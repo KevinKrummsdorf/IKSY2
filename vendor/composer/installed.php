@@ -3,7 +3,7 @@
         'name' => 'kevinkrummsdorf/iksy2',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'fb19ddbc7a4a4413ea5169e5a408b21bc8c22dbe',
+        'reference' => '3aeb4c6cf9abc3015660dd823db5c9494d1dfcea',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'kevinkrummsdorf/iksy2' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'fb19ddbc7a4a4413ea5169e5a408b21bc8c22dbe',
+            'reference' => '3aeb4c6cf9abc3015660dd823db5c9494d1dfcea',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
