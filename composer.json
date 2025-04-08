@@ -6,8 +6,8 @@
         "php": "^8.1",
         "smarty/smarty": "^4.3",
         "tecnickcom/tcpdf": "^6.6",
-        "lbuchs/WebAuth" : "^2.2.0",
-        "twns/bootstrap" : "^5.3",
+        "lbuchs/webauthn" : "^2.2.0",
+        "twbs/bootstrap" : "^5.3",
         "paragonie/halite" : "^5.1.0"
     },
     "autoload": {
