@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'kevinkrummsdorf/iksy2',
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
-        'reference' => '3aeb4c6cf9abc3015660dd823db5c9494d1dfcea',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => 'aaeeae7806be910446b2f731a4f44fa7bbbde903',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'kevinkrummsdorf/iksy2' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
-            'reference' => '3aeb4c6cf9abc3015660dd823db5c9494d1dfcea',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => 'aaeeae7806be910446b2f731a4f44fa7bbbde903',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
