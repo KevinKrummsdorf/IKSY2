@@ -4,7 +4,7 @@ Diese Anwendung verwendet [Composer](https://getcomposer.org) zur einfachen Inst
   
 **Schritt 1: Repo clonen und Verzeichniss öffnen**
 ```
-git clone https://github.com/KevinKrummsdorf/KSY2 ~/IKSY2 && cd ~/IKSY2
+git clone https://github.com/KevinKrummsdorf/IKSY2 ~/IKSY2 && cd ~/IKSY2
 ```
 **Schritt 2: Abhängigkeiten installieren**
 ```
