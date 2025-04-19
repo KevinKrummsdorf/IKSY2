@@ -1,5 +1,4 @@
 # Ignoriere einzelne Dateien
-composer.lock
 
 # Ignoriere ein ganzes Verzeichnis
 /vendor/
