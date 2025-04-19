@@ -1,0 +1,5 @@
+# Ignoriere einzelne Dateien
+
+# Ignoriere ein ganzes Verzeichnis
+/vendor/
+

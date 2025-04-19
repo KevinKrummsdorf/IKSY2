@@ -1,7 +1,23 @@
-# Installation und Abhängigkeiten
+# Anleitung Erstinstallation
 
-Diese Anwendung verwendet [Composer](https://getcomposer.org) zur einfachen Installation und Verwaltung der benötigten Bibliotheken.
+Diese Anwendung verwendet [Composer](https://getcomposer.org) zur einfachen Installation und Verwaltung der benötigten Bibliotheken. Diese Anleitung geht davon aus, das Composer sowie git bereits intalliert und konfiguriert ist.  
+  
+**Schritt 1: Repo clonen und Verzeichniss öffnen**
+```
+git clone https://github.com/KevinKrummsdorf/IKSY2 ~/IKSY2 && cd ~/IKSY2
+```
+**Schritt 2: Abhängigkeiten installieren**
+```
+composer install
+``` 
+# Verwendete Bibliotheken
 
-Für die Kryptografie werden die Bibliotheken von [Paragon Initiative Enterprises, LLC](https://github.com/paragonie) genutzt.
+[halite](https://github.com/paragonie/halite)
 
-Für die Entwicklung von responsiven, mobilen-first Websites wird [Bootstrap](https://github.com/twbs/bootstrap) als Framework verwendet.
+[Bootstrap](https://github.com/twbs/bootstrap)
+
+[PHPMailer](https://github.com/PHPMailer/PHPMailer)
+
+[monolog](https://github.com/Seldaek/monolog)
+
+[phpdotenv](https://github.com/vlucas/phpdotenv)

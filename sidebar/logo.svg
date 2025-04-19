@@ -1,0 +1,17 @@
+<svg width="200" height="115" viewBox="0 0 200 115" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+
+    <defs>
+        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#3b82f6; stop-opacity:1" /> <stop offset="100%" style="stop-color:#8b5cf6; stop-opacity:1" /> </linearGradient>
+            <linearGradient id="hubGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#10b981; stop-opacity:1" /> <stop offset="100%" style="stop-color:#3b82f6; stop-opacity:1" /> </linearGradient>
+    </defs>
+                  
+    <path d="M 60 20 Q 80 10, 100 20 L 100 80 Q 80 90, 60 80 Z" fill="url(#logoGradient)" transform="translate(-15, 0)"/>
+    <path d="M 140 20 Q 120 10, 100 20 L 100 80 Q 120 90, 140 80 Z" fill="url(#logoGradient)" transform="translate(15, 0)"/>
+                  
+    <circle cx="100" cy="50" r="10" fill="url(#hubGradient)" />
+                  
+    <text x="100" y="105" font-size="18" font-weight="bold" text-anchor="middle" fill="#4b5563">StudyHub</text>
+                  
+</svg>
