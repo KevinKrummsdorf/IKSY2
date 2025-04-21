@@ -21,3 +21,6 @@ composer install
 [monolog](https://github.com/Seldaek/monolog)
 
 [phpdotenv](https://github.com/vlucas/phpdotenv)
+
+# Verwendete APIs  
+[Google Fonts](https://fonts.google.com/icons?icon.size=24&icon.color=%23e3e3e3)
