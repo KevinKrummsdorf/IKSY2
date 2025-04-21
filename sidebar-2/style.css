@@ -1,0 +1,321 @@
+/* ========================================================================== 
+   Globale Einstellungen & Variablen 
+   ========================================================================== */
+
+   :root {
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --text-color: #000000;
+    --text-light-color: #333;
+    --text-muted-color: #495057;
+    --icon-color: #6c757d;
+    --background-light: #fff;
+    --background-gradient-start: #e2e2e2;
+    --background-gradient-end: #c9d6ff;
+    --border-color: #ced4da;
+    --border-light-color: #dee2e6;
+    --valid-color: #28a745;
+    --invalid-color: #dc3545;
+    --btn-light-bg: #f8f9fa;
+    --btn-light-hover-bg: #e2e6ea;
+  }
+  
+  body {
+    background: linear-gradient(90deg, var(--background-gradient-start), var(--background-gradient-end));
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-lg);
+    min-height: 100vh;
+    font-family: sans-serif;
+    color: var(--text-color);
+  }
+  
+  /* Requirement List */
+  .requirement-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    color: var(--text-muted-color);
+  }
+  
+  .requirement-list li {
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .requirement-list li i {
+    margin-right: var(--spacing-xs);
+    color: var(--invalid-color);
+    width: 1em;
+    text-align: center;
+  }
+  
+  .requirement-list li.valid i {
+    color: var(--valid-color);
+  }
+  
+  /* Sidebar */
+  .sidebar-icon .top,
+  .sidebar-icon .middle,
+  .sidebar-icon .bottom {
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+  
+  .sidebar-icon.active .top {
+    transform: translateY(6px) rotate(45deg);
+  }
+  
+  .sidebar-icon.active .middle {
+    opacity: 0;
+  }
+  
+  .sidebar-icon.active .bottom {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+  
+  /* Impressum */
+  .impressum-content{
+    text-align: justify;
+    max-width: 800px;
+  }
+  
+  /* Datenschutz */
+  .datenschutz-content {
+    max-width: 900px;
+  }
+  
+  .datenschutz-section {
+    margin-bottom: 2em;
+    border-bottom: 2px solid var(--border-light-color);
+    padding-bottom: 2em;
+  }
+  
+  /* -------------------- Sliding Sidebar Menü -------------------- */
+  .menu::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .menu {
+    position: fixed;
+    top: 70px; /* Höhe des Headers */
+    left: 0;
+    width: 85px;
+    height: calc(100% - 70px); /* Passt die Höhe der Sidebar an */
+    background: #ffffff12;
+    backdrop-filter: blur(5px);
+    box-shadow: 8px 0px 9px 0px #00000014;
+    padding: 20px 20px 20px 0;
+    overflow: hidden scroll;
+    transition: 0.3s;
+    z-index: 1000;
+  }
+  
+  .menu:hover {
+    width: 260px;
+  }
+  
+  .menu:hover li span:nth-child(2) {
+    display: block;
+  }
+  
+  .menu-content {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .menu-content li {
+    list-style: none;
+    border-radius: 0px 50px 50px 0;
+    transition: .3s;
+    margin-bottom: 20px;
+    padding-left: 20px;
+    font-family: 'sans-serif'; /* Gleiche Schriftart wie der Hauptinhalt */
+    font-size: 16px; /* Optionale Schriftgröße anpassen */
+  }
+  
+  .menu-content li:hover {
+    background: #bdbbbb; /* Hintergrundfarbe beim Hover */
+  }
+  
+  .menu-content li span:nth-child(2) {
+    display: none;
+  }
+  
+  .menu a {
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    display: flex;
+    align-items: center;
+    font-family: 'sans-serif'; /* Gleiche Schriftart wie der Hauptinhalt */
+  }
+  
+  .material-symbols-outlined {
+    padding: 10px;
+    font-size: 25px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background: #ffffff;
+  }
+  
+  .central-content {
+    margin-left: 85px;
+    transition: margin-left 0.3s;
+  }
+  
+  .menu:hover ~ .central-content {
+    margin-left: 260px;
+  }
+  
+  /* Damit der Main-Content nicht unter die Sidebar rutscht */
+  .site-main {
+    margin-left: 85px;
+    padding-top: 1rem; /* Platz für Header */
+    transition: margin-left 0.3s;
+  }
+  
+  .menu:hover ~ .site-main {
+    margin-left: 260px;
+  }
+  
+  .menu-header img {
+    max-width: 80%;
+    height: auto;
+  }
+  
+  .menu-header .btn {
+    font-size: 0.9rem;
+  }
+  
+  .site-main {
+    margin-left: 85px;
+    transition: margin-left 0.3s;
+  }
+  
+  .menu:hover ~ .site-main {
+    margin-left: 260px;
+  }
+  
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+  }
+  
+  .logo-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 1100;
+  }
+  
+  .menu {
+    top: 70px; /* beginnt unter dem Logo */
+    height: calc(100% - 70px);
+  }
+  
+  .topbar {
+    position: sticky;
+    top: 70px;
+    z-index: 1000;
+    margin-left: 85px;
+  }
+  
+  .site-main {
+    margin-left: 85px;
+    padding-top: 100px; /* Platz für Header */
+    transition: margin-left 0.3s;
+  }
+  
+  /* Header im gleichen Stil wie Sidebar */
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 85px;
+    background: #ffffff12;
+    backdrop-filter: blur(5px);
+    border-bottom: 1px solid rgba(255,255,255,0.05); /* sanfter Übergang */
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    z-index: 1100;
+  }
+  
+  /* Sidebar darunter starten */
+  .menu {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 85px;
+    height: calc(100% - 70px);
+    background: #ffffff12;
+    border-right: 1px solid rgba(255,255,255,0.05); /* optische Trennung zur Seite */
+    margin-top: 0; /* kein Cut mehr */
+    backdrop-filter: blur(5px);
+    box-shadow: 8px 0px 9px 0px #00000014;
+    padding: 20px 20px 20px 0;
+    overflow: hidden scroll;
+    transition: 0.3s;
+    z-index: 1000;
+  }
+  
+  .menu:hover {
+    width: 260px;
+  }
+  
+  .menu:hover li span:nth-child(2) {
+    display: block;
+  }
+  
+  .site-main {
+    margin-left: 85px;
+    padding-top: 100px; /* Platz für Header */
+    transition: margin-left 0.3s;
+  }
+  
+  .menu:hover ~ .site-main {
+    margin-left: 260px;
+  }
+  
+  .header-logo img {
+    max-width: 200px;
+    height: auto;
+  }
+  
+  /* Neue Anpassungen für Footer */
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .site-main {
+    flex-grow: 1; /* sorgt dafür, dass der Hauptinhalt den verfügbaren Raum ausfüllt */
+  }
+  
+  /* Neue Anpassungen für Footer mit Blur-Effekt */
+  footer {
+    margin-top: auto; /* sorgt dafür, dass der Footer immer am unteren Ende ist */
+    text-align: center;
+    padding: 20px;
+    background: #ffffff12; /* Hintergrundfarbe mit transparenter Deckkraft */
+    backdrop-filter: blur(5px); /* Fügt den gleichen Blur-Effekt hinzu wie bei der Sidebar und dem Header */
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1); /* Optionaler Schatten für einen weicheren Übergang */
+  }
+  
+  .site-header {
+    display: flex;
+    justify-content: flex-start; /* Stellt sicher, dass der Header links ausgerichtet ist */
+    align-items: center; /* Zentriert das Logo vertikal */
+    padding: 10px 0;
+    background: transparent; /* Optional, wenn der Header keinen Hintergrund haben soll */
+  }
+  
+  .header-logo img {
+    max-width: 200px; /* Passt die maximale Breite des Logos an */
+    height: auto;
+  }
+  
