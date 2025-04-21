@@ -1,0 +1,142 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f3f3f3;
+  }
+  
+  .timer-container {
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    margin-bottom: 20px;
+  }
+  
+  .time-display {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .controls button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  
+  .controls button:hover {
+    background-color: #45a049;
+  }
+  
+  #resetButton {
+    background-color: #f44336;
+  }
+  
+  #resetButton:hover {
+    background-color: #e53935;
+  }
+  
+  .time-input {
+    margin-bottom: 20px;
+  }
+  
+  #timeInput {
+    padding: 5px;
+    font-size: 16px;
+    width: 60px;
+    text-align: center;
+    margin-top: 5px;
+  }
+  
+  /* Hier einige grundlegende Stile für die Benachrichtigung */
+.notification {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.notification button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.notification button:hover {
+  background-color: #e53935;
+}
+
+/* Zusätzliche CSS-Regeln für den Stop-Button */
+.controls button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.controls button:hover {
+  background-color: #45a049;
+}
+
+#stopButton {
+  background-color: #f44336; /* Rote Farbe für Stoppen */
+}
+
+#stopButton:hover {
+  background-color: #e53935;
+}
+
+/* Hier wird das Layout angepasst */
+.time-input {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Abstand zwischen den Elementen */
+}
+
+#minutesInput, #secondsInput {
+  width: 60px; /* Die Breite der Eingabefelder */
+}
+
+#secondsInput {
+  margin-left: 10px; /* Etwas Abstand zwischen Minuten und Sekunden Eingabefeld */
+}
+
+#minutesInput, #secondsInput, #setTimeButton {
+  padding: 5px;
+}
+

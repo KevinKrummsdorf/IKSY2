@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lerntimer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="timer-container">
+    <h1>Lerntimer</h1>
+    <div class="time-input">
+      <label for="minutesInput">Minuten:</label>
+      <input type="number" id="minutesInput" value="25" min="0" max="120">
+      <label for="secondsInput">Sekunden:</label>
+      <input type="number" id="secondsInput" value="0" min="0" max="59">
+      <button id="setTimeButton">Zeit bestätigen</button> <!-- Bestätigungsbutton direkt neben dem Formular -->
+    </div>
+    <div class="time-display" id="timeDisplay">25:00</div>
+    <div class="controls">
+      <button id="startPauseButton">Start</button>
+      <button id="stopButton">Stoppen</button>
+    </div>
+  </div>
+
+  <audio id="timerSound" src="alarm-sound.wav" preload="auto"></audio>
+
+  <div id="notification" class="notification">
+    <p>Die Zeit ist abgelaufen! Mach eine Pause!</p>
+    <button id="closeNotification">Schließen</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
