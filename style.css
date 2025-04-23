@@ -1,9 +1,8 @@
-/* ==========================================================================
-   Globale Einstellungen & Variablen
+/* ========================================================================== 
+   Globale Einstellungen & Variablen 
    ========================================================================== */
 
    :root {
-    /* Farben */
     --primary-color: #007bff;
     --primary-hover-color: #0056b3;
     --text-color: #000000;
@@ -19,341 +18,277 @@
     --invalid-color: #dc3545;
     --btn-light-bg: #f8f9fa;
     --btn-light-hover-bg: #e2e6ea;
-  
-    /* Schriftgrößen */
-    --font-size-base: 1rem;
-    --font-size-lg: 1.1rem;
-    --font-size-sm: 0.9rem;
-    --font-size-h1: 32px;
-    --font-size-h2: 24px;
-    --font-size-logo: 1.4rem;
-  
-    /* Abstände */
-    --spacing-xs: 5px;
-    --spacing-sm: 10px;
-    --spacing-md: 15px;
-    --spacing-lg: 20px;
-    --spacing-xl: 25px;
-    --spacing-xxl: 30px;
-    --spacing-xxxl: 40px;
-  
-    /* Andere */
-    --border-radius-sm: 0.25rem;
-    --border-radius-lg: 15px;
-    --box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    --transition-speed: 0.15s;
-  }
-  
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
-  
-  body {
+}
+
+body {
     background: linear-gradient(90deg, var(--background-gradient-start), var(--background-gradient-end));
     line-height: 1.6;
     display: flex;
     flex-direction: column;
-    align-items: center;
     padding: var(--spacing-lg);
-    min-height: 100vh;
+    min-height: 100vh; /* Der Body nimmt immer mindestens die Höhe des Viewports ein */
     font-family: sans-serif;
     color: var(--text-color);
-  }
-  
-  /* ==========================================================================
-     Globale Element-Stile
-     ========================================================================== */
-  
-  h1 {
-    font-size: var(--font-size-h1);
-    margin-bottom: var(--spacing-xl);
-    text-align: center;
-    color: var(--text-color);
-  }
-  
-  h2 {
-    font-size: var(--font-size-h2);
-    margin-top: var(--spacing-xxl);
-    margin-bottom: var(--spacing-md);
-    color: var(--text-color);
-  }
-  
-  p {
-    font-size: var(--font-size-base);
-    margin-bottom: var(--spacing-md);
-  }
-  
-  a {
-    color: var(--primary-color);
-    text-decoration: none;
-  }
-  
-  a:hover {
-    text-decoration: underline;
-  }
-  
-  /* ==========================================================================
-     Wiederverwendbare Komponenten & Utility-Klassen
-     ========================================================================== */
-  
-  .content-box {
-    background: var(--background-light);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--box-shadow);
-    padding: var(--spacing-xxl);
-    margin-bottom: var(--spacing-lg);
-    width: 100%;
-  }
-  
-  .btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    font-size: var(--font-size-lg);
-    font-weight: 500;
-    text-align: center;
-    vertical-align: middle;
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-radius: var(--border-radius-sm);
-    transition: background-color var(--transition-speed) ease-in-out, border-color var(--transition-speed) ease-in-out, color var(--transition-speed) ease-in-out;
-  }
-  
-  .btn-primary {
-    color: var(--background-light);
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-  }
-  
-  .btn-primary:hover {
-    background-color: var(--primary-hover-color);
-    border-color: var(--primary-hover-color);
-  }
-  
-  .btn-light {
-    color: var(--text-muted-color);
-    background-color: var(--btn-light-bg);
-    border-color: var(--btn-light-bg);
-  }
-  
-  .btn-light:hover {
-    background-color: var(--btn-light-hover-bg);
-    border-color: var(--btn-light-hover-bg);
-  }
-  
-  .btn-block {
-    display: block;
-    width: 100%;
-  }
-  
-  .form-control {
-    display: block;
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    font-size: var(--font-size-base);
-    line-height: 1.5;
-    color: var(--text-muted-color);
-    background-color: var(--background-light);
-    background-clip: padding-box;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-sm);
-    transition: border-color var(--transition-speed) ease-in-out, box-shadow var(--transition-speed) ease-in-out;
-  }
-  
-  .form-control-icon {
-    padding-right: 35px;
-  }
-  
-  .position-relative {
-    position: relative;
-  }
-  
-  .position-relative i.bx,
-  .position-relative i.fa-solid {
-    position: absolute;
-    top: 50%;
-    right: var(--spacing-sm);
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: var(--icon-color);
-  }
-  
-  .mb-3 {
-    margin-bottom: var(--spacing-lg);
-  }
-  
-  .mt-30 { margin-top: var(--spacing-xxl); }
-  .mb-15 { margin-bottom: var(--spacing-md); }
-  .mb-20 { margin-bottom: var(--spacing-lg); }
-  
-  .text-center { text-align: center; }
-  .text-end { text-align: end; }
-  
-  .d-flex { display: flex; }
-  .justify-content-center { justify-content: center; }
-  .justify-content-between { justify-content: space-between; }
-  .align-items-center { align-items: center; }
-  .flex-column { flex-direction: column; }
-  
-  /* ==========================================================================
-     Seiten-/Bereichs-spezifische Stile
-     ========================================================================== */
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    position: absolute;
+    padding-top: 85px; /* Platz für den Header schaffen */
+    margin: 0; /* Entfernt Standardabstände */
+}
+
+/* Sicherstellen, dass die Modals immer über den anderen Inhalten liegen */
+.modal-backdrop {
+    z-index: 1040 !important; /* Standard z-index für das Hintergrund-Overlay */
+}
+
+.modal-dialog {
+    z-index: 1050 !important; /* Stellt sicher, dass der Modal-Dialog über dem Rest liegt */
+}
+
+.modal-content {
+    z-index: 1060 !important; /* Ein höherer z-index für den eigentlichen Inhalt des Modals */
+}
+
+/* Header-Z-Index anpassen */
+.site-header {
+    position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-  }
-  
-  .logo {
-    font-weight: bold;
-    font-size: var(--font-size-logo);
-    color: var(--text-color);
-  }
-  
-  .nav-links {
-    display: flex;
-    gap: 1.5rem;
-  }
-  
-  .nav-links a {
-    color: var(--primary-color);
-    font-weight: 500;
-  }
-  
-  main.container {
-    margin-top: 100px;
-    margin-bottom: 3rem;
     width: 100%;
-    max-width: 1200px;
-    padding: 0 var(--spacing-lg);
-  }
-  
-  .form-container {
-    margin-top: var(--spacing-xxxl);
-    max-width: 500px;
-  }
-  
-  .nav-tabs {
-    border-bottom: 2px solid var(--border-light-color);
-    margin-bottom: var(--spacing-lg);
-  }
-  
-  .nav-link {
-    color: var(--text-muted-color);
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    display: inline-block;
-    border: none;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -2px;
-  }
-  
-  .nav-link.active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
-  }
-  
-  .nav-link:not(.active):hover {
-    border-bottom-color: var(--border-color);
-  }
-  
-  .requirement-list {
+    height: 85px;
+    background: #ffffff12;
+    backdrop-filter: blur(5px);
+    border-bottom: 1px solid rgba(255,255,255,0.05); /* sanfter Übergang */
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    z-index: 1050 !important; /* Header bekommt einen niedrigeren z-index als das Modal */
+}
+
+/* Sidebar */
+.menu {
+    position: fixed;
+    top: 70px; /* Sidebar beginnt unter dem Header */
+    left: 0;
+    width: 74px; /* Sidebar ist im geschlossenen Zustand schmal */
+    height: calc(100% - 70px); /* Sidebarhöhe anpassen */
+    background: #ffffff12;
+    backdrop-filter: blur(5px);
+    box-shadow: 8px 0px 9px 0px #00000014;
+    padding: 20px 20px 20px 0;
+    overflow: hidden scroll;
+    transition: width 0.3s ease;
+    z-index: 1020 !important; /* Sidebar bleibt unter dem Header */
+}
+
+/* Sidebar beim Hover ausklappen */
+.menu:hover {
+    width: 260px; /* Sidebar wird bei Hover breiter */
+}
+
+.menu-content {
+    list-style: none;
+    padding-left: 0;
+}
+
+.menu-content li {
+    list-style: none;
+    border-radius: 0px 50px 50px 0;
+    transition: .3s;
+    margin-bottom: 20px;
+    padding-left: 20px;
+    font-family: 'sans-serif'; /* Gleiche Schriftart wie der Hauptinhalt */
+    font-size: 16px; /* Optionale Schriftgröße anpassen */
+}
+
+.menu-content li:hover {
+    background: #bdbbbb; /* Hintergrundfarbe beim Hover */
+}
+
+.menu a {
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    display: flex;
+    align-items: center;
+    font-family: 'sans-serif'; /* Gleiche Schriftart wie der Hauptinhalt */
+}
+
+.material-symbols-outlined {
+    padding: 10px;
+    font-size: 25px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background: #ffffff;
+}
+
+/* Requirement List */
+.requirement-list {
     list-style: none;
     padding: 0;
-    margin-bottom: var(--spacing-lg);
-    font-size: var(--font-size-sm);
-    color: var(--text-muted-color);
+    margin-top: 10px;
+    color: #28a745;
+    font-size: 14px;
   }
   
-  .requirement-list li {
+
+.requirement-list li {
+    color: black; /* Setzt den Standardtext auf schwarz */
     margin-bottom: var(--spacing-xs);
-  }
-  
-  .requirement-list li i {
+}
+
+.requirement-list li i {
     margin-right: var(--spacing-xs);
     color: var(--invalid-color);
     width: 1em;
     text-align: center;
-  }
-  
-  .requirement-list li.valid i {
+}
+
+.requirement-list li.valid i {
     color: var(--valid-color);
-  }
-  
-  .d-flex.justify-content-center a.btn-light {
-    margin: 0 var(--spacing-sm);
-  }
-  
-  .impressum-content {
+}
+
+/* Impressum */
+.impressum-content {
+    text-align: justify;
     max-width: 800px;
-  }
-  
-  .impressum-content p strong {
-    font-weight: bold;
-  }
-  
-  .datenschutz-content {
-    max-width: 800px;
-  }
-  
-  .datenschutz-section {
+}
+
+/* Datenschutz */
+.datenschutz-content {
+    max-width: 900px;
+}
+
+.datenschutz-section {
     margin-bottom: 2em;
-    border-bottom: 1px solid var(--border-light-color);
+    border-bottom: 2px solid var(--border-light-color);
     padding-bottom: 2em;
-  }
-  
-  .datenschutz-section:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-  }
-  
-  .datenschutz-content ul {
-    padding-left: var(--spacing-lg);
-    margin-bottom: var(--spacing-md);
-    list-style-type: disc;
-  }
-  
-  .datenschutz-content li {
-    font-size: var(--font-size-base);
-    color: var(--text-light-color);
-    margin-bottom: var(--spacing-xs);
-  }
-  
-  .kontakt-section {
-    max-width: 600px;
-  }
-  
-  .direct-contact-section {
-    background: var(--btn-light-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--spacing-xs);
-    padding: var(--spacing-lg);
-    margin-top: var(--spacing-lg);
-    width: 100%;
-    max-width: 600px;
-  }
-  
-  .g-recaptcha {
-    margin-bottom: var(--spacing-md);
-    display: flex;
-    justify-content: center;
-  }
-  
-  .footer-links {
-    margin-top: var(--spacing-xxl);
+    padding-bottom: 80px; /* Platz schaffen für den fixierten Footer */
+    
+}
+
+/* Sicherstellen, dass der Main-Content nicht unter die Sidebar rutscht */
+.site-main {
+    margin-left: 85px;
+    padding-top: 1rem; /* Platz für Header */
+    transition: margin-left 0.3s;
+}
+
+.menu:hover ~ .site-main {
+    margin-left: 260px; /* Platz für Sidebar, wenn diese bei Hover ausgeklappt ist */
+}
+
+/* -------------------- Sliding Sidebar Menü -------------------- */
+.menu::-webkit-scrollbar {
+    display: none;
+}
+
+.site-main {
+    margin-left: 85px;
+    padding-top: 1rem; /* Platz für Header */
+    transition: margin-left 0.3s;
+    flex-grow: 1; /* Sorgt dafür, dass der Hauptinhalt den verbleibenden Platz ausfüllt */
+}
+
+.menu:hover ~ .site-main {
+    margin-left: 260px;
+}
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+/* Footer */
+footer {
+    position: static; /* Fixiert den Footer am unteren Rand des Viewports */
+    bottom: 0; /* Stellt sicher, dass der Footer immer am unteren Rand bleibt */
+    left: 0; /* Setzt den Footer ganz nach links */
+    width: 100%; /* Der Footer nimmt die gesamte Breite des Bildschirms ein */
     text-align: center;
-    color: var(--text-light-color);
+    padding: 20px;
+    background: #ffffff12; /* Hintergrundfarbe mit transparenter Deckkraft */
+    backdrop-filter: blur(5px); /* Fügt den gleichen Blur-Effekt hinzu wie bei der Sidebar und dem Header */
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1); /* Optionaler Schatten für einen weicheren Übergang */
+    z-index: 1000; /* Stellt sicher, dass der Footer immer oben bleibt */
+  }
+
+.site-header {
+    display: flex;
+    justify-content: flex-start; /* Stellt sicher, dass der Header links ausgerichtet ist */
+    align-items: center; /* Zentriert das Logo vertikal */
+    padding: 10px 0;
+    background: transparent; /* Optional, wenn der Header keinen Hintergrund haben soll */
+}
+
+.header-logo img {
+    max-width: 200px; /* Passt die maximale Breite des Logos an */
+    height: auto;
+}
+
+/* Der Footer bleibt jetzt immer am unteren Rand der Seite */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Stellt sicher, dass der Body den gesamten Viewport ausfüllt */
+    padding-bottom: 0; /* Fügt Platz für den Footer hinzu */
+  }
+
+
+/*test*/
+  .offcanvas .menu-content li {
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+  }
+  .offcanvas .menu-content a {
+    display: flex;
+    align-items: center;
+    color: #000;
+    text-decoration: none;
+  }
+  /* Offcanvas-Menü über den Header legen */
+.offcanvas {
+    z-index: 1060 !important;
+  }
+
+/*======================
+    404 page
+=======================*/
+.page_404 {
+    background: linear-gradient(90deg, var(--background-gradient-start), var(--background-gradient-end));
+    height: calc(90vh - 70px); /* ganze Höhe – Header */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Inhalt vertikal mittig im Container */
+    align-items: center;
+    padding: 1rem 0;
   }
   
-  .footer-links a {
-    margin: 0 var(--spacing-sm);
+  .page_404 .container {
+    padding: 0 !important;
+    margin: 0 !important;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Inhalt vertikal mittig im Container */
+    align-items: center;
   }
+  
+  .four_zero_four_bg img {
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    max-height: 50vh; /* verhindert, dass das Bild zu groß wird */
+  }
+  
+  .contant_box_404 {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  .contant_box_404 h3,
+  .contant_box_404 p {
+    margin: 0.5rem 0;
+  }
+  
+  .contant_box_404 a {
+    margin-top: 1rem;
+  }
+  
   

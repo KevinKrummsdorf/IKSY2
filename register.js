@@ -23,22 +23,23 @@ const requirements = {
 if (passwordInput && requirementList && passwordConfirmInput) {
     // --- Event Listener für Fokus auf das erste Passwortfeld ---
     passwordInput.addEventListener("focus", () => {
-        requirementList.style.display = "block";
+        requirementList.style.display = "block"; // Anforderungsliste anzeigen
     });
 
     // --- Event Listener für Blur auf das erste Passwortfeld ---
     passwordInput.addEventListener("blur", () => {
-        // Kurze Verzögerung, damit Klick auf Eye-Icon noch funktioniert
+        // Verzögerung, um sicherzustellen, dass Eye-Icon Klick funktioniert
         setTimeout(() => {
+            // Versteckt die Liste nur, wenn das Passwort-Bestätigungsfeld oder ein Eye-Icon nicht fokussiert sind
             if (document.activeElement !== passwordConfirmInput && !Array.from(eyeIcons || []).includes(document.activeElement)) {
-                requirementList.style.display = "none";
+                requirementList.style.display = "none"; // Anforderungsliste ausblenden
             }
         }, 150);
     });
 
     // --- Event Listener für Fokus auf das "Passwort bestätigen"-Feld ---
     passwordConfirmInput.addEventListener("focus", () => {
-        requirementList.style.display = "none";
+        requirementList.style.display = "none"; // Versteckt die Liste, wenn das Bestätigungsfeld fokussiert ist
     });
 
     // --- Live-Validierung der Liste bei Eingabe im ersten Passwortfeld ---
