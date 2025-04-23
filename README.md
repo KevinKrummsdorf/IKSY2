@@ -52,6 +52,10 @@ commit erstellen
 ```
 git commit -m "Kurze Beschreibung der Änderungen"
 ```
+commit pushen  
+```
+git push origin test
+```  
 User = Username  
 Passwort = Acces Key  
 
