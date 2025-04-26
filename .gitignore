@@ -1,5 +1,7 @@
 # Ignoriere einzelne Dateien
+publicsecret-key.txt
+.env
 
 # Ignoriere ein ganzes Verzeichnis
 /vendor/
-
+/templates_c/
