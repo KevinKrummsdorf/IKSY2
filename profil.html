@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="de"> <!-- Umlaute werden angezeigt -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Anpassung an Bildschirmgröße -->
+    <title>StudyHub Profil</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    
+    <div class="header">
+        <div class="logo">
+            <a href="landing.html">
+                <img src="logo.svg" alt="StudyHub Logo" width="200" height="115">
+        </div>
+        <div class="nav-links">
+         	<a href="stundenplan.html">Stundenplan</a>
+            <a href="gruppen.html">Gruppen</a>
+            <a href="login.html"><img src="login.png" alt="Login Icon" widht="50" height="25"> </a>
+            <img src="logout.png" width="25" height="25">
+        </div>
+    </div>
+  
+  
+ 	<main class="container  my-5">
+	  	<section class="content-box d-flex align-items-start" style="gap: var(--spacing-xxl);">
+		   		 <!-- Linke Seite: Profilbild + Button -->
+			    <section class="content-box-s text-center">
+			      <img src="login.png" height="200" width="200" style="border-radius: 50%; object-fit: cover;">
+			      <a href="profilbearbeiten.html" class="btn btn-primary btn-lg mt-30">Profil bearbeiten</a>
+			    </section>
+	
+	   		 <!-- Rechte Seite: Profildaten -->
+		    <div class="text-start">
+		      <strong>Name:</strong>
+		      <p class="text-muted">Max Mustermann</p>
+		      <strong>Benutzername:</strong>
+		      <p class="text-muted">mustermax</p>
+		      <strong>E-Mail:</strong>
+		      <p class="text-muted">max@example.com</p>
+		      <strong>Andere Netzwerke:</strong>
+		      <p class="text-muted">Instagram, TikTok, Discord, MS Teams</p>
+		    </div>
+	  	</section>
+	</main>
+	
+	
+	<footer class="text-center mt-5">
+        <a href="/about.html">Über uns</a> |
+        <a href="privacy.html">Datenschutz</a> |
+        <a href="/terms.html">AGB</a> |
+        <a href="contact.html">Kontakt</a> |
+        <a href="impressum.html">Impressum</a>
+        <p class="mt-2 text-center">&copy; <script>document.write(new Date().getFullYear())</script> StudyHub. Alle Rechte vorbehalten.</p>
+    </footer>
+
+	
+</body>
+</html>
