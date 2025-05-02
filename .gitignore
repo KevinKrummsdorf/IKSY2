@@ -5,3 +5,4 @@ publicsecret-key.txt
 # Ignoriere ein ganzes Verzeichnis
 /vendor/
 /templates_c/
+/stats/

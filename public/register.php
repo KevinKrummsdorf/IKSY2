@@ -3,157 +3,124 @@ declare(strict_types=1);
 
 // 0) JSON-Response und Buffer starten
 header('Content-Type: application/json; charset=utf-8');
-ini_set('display_errors', '0');
+ini_set('display_errors', '1');
 error_reporting(0);
 ob_start();
 
-// DEBUG-Flag: false in Produktion
-const DEBUG = false;
+// DEBUG-Flag: in Produktion auf false lassen
+const DEBUG = true;
 
 // Basis-Antwort
 $response = ['success' => false];
 
+// 1) Core-Dateien einbinden
 require_once __DIR__ . '/../includes/db.inc.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Dotenv\Dotenv;
 use ParagonIE\Halite\KeyFactory;
-use ParagonIE\Halite\Password;
 use ParagonIE\HiddenString\HiddenString;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
+use ParagonIE\Halite\Password;
 
 try {
-    // 1) Ensure sodium extension is available
+    // 3) Sicherstellen, dass sodium verfügbar ist
     if (!extension_loaded('sodium')) {
         throw new \RuntimeException(
-            'PHP-Extension "sodium" fehlt. Bitte in php.ini aktivieren: ' .
-            'extension=sodium oder extension=php_sodium.dll'
+            'PHP-Extension "sodium" fehlt. Bitte in php.ini aktivieren.'
         );
     }
 
-    // 2) Load .env
+    // 6) Logger konfigurieren (optional, kann bei Bedarf deaktiviert werden)
+    $log = new Logger('user_registration');
+    $log->debug('register.php geladen und Monolog konfiguriert');
+    $log->pushHandler(new StreamHandler(__DIR__ . '/../logs/register.log', Level::Debug));
+
+    // 4) .env laden
     $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
     $dotenv->load();
 
-    // 3) Read HALITE_KEYFILE_BASE64 from environment
+    //Verifikations-Logik einbinden
+    require_once __DIR__ . '/../includes/verification.inc.php';
+
+    // 5) Halite-Schlüssel importieren
     $b64 = $_ENV['HALITE_KEYFILE_BASE64']
          ?? $_SERVER['HALITE_KEYFILE_BASE64']
          ?? getenv('HALITE_KEYFILE_BASE64')
          ?? '';
-
     if (empty($b64)) {
-        throw new \RuntimeException('Verschlüsselungsschlüssel nicht in HALITE_KEYFILE_BASE64 gefunden.');
+        throw new \RuntimeException('Verschlüsselungsschlüssel nicht gefunden.');
     }
-
-    // 4) Decode Base64 and import Halite key
     $raw = base64_decode($b64, true);
     if ($raw === false) {
         throw new \RuntimeException('Base64-Decode des Schlüssels fehlgeschlagen.');
     }
     $key = KeyFactory::importEncryptionKey(new HiddenString($raw));
 
-    // 5) Logger konfigurieren
-    $log = new Logger('user_registration');
-    $log->pushHandler(new StreamHandler(__DIR__ . '/../logs/register.log', Level::Warning));
-
-    // 6) Verbindung zur Datenbank aufbauen
+    // 7) DB-Verbindung aufbauen
     $pdo = DbFunctions::db_connect();
 
-    // 7) Eingaben holen und validieren
+    // 8) Eingaben sammeln und validieren
     $username = trim($_POST['username'] ?? '');
     $email    = trim($_POST['email'] ?? '');
     $pw       = $_POST['password'] ?? '';
     $pw2      = $_POST['password_confirm'] ?? '';
     $errors   = [];
 
-    if ($username === '') {
-        $errors['username'] = 'Bitte geben Sie einen Benutzernamen ein.';
-    } elseif (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $username)) {
-        $errors['username'] = 'Benutzername muss 3–20 Zeichen lang sein und darf nur a–Z, 0–9 und _ enthalten.';
-    }
-
-    if ($email === '') {
-        $errors['email'] = 'Bitte geben Sie eine E-Mail-Adresse ein.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 255) {
-        $errors['email'] = 'Bitte geben Sie eine gültige E-Mail-Adresse (max. 255 Zeichen) ein.';
-    }
-
-    if ($pw === '') {
-        $errors['password'][] = 'Bitte geben Sie ein Passwort ein.';
-    } else {
-        $len = mb_strlen($pw);
-        if ($len < 8 || $len > 128) {
-            $errors['password'][] = 'Passwort muss 8–128 Zeichen lang sein.';
-        }
-        if (!preg_match('/[A-Z]/', $pw)) {
-            $errors['password'][] = 'Passwort muss mindestens einen Großbuchstaben enthalten.';
-        }
-        if (!preg_match('/[a-z]/', $pw)) {
-            $errors['password'][] = 'Passwort muss mindestens einen Kleinbuchstaben enthalten.';
-        }
-        if (!preg_match('/[0-9]/', $pw)) {
-            $errors['password'][] = 'Passwort muss mindestens eine Zahl enthalten.';
-        }
-        if (!preg_match('/[\W_]/', $pw)) {
-            $errors['password'][] = 'Passwort muss mindestens ein Sonderzeichen enthalten.';
-        }
-    }
-
-    if ($pw2 === '') {
-        $errors['password_confirm'] = 'Bitte bestätigen Sie Ihr Passwort.';
-    } elseif ($pw !== $pw2) {
-        $errors['password_confirm'] = 'Die Passwörter stimmen nicht überein.';
-    }
+    // … hier dein bestehendes Validierungs-Logik … //
 
     if (!empty($errors)) {
         $response['errors'] = $errors;
         throw new \DomainException('Validierungsfehler');
     }
 
-    // 8) Existenz-Checks
-    $stmt = $pdo->prepare('SELECT COUNT(*) AS cnt FROM users WHERE username = ?');
-    $stmt->execute([$username]);
-    $cntUser = (int) $stmt->fetchColumn();
-
-    if ($cntUser > 0) {
-        $errors['username'] = 'Benutzername ist bereits vergeben.';
-    }
-
-    $stmt = $pdo->prepare('SELECT COUNT(*) AS cnt FROM users WHERE email = ?');
-    $stmt->execute([$email]);
-    $cntMail = (int) $stmt->fetchColumn();
-
-    if ($cntMail > 0) {
-        $errors['email'] = 'E-Mail-Adresse ist bereits registriert.';
-    }
+    // 9) Existenz-Checks (Username, E-Mail)
+    // … bestehender Code für SELECT COUNT(*) … //
 
     if (!empty($errors)) {
         $response['errors'] = $errors;
         throw new \DomainException('Benutzer bereits vorhanden');
     }
 
-    // 9) Passwort hashen und in DB einfügen
+    // 10) Passwort hashen & in DB einfügen
     $hash = Password::hash(new HiddenString($pw), $key);
-
-    // WICHTIG: explizit in einen String umwandeln!
-    $stmt = $pdo->prepare('INSERT INTO users (username, email, password_hash, is_verified) VALUES (?, ?, ?, 0)');
+    $stmt = $pdo->prepare(
+        'INSERT INTO users (username, email, password_hash, is_verified)
+         VALUES (?, ?, ?, FALSE)'
+    );
     $res = $stmt->execute([
         $username,
         $email,
-        (string) $hash   // <-- Hier casten!
+        (string)$hash
     ]);
-
     if (!$res) {
         throw new \RuntimeException('INSERT fehlgeschlagen.');
     }
 
+    // 11) Markiere Erfolg
+    // ... nach Monolog-Initialisierung und INSERT ...
     $response['success'] = true;
     $log->info('Registrierung erfolgreich', ['username' => $username]);
 
+    try {
+        sendVerificationEmail(
+            $pdo,
+            $username,
+            $email,
+            $_SERVER['HTTP_HOST'],
+            $log                // <- hier den Monolog-Logger übergeben
+    );
+    $response['message'] = 'Registrierung fast abgeschlossen! ...';
+    } catch (\Exception $e) {
+        $response['message'] = '…, aber die Verifizierungs-Mail konnte nicht versendet werden.';
+        $log->warning('Verifikations-Mail-Versand fehlgeschlagen', ['error' => $e->getMessage()]);
+    }
+
+
 } catch (\DomainException $e) {
-    // Validierungs- oder Duplicate-Fehler
+    // Benutzer- oder Validierungsfehler
     if (empty($response['errors'])) {
         $response['message'] = $e->getMessage();
     }
@@ -170,7 +137,7 @@ try {
         : 'Interner Serverfehler. Bitte später erneut versuchen.';
 }
 
-// 10) Nur das finale JSON senden
+// 13) Finale JSON-Antwort
 ob_clean();
 echo json_encode($response);
 exit;

@@ -15,27 +15,27 @@ class DbFunctions
     // Fehler-Logging-Funktion mit Logrotation
     public function log_error(string $message): void
     {
-        $logFile = __DIR__ . '/../logs/error.log';
+        $logFile = __DIR__ . '/../logs/db_error.log';
+        // … Rotation …
     
-        // Logrotation: Wenn Log größer als 5 MB ist
-        if (file_exists($logFile) && filesize($logFile) > 5 * 1024 * 1024) {
-            $timestamp = date('Ymd_His');
-            rename($logFile, __DIR__ . "/../logs/error_$timestamp.log");
-        }
-    
+        // wieder einkommentieren:
         error_log('[' . date('Y-m-d H:i:s') . '] ' . $message . PHP_EOL, 3, $logFile);
     }
+    
     
     // Datenbankverbindung herstellen
     public static function db_connect(): PDO
     {
-        $host = $_ENV['DB_HOST'] ?? getenv('DB_HOST') ?? 'localhost';
+        // 1) Umgebungsvariablen mit Fallbacks
+        $host = $_ENV['DB_HOST']     ?? getenv('DB_HOST')     ?? 'localhost';
+        $port = $_ENV['DB_PORT']     ?? getenv('DB_PORT')     ?? '5432';
         $db   = $_ENV['DB_DATABASE'] ?? getenv('DB_DATABASE') ?? 'studyhub';
-        $user = $_ENV['DB_USERNAME'] ?? getenv('DB_USERNAME') ?? 'root';
-        $pass = $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD') ?? '';
-        $charset = 'utf8mb4';
+        $user = $_ENV['DB_USERNAME'] ?? getenv('DB_USERNAME') ?? 'admin';
+        $pass = $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD') ?? 'admin';
     
-        $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+        // 2) DSN für PostgreSQL
+        $dsn = "pgsql:host={$host};port={$port};dbname={$db}";
+    
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -44,16 +44,27 @@ class DbFunctions
     
         try {
             return new PDO($dsn, $user, $pass, $options);
-        } catch (PDOException $e) {
-            (new self())->log_error('Datenbankverbindung fehlgeschlagen: ' . $e->getMessage());
+        } catch (\PDOException $e) {
+            // Schreibe den Fehler ins log-File
+            (new self())->log_error('DB-Verbindung fehlgeschlagen: ' . $e->getMessage());
+    
+            // HTTP-500 + JSON-Fehler
             http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'message' => 'Interner Serverfehler. Bitte später erneut versuchen.'
+                'message' => defined('DEBUG') && DEBUG
+                    ? 'DB-Fehler: ' . $e->getMessage()
+                    : 'Interner Serverfehler. Bitte später erneut versuchen.'
             ]);
-            exit;
+    
+            // Exception weiterwerfen, damit register.php sie im Try-Catch fängt
+            throw $e;
         }
     }
+    
+    
+    
+    
     
     
 

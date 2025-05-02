@@ -4,14 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (loginSuccess === 'success') {
         const alertContainer = document.getElementById('globalAlert');
-        if (alertContainer) {
-            alertContainer.innerHTML = `
-                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-                  Willkommen zurück! Sie haben sich erfolgreich eingeloggt.
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
-                </div>
-            `;
-        }
 
         // KEIN Modal-Öffnen mehr!
 

@@ -32,7 +32,7 @@
 
         <h2 class="mt-5 mb-3 text-center">Oder kontaktieren Sie uns direkt</h2>
         <p class="text-center">
-          <a href="mailto:info@studyhub.de">info@studyhub.de</a>
+          <a href="mailto:studyhub.iksy@gmail.com">studyhub.iksy@gmail.com</a>
         </p>
 
         <div class="mt-4 text-center">

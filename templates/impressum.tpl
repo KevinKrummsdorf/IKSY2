@@ -21,7 +21,7 @@
     <p><strong>Kontakt:</strong></p>
     <p>
       Telefon: 01234 123-0<br>
-      E-Mail: <a href="mailto:info@studyhub.de">info@studyhub.de</a>
+      E-Mail: <a href="mailto:studyhub.iksy@gmail.com">studyhub.iksy@gmail.com</a>
     </p>
 
     <h2 class="mt-4">Informationen zur Online-Streitbeilegung</h2>

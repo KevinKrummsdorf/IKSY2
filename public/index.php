@@ -10,6 +10,12 @@ use Smarty\Smarty;
 
 session_start();
 
+// Wenn bereits eingeloggt UND NICHT gerade frisch eingeloggt (login=success), direkt ins Dashboard
+if (isset($_SESSION['user_id']) && !isset($_GET['login'])) {
+    header('Location: dashboard.php');
+    exit;
+}
+
 // Konfiguration laden
 require_once __DIR__ . '/../includes/config.inc.php'; // ACHTUNG auf .inc.php
 

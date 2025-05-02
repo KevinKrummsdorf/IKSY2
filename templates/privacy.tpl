@@ -13,7 +13,7 @@
       <p>StudyHub GmbH<br>Musterstraße 1<br>12345 Musterstadt<br>Deutschland</p>
       <p>Vertreten durch: Maximilian Mustermann</p>
       <p>Telefon: 01234 123-0<br>
-         E-Mail: <a href="mailto:info@studyhub.de">info@studyhub.de</a></p>
+         E-Mail: <a href="mailto:studyhub.iksy@gmail.com">studyhub.iksy@gmail.com</a>
     </div>
 
     <div class="datenschutz-section mt-4">
