@@ -72,7 +72,9 @@ Passwort = Acces Key
 
 [monolog](https://github.com/Seldaek/monolog)
 
-[phpdotenv](https://github.com/vlucas/phpdotenv)  
+[phpdotenv](https://github.com/vlucas/phpdotenv)    
+
+[Smarty](https://github.com/smarty-php/smarty)
 
 # Verwendete Mediaquellen  
 [mixkit](https://mixkit.co)
