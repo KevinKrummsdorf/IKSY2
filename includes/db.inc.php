@@ -2,13 +2,20 @@
 
 declare(strict_types=1);
 
+
+use Dotenv\Dotenv;
+
+// .env-Datei laden
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 class DbFunctions
 {
     // Datenbank-Konfiguration als Klassenkonstanten
-    private const DB_HOST     = 'localhost';
-    private const DB_USER     = 'admin';
-    private const DB_PASSWORD = 'admin';
-    private const DB_NAME     = 'studyhub';
+private const DB_HOST     = $_ENV['DB_HOST'];
+private const DB_USER     = $_ENV['DB_USER'];
+private const DB_PASSWORD = $_ENV['DB_PASSWORD'];
+private const DB_NAME     = $_ENV['DB_NAME'];
 
     
     
