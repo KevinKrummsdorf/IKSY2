@@ -2,52 +2,58 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Dotenv\Dotenv;
+
 class DbFunctions
 {
-    // Datenbank-Konfiguration als Klassenkonstanten
-    private const DB_HOST     = 'localhost';
-    private const DB_USER     = 'admin';
-    private const DB_PASSWORD = 'admin';
-    private const DB_NAME     = 'studyhub';
-
-    
-    
     // Fehler-Logging-Funktion mit Logrotation
     public function log_error(string $message): void
     {
         $logFile = __DIR__ . '/../logs/db_error.log';
         // … Rotation …
-    
+
         // wieder einkommentieren:
         error_log('[' . date('Y-m-d H:i:s') . '] ' . $message . PHP_EOL, 3, $logFile);
     }
-    
-    
+
     // Datenbankverbindung herstellen
     public static function db_connect(): PDO
     {
-        // 1) Umgebungsvariablen mit Fallbacks
-        $host = $_ENV['DB_HOST']     ?? getenv('DB_HOST')     ?? 'localhost';
-        $port = $_ENV['DB_PORT']     ?? getenv('DB_PORT')     ?? '5432';
-        $db   = $_ENV['DB_DATABASE'] ?? getenv('DB_DATABASE') ?? 'studyhub';
-        $user = $_ENV['DB_USERNAME'] ?? getenv('DB_USERNAME') ?? 'admin';
-        $pass = $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD') ?? 'admin';
-    
-        // 2) DSN für PostgreSQL
+        // .env-Datei laden, falls noch nicht geschehen
+        if (!isset($_ENV['DB_HOST'])) {
+            $dotenv = Dotenv::createImmutable(__DIR__);
+            $dotenv->load();
+        }
+
+        // Umgebungsvariablen ohne Fallbacks
+        $host = $_ENV['DB_HOST'];
+        $port = $_ENV['DB_PORT'];
+        $db   = $_ENV['DB_DATABASE'];
+        $user = $_ENV['DB_USERNAME'];
+        $pass = $_ENV['DB_PASSWORD'];
+
+        // Überprüfen, ob alle nötigen Umgebungsvariablen gesetzt sind
+        if (empty($host) || empty($port) || empty($db) || empty($user) || empty($pass)) {
+            throw new \RuntimeException('Fehlende Umgebungsvariablen für die DB-Verbindung.');
+        }
+
+        // DSN für PostgreSQL
         $dsn = "pgsql:host={$host};port={$port};dbname={$db}";
-    
+
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
         ];
-    
+
         try {
             return new PDO($dsn, $user, $pass, $options);
         } catch (\PDOException $e) {
             // Schreibe den Fehler ins log-File
             (new self())->log_error('DB-Verbindung fehlgeschlagen: ' . $e->getMessage());
-    
+
             // HTTP-500 + JSON-Fehler
             http_response_code(500);
             echo json_encode([
@@ -56,17 +62,11 @@ class DbFunctions
                     ? 'DB-Fehler: ' . $e->getMessage()
                     : 'Interner Serverfehler. Bitte später erneut versuchen.'
             ]);
-    
-            // Exception weiterwerfen, damit register.php sie im Try-Catch fängt
+
+            // Exception weiterwerfen, damit sie im Aufruf von register.php oder login.php gefangen werden kann
             throw $e;
         }
     }
-    
-    
-    
-    
-    
-    
 
     /**
      * Escaped einen String für eine Query.
