@@ -14,7 +14,7 @@
 
   {* Jetzt erst deine CSS-Dateien *}
   <link href="{$base_url}/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
   <link href="{$base_url}/css/style.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 
