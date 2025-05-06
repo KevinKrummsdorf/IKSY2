@@ -78,3 +78,7 @@ Passwort = Acces Key
 
 # Verwendete Mediaquellen  
 [mixkit](https://mixkit.co)
+
+# Verwendete APIs
+[Google reCaptcha](https://cloud.google.com/security/products/recaptcha)  
+[Google Fronts](https://fonts.google.com/icons)
