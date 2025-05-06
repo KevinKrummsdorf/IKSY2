@@ -26,3 +26,30 @@ function fetchLoginLogs(PDO $pdo, bool $isAdmin, int $limit = 50): array
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+function fetchCaptchaLogs(PDO $pdo, bool $isAdmin, int $limit = 50): array
+{
+    if (!$isAdmin) {
+        return [];
+    }
+
+    $sql = '
+        SELECT
+            id,
+            token,
+            success,
+            score,
+            action,
+            hostname,
+            error_reason,
+            created_at
+        FROM captcha_log
+        ORDER BY created_at DESC
+        LIMIT :limit
+    ';
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}

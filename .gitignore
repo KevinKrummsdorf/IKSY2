@@ -6,3 +6,4 @@ publicsecret-key.txt
 /vendor/
 /templates_c/
 /stats/
+/cache/

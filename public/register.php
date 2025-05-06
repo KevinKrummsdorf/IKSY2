@@ -24,6 +24,10 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use ParagonIE\Halite\Password;
+use PDO;
+
+// 2) reCAPTCHA-Funktionen einbinden
+require_once __DIR__ . '/../includes/recaptcha.inc.php';
 
 try {
     // 3) Sicherstellen, dass sodium verfügbar ist
@@ -33,19 +37,17 @@ try {
         );
     }
 
-    // 6) Logger konfigurieren (optional, kann bei Bedarf deaktiviert werden)
+    // 4) Logger konfigurieren
     $log = new Logger('user_registration');
-    $log->debug('register.php geladen und Monolog konfiguriert');
     $log->pushHandler(new StreamHandler(__DIR__ . '/../logs/register.log', Level::Debug));
+    $log->debug('register.php gestartet');
 
-    // 4) .env laden
+    // 5) .env laden
     $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
     $dotenv->load();
+    $config = require __DIR__ . '/../includes/config.inc.php';
 
-    //Verifikations-Logik einbinden
-    require_once __DIR__ . '/../includes/verification.inc.php';
-
-    // 5) Halite-Schlüssel importieren
+    // 6) Halite-Schlüssel importieren
     $b64 = $_ENV['HALITE_KEYFILE_BASE64']
          ?? $_SERVER['HALITE_KEYFILE_BASE64']
          ?? getenv('HALITE_KEYFILE_BASE64')
@@ -62,72 +64,91 @@ try {
     // 7) DB-Verbindung aufbauen
     $pdo = DbFunctions::db_connect();
 
-    // 8) Eingaben sammeln und validieren
+    // 8) reCAPTCHA v3 prüfen und loggen (Action "register")
+    $token  = $_POST['recaptcha_token'] ?? '';
+    $secret = (string)$config['recaptcha_secret']; 
+    if (!recaptcha_verify($pdo, $token, $secret, 0.5)) {
+        $response['errors']['recaptcha'] = 'reCAPTCHA-Validierung fehlgeschlagen. Bitte erneut versuchen.';
+        throw new \DomainException('reCAPTCHA fehlgeschlagen');
+    }
+
+    // 9) Eingaben sammeln und validieren
     $username = trim($_POST['username'] ?? '');
     $email    = trim($_POST['email'] ?? '');
     $pw       = $_POST['password'] ?? '';
     $pw2      = $_POST['password_confirm'] ?? '';
     $errors   = [];
 
-    // … hier dein bestehendes Validierungs-Logik … //
+    if ($username === '') {
+        $errors['username'] = 'Bitte wähle einen Benutzernamen.';
+    }
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Bitte gib eine gültige E-Mail-Adresse an.';
+    }
+    if (mb_strlen($pw) < 8) {
+        $errors['password'] = 'Passwort muss mindestens 8 Zeichen lang sein.';
+    }
+    if ($pw !== $pw2) {
+        $errors['password_confirm'] = 'Passwörter stimmen nicht überein.';
+    }
 
     if (!empty($errors)) {
         $response['errors'] = $errors;
         throw new \DomainException('Validierungsfehler');
     }
 
-    // 9) Existenz-Checks (Username, E-Mail)
-    // … bestehender Code für SELECT COUNT(*) … //
-
+    // 10) Existenz-Checks (Username, E-Mail)
+    $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE username = ?');
+    $stmt->execute([$username]);
+    if ($stmt->fetchColumn() > 0) {
+        $errors['username'] = 'Dieser Benutzername ist bereits vergeben.';
+    }
+    $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE email = ?');
+    $stmt->execute([$email]);
+    if ($stmt->fetchColumn() > 0) {
+        $errors['email'] = 'Diese E-Mail-Adresse ist bereits registriert.';
+    }
     if (!empty($errors)) {
         $response['errors'] = $errors;
         throw new \DomainException('Benutzer bereits vorhanden');
     }
 
-    // 10) Passwort hashen & in DB einfügen
+    // 11) Passwort hashen & in DB einfügen
     $hash = Password::hash(new HiddenString($pw), $key);
     $stmt = $pdo->prepare(
         'INSERT INTO users (username, email, password_hash, is_verified)
          VALUES (?, ?, ?, FALSE)'
     );
-    $res = $stmt->execute([
-        $username,
-        $email,
-        (string)$hash
-    ]);
-    if (!$res) {
+    if (!$stmt->execute([$username, $email, (string)$hash])) {
         throw new \RuntimeException('INSERT fehlgeschlagen.');
     }
 
-    // 11) Markiere Erfolg
-    // ... nach Monolog-Initialisierung und INSERT ...
-    $response['success'] = true;
-    $log->info('Registrierung erfolgreich', ['username' => $username]);
-
+    // 12) Verifikations-Mail senden
     try {
+        require_once __DIR__ . '/../includes/verification.inc.php';
         sendVerificationEmail(
             $pdo,
             $username,
             $email,
             $_SERVER['HTTP_HOST'],
-            $log                // <- hier den Monolog-Logger übergeben
-    );
-    $response['message'] = 'Registrierung fast abgeschlossen! ...';
+            $log
+        );
+        $response['message'] = 'Registrierung fast abgeschlossen! Bitte bestätige deine E-Mail.';
     } catch (\Exception $e) {
-        $response['message'] = '…, aber die Verifizierungs-Mail konnte nicht versendet werden.';
-        $log->warning('Verifikations-Mail-Versand fehlgeschlagen', ['error' => $e->getMessage()]);
+        $response['message'] = 'Registrierung erfolgreich, aber Bestätigungs-Mail konnte nicht gesendet werden.';
+        $log->warning('Verifikations-Mail fehlgeschlagen', ['error' => $e->getMessage()]);
     }
 
+    // 13) Erfolg
+    $response['success'] = true;
 
 } catch (\DomainException $e) {
-    // Benutzer- oder Validierungsfehler
-    if (empty($response['errors'])) {
+    if (!isset($response['errors'])) {
         $response['message'] = $e->getMessage();
     }
 } catch (\Throwable $e) {
-    // Schwere Fehler
     if (isset($log)) {
-        $log->error('Uncaught Exception', [
+        $log->error('Uncaught Exception in register.php', [
             'message' => $e->getMessage(),
             'trace'   => $e->getTraceAsString()
         ]);
@@ -137,7 +158,7 @@ try {
         : 'Interner Serverfehler. Bitte später erneut versuchen.';
 }
 
-// 13) Finale JSON-Antwort
+// 14) Finale JSON-Antwort
 ob_clean();
 echo json_encode($response);
 exit;

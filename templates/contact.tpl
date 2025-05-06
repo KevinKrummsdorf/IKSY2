@@ -1,46 +1,103 @@
 {extends file="./layouts/layout.tpl"}
 
-{block name="title"}Kontakt{/block}
+{block name="head" append}
+  <script src="https://www.google.com/recaptcha/api.js?render={$recaptcha_site_key}"></script>
+  <style>
+    .grecaptcha-badge {
+      z-index: 9999 !important;
+      bottom: 80px !important;
+      right: 20px !important;
+    }
+  </style>
+{/block}
 
 {block name="content"}
 <div class="container my-5">
   <h1 class="text-center">Kontakt</h1>
 
-  <div class="row justify-content-center">
-    <div class="col-md-7 col-lg-6">
-      <section class="kontakt-section">
-        <h2 class="mt-4 mb-3 text-center">Kontaktformular</h2>
-
-        <form action="kontakt-senden.php" method="POST" class="kontakt-form">
-          <div class="mb-3 position-relative">
-            <label for="name" class="form-label visually-hidden">Name</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="Ihr Name" required>
-          </div>
-
-          <div class="mb-3 position-relative">
-            <label for="email" class="form-label visually-hidden">E-Mail</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Ihre E-Mail" required>
-          </div>
-
-          <div class="mb-3">
-            <label for="nachricht" class="form-label visually-hidden">Nachricht</label>
-            <textarea class="form-control" id="nachricht" name="nachricht" rows="6" placeholder="Ihre Nachricht" required></textarea>
-          </div>
-
-          <button type="submit" class="btn btn-primary">Absenden</button>
-        </form>
-
-        <h2 class="mt-5 mb-3 text-center">Oder kontaktieren Sie uns direkt</h2>
-        <p class="text-center">
-          <a href="mailto:studyhub.iksy@gmail.com">studyhub.iksy@gmail.com</a>
-        </p>
-
-        <div class="mt-4 text-center">
-          <h3>Servicezeiten:</h3>
-          <p>Montag bis Freitag: 9:00 - 17:00 Uhr</p>
-        </div>
-      </section>
+  {if $success}
+    <div class="alert alert-success show">
+      Ihre Nachricht wurde erfolgreich gesendet.<br>
+      {if $orderId}
+        <strong>Ihre Auftrags-ID:</strong> {$orderId}
+      {/if}
     </div>
-  </div>
+  {/if}
+
+  {if $errors}
+    <div class="alert alert-danger show">
+      <ul class="mb-0">
+        {foreach $errors as $err}
+          <li>{$err}</li>
+        {/foreach}
+      </ul>
+    </div>
+  {/if}
+
+  <form id="contact-form" action="" method="POST" class="mx-auto" style="max-width:600px">
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input id="name" name="name" type="text" class="form-control"
+             value="{$input.name|escape}" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">E-Mail</label>
+      <input id="email" name="email" type="email" class="form-control"
+             value="{$input.email|escape}" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="subject" class="form-label">Betreff</label>
+      <input id="subject" name="subject" type="text" class="form-control"
+             value="{$input.subject|escape}" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="message" class="form-label">Nachricht</label>
+      <textarea id="message" name="message" rows="6" class="form-control" required>
+        {$input.message|escape}
+      </textarea>
+    </div>
+
+    <input type="hidden" name="recaptcha_token" id="recaptcha_token">
+
+    <button type="submit" class="btn btn-primary w-100 position-relative">
+      <span class="spinner-border spinner-border-sm me-2 d-none"
+            id="btn-spinner" role="status"></span>
+      Nachricht senden
+    </button>
+  </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var form    = document.getElementById('contact-form'),
+      btn     = form.querySelector('button[type="submit"]'),
+      spinner = document.getElementById('btn-spinner'),
+      token   = document.getElementById('recaptcha_token');
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    btn.disabled = true;
+    spinner.classList.remove('d-none');
+
+    grecaptcha.ready(function() {
+      grecaptcha.execute('{$recaptcha_site_key}', {ldelim}action:'contact'{rdelim})
+      .then(function(t) {
+        token.value = t;
+        form.submit();
+      });
+    });
+  });
+
+  setTimeout(function() {
+    document.querySelectorAll('.alert').forEach(function(a) {
+      a.classList.add('fade');
+      a.classList.remove('show');
+      a.addEventListener('transitionend', function(){ a.remove(); });
+    });
+  }, 5000);
+});
+</script>
 {/block}

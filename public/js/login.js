@@ -1,55 +1,63 @@
+// login.js
+
 document.addEventListener("DOMContentLoaded", () => {
-    const loginForm = document.querySelector("#loginModal form");
-    if (!loginForm) return;
+    // ---------------------------------------
+    // 1) Handle "login=success" alert & redirect
+    // ---------------------------------------
+    const urlParams = new URLSearchParams(window.location.search);
+    const loginSuccess = urlParams.get('login');
+
+    if (loginSuccess === 'success') {
+        const alertContainer = document.getElementById('globalAlert');
+
+        // KEIN Modal-Öffnen mehr!
+
+        // Nach 2 Sekunden Weiterleitung
+        setTimeout(function() {
+            window.location.href = baseUrl + '/dashboard.php';
+        }, 2000);
+    }
   
-    const loginBtn = loginForm.querySelector("button[type='submit']");
-    const usernameInput = loginForm.querySelector("input[type='text']");
-    const passwordInput = loginForm.querySelector("input[type='password']");
-    const loginModal = document.getElementById("loginModal");
+    // ---------------------------------------
+    // 2) reCAPTCHA v3 protection on login form
+    // ---------------------------------------
+    const form     = document.querySelector("#loginModal form");
+    const tokenEl  = document.getElementById("login-recaptcha-token");
+    const btn      = form?.querySelector("button[type='submit']");
+    const spinner  = document.getElementById("login-spinner");
+    const siteKey  = window.recaptchaSiteKey;
   
-    loginBtn.addEventListener("click", async (event) => {
-      event.preventDefault();
-      usernameInput.setCustomValidity("");
-      passwordInput.setCustomValidity("");
+    if (form && btn && tokenEl && spinner && siteKey) {
+      form.addEventListener("submit", event => {
+        event.preventDefault();
   
-      if (!loginForm.checkValidity()) {
-        loginForm.reportValidity();
-        return;
-      }
-  
-      try {
-        const formData = new FormData(loginForm);
-        const response = await fetch('login.php', {
-          method: 'POST',
-          body: formData
-        });
-  
-        const data = await response.json();
-  
-        if (data.success) {
-          // ✅ 1. Modal schließen
-          const modalInstance = bootstrap.Modal.getInstance(loginModal);
-          modalInstance.hide();
-  
-          // ✅ 2. Begrüßung anzeigen oder zur Startseite weiterleiten
-          // Variante A: Begrüßung mit Alert
-          alert("Willkommen zurück!");
-  
-          // Variante B: Weiterleitung (z. B. ins Dashboard)
-          // window.location.href = "dashboard.html";
-        } else {
-          if (data.errors?.username) {
-            usernameInput.setCustomValidity(data.errors.username);
-          }
-          if (data.errors?.password) {
-            passwordInput.setCustomValidity(data.errors.password);
-          }
-          loginForm.reportValidity();
+        // HTML5 validation
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
         }
-      } catch (err) {
-        alert("Fehler beim Login. Bitte versuche es später erneut.");
-        console.error(err);
-      }
-    });
+  
+        // Show spinner and disable button
+        btn.disabled = true;
+        spinner.classList.remove("d-none");
+  
+        // Fetch reCAPTCHA token
+        grecaptcha.ready(() => {
+          grecaptcha.execute(siteKey, { action: "login" })
+            .then(token => {
+              console.log("Login reCAPTCHA Token:", token);
+              tokenEl.value = token;
+              // Submit the form normally
+              form.submit();
+            })
+            .catch(err => {
+              console.error("reCAPTCHA error:", err);
+              // Allow retry
+              btn.disabled = false;
+              spinner.classList.add("d-none");
+            });
+        });
+      });
+    }
   });
   

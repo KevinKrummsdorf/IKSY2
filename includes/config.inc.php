@@ -10,4 +10,7 @@ $base_url = "$protocol://$host$basePath";
 return [
     'base_url' => $base_url,
     'app_name' => 'StudyHub',
+    'contact_email' => 'studyhub.iksy@gmail.com',
+    'recaptcha_site_key' => (string)($_ENV['RECAPTCHA_SITE_KEY'] ?? getenv('RECAPTCHA_SITE_KEY')   ?? ''),
+    'recaptcha_secret'   => (string)($_ENV['RECAPTCHA_SECRET']     ?? getenv('RECAPTCHA_SECRET')       ?? ''),
 ];

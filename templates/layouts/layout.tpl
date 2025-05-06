@@ -4,13 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{$app_name} - {block name="title"}Startseite{/block}</title>
+
+  {* Ganz oben im head: recaptchaSiteKey setzen und API laden *}
+  <script>
+    window.recaptchaSiteKey = '{$recaptcha_site_key}';
+    const baseUrl = '{$base_url}';
+  </script>
+  <script src="https://www.google.com/recaptcha/api.js?render={$recaptcha_site_key}" async defer></script>
+
+  {* Jetzt erst deine CSS-Dateien *}
   <link href="{$base_url}/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link href="{$base_url}/css/style.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-  <script>
-  const baseUrl = '{$base_url}';
-  </script>
+
+  {* Rest des head-Blocks unverändert (z.B. weitere append-Blocks) *}
+  {block name="head" append}{/block}
 </head>
 <body>
 <header class="site-header d-flex justify-content-between align-items-center px-4 py-2">
@@ -89,7 +98,7 @@
 <script src="{$base_url}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="{$base_url}/js/register.js"></script>
 <script src="{$base_url}/js/sidebar.js"></script>
-<script src="{$base_url}/js/login-success.js"></script>
+<script src="{$base_url}/js/login.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     if (window.location.hash === '#loginModal') {

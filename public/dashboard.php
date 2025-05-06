@@ -23,7 +23,8 @@ $pdo = DbFunctions::db_connect();
 
 // 5) Logs laden
 require_once __DIR__ . '/../includes/fetch_logs.inc.php';
-$logs = fetchLoginLogs($pdo, $isAdmin, 50);
+$loginLogs    = fetchLoginLogs($pdo, $isAdmin, 50);
+$captchaLogs  = fetchCaptchaLogs($pdo, $isAdmin, 50);
 
 // 6) Smarty initialisieren
 require_once __DIR__ . '/../vendor/autoload.php'; // nur nötig, wenn noch nicht geladen
@@ -42,7 +43,8 @@ $smarty->assign('app_name',   $config['app_name']);
 $smarty->assign('isLoggedIn', true);
 $smarty->assign('username',   $_SESSION['username'] ?? '');
 $smarty->assign('isAdmin',    $isAdmin);
-$smarty->assign('admin_logs', $logs);
+$smarty->assign('login_logs',       $loginLogs);
+$smarty->assign('captcha_logs',     $captchaLogs);
 
 // 8) Template rendern
 $smarty->display('dashboard.tpl');

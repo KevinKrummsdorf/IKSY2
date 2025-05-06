@@ -1,23 +1,23 @@
 <?php
+declare(strict_types=1);
 
-$config = require __DIR__ . '/../includes/config.inc.php'; // <- ACHTUNG auf .inc.php
-
+// 0) Autoloader & Environment
 require_once __DIR__ . '/../vendor/autoload.php';
-/** @var \Smarty\Smarty $smarty */
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 
+// 1) Config laden (jetzt mit Umgebungsvariablen)
+$config = require __DIR__ . '/../includes/config.inc.php';
 
-use Smarty\Smarty;
-
+// 2) Smarty & Session
 session_start();
+use Smarty\Smarty;
 
 // Wenn bereits eingeloggt UND NICHT gerade frisch eingeloggt (login=success), direkt ins Dashboard
 if (isset($_SESSION['user_id']) && !isset($_GET['login'])) {
     header('Location: dashboard.php');
     exit;
 }
-
-// Konfiguration laden
-require_once __DIR__ . '/../includes/config.inc.php'; // ACHTUNG auf .inc.php
 
 // Smarty initialisieren
 $smarty = new Smarty();
@@ -29,10 +29,11 @@ $smarty->setTemplateDir([
 $smarty->setCompileDir(__DIR__ . '/../templates_c/');
 
 // Globale Template-Variablen zuweisen
-$smarty->assign('base_url', $config['base_url']);
-$smarty->assign('app_name', $config['app_name']);
-$smarty->assign('isLoggedIn', isset($_SESSION['user_id']));
-$smarty->assign('username', $_SESSION['username'] ?? null);
+$smarty->assign('recaptcha_site_key', $config['recaptcha_site_key']);
+$smarty->assign('base_url',           $config['base_url']);
+$smarty->assign('app_name',           $config['app_name']);
+$smarty->assign('isLoggedIn',         isset($_SESSION['user_id']));
+$smarty->assign('username',           $_SESSION['username'] ?? null);
 
 // Template anzeigen
 $smarty->display('index.tpl');
