@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginSuccess = urlParams.get('login');
 
     if (loginSuccess === 'success') {
-        const alertContainer = document.getElementById('globalAlert');
+        //const alertContainer = document.getElementById('globalAlert');
 
         // KEIN Modal-Öffnen mehr!
 

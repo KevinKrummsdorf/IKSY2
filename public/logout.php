@@ -3,27 +3,33 @@ declare(strict_types=1);
 
 session_start();
 
-// Session sauber beenden
-session_unset();
-session_destroy();
-
-// Neues leeres Session-Cookie setzen
+// Session leeren & zerstören
+$_SESSION = [];
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();
     setcookie(
         session_name(),
         '',
-        [
-            'expires' => time() - 42000,
-            'path' => $params['path'],
-            'domain' => $params['domain'],
-            'secure' => $params['secure'],
-            'httponly' => $params['httponly'],
-            'samesite' => 'Lax'
-        ]
+        time() - 42000,
+        $params['path'],
+        $params['domain'],
+        $params['secure'],
+        $params['httponly']
     );
 }
+session_destroy();
 
-// Zurück zur Startseite mit Logout-Erfolgsmeldung
-header('Location: index.php?logout=1');
+// Neue Session ID erzeugen und starten
+session_start();
+session_regenerate_id(true); // 💡 wichtig
+
+// Flash setzen
+$_SESSION['flash'] = [
+    'type'    => 'success',
+    'message' => 'Du wurdest erfolgreich ausgeloggt.',
+    'context' => 'logout'
+];
+
+// Weiterleiten
+header('Location: index.php');
 exit;

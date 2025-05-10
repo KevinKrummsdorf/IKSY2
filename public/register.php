@@ -1,164 +1,131 @@
 <?php
 declare(strict_types=1);
-
-// 0) JSON-Response und Buffer starten
 header('Content-Type: application/json; charset=utf-8');
-ini_set('display_errors', '1');
-error_reporting(0);
-ob_start();
 
-// DEBUG-Flag: in Produktion auf false lassen
-const DEBUG = true;
+require_once __DIR__ . '/../includes/config.inc.php';
 
-// Basis-Antwort
+use ParagonIE\Halite\KeyFactory;
+use ParagonIE\Halite\Password;
+use ParagonIE\HiddenString\HiddenString;
+
+$monolog  = getLogger('register');
+$log      = new MonologLoggerAdapter($monolog);
 $response = ['success' => false];
 
-// 1) Core-Dateien einbinden
-require_once __DIR__ . '/../includes/db.inc.php';
-require_once __DIR__ . '/../vendor/autoload.php';
-
-use Dotenv\Dotenv;
-use ParagonIE\Halite\KeyFactory;
-use ParagonIE\HiddenString\HiddenString;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Monolog\Level;
-use ParagonIE\Halite\Password;
-use PDO;
-
-// 2) reCAPTCHA-Funktionen einbinden
-require_once __DIR__ . '/../includes/recaptcha.inc.php';
+// PDO-Verbindung bereitstellen
+$pdo = DbFunctions::db_connect();
 
 try {
-    // 3) Sicherstellen, dass sodium verfügbar ist
     if (!extension_loaded('sodium')) {
-        throw new \RuntimeException(
-            'PHP-Extension "sodium" fehlt. Bitte in php.ini aktivieren.'
-        );
+        $log->error('PHP-Extension "sodium" nicht verfügbar.');
+        throw new RuntimeException('Die PHP-Extension "sodium" ist nicht verfügbar.');
     }
 
-    // 4) Logger konfigurieren
-    $log = new Logger('user_registration');
-    $log->pushHandler(new StreamHandler(__DIR__ . '/../logs/register.log', Level::Debug));
-    $log->debug('register.php gestartet');
+    $log->info('Registrierung gestartet');
 
-    // 5) .env laden
-    $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-    $dotenv->load();
-    $config = require __DIR__ . '/../includes/config.inc.php';
-
-    // 6) Halite-Schlüssel importieren
-    $b64 = $_ENV['HALITE_KEYFILE_BASE64']
-         ?? $_SERVER['HALITE_KEYFILE_BASE64']
-         ?? getenv('HALITE_KEYFILE_BASE64')
-         ?? '';
-    if (empty($b64)) {
-        throw new \RuntimeException('Verschlüsselungsschlüssel nicht gefunden.');
+    // Halite-Key laden
+    $rawKey = base64_decode($_ENV['HALITE_KEYFILE_BASE64'] ?? '', true);
+    if (!$rawKey) {
+        $log->error('HALITE_KEYFILE_BASE64 fehlt oder ungültig.');
+        throw new RuntimeException('Server-Konfigurationsfehler.');
     }
-    $raw = base64_decode($b64, true);
-    if ($raw === false) {
-        throw new \RuntimeException('Base64-Decode des Schlüssels fehlgeschlagen.');
-    }
-    $key = KeyFactory::importEncryptionKey(new HiddenString($raw));
+    $key = KeyFactory::importEncryptionKey(new HiddenString($rawKey));
 
-    // 7) DB-Verbindung aufbauen
-    $pdo = DbFunctions::db_connect();
-
-    // 8) reCAPTCHA v3 prüfen und loggen (Action "register")
+    // reCAPTCHA prüfen
     $token  = $_POST['recaptcha_token'] ?? '';
-    $secret = (string)$config['recaptcha_secret']; 
-    if (!recaptcha_verify($pdo, $token, $secret, 0.5)) {
-        $response['errors']['recaptcha'] = 'reCAPTCHA-Validierung fehlgeschlagen. Bitte erneut versuchen.';
-        throw new \DomainException('reCAPTCHA fehlgeschlagen');
+    $secret = $config['recaptcha']['secret_key'];
+    if (!recaptcha_verify($pdo, $token, $secret, $config['recaptcha']['min_score'])) {
+        $response['errors']['recaptcha'] = 'reCAPTCHA fehlgeschlagen.';
+        $log->warning('reCAPTCHA-Validierung fehlgeschlagen', ['token' => $token]);
+        throw new DomainException('reCAPTCHA ungültig.');
     }
 
-    // 9) Eingaben sammeln und validieren
+    // Eingaben validieren
     $username = trim($_POST['username'] ?? '');
-    $email    = trim($_POST['email'] ?? '');
-    $pw       = $_POST['password'] ?? '';
+    $email    = trim($_POST['email']    ?? '');
+    $pw       = $_POST['password']      ?? '';
     $pw2      = $_POST['password_confirm'] ?? '';
     $errors   = [];
 
     if ($username === '') {
-        $errors['username'] = 'Bitte wähle einen Benutzernamen.';
+        $errors['username'] = 'Benutzername erforderlich.';
     }
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = 'Bitte gib eine gültige E-Mail-Adresse an.';
+        $errors['email'] = 'Ungültige E-Mail.';
     }
     if (mb_strlen($pw) < 8) {
-        $errors['password'] = 'Passwort muss mindestens 8 Zeichen lang sein.';
+        $errors['password'] = 'Mindestens 8 Zeichen.';
     }
     if ($pw !== $pw2) {
         $errors['password_confirm'] = 'Passwörter stimmen nicht überein.';
     }
-
-    if (!empty($errors)) {
+    if ($errors) {
         $response['errors'] = $errors;
-        throw new \DomainException('Validierungsfehler');
+        throw new DomainException('Ungültige Eingaben.');
     }
 
-    // 10) Existenz-Checks (Username, E-Mail)
-    $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE username = ?');
-    $stmt->execute([$username]);
-    if ($stmt->fetchColumn() > 0) {
-        $errors['username'] = 'Dieser Benutzername ist bereits vergeben.';
+    // Doppelte prüfen
+    if (DbFunctions::countWhere('users', 'username', $username) > 0) {
+        $errors['username'] = 'Benutzername vergeben.';
     }
-    $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE email = ?');
-    $stmt->execute([$email]);
-    if ($stmt->fetchColumn() > 0) {
-        $errors['email'] = 'Diese E-Mail-Adresse ist bereits registriert.';
+    if (DbFunctions::countWhere('users', 'email', $email) > 0) {
+        $errors['email'] = 'E-Mail vergeben.';
     }
-    if (!empty($errors)) {
+    if ($errors) {
         $response['errors'] = $errors;
-        throw new \DomainException('Benutzer bereits vorhanden');
+        $log->warning('Doppelte Benutzerprüfung fehlgeschlagen', ['username' => $username, 'email' => $email]);
+        throw new DomainException('Benutzer existiert bereits.');
     }
 
-    // 11) Passwort hashen & in DB einfügen
+    // Passwort hashen
     $hash = Password::hash(new HiddenString($pw), $key);
-    $stmt = $pdo->prepare(
-        'INSERT INTO users (username, email, password_hash, is_verified)
-         VALUES (?, ?, ?, FALSE)'
-    );
-    if (!$stmt->execute([$username, $email, (string)$hash])) {
-        throw new \RuntimeException('INSERT fehlgeschlagen.');
-    }
 
-    // 12) Verifikations-Mail senden
+    // Transaktion starten
+    DbFunctions::beginTransaction();
+
+    // Nutzer anlegen
+    $userId = DbFunctions::insertUser($username, $email, (string)$hash);
+    $log->info('User angelegt', ['user_id' => $userId]);
+
+    // Default-Rolle (ID 3) zuweisen
+    DbFunctions::assignRole($userId, 3);
+    $log->info('Rolle zugewiesen', ['user_id' => $userId, 'role_id' => 3]);
+
+    // Commit
+    DbFunctions::commit();
+
+    // Verifikations-Mail
     try {
         require_once __DIR__ . '/../includes/verification.inc.php';
-        sendVerificationEmail(
-            $pdo,
-            $username,
-            $email,
-            $_SERVER['HTTP_HOST'],
-            $log
-        );
-        $response['message'] = 'Registrierung fast abgeschlossen! Bitte bestätige deine E-Mail.';
-    } catch (\Exception $e) {
-        $response['message'] = 'Registrierung erfolgreich, aber Bestätigungs-Mail konnte nicht gesendet werden.';
-        $log->warning('Verifikations-Mail fehlgeschlagen', ['error' => $e->getMessage()]);
-    }
-
-    // 13) Erfolg
-    $response['success'] = true;
-
-} catch (\DomainException $e) {
-    if (!isset($response['errors'])) {
-        $response['message'] = $e->getMessage();
-    }
-} catch (\Throwable $e) {
-    if (isset($log)) {
-        $log->error('Uncaught Exception in register.php', [
-            'message' => $e->getMessage(),
-            'trace'   => $e->getTraceAsString()
+        sendVerificationEmail($pdo, $userId, $username, $email);
+        $response['message'] = 'Bestätigungs-E-Mail gesendet.';
+    } catch (Exception $e) {
+        $response['message'] = 'Registrierung gespeichert, aber Mailversand fehlgeschlagen.';
+        $log->error('Mailversand fehlgeschlagen', [
+            'user_id'  => $userId,
+            'username' => $username,
+            'email'    => $email,
+            'error'    => $e->getMessage(),
         ]);
     }
+
+    $response['success'] = true;
+    $log->info('Registrierung erfolgreich', ['username' => $username, 'email' => $email]);
+
+} catch (DomainException $e) {
+    if (!isset($response['errors'])) {
+        $response['message'] = $e->getMessage();
+        $log->warning('Domain-Fehler bei Registrierung', ['msg' => $e->getMessage()]);
+    }
+    DbFunctions::rollBack();
+
+} catch (Throwable $e) {
+    $log->error('Unerwarteter Fehler bei Registrierung', ['error' => $e->getMessage()]);
     $response['message'] = DEBUG
         ? $e->getMessage()
         : 'Interner Serverfehler. Bitte später erneut versuchen.';
+    DbFunctions::rollBack();
 }
 
-// 14) Finale JSON-Antwort
-ob_clean();
 echo json_encode($response);
 exit;

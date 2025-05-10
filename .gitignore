@@ -1,6 +1,7 @@
 # Ignoriere einzelne Dateien
 publicsecret-key.txt
 .env
+.cache_ggshield
 
 # Ignoriere ein ganzes Verzeichnis
 /vendor/
@@ -8,3 +9,4 @@ publicsecret-key.txt
 /stats/
 /cache/
 /logs/
+/uploads/

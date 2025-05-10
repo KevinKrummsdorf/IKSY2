@@ -1,8 +1,10 @@
 RewriteEngine On
+RewriteBase /IKSY2/public/
 
-# Wenn die Datei oder das Verzeichnis existiert, direkt ausliefern
+# 1) Ausnahme: /contact (ohne .php) auf contact.php mappen
+RewriteRule ^contact/?$ contact.php [QSA,L]
+
+# 2) Catch-All: alle anderen Anfragen auf index.php, außer echte Dateien/Ordner
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-
-# Sonst leite alles an router.php weiter
-RewriteRule ^(.+)$ router.php?page=$1 [QSA,L]
+RewriteRule ^ index.php [QSA,L]
