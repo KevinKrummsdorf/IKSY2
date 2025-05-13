@@ -75,6 +75,8 @@ Passwort = Acces Key
 [phpdotenv](https://github.com/vlucas/phpdotenv)    
 
 [Smarty](https://github.com/smarty-php/smarty)
+  
+[TwoFactorAuth](https://github.com/RobThree/TwoFactorAuth)
 
 # Verwendete Mediaquellen  
 [mixkit](https://mixkit.co)
