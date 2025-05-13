@@ -12,10 +12,20 @@ use ParagonIE\HiddenString\HiddenString;
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../includes/db.inc.php';
 require_once __DIR__ . '/../includes/ip_utils.inc.php';
+<<<<<<< HEAD
 require_once __DIR__ . '/../includes/recaptcha.inc.php';
 require_once __DIR__ . '/../includes/mailing.inc.php';
 require_once __DIR__ . '/../includes/central_logs.inc.php';
 require_once __DIR__ . '/../includes/crypto.inc.php';
+=======
+require_once __DIR__ . '/../includes/logger.inc.php';
+require_once __DIR__ . '/../includes/recaptcha.inc.php';
+require_once __DIR__ . '/../includes/mailing.inc.php';
+require_once __DIR__ . '/../includes/central_logs.inc.php';
+require_once __DIR__ . '/../src/ILogger.php';
+require_once __DIR__ . '/../src/MonologLoggerAdapter.php';
+
+>>>>>>> 4e0e75f0651890aeaabe1b48031e861e3f06d2e6
 
 // .env laden
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
@@ -89,10 +99,13 @@ $config['recaptcha'] = [
     'log_file'   => __DIR__ . '/../logs/recaptcha.log',
 ];
 
+<<<<<<< HEAD
 require_once __DIR__ . '/../includes/logger.inc.php';
 require_once __DIR__ . '/../src/ILogger.php';
 require_once __DIR__ . '/../src/MonologLoggerAdapter.php';
 
+=======
+>>>>>>> 4e0e75f0651890aeaabe1b48031e861e3f06d2e6
 // ==== Smarty Initialisierung ====
 $smarty = new Smarty();
 

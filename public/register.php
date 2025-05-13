@@ -4,6 +4,13 @@ header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../includes/config.inc.php';
 
+<<<<<<< HEAD
+=======
+use ParagonIE\Halite\KeyFactory;
+use ParagonIE\Halite\Password;
+use ParagonIE\HiddenString\HiddenString;
+
+>>>>>>> 4e0e75f0651890aeaabe1b48031e861e3f06d2e6
 $monolog  = getLogger('register');
 $log      = new MonologLoggerAdapter($monolog);
 $response = ['success' => false];
@@ -19,6 +26,17 @@ try {
 
     $log->info('Registrierung gestartet');
 
+<<<<<<< HEAD
+=======
+    // Halite-Key laden
+    $rawKey = base64_decode($_ENV['HALITE_KEYFILE_BASE64'] ?? '', true);
+    if (!$rawKey) {
+        $log->error('HALITE_KEYFILE_BASE64 fehlt oder ungültig.');
+        throw new RuntimeException('Server-Konfigurationsfehler.');
+    }
+    $key = KeyFactory::importEncryptionKey(new HiddenString($rawKey));
+
+>>>>>>> 4e0e75f0651890aeaabe1b48031e861e3f06d2e6
     // reCAPTCHA prüfen
     $token  = $_POST['recaptcha_token'] ?? '';
     $secret = $config['recaptcha']['secret_key'];
@@ -65,14 +83,23 @@ try {
         throw new DomainException('Benutzer existiert bereits.');
     }
 
+<<<<<<< HEAD
     // Passwort hashen (jetzt über crypto.inc.php)
     $hash = hashPassword($pw);
+=======
+    // Passwort hashen
+    $hash = Password::hash(new HiddenString($pw), $key);
+>>>>>>> 4e0e75f0651890aeaabe1b48031e861e3f06d2e6
 
     // Transaktion starten
     DbFunctions::beginTransaction();
 
     // Nutzer anlegen
+<<<<<<< HEAD
     $userId = DbFunctions::insertUser($username, $email, $hash);
+=======
+    $userId = DbFunctions::insertUser($username, $email, (string)$hash);
+>>>>>>> 4e0e75f0651890aeaabe1b48031e861e3f06d2e6
     $log->info('User angelegt', ['user_id' => $userId]);
 
     // Default-Rolle (ID 3) zuweisen

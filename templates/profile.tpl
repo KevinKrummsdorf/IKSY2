@@ -3,6 +3,7 @@
 {block name="title"}Profil{/block}
 
 {block name="content"}
+<<<<<<< HEAD
 <h1 class="text-center">Mein Profil</h1>
 
 <div class="container my-5">
@@ -117,3 +118,26 @@
     </div>
 </div>
 {/block}
+=======
+  <h1 class="text-center">Mein Profil</h1>
+   
+   <div class="container my-5">
+      <div class="profile-box">
+     	 <strong>Name:</strong>
+      	<p class="text-muted">Max</p>
+      	<strong>Benutzername:</strong>
+      	<p class="text-muted">{$username}</p> 
+      	<strong>E-Mail:</strong>
+     	<p class="text-muted">max@example.com</p>
+      	<strong>Andere Netzwerke:</strong>
+     	<p class="text-muted">Instagram, TikTok, Discord, MS Teams</p>
+
+	 <section class="text-center">
+      <a href="bearbeiten.php" class="btn btn-primary btn-lg mt-30">Profil bearbeiten</a>
+    </section>
+    
+  		</div>
+	</div>
+	
+{/block}
+>>>>>>> 4e0e75f0651890aeaabe1b48031e861e3f06d2e6

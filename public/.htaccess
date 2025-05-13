@@ -7,5 +7,9 @@ RewriteRule ^contact/?$ contact.php [QSA,L]
 # 2) Catch-All: alle anderen Anfragen auf index.php, außer echte Dateien/Ordner
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+<<<<<<< HEAD
 RewriteRule ^(?!index\.php$) index.php [QSA,L]
 
+=======
+RewriteRule ^ index.php [QSA,L]
+>>>>>>> 4e0e75f0651890aeaabe1b48031e861e3f06d2e6
