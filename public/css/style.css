@@ -146,9 +146,19 @@ body {
     text-align: center;
 }
 
-.requirement-list li.valid i {
-    color: var(--valid-color);
+.requirement-list li.valid {
+  color: #198754;        /* Bootstrap success-green */
 }
+.requirement-list li.valid i {
+  color: #198754;
+}
+.requirement-list li.invalid {
+  color: #dc3545;        /* Bootstrap danger-red */
+}
+.requirement-list li.invalid i {
+  color: #dc3545;
+}
+/* -------------------- Impressum & Datenschutz -------------------- */
 
 /* Impressum */
 .impressum-content {
@@ -304,8 +314,8 @@ body {
 =======================*/
   
   .team-photo-wrapper {
-    width: 90%;
-    height: 500px;
+    width: 100%;
+    height: 600px;
     overflow: hidden;
   }
   

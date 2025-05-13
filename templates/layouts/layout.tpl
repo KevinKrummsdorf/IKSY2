@@ -5,23 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{$app_name} - {block name="title"}Startseite{/block}</title>
 
-  {* Ganz oben im head: recaptchaSiteKey setzen und API laden *}
   <script>
     window.recaptchaSiteKey = '{$recaptcha_site_key}';
     const baseUrl = '{$base_url}';
   </script>
   <script src="https://www.google.com/recaptcha/api.js?render={$recaptcha_site_key}" async defer></script>
 
-  {* Jetzt erst deine CSS-Dateien *}
   <link href="{$base_url}/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
   <link href="{$base_url}/css/style.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+  <link rel="stylesheet" href="/css/material-symbols.css">
 
-  {* Rest des head-Blocks unverändert (z.B. weitere append-Blocks) *}
   {block name="head" append}{/block}
 </head>
 <body>
+
 <header class="site-header d-flex justify-content-between align-items-center px-4 py-2">
   <div class="header-logo">
     <a href="{$base_url}/index.php">
@@ -39,13 +36,37 @@
   </nav>
 </header>
 
+<div id="AlertContainer"></div>
+
+{* Flash-Alert direkt unter dem Header anzeigen *}
+{if isset($flash)}
+  {* Optional: Debug-Zeile *}
+  {*
+  <script>console.log("Flash-Kontext: {$flash.context}");</script>
+  *}
+
+  <div class="container mt-3">
+    <div class="alert alert-{$flash.type|default:'info'} alert-dismissible fade show" role="alert">
+      {$flash.message|escape}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
+    </div>
+  </div>
+
+  {* Nur nach Login weiterleiten *}
+  {if isset($flash.context) && $flash.context == 'login'}
+    <script>
+      setTimeout(() => window.location.href = 'dashboard.php', 3000);
+    </script>
+  {/if}
+{/if}
+
 <!-- Menü-Button (mobil) -->
 <button class="btn btn-primary d-md-none menu-toggle-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">Menü</button>
 
 <!-- Sidebar (Desktop) -->
 <div class="menu d-none d-md-block">
   <ul class="menu-content mt-4">
-    <li><a href="{$base_url}/profile.php"><span class="material-symbols-outlined">person</span><span>Mein Profil</span></a></li>
+    <li><a href="{$base_url}/profile.php"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
     <li><a href="{$base_url}/lerngruppen.php"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
     <li><a href="{$base_url}/nachrichten.php"><span class="material-symbols-outlined">message</span><span>Nachrichten</span></a></li>
     <li><a href="{$base_url}/todos.php"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
@@ -63,7 +84,7 @@
   </div>
   <div class="offcanvas-body">
     <ul class="menu-content">
-      <li><a href="{$base_url}/profile.php"><span class="material-symbols-outlined">person</span><span>Mein Profil</span></a></li>
+      <li><a href="{$base_url}/profile.php"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
       <li><a href="{$base_url}/lerngruppen.php"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
       <li><a href="{$base_url}/nachrichten.php"><span class="material-symbols-outlined">message</span><span>Nachrichten</span></a></li>
       <li><a href="{$base_url}/todos.php"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
@@ -74,13 +95,11 @@
   </div>
 </div>
 
-<main class="site-main">
+<main class="site-main" aria-labelledby="main-heading">
   <div class="container mt-3">
-    <div id="globalAlert"></div>
+    {block name="content"}{/block}
   </div>
-  {block name="content"}{/block}
 </main>
-
 
 <footer class="text-center mt-4 py-3">
   <div class="container-fluid">
@@ -95,14 +114,17 @@
 
 {include file="partials/modals.tpl"}
 
+<!-- JS-Dateien -->
 <script src="{$base_url}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="{$base_url}/js/login.js"></script>
 <script src="{$base_url}/js/register.js"></script>
 <script src="{$base_url}/js/sidebar.js"></script>
-<script src="{$base_url}/js/login.js"></script>
+<script src="{$base_url}/js/login-success.js"></script>
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     if (window.location.hash === '#loginModal') {
-      var modalEl = document.getElementById('loginModal');
+      const modalEl = document.getElementById('loginModal');
       if (modalEl) {
         new bootstrap.Modal(modalEl).show();
       }

@@ -1,50 +1,46 @@
 <?php
 declare(strict_types=1);
+
+// Zentrale Initialisierung
+require_once __DIR__ . '/../includes/config.inc.php';
+
 session_start();
 
-// 1) Nicht eingeloggt → zurück zur Startseite
-if (empty($_SESSION['user_id'])) {
+if (
+    empty($_SESSION['user_id']) ||
+    empty($_SESSION['2fa_passed']) ||
+    $_SESSION['2fa_passed'] !== true
+) {
     header('Location: index.php');
     exit;
 }
 
-// 2) Dotenv laden (damit DB-Credentials aus .env verfügbar sind)
-require_once __DIR__ . '/../vendor/autoload.php';
-use Dotenv\Dotenv;
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-$dotenv->load();
+// Rollen prüfen
+$isAdmin = ($_SESSION['role'] ?? '') === 'admin';
+$isMod   = ($_SESSION['role'] ?? '') === 'mod';
 
-// 3) Rolle prüfen
-$isAdmin = (($_SESSION['role'] ?? '') === 'admin');
-
-// 4) DB-Verbindung
-require_once __DIR__ . '/../includes/db.inc.php';
+// DB-Verbindung
 $pdo = DbFunctions::db_connect();
 
-// 5) Logs laden
-require_once __DIR__ . '/../includes/fetch_logs.inc.php';
-$loginLogs    = fetchLoginLogs($pdo, $isAdmin, 50);
-$captchaLogs  = fetchCaptchaLogs($pdo, $isAdmin, 50);
+// Logs laden
+$loginLogs       = fetchLoginLogs($pdo, $isAdmin, 10);
+$captchaLogs     = fetchCaptchaLogs($pdo, $isAdmin, 10);
+$contactRequests = $isAdmin ? getRecentContactRequests($pdo, 10) : [];
+$uploadLogs      = fetchUploadLogs($pdo, $isAdmin, $isMod, 10);
 
-// 6) Smarty initialisieren
-require_once __DIR__ . '/../vendor/autoload.php'; // nur nötig, wenn noch nicht geladen
-use Smarty\Smarty;
-/** @var Smarty $smarty */
-$smarty = new Smarty();
-$smarty->setTemplateDir(__DIR__ . '/../templates/');
-$smarty->setCompileDir(__DIR__ . '/../templates_c/');
-$smarty->setCacheDir(__DIR__ . '/../cache/');
-$smarty->setConfigDir(__DIR__ . '/../configs/');
+// Flash anzeigen
+if (isset($_SESSION['flash'])) {
+    $smarty->assign('flash', $_SESSION['flash']);
+    unset($_SESSION['flash']);
+}
 
-// 7) Globale Variablen
-$config = require __DIR__ . '/../includes/config.inc.php';
-$smarty->assign('base_url',   $config['base_url']);
-$smarty->assign('app_name',   $config['app_name']);
-$smarty->assign('isLoggedIn', true);
-$smarty->assign('username',   $_SESSION['username'] ?? '');
-$smarty->assign('isAdmin',    $isAdmin);
+// Smarty-Variablen
 $smarty->assign('login_logs',       $loginLogs);
 $smarty->assign('captcha_logs',     $captchaLogs);
+$smarty->assign('contact_requests', $contactRequests);
+$smarty->assign('upload_logs',      $uploadLogs);
+$smarty->assign('isAdmin',          $isAdmin);
+$smarty->assign('isMod',            $isMod);
 
-// 8) Template rendern
+// Seite anzeigen
 $smarty->display('dashboard.tpl');

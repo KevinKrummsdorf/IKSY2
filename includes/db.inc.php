@@ -2,45 +2,46 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
-use Dotenv\Dotenv;
-
 class DbFunctions
 {
-    // Fehler-Logging-Funktion mit Logrotation
+    private static ?PDO $pdo = null;
+
+    /**
+     * Fehlerprotokollierung
+     */
     public function log_error(string $message): void
     {
         $logFile = __DIR__ . '/../logs/db_error.log';
-        // … Rotation …
-
-        // wieder einkommentieren:
         error_log('[' . date('Y-m-d H:i:s') . '] ' . $message . PHP_EOL, 3, $logFile);
     }
 
-    // Datenbankverbindung herstellen
+    /**
+     * Singleton-DB-Verbindung über Konfigurationsarray
+     */
     public static function db_connect(): PDO
     {
-        // .env-Datei laden, falls noch nicht geschehen
-        if (!isset($_ENV['DB_HOST'])) {
-            $dotenv = Dotenv::createImmutable(__DIR__);
-            $dotenv->load();
+        if (self::$pdo !== null) {
+            return self::$pdo;
         }
 
-        // Umgebungsvariablen ohne Fallbacks
-        $host = $_ENV['DB_HOST'];
-        $port = $_ENV['DB_PORT'];
-        $db   = $_ENV['DB_DATABASE'];
-        $user = $_ENV['DB_USERNAME'];
-        $pass = $_ENV['DB_PASSWORD'];
+        global $config;
+        $db = $config['db'];
 
-        // Überprüfen, ob alle nötigen Umgebungsvariablen gesetzt sind
-        if (empty($host) || empty($port) || empty($db) || empty($user) || empty($pass)) {
-            throw new \RuntimeException('Fehlende Umgebungsvariablen für die DB-Verbindung.');
+        if (
+            empty($db['host']) ||
+            empty($db['name']) ||
+            empty($db['user']) ||
+            empty($db['pass'])
+        ) {
+            throw new RuntimeException('Fehlende Datenbank-Konfiguration in $config[\'db\'].');
         }
 
-        // DSN für PostgreSQL
-        $dsn = "pgsql:host={$host};port={$port};dbname={$db}";
+        $dsn = sprintf(
+            'mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
+            $db['host'],
+            $db['port'] ?? 3306,
+            $db['name']
+        );
 
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -49,12 +50,11 @@ class DbFunctions
         ];
 
         try {
-            return new PDO($dsn, $user, $pass, $options);
-        } catch (\PDOException $e) {
-            // Schreibe den Fehler ins log-File
+            self::$pdo = new PDO($dsn, $db['user'], $db['pass'], $options);
+            return self::$pdo;
+        } catch (PDOException $e) {
             (new self())->log_error('DB-Verbindung fehlgeschlagen: ' . $e->getMessage());
 
-            // HTTP-500 + JSON-Fehler
             http_response_code(500);
             echo json_encode([
                 'success' => false,
@@ -62,174 +62,289 @@ class DbFunctions
                     ? 'DB-Fehler: ' . $e->getMessage()
                     : 'Interner Serverfehler. Bitte später erneut versuchen.'
             ]);
-
-            // Exception weiterwerfen, damit sie im Aufruf von register.php oder login.php gefangen werden kann
             throw $e;
         }
     }
 
     /**
-     * Escaped einen String für eine Query.
+     * Führt ein Prepared Statement aus und gibt Ergebnis oder Zeilenanzahl zurück.
      */
-    public static function escape(mysqli $link, string $str): string
+    public static function execute(string $query, array $params = [], bool $expectResult = false): mixed
     {
-        return $link->real_escape_string($str);
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare($query);
+
+        if (!$stmt->execute($params)) {
+            throw new RuntimeException('Fehler beim Ausführen des Statements.');
+        }
+
+        return $expectResult ? $stmt->fetchAll() : $stmt->rowCount();
     }
 
     /**
-     * Führt ein einfaches (unparametriertes) Query aus und liefert das Resultset oder wirft.
+     * Holt die erste Zeile als assoziatives Array oder null.
      */
-    public static function executeQuery(mysqli $link, string $query): mysqli_result
+    public static function fetchOne(string $query, array $params = []): ?array
     {
-        $result = $link->query($query);
-        if ($result === false) {
-            throw new \RuntimeException(
-                'Query-Fehler: ' . $link->error
-            );
-        }
-        return $result;
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
+        $row = $stmt->fetch();
+        return $row ?: null;
     }
 
     /**
-     * Holt alle Zeilen als assoziatives Array oder null, falls keine Zeilen.
+     * Holt einen einzelnen Feldwert (z. B. COUNT(*)) aus der ersten Zeile.
      */
-    public static function getAssociativeResultArray(mysqli $link, string $query): ?array
+    public static function fetchValue(string $query, array $params = []): mixed
     {
-        $result     = self::executeQuery($link, $query);
-        $rowCount   = $result->num_rows;
-        if ($rowCount === 0) {
-            $result->free();
-            return null;
-        }
-
-        $resultArray = [];
-        while ($row = $result->fetch_assoc()) {
-            $resultArray[] = $row;
-        }
-        $result->free();
-        return $resultArray;
+        $row = self::fetchOne($query, $params);
+        return $row ? array_values($row)[0] : null;
     }
 
     /**
-     * Holt das erste Ergebnis als assoziatives Array oder null.
+     * Holt ein Key-Value-Array aus 2-Spalten-Resultaten.
      */
-    public static function getHashFromFirstRow(mysqli $link, string $query): ?array
+    public static function fetchKeyValue(string $query, array $params = []): ?array
     {
-        $rows = self::getAssociativeResultArray($link, $query);
-        return $rows[0] ?? null;
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
+
+        $result = [];
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $result[(string)$row[0]] = $row[1];
+        }
+
+        return $result ?: null;
+    }
+
+        /**
+         * INSERT für Uploads
+         */
+        public static function insertUpload(string $storedName,string $title,string $description,string $course): int {
+        $sql = '
+            INSERT INTO uploads
+               (stored_name, title, description, course)
+            VALUES
+               (:stored_name, :title, :description, :course)
+        ';
+        return self::execute($sql, [
+            ':stored_name' => $storedName,
+            ':title'       => $title,
+            ':description' => $description,
+            ':course'      => $course,
+        ], false);
     }
 
     /**
-     * Holt ein Key=>Value-Paar-Array aus zwei Spalten (erste Spalte = Key, zweite = Value).
+     * INSERT für Upload-Logs
      */
-    public static function getHash(mysqli $link, string $query): ?array
+    public static function insertUploadLog(int $userId, string $storedName): int
     {
-        $result   = self::executeQuery($link, $query);
-        $rowCount = $result->num_rows;
-        if ($rowCount === 0) {
-            $result->free();
-            return null;
-        }
-
-        $fieldList = [];
-        while ($row = $result->fetch_row()) {
-            $fieldList[(string)$row[0]] = $row[1];
-        }
-        $result->free();
-        return $fieldList;
+        $sql = '
+            INSERT INTO upload_logs
+               (user_id, stored_name)
+            VALUES
+               (:user_id, :stored_name)
+        ';
+        return self::execute($sql, [
+            ':user_id'     => $userId,
+            ':stored_name' => $storedName,
+        ], false);
     }
 
     /**
-     * Gibt die erste Feldspalte des ersten Datensatzes zurück, oder null.
+     * Holt den Benutzer anhand des Tokens für die E-Mail-Verifizierung.
      */
-    public static function getFirstFieldOfResult(mysqli $link, string $query): mixed
+    public static function fetchVerificationUser(string $token): ?array
     {
-        $result = self::executeQuery($link, $query);
-        if ($result->num_rows === 0) {
-            $result->free();
-            return null;
-        }
-        $row = $result->fetch_row();
-        $result->free();
-        return $row[0];
+        $sql = '
+            SELECT u.id, u.username, u.is_verified
+            FROM verification_tokens vt
+            JOIN users u ON u.id = vt.user_id
+            WHERE vt.verification_token = :token
+            LIMIT 1
+        ';
+        return self::fetchOne($sql, [':token' => $token]);
     }
 
     /**
-     * Führt ein Prepared Statement aus.
-     *
-     * @param bool $expectResult Wenn true, wird ein Array von Zeilen zurückgegeben, sonst die Anzahl
-     *                           der betroffenen Zeilen (INSERT/UPDATE).
-     * @return mixed
-     * @throws RuntimeException
+     * Update user to verified
      */
-    public static function executePreparedQuery(
-        mysqli $link,
-        string $query,
-        array $params = [],
-        bool $expectResult = false
-    ): mixed {
-        $stmt = $link->prepare($query);
-        if ($stmt === false) {
-            throw new \RuntimeException(
-                'Prepare-Fehler: ' . $link->error
-            );
-        }
-
-        if (!empty($params)) {
-            $types = '';
-            foreach ($params as $param) {
-                $types .= match (gettype($param)) {
-                    'integer' => 'i',
-                    'double'  => 'd',
-                    'string'  => 's',
-                    default   => 'b',
-                };
-            }
-            if (! $stmt->bind_param($types, ...$params)) {
-                $stmt->close();
-                throw new \RuntimeException(
-                    'Bind-Param-Fehler: ' . $stmt->error
-                );
-            }
-        }
-
-        if (! $stmt->execute()) {
-            $stmt->close();
-            throw new \RuntimeException(
-                'Execute-Fehler: ' . $stmt->error
-            );
-        }
-
-        if ($expectResult) {
-            $result = $stmt->get_result();
-            if ($result === false) {
-                $stmt->close();
-                throw new \RuntimeException(
-                    'Fetch-Result-Fehler: ' . $stmt->error
-                );
-            }
-            $data = [];
-            while ($row = $result->fetch_assoc()) {
-                $data[] = $row;
-            }
-            $result->free();
-            $stmt->close();
-            return $data;
-        }
-
-        $affected = $stmt->affected_rows;
-        $stmt->close();
-        return $affected;
+        public static function verifyUser(int $userId): int
+    {
+        $sql = 'UPDATE users SET is_verified = TRUE WHERE id = :id';
+        return self::execute($sql, [':id' => $userId], false);
     }
 
-    /** Zusätzliche Helfer für Fehlernummer und -text */
-    public static function getErrorNumber(mysqli $link): int
+    /**
+     * löscht den Verifizierungstoken
+     */
+    public static function deleteVerificationToken(int $userId): int
     {
-        return $link->errno;
+        $sql = 'DELETE FROM verification_tokens WHERE user_id = :id';
+        return self::execute($sql, [':id' => $userId], false);
     }
 
-    public static function getErrorText(mysqli $link): string
+    //startet eine Transaktion
+        public static function beginTransaction(): void
     {
-        return $link->error;
+        self::db_connect()->beginTransaction();
+    }
+
+    //committet eine Transaktion
+        public static function commit(): void
+    {
+        self::db_connect()->commit();
+    }
+    //rollback einer Transaktion
+        public static function rollBack(): void
+    {
+        self::db_connect()->rollBack();
+    }
+
+    //holt die letzte ID
+        public static function lastInsertId(): string
+    {
+        return self::db_connect()->lastInsertId();
+    }
+
+    // zählt die Anzahl der Einträge in einer Tabelle
+    // mit einer bestimmten Bedingung
+    private static array $allowedTables = ['users','roles','…'];
+    private static array $allowedColumns = ['username','email','…'];
+    public static function countWhere(string $table, string $column, mixed $value): int
+    {
+        if (!in_array($table, self::$allowedTables, true) ||
+            !in_array($column, self::$allowedColumns, true)) {
+            throw new InvalidArgumentException('Ungültige Tabelle oder Spalte.');
+        }
+        $sql = "SELECT COUNT(*) FROM `$table` WHERE `$column` = :val";
+        return (int) self::fetchValue($sql, [':val' => $value]);
+    }
+
+    //INSERT für die Benutzerregistrierung
+    public static function insertUser(string $username, string $email, string $passwordHash): int {
+        $sql = '
+            INSERT INTO users (username, email, password_hash, is_verified)
+            VALUES (:u, :e, :p, 0)
+        ';
+        self::execute($sql, [
+            ':u' => $username,
+            ':e' => $email,
+            ':p' => $passwordHash,
+        ], false);
+
+        return (int)self::lastInsertId();
+    }
+
+    //setzt Rollen für einen Benutzer
+    public static function assignRole(int $userId, int $roleId): int{
+        $sql = '
+            INSERT INTO user_roles (user_id, role_id)
+            VALUES (:uid, :rid)
+        ';
+        return self::execute($sql, [
+            ':uid' => $userId,
+            ':rid' => $roleId,
+        ], false);
+    }
+
+    //holt den Benutzer anhand email oder username
+    public static function fetchUserByIdentifier(string $input): ?array
+    {
+        $sql = '
+            SELECT 
+                u.id, u.username, u.password_hash, u.is_verified,
+                r.role_name AS role
+            FROM users u
+            LEFT JOIN user_roles ur ON u.id = ur.user_id
+            LEFT JOIN roles r ON ur.role_id = r.id
+            WHERE u.username = :identUser OR u.email = :identEmail
+            LIMIT 1
+        ';
+        return self::fetchOne($sql, [
+            ':identUser'  => $input,
+            ':identEmail' => $input,
+        ]);
+    }
+
+    //UPDATE für last_login
+    public static function updateLastLogin(int $userId): int
+    {
+        $sql = 'UPDATE users SET last_login = NOW() WHERE id = :id';
+        return self::execute($sql, [':id' => $userId], false);
+    }
+
+    //INSERT für die Login-Logs
+    public static function insertLoginLog(?int $userId, string $ipAddress, bool $success, ?string $reason = null): int
+    {
+        $sql = '
+            INSERT INTO login_logs (user_id, ip_address, success, reason)
+            VALUES (:uid, :ip, :succ, :reason)
+        ';
+        return self::execute($sql, [
+            ':uid'    => $userId,
+            ':ip'     => $ipAddress,
+            ':succ'   => $success ? 1 : 0,
+            ':reason' => $reason,
+        ], false);
+    }
+
+        /**
+     * Speichert ein verschlüsseltes 2FA-Secret und aktiviert 2FA für den Benutzer.
+     */
+    public static function storeTwoFASecret(string $username, string $encryptedSecret): void
+    {
+        $sql = '
+            UPDATE users 
+            SET twofa_secret = :secret, is_twofa_enabled = 1
+            WHERE username = :username
+        ';
+        self::execute($sql, [
+            ':secret'   => $encryptedSecret,
+            ':username' => $username,
+        ]);
+    }
+
+    /**
+     * Ruft das verschlüsselte 2FA-Secret eines Benutzers ab.
+     */
+    public static function getTwoFASecret(string $username): ?string
+    {
+        $sql = '
+            SELECT twofa_secret 
+            FROM users 
+            WHERE username = :username AND is_twofa_enabled = 1
+        ';
+        return self::fetchValue($sql, [':username' => $username]);
+    }
+
+    /**
+     * Prüft, ob für einen Benutzer 2FA aktiviert ist.
+     */
+    public static function isTwoFAEnabled(string $username): bool
+    {
+        $sql = '
+            SELECT is_twofa_enabled 
+            FROM users 
+            WHERE username = :username
+        ';
+        return (bool) self::fetchValue($sql, [':username' => $username]);
+    }
+
+    /**
+     * Deaktiviert 2FA für einen Benutzer.
+     */
+    public static function disableTwoFA(string $username): void
+    {
+        $sql = '
+            UPDATE users 
+            SET twofa_secret = NULL, is_twofa_enabled = 0
+            WHERE username = :username
+        ';
+        self::execute($sql, [':username' => $username]);
     }
 }
+
