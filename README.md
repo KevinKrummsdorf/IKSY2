@@ -83,4 +83,4 @@ Passwort = Acces Key
 
 # Verwendete APIs
 [Google reCaptcha](https://cloud.google.com/security/products/recaptcha)  
-[Google Fronts](https://fonts.google.com/icons)
+[Google Fronts](https://fonts.google.com/icons) (lokal eingebunden)
