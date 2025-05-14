@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Material hochladen – StudyHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+</head>
+<body>
+  <!-- Header + Sidebar wie in index.html-->
+  <header class="site-header d-flex justify-content-between align-items-center px-4 py-2">
+    <div class="header-logo">
+      <a href="index.html">
+        <img src="logo.svg" alt="StudyHub Logo" width="160">
+      </a>
+    </div>
+  </header>
+
+    <!-- Menü-Button (sichtbar NUR auf kleinen Screens, fixiert) -->
+<button class="btn btn-primary d-md-none menu-toggle-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">
+  Menü
+  </button>
+
+  <!-- SIDEBAR -->
+  <div class="menu d-none d-md-block">
+    <ul class="menu-content mt-4">
+      <li><a href="profile.html"><span class="material-symbols-outlined">person</span><span>Mein Profil</span></a></li>
+      <li><a href="lerngruppen.html"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
+      <li><a href="nachrichten.html"><span class="material-symbols-outlined">message</span><span>Nachrichten</span></a></li>
+      <li><a href="todos.html"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
+      <li><a href="material.html"><span class="material-symbols-outlined">search</span><span>Material finden</span></a></li>
+      <li><a href="einstellungen.html"><span class="material-symbols-outlined">settings</span><span>Einstellungen</span></a></li>
+      <li><a href="logout.html"><span class="material-symbols-outlined">logout</span><span>Logout</span></a></li>
+    </ul>
+  </div>
+
+  <!-- Offcanvas für mobile Sidebar -->
+<div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">Menü</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Schließen"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="menu-content">
+      <li><a href="profile.html"><span class="material-symbols-outlined">person</span><span>Mein Profil</span></a></li>
+      <li><a href="lerngruppen.html"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
+      <li><a href="nachrichten.html"><span class="material-symbols-outlined">message</span><span>Nachrichten</span></a></li>
+      <li><a href="todos.html"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
+      <li><a href="material.html"><span class="material-symbols-outlined">search</span><span>Material finden</span></a></li>
+      <li><a href="einstellungen.html"><span class="material-symbols-outlined">settings</span><span>Einstellungen</span></a></li>
+      <li><a href="logout.html"><span class="material-symbols-outlined">logout</span><span>Logout</span></a></li>
+    </ul>
+  </div>
+</div>
+
+  <!-- MAIN CONTENT -->
+  <main class="site-main mt-5">
+    <div class="container">
+      <h1 class="mb-4 text-center">Material hochladen</h1>
+      <form action="upload.php" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="title" class="form-label">Titel</label>
+          <input type="text" id="title" name="title" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label">Beschreibung</label>
+          <textarea id="description" name="description" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="course" class="form-label">Kurs</label>
+          <select id="course" name="course" class="form-select">
+            <option value="mathe">Mathematik</option>
+            <option value="statistik">Statistik</option>
+            <option value="englisch">Englisch</option>
+            <!-- weitere Optionen nach Bedarf -->
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="file" class="form-label">Datei auswählen</label>
+          <input type="file" id="file" name="file" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Hochladen</button>
+      </form>
+    </div>
+  </main>
+
+    <footer class="text-center mt-4 py-3">
+    <div class="container-fluid">
+      <a href="about.html" class="mx-2">Über uns</a> |
+      <a href="privacy.html" class="mx-2">Datenschutz</a> |
+      <a href="terms.html" class="mx-2">AGB</a> |
+      <a href="contact.html" class="mx-2">Kontakt</a> |
+      <a href="impressum.html" class="mx-2">Impressum</a>
+      <p class="mt-2 text-center">&copy; <script>document.write(new Date().getFullYear())</script> StudyHub. Alle Rechte vorbehalten.</p>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
