@@ -13,7 +13,7 @@
 
   <link href="{$base_url}/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="{$base_url}/css/style.css" rel="stylesheet">
-  <link rel="stylesheet" href="/css/material-symbols.css">
+  <link href="{$base_url}/css/material-symbols.css" rel="stylesheet">
 
   {block name="head" append}{/block}
 </head>
