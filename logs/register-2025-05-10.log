@@ -1,0 +1,4 @@
+[2025-05-10T15:48:24.625141+02:00] INFO: Registrierung gestartet 
+[2025-05-10T15:48:25.191603+02:00] INFO: User angelegt {"user_id":32}
+[2025-05-10T15:48:25.216505+02:00] INFO: Rolle zugewiesen {"user_id":32,"role_id":3}
+[2025-05-10T15:48:27.020773+02:00] INFO: Registrierung erfolgreich {"username":"adminadmin","email":"adminadmin@admin.de"}

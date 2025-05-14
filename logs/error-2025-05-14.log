@@ -1,0 +1,31 @@
+[2025-05-14T12:22:22.563214+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T12:24:48.662065+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T12:24:57.481339+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T12:25:00.282248+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T12:29:57.944328+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T12:57:04.223092+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T13:42:10.379745+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-14T13:42:10.543758+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T13:42:44.579100+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T13:42:53.618128+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-14T13:42:53.719191+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T13:44:04.699835+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T13:44:54.916339+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-14T13:44:55.045111+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T13:45:28.989429+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T13:45:32.981712+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T13:45:36.677842+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T13:45:41.029828+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T13:45:43.737491+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T13:45:46.410094+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T13:45:50.394686+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T13:45:54.866550+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-14T13:45:54.934035+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T13:59:53.451593+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T14:00:02.225651+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T14:06:38.896111+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-14T14:06:38.984584+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T14:07:56.982806+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T14:24:56.177671+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-14T14:24:56.972671+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-14T14:26:50.360725+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 

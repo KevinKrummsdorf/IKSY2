@@ -1,0 +1,8 @@
+[2025-05-09T15:23:10.170868+02:00] INFO: User logged in successfully {"ip":"::*","username_or_email":"kevin"}
+[2025-05-09T15:23:37.836300+02:00] WARNING: Login attempt with non-existing user {"ip":"::*","username_or_email":"admin"}
+[2025-05-09T15:23:55.624201+02:00] WARNING: Login attempt with wrong password {"ip":"::*","username_or_email":"kevin"}
+[2025-05-09T15:24:21.118263+02:00] WARNING: Login attempt with wrong password {"ip":"::*","username_or_email":"kevin"}
+[2025-05-09T15:27:17.590236+02:00] WARNING: Login attempt with wrong password {"ip":"::*","username_or_email":"kevin"}
+[2025-05-09T18:00:40.843314+02:00] INFO: User logged in successfully {"ip":"::*","username_or_email":"kevin"}
+[2025-05-09T18:02:34.749412+02:00] INFO: User logged in successfully {"ip":"::*","username_or_email":"kevin"}
+[2025-05-09T18:04:56.202671+02:00] INFO: User logged in successfully {"ip":"::*","username_or_email":"kevin.krummsdorf@stud.hs-bochum.de"}

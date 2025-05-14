@@ -1,0 +1,11 @@
+[2025-05-10T13:52:28.303389+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-10T15:29:34.833597+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-10T15:29:45.294899+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-10T15:36:35.139456+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-10T15:36:43.368242+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-10T16:11:43.284637+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-10T16:11:53.169525+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-10T16:15:19.051861+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-10T16:15:28.249215+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-10T16:15:31.693895+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-10T16:16:01.666539+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 

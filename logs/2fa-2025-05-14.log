@@ -1,0 +1,6 @@
+[2025-05-14T13:41:55.993682+02:00] INFO: 2FA start {"ip":"::*","username":"kevin","user_id":6}
+[2025-05-14T13:42:10.081266+02:00] INFO: 2FA start {"ip":"::*","username":"kevin","user_id":6}
+[2025-05-14T13:42:10.252750+02:00] INFO: 2FA success {"user":"kevin","ip":"::*"}
+[2025-05-14T14:06:20.043385+02:00] INFO: 2FA start {"ip":"::*","username":"kevin","user_id":6}
+[2025-05-14T14:06:38.821287+02:00] INFO: 2FA start {"ip":"::*","username":"kevin","user_id":6}
+[2025-05-14T14:06:38.845260+02:00] INFO: 2FA success {"user":"kevin","ip":"::*"}

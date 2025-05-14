@@ -1,0 +1,8 @@
+[2025-05-13T12:18:01.503732+02:00] ERROR: Unerwarteter Fehler bei Login {"error":"file_exists(): Argument #1 ($filename) must be of type string, ParagonIE\\Halite\\Symmetric\\EncryptionKey given"}
+[2025-05-13T13:38:32.701813+02:00] ERROR: Unerwarteter Fehler bei Login {"error":"DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php on line 18"}
+[2025-05-13T14:53:31.062502+02:00] INFO: User logged in successfully {"ip":"::*","identifier":"admin"}
+[2025-05-13T15:36:43.350927+02:00] INFO: User logged in successfully {"ip":"::*","identifier":"admin"}
+[2025-05-13T15:51:37.834877+02:00] INFO: User logged in successfully {"ip":"::*","identifier":"kevin"}
+[2025-05-13T16:04:41.418328+02:00] INFO: User logged in successfully {"ip":"::*","identifier":"kevin"}
+[2025-05-13T16:30:36.908755+02:00] WARNING: Login attempt with wrong password {"ip":"::*","identifier":"kevin"}
+[2025-05-13T16:40:17.823648+02:00] INFO: User logged in successfully {"ip":"::*","identifier":"admin"}

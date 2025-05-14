@@ -1,0 +1,207 @@
+[2025-05-09T15:00:43.694426+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\login.php at line 22: Trying to access array offset on value of type int 
+[2025-05-09T15:00:43.695863+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\db.inc.php at line 28: Trying to access array offset on value of type int 
+[2025-05-09T15:03:44.659854+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\login.php at line 23: Trying to access array offset on value of type int 
+[2025-05-09T15:03:44.660400+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\db.inc.php at line 28: Trying to access array offset on value of type int 
+[2025-05-09T15:05:22.679045+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\login.php at line 23: Trying to access array offset on value of type int 
+[2025-05-09T15:05:22.679969+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\db.inc.php at line 28: Trying to access array offset on value of type int 
+[2025-05-09T15:06:08.082101+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\login.php at line 17: Trying to access array offset on value of type int 
+[2025-05-09T15:06:08.082662+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\db.inc.php at line 28: Trying to access array offset on value of type int 
+[2025-05-09T15:09:05.067771+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\login.php at line 20: Trying to access array offset on value of type int 
+[2025-05-09T15:09:05.068537+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\db.inc.php at line 28: Trying to access array offset on value of type int 
+[2025-05-09T15:10:08.801694+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\login.php at line 20: Trying to access array offset on value of type int 
+[2025-05-09T15:10:08.802306+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\db.inc.php at line 28: Trying to access array offset on value of type int 
+[2025-05-09T15:11:10.747646+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\login.php at line 19: Trying to access array offset on value of type int 
+[2025-05-09T15:11:10.748368+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\db.inc.php at line 28: Trying to access array offset on value of type int 
+[2025-05-09T15:11:53.173357+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\login.php at line 19: Trying to access array offset on value of type int 
+[2025-05-09T15:11:53.173985+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\db.inc.php at line 28: Trying to access array offset on value of type int 
+[2025-05-09T15:14:02.058123+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\login.php at line 19: Trying to access array offset on value of type int 
+[2025-05-09T15:14:02.058595+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\db.inc.php at line 28: Trying to access array offset on value of type int 
+[2025-05-09T15:16:27.585567+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\login.php at line 19: Trying to access array offset on value of type int 
+[2025-05-09T15:16:27.586266+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\db.inc.php at line 28: Trying to access array offset on value of type int 
+[2025-05-09T18:14:01.692468+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:14:12.884517+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\contact.php at line 92: Undefined array key "contact_email" 
+[2025-05-09T18:14:12.885484+02:00] CRITICAL: Uncaught Exception: sendMail(): Argument #1 ($toEmail) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\public\contact.php on line 92 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\mailing.inc.php","line":40,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php(92): sendMail(NULL, 'StudyHub', 'Kontaktformular...', '\\n            <p...', NULL)
+#1 {main}"}
+[2025-05-09T18:14:40.526295+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:14:46.269979+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\contact.php at line 92: Undefined array key "contact_email" 
+[2025-05-09T18:14:46.270649+02:00] CRITICAL: Uncaught Exception: sendMail(): Argument #1 ($toEmail) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\public\contact.php on line 92 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\mailing.inc.php","line":40,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php(92): sendMail(NULL, 'StudyHub', 'Kontaktformular...', '\\n            <p...', NULL)
+#1 {main}"}
+[2025-05-09T18:16:31.439427+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:16:40.232830+02:00] CRITICAL: Uncaught Exception: Call to undefined function recaptcha_verify_auto() {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":38,"trace":"#0 {main}"}
+[2025-05-09T18:18:41.890042+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:18:52.210511+02:00] CRITICAL: Uncaught Exception: Call to undefined function recaptcha_verify_auto() {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":38,"trace":"#0 {main}"}
+[2025-05-09T18:20:30.879020+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:20:40.361532+02:00] CRITICAL: Uncaught Exception: Call to undefined function recaptcha_verify_auto() {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":38,"trace":"#0 {main}"}
+[2025-05-09T18:24:56.167401+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:25:02.812572+02:00] CRITICAL: Uncaught Exception: Call to undefined function recaptcha_verify_auto() {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":38,"trace":"#0 {main}"}
+[2025-05-09T18:25:21.543856+02:00] CRITICAL: Uncaught Exception: Call to undefined function recaptcha_verify_auto() {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":38,"trace":"#0 {main}"}
+[2025-05-09T18:26:26.640285+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:26:30.841854+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:26:36.491870+02:00] CRITICAL: Uncaught Exception: Call to undefined function recaptcha_verify_auto() {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":38,"trace":"#0 {main}"}
+[2025-05-09T18:28:40.634717+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:28:47.237579+02:00] CRITICAL: Uncaught Exception: Call to undefined function recaptcha_verify_auto() {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":38,"trace":"#0 {main}"}
+[2025-05-09T18:32:07.633119+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:32:16.931042+02:00] CRITICAL: Uncaught Exception: Call to undefined function recaptcha_verify_auto() {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":38,"trace":"#0 {main}"}
+[2025-05-09T18:33:10.906490+02:00] CRITICAL: Uncaught Exception: Call to undefined function recaptcha_verify_auto() {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":38,"trace":"#0 {main}"}
+[2025-05-09T18:33:24.662676+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:35:48.306652+02:00] CRITICAL: Uncaught Exception: Syntax error in template "file:contact.tpl"  on line 85 "grecaptcha.execute('{$recaptcha_site_key}', {action:'contact'})"  - Unexpected ":", expected one of: "}" {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\templates\\contact.tpl","line":85,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3071): Smarty\\Compiler\\Template->trigger_template_error()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3132): Smarty\\Parser\\TemplateParser->yy_syntax_error(2, ':')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(1268): Smarty\\Parser\\TemplateParser->doParse(2, ':')
+#3 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(435): Smarty\\Compiler\\Template->doCompile('{extends file=\"...', true)
+#4 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(359): Smarty\\Compiler\\Template->compileTemplateSource(Object(Smarty\\Template))
+#5 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(213): Smarty\\Compiler\\Template->compileTemplate(Object(Smarty\\Template))
+#6 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(190): Smarty\\Template\\Compiled->doCompile(Object(Smarty\\Template))
+#7 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(143): Smarty\\Template\\Compiled->compileAndWrite(Object(Smarty\\Template))
+#8 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(101): Smarty\\Template\\Compiled->compileAndLoad(Object(Smarty\\Template))
+#9 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(180): Smarty\\Template\\Compiled->render(Object(Smarty\\Template))
+#10 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(655): Smarty\\Template->render(false, 1)
+#11 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(594): Smarty\\Template->_execute(1)
+#12 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Smarty.php(2135): Smarty\\Template->display()
+#13 C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php(132): Smarty\\Smarty->display('contact.tpl')
+#14 {main}"}
+[2025-05-09T18:36:00.809309+02:00] CRITICAL: Uncaught Exception: Syntax error in template "file:contact.tpl"  on line 85 "grecaptcha.execute('{$recaptcha_site_key}', {action:'contact'})"  - Unexpected ":", expected one of: "}" {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\templates\\contact.tpl","line":85,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3071): Smarty\\Compiler\\Template->trigger_template_error()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3132): Smarty\\Parser\\TemplateParser->yy_syntax_error(2, ':')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(1268): Smarty\\Parser\\TemplateParser->doParse(2, ':')
+#3 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(435): Smarty\\Compiler\\Template->doCompile('{extends file=\"...', true)
+#4 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(359): Smarty\\Compiler\\Template->compileTemplateSource(Object(Smarty\\Template))
+#5 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(213): Smarty\\Compiler\\Template->compileTemplate(Object(Smarty\\Template))
+#6 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(190): Smarty\\Template\\Compiled->doCompile(Object(Smarty\\Template))
+#7 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(143): Smarty\\Template\\Compiled->compileAndWrite(Object(Smarty\\Template))
+#8 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(101): Smarty\\Template\\Compiled->compileAndLoad(Object(Smarty\\Template))
+#9 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(180): Smarty\\Template\\Compiled->render(Object(Smarty\\Template))
+#10 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(655): Smarty\\Template->render(false, 1)
+#11 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(594): Smarty\\Template->_execute(1)
+#12 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Smarty.php(2135): Smarty\\Template->display()
+#13 C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php(132): Smarty\\Smarty->display('contact.tpl')
+#14 {main}"}
+[2025-05-09T18:36:24.480125+02:00] CRITICAL: Uncaught Exception: Syntax error in template "file:contact.tpl"  on line 85 "grecaptcha.execute('{$recaptcha_site_key}', {action:'contact'})"  - Unexpected ":", expected one of: "}" {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\templates\\contact.tpl","line":85,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3071): Smarty\\Compiler\\Template->trigger_template_error()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3132): Smarty\\Parser\\TemplateParser->yy_syntax_error(2, ':')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(1268): Smarty\\Parser\\TemplateParser->doParse(2, ':')
+#3 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(435): Smarty\\Compiler\\Template->doCompile('{extends file=\"...', true)
+#4 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(359): Smarty\\Compiler\\Template->compileTemplateSource(Object(Smarty\\Template))
+#5 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(213): Smarty\\Compiler\\Template->compileTemplate(Object(Smarty\\Template))
+#6 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(190): Smarty\\Template\\Compiled->doCompile(Object(Smarty\\Template))
+#7 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(143): Smarty\\Template\\Compiled->compileAndWrite(Object(Smarty\\Template))
+#8 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(101): Smarty\\Template\\Compiled->compileAndLoad(Object(Smarty\\Template))
+#9 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(180): Smarty\\Template\\Compiled->render(Object(Smarty\\Template))
+#10 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(655): Smarty\\Template->render(false, 1)
+#11 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(594): Smarty\\Template->_execute(1)
+#12 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Smarty.php(2135): Smarty\\Template->display()
+#13 C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php(132): Smarty\\Smarty->display('contact.tpl')
+#14 {main}"}
+[2025-05-09T18:37:32.413059+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:38:17.444861+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\contact.php at line 15: require_once(C:\xampp\htdocs\www\IKSY2\public/../includes/smarty.inc.php): Failed to open stream: No such file or directory 
+[2025-05-09T18:38:17.445241+02:00] CRITICAL: Uncaught Exception: Failed opening required 'C:\xampp\htdocs\www\IKSY2\public/../includes/smarty.inc.php' (include_path='C:\xampp\php\PEAR') {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":15,"trace":"#0 {main}"}
+[2025-05-09T18:38:32.945716+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\contact.php at line 15: require_once(C:\xampp\htdocs\www\IKSY2\public/../includes/smarty.inc.php): Failed to open stream: No such file or directory 
+[2025-05-09T18:38:32.946262+02:00] CRITICAL: Uncaught Exception: Failed opening required 'C:\xampp\htdocs\www\IKSY2\public/../includes/smarty.inc.php' (include_path='C:\xampp\php\PEAR') {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":15,"trace":"#0 {main}"}
+[2025-05-09T18:40:10.439940+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:40:38.988365+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:41:42.553773+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:44:44.409895+02:00] CRITICAL: Uncaught Exception: Syntax error in template "file:contact.tpl"  on line 106 "grecaptcha.execute('{$recaptcha_site_key}', {action:'contact'})"  - Unexpected ":", expected one of: "}" {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\templates\\contact.tpl","line":106,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3071): Smarty\\Compiler\\Template->trigger_template_error()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3132): Smarty\\Parser\\TemplateParser->yy_syntax_error(2, ':')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(1268): Smarty\\Parser\\TemplateParser->doParse(2, ':')
+#3 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(435): Smarty\\Compiler\\Template->doCompile('{extends file=\"...', true)
+#4 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(359): Smarty\\Compiler\\Template->compileTemplateSource(Object(Smarty\\Template))
+#5 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(213): Smarty\\Compiler\\Template->compileTemplate(Object(Smarty\\Template))
+#6 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(190): Smarty\\Template\\Compiled->doCompile(Object(Smarty\\Template))
+#7 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(143): Smarty\\Template\\Compiled->compileAndWrite(Object(Smarty\\Template))
+#8 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(101): Smarty\\Template\\Compiled->compileAndLoad(Object(Smarty\\Template))
+#9 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(180): Smarty\\Template\\Compiled->render(Object(Smarty\\Template))
+#10 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(655): Smarty\\Template->render(false, 1)
+#11 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(594): Smarty\\Template->_execute(1)
+#12 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Smarty.php(2135): Smarty\\Template->display()
+#13 C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php(128): Smarty\\Smarty->display('contact.tpl')
+#14 {main}"}
+[2025-05-09T18:45:09.818360+02:00] CRITICAL: Uncaught Exception: Syntax error in template "file:contact.tpl"  on line 106 "grecaptcha.execute('{$recaptcha_site_key}', {action:'contact'})"  - Unexpected ":", expected one of: "}" {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\templates\\contact.tpl","line":106,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3071): Smarty\\Compiler\\Template->trigger_template_error()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3132): Smarty\\Parser\\TemplateParser->yy_syntax_error(2, ':')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(1268): Smarty\\Parser\\TemplateParser->doParse(2, ':')
+#3 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(435): Smarty\\Compiler\\Template->doCompile('{extends file=\"...', true)
+#4 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(359): Smarty\\Compiler\\Template->compileTemplateSource(Object(Smarty\\Template))
+#5 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(213): Smarty\\Compiler\\Template->compileTemplate(Object(Smarty\\Template))
+#6 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(190): Smarty\\Template\\Compiled->doCompile(Object(Smarty\\Template))
+#7 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(143): Smarty\\Template\\Compiled->compileAndWrite(Object(Smarty\\Template))
+#8 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(101): Smarty\\Template\\Compiled->compileAndLoad(Object(Smarty\\Template))
+#9 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(180): Smarty\\Template\\Compiled->render(Object(Smarty\\Template))
+#10 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(655): Smarty\\Template->render(false, 1)
+#11 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(594): Smarty\\Template->_execute(1)
+#12 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Smarty.php(2135): Smarty\\Template->display()
+#13 C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php(128): Smarty\\Smarty->display('contact.tpl')
+#14 {main}"}
+[2025-05-09T18:46:20.692557+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:46:31.240742+02:00] CRITICAL: Uncaught Exception: Call to undefined function recaptcha_verify_auto() {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":34,"trace":"#0 {main}"}
+[2025-05-09T18:47:18.305406+02:00] CRITICAL: Uncaught Exception: Call to undefined function recaptcha_verify_auto() {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":37,"trace":"#0 {main}"}
+[2025-05-09T18:47:22.551640+02:00] CRITICAL: Uncaught Exception: Call to undefined function recaptcha_verify_auto() {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":37,"trace":"#0 {main}"}
+[2025-05-09T18:47:31.885825+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:47:42.894067+02:00] CRITICAL: Uncaught Exception: Call to undefined function recaptcha_verify_auto() {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":37,"trace":"#0 {main}"}
+[2025-05-09T18:47:47.481575+02:00] CRITICAL: Uncaught Exception: Call to undefined function recaptcha_verify_auto() {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php","line":37,"trace":"#0 {main}"}
+[2025-05-09T18:48:05.223183+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:49:07.907768+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\contact.php at line 130: Undefined array key "recaptcha_site_key" 
+[2025-05-09T18:49:07.913571+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:49:43.412891+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\contact.php at line 130: Undefined array key "recaptcha_site_key" 
+[2025-05-09T18:49:43.425468+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:51:43.538506+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\contact.php at line 130: Undefined array key "recaptcha_site_key" 
+[2025-05-09T18:51:43.563946+02:00] CRITICAL: Uncaught Exception: Syntax error in template "file:contact.tpl"  on line 109 "grecaptcha.execute('{$recaptcha_site_key}', {action:'contact'})"  - Unexpected ":", expected one of: "}" {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\templates\\contact.tpl","line":109,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3071): Smarty\\Compiler\\Template->trigger_template_error()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3132): Smarty\\Parser\\TemplateParser->yy_syntax_error(2, ':')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(1268): Smarty\\Parser\\TemplateParser->doParse(2, ':')
+#3 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(435): Smarty\\Compiler\\Template->doCompile('{extends file=\"...', true)
+#4 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(359): Smarty\\Compiler\\Template->compileTemplateSource(Object(Smarty\\Template))
+#5 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(213): Smarty\\Compiler\\Template->compileTemplate(Object(Smarty\\Template))
+#6 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(190): Smarty\\Template\\Compiled->doCompile(Object(Smarty\\Template))
+#7 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(143): Smarty\\Template\\Compiled->compileAndWrite(Object(Smarty\\Template))
+#8 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(101): Smarty\\Template\\Compiled->compileAndLoad(Object(Smarty\\Template))
+#9 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(180): Smarty\\Template\\Compiled->render(Object(Smarty\\Template))
+#10 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(655): Smarty\\Template->render(false, 1)
+#11 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(594): Smarty\\Template->_execute(1)
+#12 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Smarty.php(2135): Smarty\\Template->display()
+#13 C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php(133): Smarty\\Smarty->display('contact.tpl')
+#14 {main}"}
+[2025-05-09T18:52:03.126605+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\contact.php at line 130: Undefined array key "recaptcha_site_key" 
+[2025-05-09T18:52:03.345642+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:53:46.538588+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\contact.php at line 130: Undefined array key "recaptcha_site_key" 
+[2025-05-09T18:53:46.546692+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:56:00.872967+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:56:09.056259+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T18:57:41.444644+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\contact.php at line 100: Undefined array key "contact_email" 
+[2025-05-09T18:57:42.788307+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T19:02:30.851532+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T19:02:37.732286+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T19:05:57.536181+02:00] CRITICAL: Uncaught Exception: Syntax error in template "file:contact.tpl"  on line 93 "grecaptcha.execute('{$recaptcha_site_key}', {action:'contact'})"  - Unexpected ":", expected one of: "}" {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\templates\\contact.tpl","line":93,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3071): Smarty\\Compiler\\Template->trigger_template_error()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3132): Smarty\\Parser\\TemplateParser->yy_syntax_error(2, ':')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(1268): Smarty\\Parser\\TemplateParser->doParse(2, ':')
+#3 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(435): Smarty\\Compiler\\Template->doCompile('{extends file=\"...', true)
+#4 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(359): Smarty\\Compiler\\Template->compileTemplateSource(Object(Smarty\\Template))
+#5 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(213): Smarty\\Compiler\\Template->compileTemplate(Object(Smarty\\Template))
+#6 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(190): Smarty\\Template\\Compiled->doCompile(Object(Smarty\\Template))
+#7 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(143): Smarty\\Template\\Compiled->compileAndWrite(Object(Smarty\\Template))
+#8 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(101): Smarty\\Template\\Compiled->compileAndLoad(Object(Smarty\\Template))
+#9 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(180): Smarty\\Template\\Compiled->render(Object(Smarty\\Template))
+#10 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(655): Smarty\\Template->render(false, 1)
+#11 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(594): Smarty\\Template->_execute(1)
+#12 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Smarty.php(2135): Smarty\\Template->display()
+#13 C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php(135): Smarty\\Smarty->display('contact.tpl')
+#14 {main}"}
+[2025-05-09T19:06:05.668157+02:00] CRITICAL: Uncaught Exception: Syntax error in template "file:contact.tpl"  on line 93 "grecaptcha.execute('{$recaptcha_site_key}', {action:'contact'})"  - Unexpected ":", expected one of: "}" {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\templates\\contact.tpl","line":93,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3071): Smarty\\Compiler\\Template->trigger_template_error()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3132): Smarty\\Parser\\TemplateParser->yy_syntax_error(2, ':')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(1268): Smarty\\Parser\\TemplateParser->doParse(2, ':')
+#3 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(435): Smarty\\Compiler\\Template->doCompile('{extends file=\"...', true)
+#4 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(359): Smarty\\Compiler\\Template->compileTemplateSource(Object(Smarty\\Template))
+#5 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(213): Smarty\\Compiler\\Template->compileTemplate(Object(Smarty\\Template))
+#6 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(190): Smarty\\Template\\Compiled->doCompile(Object(Smarty\\Template))
+#7 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(143): Smarty\\Template\\Compiled->compileAndWrite(Object(Smarty\\Template))
+#8 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(101): Smarty\\Template\\Compiled->compileAndLoad(Object(Smarty\\Template))
+#9 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(180): Smarty\\Template\\Compiled->render(Object(Smarty\\Template))
+#10 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(655): Smarty\\Template->render(false, 1)
+#11 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(594): Smarty\\Template->_execute(1)
+#12 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Smarty.php(2135): Smarty\\Template->display()
+#13 C:\\xampp\\htdocs\\www\\IKSY2\\public\\contact.php(135): Smarty\\Smarty->display('contact.tpl')
+#14 {main}"}
+[2025-05-09T19:06:14.739450+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T19:06:42.335942+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T19:07:09.248549+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T19:07:21.064792+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T19:07:53.587926+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T19:08:15.216704+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T19:08:31.237456+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T19:08:41.364723+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T19:11:29.658819+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-09T19:12:33.497091+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 

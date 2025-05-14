@@ -1,0 +1,4 @@
+[2025-05-10T15:29:45.260864+02:00] INFO: Datei erfolgreich hochgeladen {"user_id":6,"stored_name":"mat_681f54c834540.txt","title":"vv","description":"vv","course":"mathe"}
+[2025-05-10T15:29:45.288075+02:00] INFO: Upload-Log erfolgreich gespeichert {"user_id":6,"stored_name":"mat_681f54c834540.txt"}
+[2025-05-10T15:36:43.326798+02:00] INFO: Datei erfolgreich hochgeladen {"user_id":6,"stored_name":"mat_681f566b31e99.txt","title":"gg","description":"gg","course":"statistik"}
+[2025-05-10T15:36:43.352749+02:00] INFO: Upload-Log erfolgreich gespeichert {"user_id":6,"stored_name":"mat_681f566b31e99.txt"}

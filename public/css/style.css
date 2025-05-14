@@ -1,0 +1,369 @@
+/* ========================================================================== 
+   Globale Einstellungen & Variablen 
+   ========================================================================== */
+
+   :root {
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --text-color: #000000;
+    --text-light-color: #333;
+    --text-muted-color: #495057;
+    --icon-color: #6c757d;
+    --background-light: #fff;
+    --background-gradient-start: #e2e2e2;
+    --background-gradient-end: #c9d6ff;
+    --border-color: #ced4da;
+    --border-light-color: #dee2e6;
+    --valid-color: #28a745;
+    --invalid-color: #dc3545;
+    --btn-light-bg: #f8f9fa;
+    --btn-light-hover-bg: #e2e6ea;
+}
+
+body {
+    background: linear-gradient(90deg, var(--background-gradient-start), var(--background-gradient-end));
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-lg);
+    min-height: 100vh; /* Der Body nimmt immer mindestens die Höhe des Viewports ein */
+    font-family: sans-serif;
+    color: var(--text-color);
+    padding-top: 85px; /* Platz für den Header schaffen */
+    margin: 0; /* Entfernt Standardabstände */
+}
+
+/* Sicherstellen, dass die Modals immer über den anderen Inhalten liegen */
+.modal-backdrop {
+    z-index: 1040 !important; /* Standard z-index für das Hintergrund-Overlay */
+}
+
+.modal-dialog {
+    z-index: 1050 !important; /* Stellt sicher, dass der Modal-Dialog über dem Rest liegt */
+}
+
+.modal-content {
+    z-index: 1060 !important; /* Ein höherer z-index für den eigentlichen Inhalt des Modals */
+}
+
+/* Header-Z-Index anpassen */
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 85px;
+    background: #ffffff12;
+    backdrop-filter: blur(5px);
+    border-bottom: 1px solid rgba(255,255,255,0.05); /* sanfter Übergang */
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    z-index: 1050 !important; /* Header bekommt einen niedrigeren z-index als das Modal */
+}
+
+/* Sidebar */
+.menu {
+    position: fixed;
+    top: 70px; /* Sidebar beginnt unter dem Header */
+    left: 0;
+    width: 74px; /* Sidebar ist im geschlossenen Zustand schmal */
+    height: calc(100% - 70px); /* Sidebarhöhe anpassen */
+    background: #ffffff12;
+    backdrop-filter: blur(5px);
+    box-shadow: 8px 0px 9px 0px #00000014;
+    padding: 20px 20px 20px 0;
+    overflow: hidden scroll;
+    transition: width 0.3s ease;
+    z-index: 1020 !important; /* Sidebar bleibt unter dem Header */
+}
+
+/* Sidebar beim Hover ausklappen */
+.menu:hover {
+    width: 260px; /* Sidebar wird bei Hover breiter */
+}
+
+.menu-content {
+    list-style: none;
+    padding-left: 0;
+}
+
+.menu-content li {
+    list-style: none;
+    border-radius: 0px 50px 50px 0;
+    transition: .3s;
+    margin-bottom: 20px;
+    padding-left: 20px;
+    font-family: 'sans-serif'; /* Gleiche Schriftart wie der Hauptinhalt */
+    font-size: 16px; /* Optionale Schriftgröße anpassen */
+}
+
+.menu-content li:hover {
+    background: #bdbbbb; /* Hintergrundfarbe beim Hover */
+}
+
+.menu a {
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    display: flex;
+    align-items: center;
+    font-family: 'sans-serif'; /* Gleiche Schriftart wie der Hauptinhalt */
+}
+
+.material-symbols-outlined {
+    padding: 10px;
+    font-size: 25px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background: #ffffff;
+}
+
+/* Requirement List */
+.requirement-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+    color: #28a745;
+    font-size: 14px;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.6s ease, max-height 1.0s ease;
+  }
+  
+  .requirement-list.visible {
+    opacity: 1;
+    max-height: 500px; /* groß genug, damit alles reinpasst */
+    }
+  
+.requirement-list li {
+    color: black; /* Setzt den Standardtext auf schwarz */
+    margin-bottom: var(--spacing-xs);
+}
+
+.requirement-list li i {
+    margin-right: var(--spacing-xs);
+    color: var(--invalid-color);
+    width: 1em;
+    text-align: center;
+}
+
+.requirement-list li.valid {
+  color: #198754;        /* Bootstrap success-green */
+}
+.requirement-list li.valid i {
+  color: #198754;
+}
+.requirement-list li.invalid {
+  color: #dc3545;        /* Bootstrap danger-red */
+}
+.requirement-list li.invalid i {
+  color: #dc3545;
+}
+/* -------------------- Impressum & Datenschutz -------------------- */
+
+/* Impressum */
+.impressum-content {
+    text-align: justify;
+    max-width: 800px;
+}
+
+/* Datenschutz */
+.datenschutz-content {
+    max-width: 900px;
+}
+
+.datenschutz-section {
+    margin-bottom: 2em;
+    border-bottom: 2px solid var(--border-light-color);
+    padding-bottom: 2em;
+    padding-bottom: 80px; /* Platz schaffen für den fixierten Footer */
+    
+}
+
+/* Sicherstellen, dass der Main-Content nicht unter die Sidebar rutscht */
+.site-main {
+    margin-left: 85px;
+    padding-top: 1rem; /* Platz für Header */
+    transition: margin-left 0.3s;
+}
+
+.menu:hover ~ .site-main {
+    margin-left: 260px; /* Platz für Sidebar, wenn diese bei Hover ausgeklappt ist */
+}
+
+/* -------------------- Sliding Sidebar Menü -------------------- */
+.menu::-webkit-scrollbar {
+    display: none;
+}
+
+.site-main {
+    margin-left: 85px;
+    padding-top: 1rem; /* Platz für Header */
+    transition: margin-left 0.3s;
+    flex-grow: 1; /* Sorgt dafür, dass der Hauptinhalt den verbleibenden Platz ausfüllt */
+}
+
+.menu:hover ~ .site-main {
+    margin-left: 260px;
+}
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+/* Footer */
+footer {
+    position: static; /* Fixiert den Footer am unteren Rand des Viewports */
+    bottom: 0; /* Stellt sicher, dass der Footer immer am unteren Rand bleibt */
+    left: 0; /* Setzt den Footer ganz nach links */
+    width: 100%; /* Der Footer nimmt die gesamte Breite des Bildschirms ein */
+    text-align: center;
+    padding: 20px;
+    background: #ffffff12; /* Hintergrundfarbe mit transparenter Deckkraft */
+    backdrop-filter: blur(5px); /* Fügt den gleichen Blur-Effekt hinzu wie bei der Sidebar und dem Header */
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1); /* Optionaler Schatten für einen weicheren Übergang */
+    z-index: 1000; /* Stellt sicher, dass der Footer immer oben bleibt */
+  }
+
+.site-header {
+    display: flex;
+    justify-content: flex-start; /* Stellt sicher, dass der Header links ausgerichtet ist */
+    align-items: center; /* Zentriert das Logo vertikal */
+    padding: 10px 0;
+    background: transparent; /* Optional, wenn der Header keinen Hintergrund haben soll */
+}
+
+.header-logo img {
+    max-width: 200px; /* Passt die maximale Breite des Logos an */
+    height: auto;
+}
+
+/* Der Footer bleibt jetzt immer am unteren Rand der Seite */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Stellt sicher, dass der Body den gesamten Viewport ausfüllt */
+    padding-bottom: 0; /* Fügt Platz für den Footer hinzu */
+  }
+
+
+/*test*/
+  .offcanvas .menu-content li {
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+  }
+  .offcanvas .menu-content a {
+    display: flex;
+    align-items: center;
+    color: #000;
+    text-decoration: none;
+  }
+  /* Offcanvas-Menü über den Header legen */
+.offcanvas {
+    z-index: 1060 !important;
+  }
+
+/*======================
+    404 page
+=======================*/
+.page_404 {
+    background: linear-gradient(90deg, var(--background-gradient-start), var(--background-gradient-end));
+    height: calc(90vh - 70px); /* ganze Höhe – Header */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Inhalt vertikal mittig im Container */
+    align-items: center;
+    padding: 1rem 0;
+  }
+  
+  .page_404 .container {
+    padding: 0 !important;
+    margin: 0 !important;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Inhalt vertikal mittig im Container */
+    align-items: center;
+  }
+  
+  .four_zero_four_bg img {
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    max-height: 50vh; /* verhindert, dass das Bild zu groß wird */
+  }
+  
+  .contant_box_404 {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  .contant_box_404 h3,
+  .contant_box_404 p {
+    margin: 0.5rem 0;
+  }
+  
+  .contant_box_404 a {
+    margin-top: 1rem;
+  }
+
+/*======================
+    about.tpl Team
+=======================*/
+  
+  .team-photo-wrapper {
+    width: 100%;
+    height: 600px;
+    overflow: hidden;
+  }
+  
+  .team-photo-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+/*======================
+    reCaptcha
+=======================*/
+/* Global für alle Viewports */
+.grecaptcha-badge {
+    position: fixed;
+    z-index: 2000 !important;
+    bottom: calc(60px + 20px);  /* Footer-Höhe + zusätzlicher Abstand */
+    right: 20px;
+    transform-origin: bottom right;
+    transition: transform 0.2s ease;
+  }
+  
+  /* Kleinbildschirme (xs <576px) */
+  @media (max-width: 575.98px) {
+    .grecaptcha-badge {
+        bottom: 80px;
+        right: 10px;    
+      transform: scale(1); /* kleiner, passt auf schmale Screens */
+    }
+  }
+  
+  
+  /* Mittlere Bildschirme (sm ≥576px) */
+  @media (min-width: 576px) and (max-width: 767.98px) {
+    .grecaptcha-badge {
+      bottom: 100px;
+      right: 15px;
+      transform: scale(0.9);
+    }
+  }
+  
+  /* Große Bildschirme (md ≥768px) */
+  @media (min-width: 768px) and (max-width: 991.98px) {
+    .grecaptcha-badge {
+      bottom: 120px;
+      right: 20px;
+      transform: scale(1);
+    }
+  }
+
+  

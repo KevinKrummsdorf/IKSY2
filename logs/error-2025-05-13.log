@@ -1,0 +1,494 @@
+[2025-05-13T12:03:15.989019+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:03:33.631641+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:03:37.058818+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:03:39.831059+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:03:45.196658+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:03:51.488969+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:03:54.359712+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:03:59.565717+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:04:01.973546+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:06:25.757613+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:17:40.727158+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:18:01.557363+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:21:52.831751+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:22:03.207167+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:22:06.706138+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:22:12.489245+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:23:41.082056+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T12:54:45.694913+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T12:54:45.695481+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T12:54:45.695545+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\index.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T12:54:53.465832+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T12:54:53.466259+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T12:54:53.466312+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\index.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T12:55:23.212163+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T12:55:23.212634+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T12:55:23.212708+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\index.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T12:55:37.932703+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T12:55:37.933298+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T12:55:37.933407+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\index.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T12:56:17.050196+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T12:56:17.050735+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T12:56:17.050824+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\index.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T12:57:58.547442+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T12:57:58.547815+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T12:57:58.547920+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\index.php(9): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T12:58:34.624378+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T12:58:34.624854+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T12:58:34.624915+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\index.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T12:58:36.434229+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T12:58:36.434815+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T12:58:36.434891+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\index.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T13:00:14.317949+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T13:00:14.318574+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T13:00:14.318679+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\index.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T13:00:18.954513+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T13:00:18.955386+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T13:00:18.955600+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\index.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T13:01:05.234201+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T13:01:05.234555+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T13:01:05.234614+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\index.php(8): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T13:01:12.803760+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T13:01:12.804220+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T13:01:12.804301+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\index.php(8): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T13:03:29.539288+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T13:03:29.540073+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T13:03:29.540191+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\index.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T13:04:53.854699+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T13:04:53.855399+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T13:04:53.855511+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\about.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T13:04:56.380350+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T13:04:56.380830+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T13:04:56.380898+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\about.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T13:04:58.104860+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T13:04:58.105236+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T13:04:58.105297+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\about.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T13:08:11.103671+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T13:08:11.104154+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T13:08:11.104250+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\about.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T13:08:12.793928+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T13:08:12.794443+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T13:08:12.794510+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\about.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T13:08:22.810228+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined global variable $_SESSION 
+[2025-05-13T13:08:22.810698+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Trying to access array offset on value of type null 
+[2025-05-13T13:08:22.810830+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\config.inc.php(20): require_once('C:\\\\xampp\\\\htdocs...')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\public\\index.php(4): require_once('C:\\\\xampp\\\\htdocs...')
+#3 {main}"}
+[2025-05-13T13:08:30.148854+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:08:41.833335+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:08:46.244373+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:08:53.001878+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:09:03.158222+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:13:10.558571+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:13:12.703174+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:13:14.990252+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:14:15.741883+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:16:54.396265+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:20:00.461946+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:20:13.323361+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:23:34.591763+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:23:40.683462+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:35:02.498654+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:35:14.209002+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined array key "username" 
+[2025-05-13T13:35:14.209939+02:00] CRITICAL: Uncaught Exception: DbFunctions::isTwoFAEnabled(): Argument #1 ($username) must be of type string, null given, called in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php on line 18 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":327,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(18): DbFunctions::isTwoFAEnabled(NULL)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\login.php(10): require_once('C:\\\\xampp\\\\htdocs...')
+#2 {main}"}
+[2025-05-13T13:37:50.950872+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:37:54.453777+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:37:58.530626+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:38:01.439894+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:38:14.260176+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:38:22.726444+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:38:32.701262+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\includes\2fa.inc.php at line 18: Undefined array key "username" 
+[2025-05-13T13:38:32.748481+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:41:12.712799+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:44:22.893249+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:44:34.819951+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(28): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T13:45:09.106863+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(28): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T13:46:33.806560+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(32): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T13:47:42.318820+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(28): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T13:47:45.561244+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(28): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T13:47:51.073359+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:48:06.580058+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:48:18.630237+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(28): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T13:50:36.365558+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(28): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T13:50:57.374235+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:51:10.276249+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:51:25.379372+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(28): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T13:53:08.232391+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:53:22.636786+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:53:34.471119+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(28): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T13:53:46.624223+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:59:17.917885+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:59:27.862116+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T13:59:37.958381+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(29): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:02:00.226553+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:02:09.416338+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:02:17.178414+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(29): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:04:05.317405+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(29): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:04:11.472136+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:04:21.603031+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:04:34.399325+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(29): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:06:51.906832+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:07:03.397385+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:07:10.968529+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(29): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:09:03.886028+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:09:11.874644+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:09:21.025730+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(30): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:10:29.842782+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(35): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:11:24.541189+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(41): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:11:35.750984+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:11:45.703438+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:12:32.881068+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(41): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:14:10.723241+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(44): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:15:26.868372+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(43): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:22:30.892379+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\2fa_prompt.php at line 20: Undefined variable $channel 
+[2025-05-13T14:22:30.922712+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(44): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:22:58.053972+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(42): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:23:18.577401+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:23:30.626341+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:23:38.449381+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(42): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:27:33.590392+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:27:42.313579+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:27:49.698399+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(45): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:30:22.935920+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:31:03.753788+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:31:29.527590+02:00] CRITICAL: Uncaught Exception: Syntax error in template "file:2fa_login.tpl"  on line 11 "{if isset(\$flash)}"  - Unexpected "\", expected one of: "","" , ")" {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\templates\\2fa_login.tpl","line":11,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3071): Smarty\\Compiler\\Template->trigger_template_error()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3132): Smarty\\Parser\\TemplateParser->yy_syntax_error(3, '\\\\')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(1268): Smarty\\Parser\\TemplateParser->doParse(3, '\\\\')
+#3 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(435): Smarty\\Compiler\\Template->doCompile('{extends file=\"...', true)
+#4 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(359): Smarty\\Compiler\\Template->compileTemplateSource(Object(Smarty\\Template))
+#5 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(213): Smarty\\Compiler\\Template->compileTemplate(Object(Smarty\\Template))
+#6 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(190): Smarty\\Template\\Compiled->doCompile(Object(Smarty\\Template))
+#7 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(143): Smarty\\Template\\Compiled->compileAndWrite(Object(Smarty\\Template))
+#8 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(101): Smarty\\Template\\Compiled->compileAndLoad(Object(Smarty\\Template))
+#9 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(180): Smarty\\Template\\Compiled->render(Object(Smarty\\Template))
+#10 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(655): Smarty\\Template->render(false, 1)
+#11 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(594): Smarty\\Template->_execute(1)
+#12 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Smarty.php(2135): Smarty\\Template->display()
+#13 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(94): Smarty\\Smarty->display('2fa_login.tpl')
+#14 {main}"}
+[2025-05-13T14:31:39.985067+02:00] CRITICAL: Uncaught Exception: Syntax error in template "file:2fa_login.tpl"  on line 11 "{if isset(\$flash)}"  - Unexpected "\", expected one of: "","" , ")" {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\templates\\2fa_login.tpl","line":11,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3071): Smarty\\Compiler\\Template->trigger_template_error()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3132): Smarty\\Parser\\TemplateParser->yy_syntax_error(3, '\\\\')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(1268): Smarty\\Parser\\TemplateParser->doParse(3, '\\\\')
+#3 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(435): Smarty\\Compiler\\Template->doCompile('{extends file=\"...', true)
+#4 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(359): Smarty\\Compiler\\Template->compileTemplateSource(Object(Smarty\\Template))
+#5 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(213): Smarty\\Compiler\\Template->compileTemplate(Object(Smarty\\Template))
+#6 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(190): Smarty\\Template\\Compiled->doCompile(Object(Smarty\\Template))
+#7 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(143): Smarty\\Template\\Compiled->compileAndWrite(Object(Smarty\\Template))
+#8 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(101): Smarty\\Template\\Compiled->compileAndLoad(Object(Smarty\\Template))
+#9 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(180): Smarty\\Template\\Compiled->render(Object(Smarty\\Template))
+#10 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(655): Smarty\\Template->render(false, 1)
+#11 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(594): Smarty\\Template->_execute(1)
+#12 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Smarty.php(2135): Smarty\\Template->display()
+#13 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(94): Smarty\\Smarty->display('2fa_login.tpl')
+#14 {main}"}
+[2025-05-13T14:31:54.638771+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:32:06.544377+02:00] CRITICAL: Uncaught Exception: Syntax error in template "file:2fa_login.tpl"  on line 11 "{if isset(\$flash)}"  - Unexpected "\", expected one of: "","" , ")" {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\templates\\2fa_login.tpl","line":11,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3071): Smarty\\Compiler\\Template->trigger_template_error()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3132): Smarty\\Parser\\TemplateParser->yy_syntax_error(3, '\\\\')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(1268): Smarty\\Parser\\TemplateParser->doParse(3, '\\\\')
+#3 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(435): Smarty\\Compiler\\Template->doCompile('{extends file=\"...', true)
+#4 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(359): Smarty\\Compiler\\Template->compileTemplateSource(Object(Smarty\\Template))
+#5 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(213): Smarty\\Compiler\\Template->compileTemplate(Object(Smarty\\Template))
+#6 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(190): Smarty\\Template\\Compiled->doCompile(Object(Smarty\\Template))
+#7 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(143): Smarty\\Template\\Compiled->compileAndWrite(Object(Smarty\\Template))
+#8 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(101): Smarty\\Template\\Compiled->compileAndLoad(Object(Smarty\\Template))
+#9 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(180): Smarty\\Template\\Compiled->render(Object(Smarty\\Template))
+#10 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(655): Smarty\\Template->render(false, 1)
+#11 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(594): Smarty\\Template->_execute(1)
+#12 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Smarty.php(2135): Smarty\\Template->display()
+#13 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(94): Smarty\\Smarty->display('2fa_login.tpl')
+#14 {main}"}
+[2025-05-13T14:35:16.229401+02:00] CRITICAL: Uncaught Exception: Syntax error in template "file:2fa_login.tpl"  on line 11 "{if isset(\$flash)}"  - Unexpected "\", expected one of: "","" , ")" {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\templates\\2fa_login.tpl","line":11,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3071): Smarty\\Compiler\\Template->trigger_template_error()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3132): Smarty\\Parser\\TemplateParser->yy_syntax_error(3, '\\\\')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(1268): Smarty\\Parser\\TemplateParser->doParse(3, '\\\\')
+#3 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(435): Smarty\\Compiler\\Template->doCompile('{extends file=\"...', true)
+#4 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(359): Smarty\\Compiler\\Template->compileTemplateSource(Object(Smarty\\Template))
+#5 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(213): Smarty\\Compiler\\Template->compileTemplate(Object(Smarty\\Template))
+#6 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(190): Smarty\\Template\\Compiled->doCompile(Object(Smarty\\Template))
+#7 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(143): Smarty\\Template\\Compiled->compileAndWrite(Object(Smarty\\Template))
+#8 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(101): Smarty\\Template\\Compiled->compileAndLoad(Object(Smarty\\Template))
+#9 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(180): Smarty\\Template\\Compiled->render(Object(Smarty\\Template))
+#10 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(655): Smarty\\Template->render(false, 1)
+#11 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(594): Smarty\\Template->_execute(1)
+#12 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Smarty.php(2135): Smarty\\Template->display()
+#13 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(96): Smarty\\Smarty->display('2fa_login.tpl')
+#14 {main}"}
+[2025-05-13T14:36:03.261924+02:00] ERROR: PHP Error [2] in C:\xampp\htdocs\www\IKSY2\public\2fa_prompt.php at line 30: Undefined variable $monolog 
+[2025-05-13T14:36:03.262649+02:00] CRITICAL: Uncaught Exception: MonologLoggerAdapter::__construct(): Argument #1 ($logger) must be of type Monolog\Logger, null given, called in C:\xampp\htdocs\www\IKSY2\public\2fa_prompt.php on line 30 {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\src\\MonologLoggerAdapter.php","line":7,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(30): MonologLoggerAdapter->__construct(NULL)
+#1 {main}"}
+[2025-05-13T14:36:44.759243+02:00] CRITICAL: Uncaught Exception: Syntax error in template "file:2fa_login.tpl"  on line 11 "{if isset(\$flash)}"  - Unexpected "\", expected one of: "","" , ")" {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\templates\\2fa_login.tpl","line":11,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3071): Smarty\\Compiler\\Template->trigger_template_error()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Parser\\TemplateParser.php(3132): Smarty\\Parser\\TemplateParser->yy_syntax_error(3, '\\\\')
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(1268): Smarty\\Parser\\TemplateParser->doParse(3, '\\\\')
+#3 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(435): Smarty\\Compiler\\Template->doCompile('{extends file=\"...', true)
+#4 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Compiler\\Template.php(359): Smarty\\Compiler\\Template->compileTemplateSource(Object(Smarty\\Template))
+#5 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(213): Smarty\\Compiler\\Template->compileTemplate(Object(Smarty\\Template))
+#6 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(190): Smarty\\Template\\Compiled->doCompile(Object(Smarty\\Template))
+#7 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(143): Smarty\\Template\\Compiled->compileAndWrite(Object(Smarty\\Template))
+#8 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template\\Compiled.php(101): Smarty\\Template\\Compiled->compileAndLoad(Object(Smarty\\Template))
+#9 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(180): Smarty\\Template\\Compiled->render(Object(Smarty\\Template))
+#10 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(655): Smarty\\Template->render(false, 1)
+#11 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Template.php(594): Smarty\\Template->_execute(1)
+#12 C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\smarty\\smarty\\src\\Smarty.php(2135): Smarty\\Template->display()
+#13 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(96): Smarty\\Smarty->display('2fa_login.tpl')
+#14 {main}"}
+[2025-05-13T14:41:01.153848+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:41:04.633366+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:41:17.385096+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:41:24.537128+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:41:36.333004+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:41:45.341646+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:46:22.621788+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(47): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:46:42.106383+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(47): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:46:53.098531+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(47): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:46:55.057172+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:47:05.507024+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(47): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:48:45.230588+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:48:57.277874+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:49:05.157815+02:00] CRITICAL: Uncaught Exception: This HiddenString object cannot be inlined as a string. {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\vendor\\paragonie\\hidden-string\\src\\HiddenString.php","line":151,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\crypto.inc.php(74): ParagonIE\\HiddenString\\HiddenString->__toString()
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(47): decryptData('MUIFAFYr9DuYOxI...')
+#2 {main}"}
+[2025-05-13T14:53:21.317746+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:53:31.132977+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:53:34.488875+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T14:53:35.109856+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:53:38.863607+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:57:02.217713+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:57:11.590081+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T14:57:22.886183+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:07:05.102078+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:07:17.785016+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:07:22.658475+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:07:31.842123+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:07:39.495065+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:08:26.684112+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:08:33.733617+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:14:38.975546+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:14:51.198018+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:21:25.052273+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:21:38.454488+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:21:44.561359+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:22:12.778826+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:22:18.203277+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:24:53.715714+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:25:05.374597+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:36:43.433706+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:36:47.225921+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T15:36:48.224564+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:37:00.451609+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:39:11.301207+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:39:35.480162+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:47:24.296173+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:47:35.322727+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:51:37.915281+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:51:41.549535+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T15:51:41.766335+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:51:53.936787+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:51:56.260223+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:52:10.143763+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:52:24.259477+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:52:39.211361+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:52:45.498646+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:56:55.316463+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:57:06.492283+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T15:58:59.415567+02:00] CRITICAL: Uncaught Exception: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for pav050.hs-bochum.de failed: Der angegebene Host ist unbekannt.  {"file":"C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php","line":53,"trace":"#0 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php(53): PDO->__construct('mysql:host=pav0...', 'iksy2_lernmater...', Object(SensitiveParameterValue), Array)
+#1 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php(89): DbFunctions::db_connect()
+#2 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php(101): DbFunctions::fetchOne('\\n            SE...', Array)
+#3 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\db.inc.php(334): DbFunctions::fetchValue('\\n            SE...', Array)
+#4 C:\\xampp\\htdocs\\www\\IKSY2\\includes\\2fa.inc.php(25): DbFunctions::isTwoFAEnabled('kevin')
+#5 C:\\xampp\\htdocs\\www\\IKSY2\\public\\2fa_prompt.php(14): require_once('C:\\\\xampp\\\\htdocs...')
+#6 {main}"}
+[2025-05-13T16:04:31.614575+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:04:41.471504+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:04:44.826510+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:04:46.018521+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:04:49.572452+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:04:52.698805+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:05:07.029742+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:05:09.208073+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:05:50.932535+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:06:00.096071+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:12:45.438522+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:12:52.776501+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:13:12.430928+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:13:19.676455+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:13:19.886194+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:13:26.481777+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:13:41.512341+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:13:51.868827+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:13:52.082061+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:14:14.373634+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:14:24.596087+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:16:56.568450+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:16:59.099074+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:17:08.824609+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:18:01.474666+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:18:16.550686+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:18:16.768265+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:18:42.357477+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:18:49.309867+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:18:49.526290+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:18:59.832614+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:19:00.948675+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:19:46.323234+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:20:56.275390+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:20:56.495360+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:21:50.119819+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:26:56.028148+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:27:18.090245+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:27:18.309354+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:27:22.341994+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:27:38.421469+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:27:38.681667+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:27:40.233283+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:27:40.460750+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:30:23.182067+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:30:36.969716+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:30:52.177425+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:30:52.386339+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:30:57.371658+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:30:57.593114+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:30:59.967581+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:31:00.176610+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:32:06.902412+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:32:26.774117+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:32:26.998238+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:33:03.254505+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:37:50.798511+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:37:51.512100+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:38:00.944795+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:38:09.210886+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:38:13.326217+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:38:21.906722+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:38:28.823494+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:39:59.348773+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:39:59.552918+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:40:03.374532+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:40:09.215493+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:40:17.941542+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:40:18.720970+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:40:22.966143+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:40:23.065505+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:40:24.729805+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:40:26.995050+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:40:31.742725+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:40:31.852608+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:40:36.898718+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:44:39.312448+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:44:39.526799+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:44:42.133080+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:44:48.050675+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:45:05.271361+02:00] ERROR: PHP Error [8] in C:\xampp\htdocs\www\IKSY2\public\dashboard.php at line 7: session_start(): Ignoring session_start() because a session is already active 
+[2025-05-13T16:45:05.481952+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 
+[2025-05-13T16:45:13.104839+02:00] ERROR: PHP Error [8192] in C:\xampp\htdocs\www\IKSY2\vendor\smarty\smarty\src\Extension\DefaultExtension.php at line 291: Function strftime() is deprecated 

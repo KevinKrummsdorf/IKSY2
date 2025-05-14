@@ -1,0 +1,11 @@
+RewriteEngine On
+RewriteBase /IKSY2/public/
+
+# 1) Ausnahme: /contact (ohne .php) auf contact.php mappen
+RewriteRule ^contact/?$ contact.php [QSA,L]
+
+# 2) Catch-All: alle anderen Anfragen auf index.php, außer echte Dateien/Ordner
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(?!index\.php$) index.php [QSA,L]
+

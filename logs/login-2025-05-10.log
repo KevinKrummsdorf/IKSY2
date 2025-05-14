@@ -1,0 +1,7 @@
+[2025-05-10T12:25:01.048960+02:00] INFO: User logged in successfully {"ip":"::*","username_or_email":"kevin"}
+[2025-05-10T12:33:36.031633+02:00] INFO: User logged in successfully {"ip":"::*","username_or_email":"kevin"}
+[2025-05-10T15:45:17.247134+02:00] ERROR: Unerwarteter Fehler bei Login {"error":"SQLSTATE[HY093]: Invalid parameter number"}
+[2025-05-10T15:46:52.567285+02:00] ERROR: Unerwarteter Fehler bei Login {"error":"SQLSTATE[HY093]: Invalid parameter number"}
+[2025-05-10T15:47:52.641155+02:00] INFO: User logged in successfully {"ip":"::*","identifier":"kevin"}
+[2025-05-10T15:51:54.503226+02:00] INFO: User logged in successfully {"ip":"::*","identifier":"kevin"}
+[2025-05-10T16:11:53.118458+02:00] ERROR: Unerwarteter Fehler bei Login {"error":"Call to undefined function insertLoginLog()"}
