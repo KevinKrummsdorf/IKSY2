@@ -290,7 +290,6 @@ class DbFunctions
             ':succ'   => $success ? 1 : 0,
             ':reason' => $reason,
         ], false);
-<<<<<<< HEAD
     }
 
         /**
@@ -346,8 +345,6 @@ class DbFunctions
             WHERE username = :username
         ';
         self::execute($sql, [':username' => $username]);
-=======
->>>>>>> 4e0e75f0651890aeaabe1b48031e861e3f06d2e6
     }
 }
 
