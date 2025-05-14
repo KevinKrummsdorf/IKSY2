@@ -46,7 +46,6 @@
 
     <h3 class="mt-4">2.3 Cookies</h3>
     <p>Wir verwenden Cookies zur Optimierung der Nutzererfahrung. Sie können diese im Browser deaktivieren.</p>
-<<<<<<< HEAD
 
     <h3 class="mt-4">2.4 Google reCAPTCHA</h3>
     <p>
@@ -87,33 +86,6 @@
   </section>
 
   <section class="mt-4">
-=======
-  </section>
-
-  <section class="mt-4">
-    <h2>3. Ihre Rechte</h2>
-    <p>Sie haben gemäß DSGVO insbesondere folgende Rechte:</p>
-    <ul>
-      <li>Auskunft (Art. 15 DSGVO)</li>
-      <li>Berichtigung (Art. 16 DSGVO)</li>
-      <li>Löschung (Art. 17 DSGVO)</li>
-      <li>Einschränkung der Verarbeitung (Art. 18 DSGVO)</li>
-      <li>Datenübertragbarkeit (Art. 20 DSGVO)</li>
-      <li>Widerspruch (Art. 21 DSGVO)</li>
-      <li>Beschwerde bei einer Aufsichtsbehörde (Art. 77 DSGVO)</li>
-    </ul>
-  </section>
-
-  <section class="mt-4">
-    <h2>4. Datensicherheit</h2>
-    <p>
-      Wir treffen angemessene technische und organisatorische Maßnahmen
-      zum Schutz Ihrer Daten vor Verlust, Missbrauch oder unbefugtem Zugriff.
-    </p>
-  </section>
-
-  <section class="mt-4">
->>>>>>> 4e0e75f0651890aeaabe1b48031e861e3f06d2e6
     <h2>5. Änderungen dieser Datenschutzerklärung</h2>
     <p>
       Diese Datenschutzerklärung kann jederzeit angepasst werden,

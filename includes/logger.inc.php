@@ -4,12 +4,8 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Formatter\LineFormatter;
 
 define('LOG_DIR', __DIR__ . '/../logs');
-<<<<<<< HEAD
 global $config;
 $debug   = $config['log']['debug'] ?? false;
-=======
-$debug = $config['log']['debug'] ?? false;
->>>>>>> 4e0e75f0651890aeaabe1b48031e861e3f06d2e6
 $logDays = $config['log']['log_days'] ?? 30;
 
 function getLogger(string $channel): Logger {

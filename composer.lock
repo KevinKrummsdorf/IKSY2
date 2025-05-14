@@ -659,7 +659,6 @@
             "time": "2024-09-11T13:17:53+00:00"
         },
         {
-<<<<<<< HEAD
             "name": "robthree/twofactorauth",
             "version": "1.8.0",
             "source": {
@@ -739,17 +738,6 @@
             },
             "dist": {
                 "type": "zip",
-=======
-            "name": "smarty/smarty",
-            "version": "v5.5.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/smarty-php/smarty.git",
-                "reference": "372f7cf41a6e2a9ca2e7253bc5f5c4f38df25a63"
-            },
-            "dist": {
-                "type": "zip",
->>>>>>> 4e0e75f0651890aeaabe1b48031e861e3f06d2e6
                 "url": "https://api.github.com/repos/smarty-php/smarty/zipball/372f7cf41a6e2a9ca2e7253bc5f5c4f38df25a63",
                 "reference": "372f7cf41a6e2a9ca2e7253bc5f5c4f38df25a63",
                 "shasum": ""
