@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
 
-// ✅ Weiterleitung auch bei gesetztem Flash, wenn 2FA vollständig bestätigt ist
+// ✅ Weiterleitung bei erfolgreichem Login + 2FA
 if (
     isset($_SESSION['user_id']) &&
     ($_SESSION['2fa_passed'] ?? false) === true
@@ -12,10 +12,16 @@ if (
     exit;
 }
 
-// Flash anzeigen, wenn vorhanden
+// Flash anzeigen
 if (isset($_SESSION['flash'])) {
     $smarty->assign('flash', $_SESSION['flash']);
     unset($_SESSION['flash']);
+}
+
+// Optionales Modal anzeigen (z. B. nach Fehlerseite)
+$show = $_GET['show'] ?? null;
+if (in_array($show, ['login', 'register'], true)) {
+    $smarty->assign('show_modal', $show);
 }
 
 $smarty->display('index.tpl');

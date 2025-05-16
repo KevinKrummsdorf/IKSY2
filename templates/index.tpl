@@ -21,4 +21,23 @@
     </section>
   </section>
 </div>
+{if isset($show_modal)}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const targetModalId = {
+            login: 'loginModal',
+            register: 'registerModal'
+        }['{$show_modal|escape}'];
+
+        if (targetModalId) {
+            const modalElement = document.getElementById(targetModalId);
+            if (modalElement) {
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+            }
+        }
+    });
+</script>
+{/if}
+
 {/block}

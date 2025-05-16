@@ -75,12 +75,10 @@ Passwort = Acces Key
 [phpdotenv](https://github.com/vlucas/phpdotenv)    
 
 [Smarty](https://github.com/smarty-php/smarty)
-  
-[TwoFactorAuth](https://github.com/RobThree/TwoFactorAuth)
 
 # Verwendete Mediaquellen  
 [mixkit](https://mixkit.co)
 
 # Verwendete APIs
 [Google reCaptcha](https://cloud.google.com/security/products/recaptcha)  
-[Google Fronts](https://fonts.google.com/icons) (lokal eingebunden)
+[Google Fronts](https://fonts.google.com/icons)

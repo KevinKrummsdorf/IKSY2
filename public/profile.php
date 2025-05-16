@@ -6,8 +6,8 @@ require_once __DIR__ . '/../includes/config.inc.php';
 
 // Login-Schutz
 if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
-    header('Location: index.php');
-    exit;
+    $reason = urlencode("Du musst eingeloggt sein, um dein Profil zu sehen.");
+    header("Location: /error/403?reason={$reason}&action=both");    exit;
 }
 
 $username = $_SESSION['username'];

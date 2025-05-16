@@ -6,9 +6,12 @@ session_start();
 require_once __DIR__ . '/../includes/config.inc.php';
 
 if (empty($_SESSION['user_id'])) {
-    header('Location: index.php');
+    $reason = urlencode("Du musst eingeloggt sein, um Dateien hochladen zu können.");
+    header("Location: /error/403?reason={$reason}&action=both");
     exit;
 }
+
+
 
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
