@@ -1,0 +1,13 @@
+sudo a2enmod rewrite
+sudo systemctl restart apache2
+apache2ctl -M | grep rewrite
+=> rewrite_module (shared)
+
+sudo nano /etc/apache2/sites-available/000-default.conf
+
+<Directory /var/www/html/iksy05/IKSY2/public>
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+</Directory>
+

@@ -27,6 +27,6 @@
 
 
 
-        <a href="/" class="btn btn-link d-block mt-3">Zur Startseite</a>
+        <a href="/iksy05/IKSY2/public/index.php" class="btn btn-link d-block mt-3">Zur Startseite</a>
     </div>
 {/block}

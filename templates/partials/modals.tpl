@@ -16,10 +16,15 @@
                    required autocomplete="username" aria-describedby="login-help">
           </div>
 
-          <div class="mb-3">
+          <div class="mb-3 pass-field">
             <label for="loginPassword" class="form-label">Passwort</label>
-            <input type="password" class="form-control" id="loginPassword" name="password"
-                   required autocomplete="current-password">
+            <div class="input-group">
+              <input type="password" class="form-control" id="loginPassword" name="password"
+                     required autocomplete="current-password">
+              <span class="input-group-text" id="toggleLoginPassword" style="cursor: pointer;">
+                <span class="material-symbols-outlined">visibility</span>
+              </span>
+            </div>
           </div>
 
           <input type="hidden" name="recaptcha_token" id="login-recaptcha-token">
@@ -54,22 +59,32 @@
             <input type="email" class="form-control" id="email" name="email" required autocomplete="email">
           </div>
 
-<div class="mb-3 pass-field">
-  <label for="password" class="form-label">Passwort</label>
-  <input type="password" class="form-control" id="password" name="password" required>
-  <ul class="requirement-list mb-3">
-    <li data-requirement="minlength">Mindestens 8 Zeichen</li>
-    <li data-requirement="maxlength">Maximal 128 Zeichen</li>
-    <li data-requirement="number">Mindestens eine Zahl</li>
-    <li data-requirement="lowercase">Kleinbuchstabe</li>
-    <li data-requirement="uppercase">Großbuchstabe</li>
-    <li data-requirement="special">Sonderzeichen</li>
-  </ul>
-</div>
+          <div class="mb-3 pass-field">
+            <label for="password" class="form-label">Passwort</label>
+            <div class="input-group">
+              <input type="password" class="form-control" id="password" name="password" required>
+              <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+                <span class="material-symbols-outlined">visibility</span>
+              </span>
+            </div>
+            <ul class="requirement-list mb-3">
+              <li data-requirement="minlength">Mindestens 8 Zeichen</li>
+              <li data-requirement="maxlength">Maximal 128 Zeichen</li>
+              <li data-requirement="number">Mindestens eine Zahl</li>
+              <li data-requirement="lowercase">Kleinbuchstabe</li>
+              <li data-requirement="uppercase">Großbuchstabe</li>
+              <li data-requirement="special">Sonderzeichen</li>
+            </ul>
+          </div>
 
           <div class="mb-3 pass-field">
             <label for="password_confirm" class="form-label">Passwort bestätigen</label>
-            <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+            <div class="input-group">
+              <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+              <span class="input-group-text" id="togglePasswordConfirm" style="cursor: pointer;">
+                <span class="material-symbols-outlined">visibility</span>
+              </span>
+            </div>
           </div>
 
           <input type="hidden" name="recaptcha_token" id="register-recaptcha-token">
@@ -83,3 +98,34 @@
     </div>
   </div>
 </div>
+
+<script>
+  // Funktion zum Umschalten der Passwortsichtbarkeit
+  function togglePasswordVisibility(passwordFieldId, toggleIconId) {
+    const passwordField = document.getElementById(passwordFieldId);
+    const toggleIcon = document.getElementById(toggleIconId).querySelector('span');
+
+    if (passwordField.type === 'password') {
+      passwordField.type = 'text';
+      toggleIcon.textContent = 'visibility_off'; // Ändert das Icon zu "visibility_off"
+    } else {
+      passwordField.type = 'password';
+      toggleIcon.textContent = 'visibility'; // Setzt das Icon auf "visibility"
+    }
+  }
+
+  // Event Listener für das Umschalten der Passwortsichtbarkeit im Login Modal
+  document.getElementById('toggleLoginPassword').addEventListener('click', function() {
+    togglePasswordVisibility('loginPassword', 'toggleLoginPassword');
+  });
+
+  // Event Listener für das Umschalten der Passwortsichtbarkeit im Registration Modal
+  document.getElementById('togglePassword').addEventListener('click', function() {
+    togglePasswordVisibility('password', 'togglePassword');
+  });
+
+  // Event Listener für das Umschalten der Passwortsichtbarkeit im Confirm Password Feld
+  document.getElementById('togglePasswordConfirm').addEventListener('click', function() {
+    togglePasswordVisibility('password_confirm', 'togglePasswordConfirm');
+  });
+</script>
