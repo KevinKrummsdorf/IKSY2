@@ -1,19 +1,22 @@
 <?php
 
 declare(strict_types=1);
+    require_once __DIR__ . '/../includes/logger.inc.php';
 
 class DbFunctions
 {
     private static ?PDO $pdo = null;
+    private static ?MonologLoggerAdapter $log = null;
 
-    /**
-     * Fehlerprotokollierung
-     */
-    public function log_error(string $message): void
+    private static function getLogger(): MonologLoggerAdapter
     {
-        $logFile = __DIR__ . '/../logs/db_error.log';
-        error_log('[' . date('Y-m-d H:i:s') . '] ' . $message . PHP_EOL, 3, $logFile);
+        if (self::$log === null) {
+            $monolog = getLogger('db');
+            self::$log = new MonologLoggerAdapter($monolog);
+        }
+        return self::$log;
     }
+
 
     /**
      * Singleton-DB-Verbindung über Konfigurationsarray
@@ -25,14 +28,17 @@ class DbFunctions
         }
 
         global $config;
-        $db = $config['db'];
-
+        $db = $config['db'] ?? null;
         if (
+            empty($db) ||
             empty($db['host']) ||
             empty($db['name']) ||
             empty($db['user']) ||
             empty($db['pass'])
         ) {
+            self::getLogger()->error('Fehlende DB-Konfiguration', [
+                'config' => $db,
+            ]);
             throw new RuntimeException('Fehlende Datenbank-Konfiguration in $config[\'db\'].');
         }
 
@@ -53,7 +59,11 @@ class DbFunctions
             self::$pdo = new PDO($dsn, $db['user'], $db['pass'], $options);
             return self::$pdo;
         } catch (PDOException $e) {
-            (new self())->log_error('DB-Verbindung fehlgeschlagen: ' . $e->getMessage());
+            self::getLogger()->error('DB-Verbindungsfehler', [
+                'dsn' => $dsn,
+                'user' => $db['user'],
+                'error' => $e->getMessage(),
+            ]);
 
             http_response_code(500);
             echo json_encode([
@@ -75,6 +85,11 @@ class DbFunctions
         $stmt = $pdo->prepare($query);
 
         if (!$stmt->execute($params)) {
+            self::getLogger()->error('Fehler beim Ausführen des Statements', [
+                'query' => $query,
+                'params' => $params,
+                'errorInfo' => $stmt->errorInfo(),
+            ]);
             throw new RuntimeException('Fehler beim Ausführen des Statements.');
         }
 
@@ -129,6 +144,12 @@ class DbFunctions
             VALUES
                (:stored_name, :title, :description, :course)
         ';
+        self::getLogger()->info('INSERT Upload', [
+            'stored_name' => $storedName,
+            'title'       => $title,
+            'description' => $description,
+            'course'      => $course,
+        ]);
         return self::execute($sql, [
             ':stored_name' => $storedName,
             ':title'       => $title,
@@ -148,6 +169,10 @@ class DbFunctions
             VALUES
                (:user_id, :stored_name)
         ';
+        self::getLogger()->info('INSERT Upload Log', [
+            'user_id'     => $userId,
+            'stored_name' => $storedName,
+        ]);
         return self::execute($sql, [
             ':user_id'     => $userId,
             ':stored_name' => $storedName,
@@ -166,6 +191,9 @@ class DbFunctions
             WHERE vt.verification_token = :token
             LIMIT 1
         ';
+        self::getLogger()->info('Fetch Verification User', [
+            'token' => $token,
+        ]);
         return self::fetchOne($sql, [':token' => $token]);
     }
 
@@ -175,6 +203,9 @@ class DbFunctions
         public static function verifyUser(int $userId): int
     {
         $sql = 'UPDATE users SET is_verified = TRUE WHERE id = :id';
+        self::getLogger()->info('Verify User', [
+            'user_id' => $userId,
+        ]);
         return self::execute($sql, [':id' => $userId], false);
     }
 
@@ -184,6 +215,9 @@ class DbFunctions
     public static function deleteVerificationToken(int $userId): int
     {
         $sql = 'DELETE FROM verification_tokens WHERE user_id = :id';
+        self::getLogger()->info('Delete Verification Token', [
+            'user_id' => $userId,
+        ]);
         return self::execute($sql, [':id' => $userId], false);
     }
 
@@ -230,6 +264,11 @@ class DbFunctions
             INSERT INTO users (username, email, password_hash, is_verified)
             VALUES (:u, :e, :p, 0)
         ';
+        self::getLogger()->info('INSERT User', [
+            'username' => $username,
+            'email'    => $email,
+            'password' => $passwordHash,
+        ]);
         self::execute($sql, [
             ':u' => $username,
             ':e' => $email,
@@ -245,6 +284,10 @@ class DbFunctions
             INSERT INTO user_roles (user_id, role_id)
             VALUES (:uid, :rid)
         ';
+        self::getLogger()->info('Assign Role', [
+            'user_id' => $userId,
+            'role_id' => $roleId,
+        ]);
         return self::execute($sql, [
             ':uid' => $userId,
             ':rid' => $roleId,
@@ -264,6 +307,9 @@ class DbFunctions
             WHERE u.username = :identUser OR u.email = :identEmail
             LIMIT 1
         ';
+        self::getLogger()->info('Fetch User by Identifier', [
+            'input' => $input,
+        ]);
         return self::fetchOne($sql, [
             ':identUser'  => $input,
             ':identEmail' => $input,
@@ -274,6 +320,9 @@ class DbFunctions
     public static function updateLastLogin(int $userId): int
     {
         $sql = 'UPDATE users SET last_login = NOW() WHERE id = :id';
+        self::getLogger()->info('Update Last Login', [
+            'user_id' => $userId,
+        ]);
         return self::execute($sql, [':id' => $userId], false);
     }
 
@@ -284,6 +333,12 @@ class DbFunctions
             INSERT INTO login_logs (user_id, ip_address, success, reason)
             VALUES (:uid, :ip, :succ, :reason)
         ';
+        self::getLogger()->info('INSERT Login Log', [
+            'user_id' => $userId,
+            'ip_address' => $ipAddress,
+            'success' => $success,
+            'reason' => $reason,
+        ]);
         return self::execute($sql, [
             ':uid'    => $userId,
             ':ip'     => $ipAddress,
@@ -302,6 +357,9 @@ class DbFunctions
             SET twofa_secret = :secret, is_twofa_enabled = 1
             WHERE username = :username
         ';
+        self::getLogger()->info('Store 2FA Secret', [
+            'username' => $username
+        ]);        
         self::execute($sql, [
             ':secret'   => $encryptedSecret,
             ':username' => $username,
@@ -318,6 +376,9 @@ class DbFunctions
             FROM users 
             WHERE username = :username AND is_twofa_enabled = 1
         ';
+        self::getLogger()->info('Fetch 2FA Secret', [
+            'username' => $username,
+        ]);
         return self::fetchValue($sql, [':username' => $username]);
     }
 
@@ -331,6 +392,9 @@ class DbFunctions
             FROM users 
             WHERE username = :username
         ';
+        self::getLogger()->info('Check 2FA Enabled', [
+            'username' => $username,
+        ]);
         return (bool) self::fetchValue($sql, [':username' => $username]);
     }
 
@@ -344,6 +408,9 @@ class DbFunctions
             SET twofa_secret = NULL, is_twofa_enabled = 0
             WHERE username = :username
         ';
+        self::getLogger()->info('Disable 2FA', [
+            'username' => $username,
+        ]);
         self::execute($sql, [':username' => $username]);
     }
 }
