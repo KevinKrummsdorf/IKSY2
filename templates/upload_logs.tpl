@@ -8,7 +8,6 @@
   <p>Benutzer: {$username} | Rolle: {if $isAdmin}Administrator{elseif $isMod}Moderator{else}Benutzer{/if}</p>
 
   {if $upload_logs|@count > 0}
-    {assign var="startIndex" value=($currentPage-1)*25}
     <div class="table-responsive shadow-sm">
       <table class="table table-striped table-bordered align-middle">
         <thead class="table-dark text-center">
@@ -20,9 +19,9 @@
           </tr>
         </thead>
         <tbody>
-          {foreach $upload_logs as $log name=logsLoop}
+          {foreach $upload_logs as $index => $log}
             <tr>
-              <td>{$smarty.foreach.logs.index+1 + ($currentPage-1)*25}</td>
+              <td>{$index + 1 + (($currentPage - 1) * 25)}</td>
               <td>{$log.user_id}</td>
               <td>{$log.stored_name|escape}</td>
               <td>{$log.uploaded_at}</td>

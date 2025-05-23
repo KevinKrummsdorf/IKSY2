@@ -15,9 +15,6 @@ if (! $isAdmin) {
     exit('Zugriff verweigert.');
 }
 
-// DB-Verbindung
-$pdo = DbFunctions::db_connect();
-
 // Pagination-Parameter
 $currentPage = isset($_GET['page']) && is_numeric($_GET['page'])
     ? max(1, (int)$_GET['page'])
@@ -25,12 +22,10 @@ $currentPage = isset($_GET['page']) && is_numeric($_GET['page'])
 $perPage = 25;
 $offset  = ($currentPage - 1) * $perPage;
 
-// Gesamtanzahl und Gesamtseiten
-$totalCount = countCaptchaLogs($pdo);
+// Captcha-Logs über DbFunctions abrufen
+$totalCount = DbFunctions::countCaptchaLogs();
 $totalPages = (int)ceil($totalCount / $perPage);
-
-// Logs der aktuellen Seite laden
-$logs = getCaptchaLogsPage($pdo, $perPage, $offset);
+$logs       = DbFunctions::getCaptchaLogsPage($perPage, $offset);
 
 // Daten an Smarty übergeben
 $smarty->assign('captcha_logs', $logs);

@@ -18,7 +18,7 @@ $page = $_GET['page'] ?? 'start';
 
 if (!isset($validPages[$page])) {
     $reason = urlencode("Die Seite '$page' existiert nicht.");
-    header("Location: {$config['base_url']}/error/404?reason={$reason}");
+    header("Location: /error/404?reason={$reason}");
     exit;
 }
 

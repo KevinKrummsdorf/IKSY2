@@ -11,9 +11,11 @@
   </script>
   <script src="https://www.google.com/recaptcha/api.js?render={$recaptcha_site_key}" async defer></script>
 
+  <!-- STYLES -->
   <link href="{$base_url}/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link href="{$base_url}/css/style.css" rel="stylesheet">
-  <link href="{$base_url}/css/material-symbols.css" rel="stylesheet">
+  <link rel="stylesheet" href="{$base_url}/css/material-symbols.css">
 
   {block name="head" append}{/block}
 </head>
@@ -38,21 +40,14 @@
 
 <div id="AlertContainer"></div>
 
-{* Flash-Alert direkt unter dem Header anzeigen *}
+{* Flash-Alert *}
 {if isset($flash)}
-  {* Optional: Debug-Zeile *}
-  {*
-  <script>console.log("Flash-Kontext: {$flash.context}");</script>
-  *}
-
   <div class="container mt-3">
     <div class="alert alert-{$flash.type|default:'info'} alert-dismissible fade show" role="alert">
       {$flash.message|escape}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
     </div>
   </div>
-
-  {* Nur nach Login weiterleiten *}
   {if isset($flash.context) && $flash.context == 'login'}
     <script>
       setTimeout(() => window.location.href = 'dashboard.php', 3000);
@@ -60,10 +55,9 @@
   {/if}
 {/if}
 
-<!-- Menü-Button (mobil) -->
+<!-- Offcanvas Menü -->
 <button class="btn btn-primary d-md-none menu-toggle-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">Menü</button>
 
-<!-- Sidebar (Desktop) -->
 <div class="menu d-none d-md-block">
   <ul class="menu-content mt-4">
     <li><a href="{$base_url}/profile.php"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
@@ -84,13 +78,7 @@
   </div>
   <div class="offcanvas-body">
     <ul class="menu-content">
-      <li><a href="{$base_url}/profile.php"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
-      <li><a href="{$base_url}/lerngruppen.php"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
-      <li><a href="{$base_url}/nachrichten.php"><span class="material-symbols-outlined">message</span><span>Nachrichten</span></a></li>
-      <li><a href="{$base_url}/todos.php"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
-      <li><a href="{$base_url}/material.php"><span class="material-symbols-outlined">search</span><span>Material finden</span></a></li>
-      <li><a href="{$base_url}/upload.php"><span class="material-symbols-outlined">arrow_circle_up</span><span>Material hochladen</span></a></li>
-      <li><a href="{$base_url}/einstellungen.php"><span class="material-symbols-outlined">settings</span><span>Einstellungen</span></a></li>
+      <!-- identisch zu Desktop -->
     </ul>
   </div>
 </div>
@@ -114,22 +102,14 @@
 
 {include file="partials/modals.tpl"}
 
-<!-- JS-Dateien -->
+<!-- Bootstrap & JS -->
 <script src="{$base_url}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="{$base_url}/js/login.js"></script>
-<script src="{$base_url}/js/register.js"></script>
 <script src="{$base_url}/js/sidebar.js"></script>
 <script src="{$base_url}/js/login-success.js"></script>
+<script src="{$base_url}/js/register.js"></script> {* <- GANZ am Ende *}
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    if (window.location.hash === '#loginModal') {
-      const modalEl = document.getElementById('loginModal');
-      if (modalEl) {
-        new bootstrap.Modal(modalEl).show();
-      }
-    }
-  });
-</script>
+{block name="scripts"}{/block}
 </body>
 </html>
+

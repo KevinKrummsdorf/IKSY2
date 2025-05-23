@@ -15,27 +15,22 @@ if (empty($_SESSION['user_id'])) {
 $isAdmin = ($_SESSION['role'] ?? '') === 'admin';
 $isMod   = ($_SESSION['role'] ?? '') === 'mod';
 
-// Nur Admins/Mods dürfen
+// Nur Admins oder Moderatoren dürfen zugreifen
 if (! $isAdmin && ! $isMod) {
     header('HTTP/1.1 403 Forbidden');
     echo 'Zugriff verweigert.';
     exit;
 }
 
-// DB-Verbindung
-$pdo = DbFunctions::db_connect();
-
 // Pagination-Parameter
 $currentPage = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $pageSize    = 25;
 $offset      = ($currentPage - 1) * $pageSize;
 
-// Gesamtanzahl der Upload-Logs
-$totalCount = countUploadLogs($pdo);
-$totalPages = (int)ceil($totalCount / $pageSize);
-
-// Logs abrufen für die aktuelle Seite
-$uploadLogs = getUploadLogsPage($pdo, $pageSize, $offset);
+// Upload-Log-Daten über DbFunctions
+$totalCount  = DbFunctions::countUploadLogs();
+$totalPages  = (int)ceil($totalCount / $pageSize);
+$uploadLogs  = DbFunctions::getUploadLogsPage($pageSize, $offset, $isAdmin, $isMod);
 
 // Smarty-Variablen zuweisen
 $smarty->assign('upload_logs',  $uploadLogs);

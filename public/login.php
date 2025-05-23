@@ -1,9 +1,7 @@
 <?php
 
 declare(strict_types=1);
-
 session_start();
-
 header('Content-Type: text/html; charset=utf-8');
 
 require_once __DIR__ . '/../includes/config.inc.php';
@@ -38,9 +36,26 @@ try {
         exit;
     }
 
-    // 2) Verifiziert?
+    $userId = (int)$user['id'];
+
+    // 2) Konto gesperrt?
+    if (DbFunctions::isAccountLocked($userId)) {
+        DbFunctions::insertLoginLog($userId, $maskedIp, false, 'account_locked');
+        $log->warning('Login attempt on locked account', [
+            'ip'   => $maskedIp,
+            'user' => $user['username'],
+        ]);
+        $_SESSION['flash'] = [
+            'type'    => 'danger',
+            'message' => 'Dein Account ist vorübergehend gesperrt. Bitte versuche es später erneut.',
+        ];
+        header('Location: index.php');
+        exit;
+    }
+
+    // 3) Verifiziert?
     if ((int)$user['is_verified'] !== 1) {
-        DbFunctions::insertLoginLog((int)$user['id'], $maskedIp, false, 'not_verified');
+        DbFunctions::insertLoginLog($userId, $maskedIp, false, 'not_verified');
         $log->warning('Login attempt with unverified account', [
             'ip'         => $maskedIp,
             'identifier' => $identifier,
@@ -53,13 +68,22 @@ try {
         exit;
     }
 
-    // 3) Passwort prüfen
+    // 4) Passwort prüfen
     if (!verifyPassword($password, $user['password_hash'])) {
-        DbFunctions::insertLoginLog((int)$user['id'], $maskedIp, false, 'wrong_password');
+        DbFunctions::insertLoginLog($userId, $maskedIp, false, 'wrong_password');
+        DbFunctions::updateFailedAttempts($userId);
+
         $log->warning('Login attempt with wrong password', [
             'ip'         => $maskedIp,
             'identifier' => $identifier,
         ]);
+
+        // Optional: direkt sperren ab X Fehlversuchen (z. B. 5)
+        $attempts = DbFunctions::fetchValue('SELECT failed_attempts FROM user_security WHERE user_id = :id', [':id' => $userId]);
+        if ($attempts >= 5) {
+            DbFunctions::lockAccount($userId, 15); // z. B. 15 Minuten Sperre
+        }
+
         $_SESSION['flash'] = [
             'type'    => 'danger',
             'message' => 'Falsches Passwort. Bitte versuche es erneut.',
@@ -68,12 +92,15 @@ try {
         exit;
     }
 
-    // 4) Wenn 2FA aktiviert, leite weiter zur 2FA-Bestätigung
+    // 5) Login erfolgreich – Fehlversuche zurücksetzen
+    DbFunctions::resetFailedAttempts($userId);
+
+    // 6) Wenn 2FA aktiviert, weiterleiten
     if (DbFunctions::isTwoFAEnabled($user['username'])) {
-        require_once __DIR__ . '/../includes/2fa.inc.php'; //nur Laden wenn 2FA aktiv
-        $_SESSION['2fa_user'] = $user['username'];
-        $_SESSION['user_id_pending'] = $user['id'];
-        $_SESSION['role_pending'] = $user['role'] ?? 'user';
+        require_once __DIR__ . '/../includes/2fa.inc.php';
+        $_SESSION['2fa_user']        = $user['username'];
+        $_SESSION['user_id_pending'] = $userId;
+        $_SESSION['role_pending']    = $user['role'] ?? 'user';
 
         $_SESSION['flash'] = [
             'type'    => 'info',
@@ -84,16 +111,16 @@ try {
         exit;
     }
 
-    // 5) Login erfolgreich: last_login updaten und Log schreiben
-    DbFunctions::updateLastLogin((int)$user['id']);
-    DbFunctions::insertLoginLog((int)$user['id'], $maskedIp, true);
+    // 7) Login erfolgreich: Zeit und Logs
+    DbFunctions::updateLastLogin($userId);
+    DbFunctions::insertLoginLog($userId, $maskedIp, true);
     $log->info('User logged in successfully', [
         'ip'         => $maskedIp,
         'identifier' => $identifier,
     ]);
 
-    // 6) Session setzen
-    $_SESSION['user_id']       = (int)$user['id'];
+    // 8) Session setzen
+    $_SESSION['user_id']       = $userId;
     $_SESSION['username']      = $user['username'];
     $_SESSION['role']          = $user['role'] ?? 'user';
     $_SESSION['2fa_passed']    = true;

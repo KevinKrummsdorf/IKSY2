@@ -7,7 +7,7 @@ require_once __DIR__ . '/../includes/config.inc.php';
 
 if (empty($_SESSION['user_id'])) {
     $reason = urlencode("Du musst eingeloggt sein, um Dateien hochladen zu können.");
-    header("Location: {$config['base_url']}/error/403?reason={$reason}&action=both");
+    header("Location: /error/403?reason={$reason}&action=both");
     exit;
 }
 

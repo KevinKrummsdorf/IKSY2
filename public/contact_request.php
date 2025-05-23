@@ -15,24 +15,19 @@ if (!in_array($role, ['admin', 'mod'], true)) {
     exit('Zugriff verweigert.');
 }
 
-// DB-Verbindung
-$pdo = DbFunctions::db_connect();
-
 // Pagination-Parameter
 $currentPage = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $perPage     = 25;
 $offset      = ($currentPage - 1) * $perPage;
 
-// Gesamtanzahl der Kontaktanfragen
-$totalCount  = countContactRequests($pdo);
-$totalPages  = (int)ceil($totalCount / $perPage);
-
-// Kontaktanfragen der aktuellen Seite laden
-$pageRequests = getContactRequestsPage($pdo, $perPage, $offset);
+// Gesamtanzahl & Kontaktanfragen über DbFunctions
+$totalCount     = DbFunctions::countContactRequests();
+$totalPages     = (int)ceil($totalCount / $perPage);
+$pageRequests   = DbFunctions::getContactRequestsPage($perPage, $offset);
 
 // Lösch-Handler
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
-    deleteContactRequest($pdo, (string)$_POST['delete_id']);
+    DbFunctions::deleteContactRequest((string)$_POST['delete_id']);
     header('Location: ' . $_SERVER['PHP_SELF'] . '?page=' . $currentPage);
     exit;
 }
