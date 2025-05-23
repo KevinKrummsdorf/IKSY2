@@ -2,6 +2,7 @@
 publicsecret-key.txt
 .env
 .cache_ggshield
+README.md
 
 # Ignoriere ein ganzes Verzeichnis
 /vendor/
