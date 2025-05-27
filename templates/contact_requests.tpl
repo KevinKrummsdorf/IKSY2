@@ -1,141 +1,113 @@
 {extends file="./layouts/layout.tpl"}
-
 {block name="title"}Kontaktanfragen{/block}
 
 {block name="content"}
 <div class="container mt-5">
   <h1>Kontaktanfragen</h1>
 
-  {if $contact_requests|@count > 0}
-    {assign var="perPage" value=25}
-    {assign var="startIndex" value=($currentPage - 1) * $perPage}
-
-    {*
-      Bootstrap-Alert für Löschbestätigung
-      und verstecktes Formular für den POST
-    *}
-    <div id="deleteAlert" class="alert alert-warning d-none align-items-center" role="alert">
-      <div class="flex-grow-1">
-        Möchten Sie diese Kontaktanfrage wirklich löschen?
-      </div>
-      <div>
-        <button type="button" id="confirmDelete" class="btn btn-sm btn-danger me-1">Löschen</button>
-        <button type="button" id="cancelDelete" class="btn btn-sm btn-secondary">Abbrechen</button>
-      </div>
-      <form id="deleteForm" method="post" class="d-none">
-        <input type="hidden" name="delete_id" id="delete_id">
-      </form>
+  {if isset($flash)}
+    <div class="alert alert-{$flash.type} alert-dismissible fade show mt-3" role="alert">
+      {$flash.message|escape}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-
-    <div class="table-responsive shadow-sm mt-4">
-      <table class="table table-bordered table-hover align-middle">
-        <thead class="table-dark text-center">
-          <tr>
-            <th>#</th>
-            <th>Kontakt-ID</th>
-            <th>Name</th>
-            <th>E-Mail</th>
-            <th>Betreff</th>
-            <th>Datum</th>
-            <th>Löschen</th>
-          </tr>
-        </thead>
-        <tbody>
-          {foreach $contact_requests as $req name=reqLoop}
-            <tr>
-              <td class="text-center">{$startIndex + $smarty.foreach.reqLoop.index + 1}</td>
-              <td><code>{$req.contact_id|escape}</code></td>
-              <td>{$req.name|escape}</td>
-              <td><a href="mailto:{$req.email|escape}">{$req.email|escape}</a></td>
-              <td>{$req.subject|escape}</td>
-              <td>{$req.created_at}</td>
-              <td class="text-center">
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-danger p-1 delete-btn"
-                  data-id="{$req.contact_id|escape}"
-                  data-page="{$currentPage}"
-                >
-                  <span class="material-symbols-outlined" style="vertical-align: middle;">
-                    delete
-                  </span>
-                </button>
-              </td>
-            </tr>
-          {/foreach}
-        </tbody>
-      </table>
-    </div>
-
-    {*
-      Pagination
-    *}
-    <nav aria-label="Seitennavigation" class="mt-4">
-      <ul class="pagination justify-content-center">
-        {if $currentPage > 1}
-          <li class="page-item">
-            <a class="page-link" href="contact_requests.php?page={$currentPage - 1}">Zurück</a>
-          </li>
-        {else}
-          <li class="page-item disabled"><span class="page-link">Zurück</span></li>
-        {/if}
-
-        {section name=pages loop=$totalPages}
-          {assign var="pageNum" value=$smarty.section.pages.index+1}
-          <li class="page-item {if $pageNum == $currentPage}active{/if}">
-            <a class="page-link" href="contact_requests.php?page={$pageNum}">{$pageNum}</a>
-          </li>
-        {/section}
-
-        {if $currentPage < $totalPages}
-          <li class="page-item">
-            <a class="page-link" href="contact_requests.php?page={$currentPage + 1}">Weiter</a>
-          </li>
-        {else}
-          <li class="page-item disabled"><span class="page-link">Weiter</span></li>
-        {/if}
-      </ul>
-    </nav>
-
-  {else}
-    <div class="alert alert-info mt-4">Keine Kontaktanfragen vorhanden.</div>
   {/if}
-</div>
 
+  <!-- Filterformular -->
+  <form class="row g-3 mt-3 mb-4" method="get" action="{$base_url}/contact_request.php">
+    <div class="col-md-3">
+      <label for="name" class="form-label">Name</label>
+      <input type="text" class="form-control" id="name" name="name" value="{$filters.name|escape}">
+    </div>
+    <div class="col-md-3">
+      <label for="email" class="form-label">E-Mail</label>
+      <input type="email" class="form-control" id="email" name="email" value="{$filters.email|escape}">
+    </div>
+    <div class="col-md-3">
+      <label for="subject" class="form-label">Betreff</label>
+      <input type="text" class="form-control" id="subject" name="subject" value="{$filters.subject|escape}">
+    </div>
+    <div class="col-md-3">
+      <label for="from" class="form-label">Von</label>
+      <input type="date" class="form-control" id="from" name="from" value="{$filters.from|escape}">
+    </div>
+    <div class="col-md-3">
+      <label for="to" class="form-label">Bis</label>
+      <input type="date" class="form-control" id="to" name="to" value="{$filters.to|escape}">
+    </div>
+    <div class="col-12 d-flex justify-content-end">
+      <button type="submit" class="btn btn-primary me-2">Filtern</button>
+      <a href="{$base_url}/contact_request.php" class="btn btn-outline-secondary me-2">Zurücksetzen</a>
+      <button type="submit" name="export" value="csv" class="btn btn-success">Exportieren als CSV</button>
+    </div>
+  </form>
+
+  <!-- Tabelle -->
+  {if $contact_requests|@count > 0}
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered align-middle table-striped">
+            <thead class="table-dark text-center">
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>E-Mail</th>
+                <th>Betreff</th>
+                <th>Nachricht</th>
+                <th>Status</th>
+                <th>Antworten</th>
+                <th>Aktionen</th>
+              </tr>
+            </thead>
+            <tbody>
+              {foreach $contact_requests as $index => $r}
+              <tr>
+                <td>{$index+1}</td>
+                <td>{$r.name|escape}</td>
+                <td>{$r.email|escape}</td>
+                <td>{$r.subject|escape}</td>
+                <td style="max-width: 250px;">{$r.message|truncate:200:"..."|escape}</td>
+
+                <!-- Status-Wechsel -->
+                <td>
+                  <form method="post" action="{$base_url}/contact_request.php" class="d-flex">
+                    <input type="hidden" name="status_contact_id" value="{$r.contact_id}">
+                    <select name="new_status" class="form-select form-select-sm me-2">
+                      <option value="offen" {if $r.status == 'offen'}selected{/if}>Offen</option>
+                      <option value="in_bearbeitung" {if $r.status == 'in_bearbeitung'}selected{/if}>In Bearbeitung</option>
+                      <option value="geschlossen" {if $r.status == 'geschlossen'}selected{/if}>Geschlossen</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-outline-primary">Speichern</button>
+                  </form>
+                </td>
+
+                <!-- Antwortformular -->
+                <td>
+                  <form method="post" action="{$base_url}/contact_request.php">
+                    <input type="hidden" name="reply_contact_id" value="{$r.contact_id}">
+                    <textarea name="reply_text" rows="2" class="form-control mb-2" placeholder="Antwort eingeben..." required></textarea>
+                    <button type="submit" class="btn btn-sm btn-outline-success w-100">Antwort senden</button>
+                  </form>
+                </td>
+
+                <!-- Weitere Aktionen -->
+                <td class="text-center">
+                  <span class="badge bg-info">{$r.status|capitalize}</span><br>
+                  <small>{$r.created_at|date_format:"%d.%m.%Y %H:%M"}</small>
+                </td>
+              </tr>
+              {/foreach}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {else}
+    <div class="alert alert-info mt-4">Keine Kontaktanfragen gefunden.</div>
+  {/if}
   <div class="mt-4">
     <a href="dashboard.php" class="btn btn-sm btn-primary">Zurück zum Dashboard</a>
   </div>
 
-{literal}
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const alertBox = document.getElementById('deleteAlert');
-    const confirmBtn = document.getElementById('confirmDelete');
-    const cancelBtn = document.getElementById('cancelDelete');
-    const deleteForm = document.getElementById('deleteForm');
-    const deleteInput = document.getElementById('delete_id');
-
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
-        const page = btn.getAttribute('data-page');
-
-        deleteForm.action = window.location.pathname + '?page=' + encodeURIComponent(page);
-        deleteInput.value = id;
-
-        alertBox.classList.remove('d-none');
-        alertBox.scrollIntoView({ behavior: 'smooth' });
-      });
-    });
-
-    cancelBtn.addEventListener('click', () => {
-      alertBox.classList.add('d-none');
-    });
-
-    confirmBtn.addEventListener('click', () => {
-      deleteForm.submit();
-    });
-  });
-</script>
-{/literal}
+</div>
 {/block}

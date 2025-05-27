@@ -20,12 +20,14 @@ if (
 $isAdmin = ($_SESSION['role'] ?? '') === 'admin';
 $isMod   = ($_SESSION['role'] ?? '') === 'mod';
 
-// Logs laden über DbFunctions
+// Logs laden über DbFunctions – bei jedem Aufruf!
 $loginLogs       = DbFunctions::fetchLoginLogs($isAdmin, 10);
 $captchaLogs     = DbFunctions::fetchCaptchaLogs($isAdmin, 10);
 $contactRequests = $isAdmin ? DbFunctions::getRecentContactRequests(10) : [];
 $uploadLogs      = DbFunctions::getUploadLogsPage(10, 0, $isAdmin, $isMod);
 $lockedUsers     = $isAdmin ? DbFunctions::getAllLockedUsers() : [];
+$pendingUploads  = DbFunctions::getPendingUploads();
+$pendingCourses  = DbFunctions::getPendingCourseSuggestions();
 
 // Flash anzeigen
 if (isset($_SESSION['flash'])) {
@@ -39,6 +41,8 @@ $smarty->assign('captcha_logs',     $captchaLogs);
 $smarty->assign('contact_requests', $contactRequests);
 $smarty->assign('upload_logs',      $uploadLogs);
 $smarty->assign('locked_users',     $lockedUsers);
+$smarty->assign('pending_uploads',  $pendingUploads);
+$smarty->assign('pending_courses',  $pendingCourses);
 $smarty->assign('isAdmin',          $isAdmin);
 $smarty->assign('isMod',            $isMod);
 

@@ -1,22 +1,23 @@
 RewriteEngine On
 RewriteBase /
 
-# 1. Fehlerseite /error/XYZ → error.php?code=XYZ
+# Fehlerseiten
 RewriteRule ^error/([0-9]{3})$ error.php?code=$1 [QSA,L]
-
-# 2. error.php nicht umleiten (sonst Endlosschleife)
 RewriteCond %{REQUEST_URI} ^/error\.php [NC]
 RewriteRule ^ - [L]
 
-# 3. echte Dateien/Verzeichnisse ausnehmen
+# Upload-Zugriffe umleiten
+RewriteRule ^uploads/(.+)$ fetch_upload.php?file=$1 [L,QSA]
+
+# Echte Dateien/Verzeichnisse nicht umleiten
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# 4. alle anderen Pfade an router.php weiterleiten
+# Router
 RewriteRule ^(.*)$ router.php?page=$1 [QSA,L]
 
-# 5. Fehlerseiten definieren (werden von Apache erkannt!)
+# Fehlerseiten
 ErrorDocument 403 /error/403
 ErrorDocument 404 /error/404
 ErrorDocument 500 /error/500

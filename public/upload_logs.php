@@ -1,44 +1,70 @@
 <?php
 declare(strict_types=1);
-
-// Zentrale Initialisierung
 session_start();
+register_shutdown_function(function () {
+    $err = error_get_last();
+    if ($err) {
+        echo "<pre>FATAL ERROR:\n" . print_r($err, true) . "</pre>";
+    }
+});
+
 require_once __DIR__ . '/../includes/config.inc.php';
 
-// Login-Schutz
-if (empty($_SESSION['user_id'])) {
-    header('Location: index.php');
+if (empty($_SESSION['user_id']) || !in_array($_SESSION['role'] ?? '', ['admin', 'mod'], true)) {
+    http_response_code(403);
+    exit('Zugriff verweigert.');
+}
+
+$role = $_SESSION['role'] ?? '';
+$filters = [
+    'user_id'     => trim($_GET['user_id'] ?? ''),
+    'filename'    => trim($_GET['filename'] ?? ''),
+    'from_date'   => trim($_GET['from_date'] ?? ''),
+    'to_date'     => trim($_GET['to_date'] ?? ''),
+    'course_name' => trim($_GET['course_name'] ?? ''),
+];
+
+$doExport = isset($_GET['export']) && $_GET['export'] === 'csv';
+
+if ($doExport) {
+    $logs = DbFunctions::getExtendedUploadLogs($filters);
+
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=upload_logs_export.csv');
+
+    $output = fopen('php://output', 'w');
+    fputcsv($output, ['User ID', 'Username', 'Dateiname', 'Kurs', 'Zeitpunkt']);
+
+    foreach ($logs as $log) {
+        fputcsv($output, [
+            $log['user_id'],
+            $log['username'] ?? '',
+            $log['stored_name'],
+            $log['course_name'] ?? '',
+            $log['created_at'],
+        ]);
+    }
+
+    fclose($output);
     exit;
 }
 
-// Rollen prüfen
-$isAdmin = ($_SESSION['role'] ?? '') === 'admin';
-$isMod   = ($_SESSION['role'] ?? '') === 'mod';
-
-// Nur Admins oder Moderatoren dürfen zugreifen
-if (! $isAdmin && ! $isMod) {
-    header('HTTP/1.1 403 Forbidden');
-    echo 'Zugriff verweigert.';
-    exit;
-}
-
-// Pagination-Parameter
 $currentPage = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $pageSize    = 25;
 $offset      = ($currentPage - 1) * $pageSize;
 
-// Upload-Log-Daten über DbFunctions
-$totalCount  = DbFunctions::countUploadLogs();
+$totalCount  = DbFunctions::countExtendedUploadLogs($filters);
 $totalPages  = (int)ceil($totalCount / $pageSize);
-$uploadLogs  = DbFunctions::getUploadLogsPage($pageSize, $offset, $isAdmin, $isMod);
+$uploadLogs  = DbFunctions::getExtendedUploadLogs($filters, $pageSize, $offset);
 
-// Smarty-Variablen zuweisen
-$smarty->assign('upload_logs',  $uploadLogs);
-$smarty->assign('isAdmin',      $isAdmin);
-$smarty->assign('isMod',        $isMod);
-$smarty->assign('username',     $_SESSION['username'] ?? '');
-$smarty->assign('currentPage',  $currentPage);
-$smarty->assign('totalPages',   $totalPages);
+$smarty->assign([
+    'upload_logs'  => $uploadLogs,
+    'currentPage'  => $currentPage,
+    'totalPages'   => $totalPages,
+    'filters'      => $filters,
+    'username'     => $_SESSION['username'] ?? '',
+    'isAdmin'      => $role === 'admin',
+    'isMod'        => $role === 'mod',
+]);
 
-// Template anzeigen
 $smarty->display('upload_logs.tpl');

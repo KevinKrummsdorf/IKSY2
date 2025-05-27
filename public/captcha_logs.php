@@ -1,38 +1,69 @@
 <?php
 declare(strict_types=1);
-
-// Zentrale Initialisierung & Session
+session_start();
 require_once __DIR__ . '/../includes/config.inc.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
-
-// Admin-Prüfung
-$isAdmin = ($_SESSION['role'] ?? '') === 'admin';
-if (! $isAdmin) {
-    header('HTTP/1.1 403 Forbidden');
+if (empty($_SESSION['user_id']) || !in_array($_SESSION['role'] ?? '', ['admin', 'mod'], true)) {
+    http_response_code(403);
     exit('Zugriff verweigert.');
 }
 
-// Pagination-Parameter
-$currentPage = isset($_GET['page']) && is_numeric($_GET['page'])
-    ? max(1, (int)$_GET['page'])
-    : 1;
-$perPage = 25;
-$offset  = ($currentPage - 1) * $perPage;
+$filters = [
+    'success'    => trim($_GET['success'] ?? ''),
+    'action'     => trim($_GET['action'] ?? ''),
+    'hostname'   => trim($_GET['hostname'] ?? ''),
+    'score_min'  => trim($_GET['score_min'] ?? ''),
+    'score_max'  => trim($_GET['score_max'] ?? ''),
+    'from_date'  => trim($_GET['from_date'] ?? ''),
+    'to_date'    => trim($_GET['to_date'] ?? ''),
+];
 
-// Captcha-Logs über DbFunctions abrufen
-$totalCount = DbFunctions::countCaptchaLogs();
-$totalPages = (int)ceil($totalCount / $perPage);
-$logs       = DbFunctions::getCaptchaLogsPage($perPage, $offset);
+$doExport = isset($_GET['export']) && $_GET['export'] === 'csv';
 
-// Daten an Smarty übergeben
-$smarty->assign('captcha_logs', $logs);
-$smarty->assign('currentPage',  $currentPage);
-$smarty->assign('totalPages',   $totalPages);
-$smarty->assign('isAdmin',      $isAdmin);
-$smarty->assign('username',     $_SESSION['username'] ?? '');
+$pdo = DbFunctions::db_connect();
 
-// Template anzeigen
+// CSV-Export
+if ($doExport) {
+    $logs = DbFunctions::getFilteredCaptchaLogs($filters, null, null, true); // ← mit token
+
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=captcha_logs_export.csv');
+
+    $output = fopen('php://output', 'w');
+    fputcsv($output, ['Token', 'Erfolg', 'Score', 'Aktion', 'Hostname', 'Fehler', 'Zeitpunkt']);
+    foreach ($logs as $log) {
+        fputcsv($output, [
+            $log['token'],
+            $log['success'] ? '✔' : '✘',
+            $log['score'],
+            $log['action'],
+            $log['hostname'],
+            $log['error_reason'] ?? '',
+            $log['created_at'],
+        ]);
+    }
+    fclose($output);
+    exit;
+}
+
+
+// Pagination
+$currentPage = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$pageSize = 25;
+$offset = ($currentPage - 1) * $pageSize;
+
+$totalCount = DbFunctions::countFilteredCaptchaLogs($filters);
+$totalPages = (int)ceil($totalCount / $pageSize);
+$logs = DbFunctions::getFilteredCaptchaLogs($filters, $pageSize, $offset);
+
+$smarty->assign([
+    'captcha_logs' => $logs,
+    'currentPage'  => $currentPage,
+    'totalPages'   => $totalPages,
+    'filters'      => $filters,
+    'username'     => $_SESSION['username'] ?? '',
+    'isAdmin'      => $_SESSION['role'] === 'admin',
+    'isMod'        => $_SESSION['role'] === 'mod',
+]);
+
 $smarty->display('captcha_logs.tpl');
