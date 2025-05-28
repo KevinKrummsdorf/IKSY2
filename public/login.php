@@ -23,7 +23,6 @@ try {
     $user = DbFunctions::fetchUserByIdentifier($identifier);
 
     if (!$user) {
-        DbFunctions::insertLoginLog(null, $maskedIp, false, 'user_not_found');
         $log->warning('Login attempt with non-existing user', [
             'ip'         => $maskedIp,
             'identifier' => $identifier,
@@ -40,7 +39,6 @@ try {
 
     // 2) Konto gesperrt?
     if (DbFunctions::isAccountLocked($userId)) {
-        DbFunctions::insertLoginLog($userId, $maskedIp, false, 'account_locked');
         $log->warning('Login attempt on locked account', [
             'ip'   => $maskedIp,
             'user' => $user['username'],
@@ -55,7 +53,6 @@ try {
 
     // 3) Verifiziert?
     if ((int)$user['is_verified'] !== 1) {
-        DbFunctions::insertLoginLog($userId, $maskedIp, false, 'not_verified');
         $log->warning('Login attempt with unverified account', [
             'ip'         => $maskedIp,
             'identifier' => $identifier,
@@ -70,7 +67,6 @@ try {
 
     // 4) Passwort prüfen
     if (!verifyPassword($password, $user['password_hash'])) {
-        DbFunctions::insertLoginLog($userId, $maskedIp, false, 'wrong_password');
         DbFunctions::updateFailedAttempts($userId);
 
         $log->warning('Login attempt with wrong password', [
@@ -113,7 +109,6 @@ try {
 
     // 7) Login erfolgreich: Zeit und Logs
     DbFunctions::updateLastLogin($userId);
-    DbFunctions::insertLoginLog($userId, $maskedIp, true);
     $log->info('User logged in successfully', [
         'ip'         => $maskedIp,
         'identifier' => $identifier,

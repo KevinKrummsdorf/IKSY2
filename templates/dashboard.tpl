@@ -19,126 +19,7 @@
   </h1>
 
   {if $isAdmin}
-    {* Abschnitt 1 : Login-Logs *}
-    <section class="my-5">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h2 class="mb-0">Login Logs</h2>
-        <button class="btn btn-outline-secondary btn-sm toggle-collapse-icon"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseLoginLogs"
-                aria-expanded="false" {* Standardmäßig auf false setzen, da es am Anfang zugeklappt ist *}
-                aria-controls="collapseLoginLogs">
-          <i class="bi bi-chevron-down"></i>
-        </button>
-      </div>
-
-      <div class="collapse" id="collapseLoginLogs"> {* Dies ist das EINZIGE DIV mit dieser ID *}
-        {if $login_logs|count > 0}
-          <div class="card card-body">
-            <table class="table table-striped table-bordered align-middle">
-              <thead class="table-dark text-center">
-                <tr>
-                  <th>#</th>
-                  <th>Username</th>
-                  <th>User ID</th>
-                  <th>IP (anonymisiert)</th>
-                  <th>Erfolg</th>
-                  <th>Grund</th>
-                  <th>Zeitpunkt</th>
-                </tr>
-              </thead>
-              <tbody>
-                {foreach $login_logs as $i => $log}
-                  <tr>
-                    <td>{$i+1}</td>
-                    <td>{$log.username|default:'–'}</td>
-                    <td>{$log.user_id|default:'–'}</td>
-                    <td>{$log.ip_address|escape}</td>
-                    <td class="text-center">
-                      {if $log.success}
-                        <span class="badge bg-success">Ja</span>
-                      {else}
-                        <span class="badge bg-danger">Nein</span>
-                      {/if}
-                    </td>
-                    <td>{$log.reason|default:'–'|escape}</td>
-                    <td>{$log.created_at}</td>
-                  </tr>
-                {/foreach}
-              </tbody>
-            </table>
-            <div class="mt-3 text-end">
-              <a href="login_logs.php" class="btn btn-sm btn-primary">Alle Login-Logs anzeigen</a>
-            </div>
-          </div>
-        {else}
-          <div class="alert alert-info">Keine Login-Logs vorhanden.</div>
-        {/if}
-      </div>
-    </section>
-
-    {* Abschnitt 2 : Captcha-Logs *}
-    <section class="my-5">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h2 class="mb-0">Captcha Logs</h2>
-        <button class="btn btn-outline-secondary btn-sm toggle-collapse-icon"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseCaptchaLogs"
-                aria-expanded="false"
-                aria-controls="collapseCaptchaLogs">
-          <i class="bi bi-chevron-down"></i>
-        </button>
-      </div>
-
-      <div class="collapse" id="collapseCaptchaLogs">
-        {if $captcha_logs|count > 0}
-          <div class="card card-body">
-            <table class="table table-striped table-bordered align-middle">
-              <thead class="table-dark text-center">
-                <tr>
-                  <th>#</th>
-                  <th>ID</th>
-                  <th>Erfolg</th>
-                  <th>Score</th>
-                  <th>Aktion</th>
-                  <th>Hostname</th>
-                  <th>Fehlergrund</th>
-                  <th>Zeitpunkt</th>
-                </tr>
-              </thead>
-              <tbody>
-                {foreach $captcha_logs as $i => $log}
-                  <tr>
-                    <td>{$i+1}</td>
-                    <td>{$log.id}</td>
-                    <td class="text-center">
-                      {if $log.success}
-                        <span class="badge bg-success">Ja</span>
-                      {else}
-                        <span class="badge bg-danger">Nein</span>
-                      {/if}
-                    </td>
-                    <td>{$log.score|default:'–'}</td>
-                    <td>{$log.action|escape}</td>
-                    <td>{$log.hostname|escape}</td>
-                    <td>{$log.error_reason|default:'–'|escape}</td>
-                    <td>{$log.created_at}</td>
-                  </tr>
-                {/foreach}
-              </tbody>
-            </table>
-            <div class="mt-3 text-end">
-              <a href="captcha_logs.php" class="btn btn-sm btn-primary">Alle Captcha-Logs anzeigen</a>
-            </div>
-          </div>
-        {else}
-          <div class="alert alert-info">Keine Captcha-Logs vorhanden.</div>
-        {/if}
-      </div>
-    </section>
-    {* Abschnitt 3 : locked User *}
+    {* Abschnitt 1 : locked User *}
     <section class="my-5">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h2 class="mb-0">Gesperrte Benutzer</h2>
@@ -187,8 +68,9 @@
       </div>
     </section>
   {/if}
+
   {if $isAdmin || $isMod}
-    {* Abschnitt 4 : Kontaktanfragen *}
+    {* Abschnitt 2 : Kontaktanfragen *}
     <section class="my-5">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h2 class="mb-0">Kontaktanfragen</h2>
@@ -236,7 +118,8 @@
         {/if}
       </div>
     </section>
-    {* Abschnitt 5 : Upload-Logs *}
+
+    {* Abschnitt 3 : Upload-Logs *}
     <section class="my-5">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h2 class="mb-0">Upload-Logs</h2>
@@ -286,7 +169,8 @@
         {/if}
       </div>
     </section>
-  {* Abschnitt 6 : Ungeprüfte Uploads *}
+
+  {* Abschnitt 4 : Ungeprüfte Uploads *}
 <section class="my-5">
   <div class="d-flex justify-content-between align-items-center mb-2">
     <h2 class="mb-0">Ungeprüfte Uploads</h2>
@@ -301,46 +185,43 @@
   </div>
 
   <div class="collapse" id="collapsePendingUploads">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        {if $pending_uploads|@count > 0}
-          <div class="table-responsive">
-            <table class="table table-striped table-bordered align-middle">
-              <thead class="table-dark text-center">
-                <tr>
-                  <th>#</th>
-                  <th>Dateiname</th>
-                  <th>Titel</th>
-                  <th>Kurs</th>
-                  <th>Uploader</th>
-                  <th>Hochgeladen am</th>
-                </tr>
-              </thead>
-              <tbody>
-                {foreach $pending_uploads as $index => $u}
-                <tr>
-                  <td>{$index+1}</td>
-                  <td>{$u.stored_name|escape}</td>
-                  <td>{$u.title|escape}</td>
-                  <td>{$u.course_name|escape}</td>
-                  <td>{$u.username|default:'Unbekannt'|escape}</td>
-                  <td>{$u.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</td>
-                </tr>
-                {/foreach}
-              </tbody>
-            </table>
-          </div>
-          <div class="mt-3 text-end">
-          <a href="{$base_url}/pending_uploads.php" class="btn btn-sm btn-primary">Alle ungeprüften Uploads anzeigen</a>
-          </div>
-        {else}
-          <div class="alert alert-info mb-0">Keine neuen Uploads vorhanden.</div>
-        {/if}
+    {if $pending_uploads|@count > 0}
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle">
+          <thead class="table-dark text-center">
+            <tr>
+              <th>#</th>
+              <th>Dateiname</th>
+              <th>Titel</th>
+              <th>Kurs</th>
+              <th>Uploader</th>
+              <th>Hochgeladen am</th>
+            </tr>
+          </thead>
+          <tbody>
+            {foreach $pending_uploads as $index => $u}
+            <tr>
+              <td>{$index+1}</td>
+              <td>{$u.stored_name|escape}</td>
+              <td>{$u.title|escape}</td>
+              <td>{$u.course_name|escape}</td>
+              <td>{$u.username|default:'Unbekannt'|escape}</td>
+              <td>{$u.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</td>
+            </tr>
+            {/foreach}
+          </tbody>
+        </table>
       </div>
-    </div>
+      <div class="mt-3 text-end">
+        <a href="{$base_url}/pending_uploads.php" class="btn btn-sm btn-primary">Alle ungeprüften Uploads anzeigen</a>
+      </div>
+    {else}
+      <div class="alert alert-info">Keine neuen Uploads vorhanden.</div>
+    {/if}
   </div>
 </section>
-{* Abschnitt 7 : Offene Kursvorschläge *}
+
+{* Abschnitt 5 : Offene Kursvorschläge *}
 <section class="my-5">
   <div class="d-flex justify-content-between align-items-center mb-2">
     <h2 class="mb-0">Offene Kursvorschläge</h2>
@@ -355,41 +236,38 @@
   </div>
 
   <div class="collapse" id="collapsePendingCourses">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        {if $pending_courses|@count > 0}
-          <div class="table-responsive">
-            <table class="table table-striped table-bordered align-middle">
-              <thead class="table-dark text-center">
-                <tr>
-                  <th>#</th>
-                  <th>Kursname</th>
-                  <th>Vorgeschlagen von</th>
-                  <th>Zeitpunkt</th>
-                </tr>
-              </thead>
-              <tbody>
-                {foreach $pending_courses as $index => $pc}
-                <tr>
-                  <td>{$index+1}</td>
-                  <td>{$pc.course_name|escape}</td>
-                  <td>{$pc.username|escape}</td>
-                  <td>{$pc.suggested_at|date_format:"%d.%m.%Y %H:%M"}</td>
-                </tr>
-                {/foreach}
-              </tbody>
-            </table>
-          </div>
-          <div class="mt-3 text-end">
-            <a href="{$base_url}/pending_uploads.php" class="btn btn-sm btn-primary">Alle offene Kursvorschläge anzeigen</a>
-          </div>
-        {else}
-          <div class="alert alert-info mb-0">Keine offenen Kursvorschläge vorhanden.</div>
-        {/if}
+    {if $pending_courses|@count > 0}
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle">
+          <thead class="table-dark text-center">
+            <tr>
+              <th>#</th>
+              <th>Kursname</th>
+              <th>Vorgeschlagen von</th>
+              <th>Zeitpunkt</th>
+            </tr>
+          </thead>
+          <tbody>
+            {foreach $pending_courses as $index => $pc}
+            <tr>
+              <td>{$index+1}</td>
+              <td>{$pc.course_name|escape}</td>
+              <td>{$pc.username|escape}</td>
+              <td>{$pc.suggested_at|date_format:"%d.%m.%Y %H:%M"}</td>
+            </tr>
+            {/foreach}
+          </tbody>
+        </table>
       </div>
-    </div>
+      <div class="mt-3 text-end">
+        <a href="{$base_url}/pending_courses.php" class="btn btn-sm btn-primary">Alle offenen Kursvorschläge anzeigen</a>
+      </div>
+    {else}
+      <div class="alert alert-info">Keine offenen Kursvorschläge vorhanden.</div>
+    {/if}
   </div>
 </section>
+
   {/if}
 </div>
 {/block}

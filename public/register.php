@@ -8,15 +8,9 @@ $monolog  = getLogger('register');
 $log      = new MonologLoggerAdapter($monolog);
 $response = ['success' => false];
 
-// PDO-Verbindung bereitstellen
 $pdo = DbFunctions::db_connect();
 
 try {
-    if (!extension_loaded('sodium')) {
-        $log->error('PHP-Extension "sodium" nicht verfügbar.');
-        throw new RuntimeException('Die PHP-Extension "sodium" ist nicht verfügbar.');
-    }
-
     $log->info('Registrierung gestartet');
 
     // reCAPTCHA prüfen
@@ -30,23 +24,28 @@ try {
 
     // Eingaben validieren
     $username = trim($_POST['username'] ?? '');
-    $email    = trim($_POST['email']    ?? '');
-    $pw       = $_POST['password']      ?? '';
+    $email    = trim($_POST['email'] ?? '');
+    $pw       = $_POST['password'] ?? '';
     $pw2      = $_POST['password_confirm'] ?? '';
     $errors   = [];
 
     if ($username === '') {
         $errors['username'] = 'Benutzername erforderlich.';
     }
+
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = 'Ungültige E-Mail.';
     }
+
     if (mb_strlen($pw) < 8) {
         $errors['password'] = 'Mindestens 8 Zeichen.';
     }
+
     if ($pw !== $pw2) {
         $errors['password_confirm'] = 'Passwörter stimmen nicht überein.';
+        $log->debug('Passwörter stimmen nicht überein', ['pw' => $pw, 'pw2' => $pw2]);
     }
+
     if ($errors) {
         $response['errors'] = $errors;
         throw new DomainException('Ungültige Eingaben.');
@@ -65,24 +64,19 @@ try {
         throw new DomainException('Benutzer existiert bereits.');
     }
 
-    // Passwort hashen (jetzt über crypto.inc.php)
-    $hash = hashPassword($pw);
+    // Passwort hashen (jetzt nativ ohne Halite)
+    $hash = password_hash($pw, PASSWORD_DEFAULT);
 
-    // Transaktion starten
     DbFunctions::beginTransaction();
 
-    // Nutzer anlegen
     $userId = DbFunctions::insertUser($username, $email, $hash);
     $log->info('User angelegt', ['user_id' => $userId]);
 
-    // Default-Rolle (ID 3) zuweisen
     DbFunctions::assignRole($userId, 3);
     $log->info('Rolle zugewiesen', ['user_id' => $userId, 'role_id' => 3]);
 
-    // Commit
     DbFunctions::commit();
 
-    // Verifikations-Mail
     try {
         require_once __DIR__ . '/../includes/verification.inc.php';
         sendVerificationEmail($pdo, $userId, $username, $email);

@@ -1,9 +1,5 @@
 // register.js
-// Zeigt Alerts im top‐level #AlertContainer nach Schließen des Modals
-// Und blendet Requirement-Liste beim Blur definitiv aus
-
 document.addEventListener('DOMContentLoaded', () => {
-  // --- Selektoren ---
   const registerModal        = document.getElementById('registerModal');
   const registerForm         = document.getElementById('registerForm');
   const registerSubmitBtn    = registerForm.querySelector('button[type="submit"]');
@@ -22,17 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // --- Passwort-Anforderungen ---
   const requirements = {
-    minlength: { regex: /.{8,}/,      message: 'Mindestens 8 Zeichen' },
-    maxlength: { regex: /^.{0,128}$/, message: 'Maximal 128 Zeichen' },
-    number:    { regex: /[0-9]/,      message: 'Mindestens eine Zahl' },
-    lowercase: { regex: /[a-z]/,      message: 'Mindestens einen Kleinbuchstaben' },
-    uppercase: { regex: /[A-Z]/,      message: 'Mindestens einen Großbuchstaben' },
+    minlength: { regex: /.{8,}/,       message: 'Mindestens 8 Zeichen' },
+    maxlength: { regex: /^.{0,128}$/,  message: 'Maximal 128 Zeichen' },
+    number:    { regex: /[0-9]/,       message: 'Mindestens eine Zahl' },
+    lowercase: { regex: /[a-z]/,       message: 'Mindestens einen Kleinbuchstaben' },
+    uppercase: { regex: /[A-Z]/,       message: 'Mindestens einen Großbuchstaben' },
     special:   { regex: /[^A-Za-z0-9]/,message: 'Mindestens ein Sonderzeichen' },
   };
 
-  // --- Passwort-Eye-Icon Toggle ---
   eyeIcons.forEach(icon => {
     icon.addEventListener('click', () => {
       const input = icon.previousElementSibling;
@@ -43,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // --- Requirement-List anzeigen/verstecken ---
   passwordInput.addEventListener('focus', () => {
     requirementList.classList.add('visible');
   });
@@ -51,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
     requirementList.classList.remove('visible');
   });
 
-  // --- Live-Validierung der Anforderungen ---
   passwordInput.addEventListener('input', () => {
     const val = passwordInput.value;
     requirementList.querySelectorAll('li').forEach(li => {
@@ -61,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // --- Hilfsfunktionen ---
   function resetForm() {
     registerForm.reset();
     requirementList.classList.remove('visible');
@@ -85,38 +76,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- Submit-Handler mit reCAPTCHA & AJAX ---
   registerSubmitBtn.addEventListener('click', async event => {
     event.preventDefault();
 
-    // 1) HTML5-Validation
+    passwordInput.setCustomValidity('');
+    passwordConfirmInput.setCustomValidity('');
+
     if (!registerForm.checkValidity()) {
       registerForm.reportValidity();
       return;
     }
 
-    // 2) Passwort-Regeln prüfen
     const pwd = passwordInput.value;
+    const confirmPwd = passwordConfirmInput.value;
+
     const pwErrors = [];
     Object.values(requirements).forEach(({ regex, message }) => {
       if (!regex.test(pwd)) pwErrors.push(message);
     });
+
     if (pwErrors.length) {
       passwordInput.setCustomValidity(pwErrors.join('\n'));
       registerForm.reportValidity();
       return;
     }
-    if (pwd !== passwordConfirmInput.value) {
+
+    if (pwd !== confirmPwd) {
       passwordConfirmInput.setCustomValidity('Passwörter stimmen nicht überein.');
       registerForm.reportValidity();
       return;
     }
 
-    // 3) Button & Spinner
     registerSubmitBtn.disabled = true;
     spinner.classList.remove('d-none');
 
-    // 4) reCAPTCHA & AJAX
     grecaptcha.ready(() => {
       grecaptcha.execute(siteKey, { action: 'register' }).then(async token => {
         tokenField.value = token;
@@ -125,13 +118,14 @@ document.addEventListener('DOMContentLoaded', () => {
             method: 'POST',
             body: new FormData(registerForm)
           });
-          if (!response.ok) throw new Error(`Server-Error: ${response.status}`);
 
+          if (!response.ok) throw new Error(`Server-Error: ${response.status}`);
           const ct = response.headers.get('content-type') || '';
           if (!ct.includes('application/json')) {
             showAlert('Ungültige Server-Antwort.', 'danger');
             return;
           }
+
           const data = await response.json();
 
           if (data.success) {
