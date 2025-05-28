@@ -57,7 +57,7 @@ try {
 
 $config['app_name']  = $_ENV['APP_NAME'] ?? 'StudyHub';
 $config['base_url'] = 'http://127.0.0.1/iksy05/IKSY2/public';
-$config['site_url'] = 'http://localhost/';
+$config['site_url'] = 'http://127.0.0.1/iksy05/IKSY2/public';
 
 //DB
 $config['db'] = [
