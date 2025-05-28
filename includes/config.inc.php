@@ -14,6 +14,7 @@ require_once __DIR__ . '/../includes/db.inc.php';
 require_once __DIR__ . '/../includes/ip_utils.inc.php';
 require_once __DIR__ . '/../includes/recaptcha.inc.php';
 require_once __DIR__ . '/../includes/mailing.inc.php';
+require_once __DIR__ . '/../includes/central_logs.inc.php';
 require_once __DIR__ . '/../includes/crypto.inc.php';
 
 // .env laden
@@ -55,8 +56,8 @@ try {
 
 
 $config['app_name']  = $_ENV['APP_NAME'] ?? 'StudyHub';
-$config['base_url'] = '';
-$config['site_url'] = 'http://localhost/';
+$config['base_url'] = 'http://127.0.0.1/iksy05/IKSY2/public';
+$config['site_url'] = 'http://127.0.0.1/iksy05/IKSY2/public';
 
 //DB
 $config['db'] = [
