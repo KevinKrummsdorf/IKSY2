@@ -4,7 +4,7 @@ Diese Anwendung verwendet [Composer](https://getcomposer.org) zur einfachen Inst
   
 **Schritt 1: Repo clonen und Verzeichniss öffnen**
 ```
-git clone https://github.com/KevinKrummsdorf/IKSY2 ~/IKSY2 && cd ~/IKSY2
+sudo git clone https://github.com/KevinKrummsdorf/IKSY2 /var/www/html/iksy05/StudyHub
 ```
 **Schritt 2: Abhängigkeiten installieren**
 ```
@@ -14,7 +14,7 @@ composer install
   
 git Verzeichnis öffnen  
 ```
-cd ~/IKSY2
+cd /var/www/html/iksy05/StudyHub/
 ```
 Aktualisierung durchführen   
 ```
@@ -42,7 +42,7 @@ composer update
 
 git Verzeichnis öffnen  
 ```
-cd ~/IKSY2
+cd /var/www/html/iksy05/StudyHub/
 ```
 Staus abfragen  
 ```
@@ -65,7 +65,7 @@ Passwort = Acces Key
 
 ## Issue erstellen
 
-Bevor du ein Issue eröffnest, prüfe bitte, ob dein Problem oder Wunsch nicht schon existiert. Neue, *größere Fehler* (z. B. Abstürze, Datenverlust, Sicherheitslücken) werden **ausschließlich** über GitHub Issues bearbeitet. Kleinere Fragen bitte über die Whatsapp Gruppe und mich taggen.
+Bevor du ein Issue eröffnest, prüfe bitte, ob dein Problem oder Wunsch nicht schon existiert. Neue, *Fehler* (z. B. Abstürze, Datenverlust, Sicherheitslücken, weiße Seite etc.) werden **ausschließlich** über GitHub Issues bearbeitet. Kleinere Fragen über die Whatsapp Gruppe und mich taggen.
 
 Wenn du ein neues Issue anlegst, verwende bitte das folgende Template und fülle **alle** Punkte aus. Issues ohne alle notwendigen Details können nicht bearbeitet werden und werden geschlossen.
 
@@ -118,8 +118,6 @@ Nur vollständige Requests mit klarer Beschreibung werden berücksichtigt.
 > - Unvollständige Issues werden kommentarlos geschlossen.  
 
 # Verwendete Bibliotheken
-
-[halite](https://github.com/paragonie/halite)
 
 [Bootstrap](https://github.com/twbs/bootstrap)
 
