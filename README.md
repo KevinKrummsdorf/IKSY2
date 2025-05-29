@@ -8,6 +8,7 @@ sudo git clone https://github.com/KevinKrummsdorf/IKSY2 /var/www/html/iksy05/Stu
 ```
 **Schritt 2: Abhängigkeiten installieren**
 ```
+cd /var/www/html/iksy05/StudyHub
 composer install
 ```
 **Schritt 3: Repo aktualisieren** 
