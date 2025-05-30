@@ -30,23 +30,6 @@ function recaptcha_write_log(string $line, string $logFile): void
 /**
  * Protokolliert ein reCAPTCHA-Resultat in der Datenbank.
  */
-function recaptcha_log(PDO $pdo, string $token, array $resp, ?string $reason): void
-{
-    $sql = <<<SQL
-INSERT INTO captcha_log (token, success, score, action, hostname, error_reason)
-VALUES (:token, :success, :score, :action, :hostname, :error_reason)
-SQL;
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        ':token'        => $token,
-        ':success'      => !empty($resp['success']) ? 1 : 0,
-        ':score'        => $resp['score'] ?? null,
-        ':action'       => $resp['action'] ?? null,
-        ':hostname'     => $resp['hostname'] ?? null,
-        ':error_reason' => $reason
-    ]);
-}
 
 /**
  * Prüft reCAPTCHA v3-Token gegen Googles API.
@@ -71,7 +54,6 @@ function recaptcha_verify(
 
     if (empty($token)) {
         $errorReason = 'no_token';
-        recaptcha_log($pdo, $token, [], $errorReason);
         if ($logFile) recaptcha_write_log("[no_token] token='(leer)'", $logFile);
         return false;
     }
@@ -95,8 +77,6 @@ function recaptcha_verify(
     } elseif (!in_array($resp['action'] ?? '', $validActions, true)) {
         $errorReason = 'wrong_action:' . ($resp['action'] ?? '(none)');
     }
-
-    recaptcha_log($pdo, $token, $resp, $errorReason);
 
     if ($logFile) {
         recaptcha_write_log(

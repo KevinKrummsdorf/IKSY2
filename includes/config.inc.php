@@ -32,12 +32,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 // Konfigurationen
 
-//Logger
-$config['log'] = [
-    'debug'    => true,
-    'log_days' => 30
-];
-
 // Halite Key
 try {
     $rawKey = base64_decode($_ENV['HALITE_KEYFILE_BASE64'] ?? '', true);
@@ -54,10 +48,16 @@ try {
     exit('Fehlerhafte Schlüsselkonfiguration');
 }
 
+//Logger
+$config['log'] = [
+    'debug'    => true,
+    'log_days' => 30
+];
 
 $config['app_name']  = $_ENV['APP_NAME'] ?? 'StudyHub';
-$config['base_url'] = 'http://127.0.0.1/iksy05/IKSY2/public';
-$config['site_url'] = 'http://127.0.0.1/iksy05/IKSY2/public';
+$config['base_url'] = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+$config['site_url'] = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $config['base_url'];
+
 
 //DB
 $config['db'] = [

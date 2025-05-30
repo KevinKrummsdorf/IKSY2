@@ -48,7 +48,7 @@ try {
         $verifyData['alertType']  = 'success';
         $verifyData['message']    = 'Deine E-Mail wurde erfolgreich verifiziert!';
         $verifyData['buttonText'] = 'Jetzt einloggen';
-        $verifyData['buttonLink'] = 'index.php#loginModal';
+        $verifyData['buttonLink'] = 'index.php#show=login';
     }
 
 } catch (Throwable $e) {
