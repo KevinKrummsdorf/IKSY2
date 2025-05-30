@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-bs-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{$app_name} - {block name="title"}Startseite{/block}</title>
+  <link rel="icon" href="{$base_url}/assets/favicon.ico" type="image/x-icon">
 
   <script>
     window.recaptchaSiteKey = '{$recaptcha_site_key}';
@@ -13,7 +14,6 @@
 
   <!-- STYLES -->
   <link href="{$base_url}/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link href="{$base_url}/css/style.css" rel="stylesheet">
   <link rel="stylesheet" href="{$base_url}/css/material-symbols.css">
 
@@ -55,7 +55,7 @@
   {/if}
 {/if}
 
-<!-- Offcanvas Menü -->
+<!-- Offcanvas Desktop -->
 <button class="btn btn-primary d-md-none menu-toggle-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">Menü</button>
 
 <div class="menu d-none d-md-block">
@@ -67,6 +67,8 @@
     <li><a href="{$base_url}/material.php"><span class="material-symbols-outlined">search</span><span>Material finden</span></a></li>
     <li><a href="{$base_url}/upload.php"><span class="material-symbols-outlined">arrow_circle_up</span><span>Material hochladen</span></a></li>
     <li><a href="{$base_url}/einstellungen.php"><span class="material-symbols-outlined">settings</span><span>Einstellungen</span></a></li>
+    <li><a href="#" id="theme-toggle"><span id="theme-icon" class="material-symbols-outlined">dark_mode</span><span id="theme-label">Darkmode</span></a></li>
+
   </ul>
 </div>
 
@@ -78,7 +80,14 @@
   </div>
   <div class="offcanvas-body">
     <ul class="menu-content">
-      <!-- identisch zu Desktop -->
+      <li><a href="{$base_url}/profile.php"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
+      <li><a href="{$base_url}/lerngruppen.php"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
+      <li><a href="{$base_url}/nachrichten.php"><span class="material-symbols-outlined">message</span><span>Nachrichten</span></a></li>
+      <li><a href="{$base_url}/todos.php"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
+      <li><a href="{$base_url}/material.php"><span class="material-symbols-outlined">search</span><span>Material finden</span></a></li>
+      <li><a href="{$base_url}/upload.php"><span class="material-symbols-outlined">arrow_circle_up</span><span>Material hochladen</span></a></li>
+      <li><a href="{$base_url}/einstellungen.php"><span class="material-symbols-outlined">settings</span><span>Einstellungen</span></a></li>
+      <li><a href="#" id="theme-toggle"><span id="theme-icon" class="material-symbols-outlined">dark_mode</span><span id="theme-label">Darkmode</span></a></li>
     </ul>
   </div>
 </div>
@@ -107,9 +116,15 @@
 <script src="{$base_url}/js/login.js"></script>
 <script src="{$base_url}/js/sidebar.js"></script>
 <script src="{$base_url}/js/login-success.js"></script>
-<script src="{$base_url}/js/register.js"></script> {* <- GANZ am Ende *}
+<script src="{$base_url}/js/theme-toggle.js"></script>
+<script src="{$base_url}/js/register.js"></script>
 
 {block name="scripts"}{/block}
+
+<script>
+</script>
+
+
 </body>
 </html>
 
