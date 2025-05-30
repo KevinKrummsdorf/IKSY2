@@ -132,7 +132,7 @@ chmod +x studyhub-manager.sh
 
 **Stellen Sie sicher, dass keine anderen Webanwendungen auf den Symlink oder die Apache-Konfiguration angewiesen sind, bevor du die Deinstallation durchführt wird.**
 
-# Issue erstellen
+# Support bei Fehlern erhalten (Issues erstellen)
 
 Bevor ein neues Issue eröffnet wird, prüfen Sie bitte, ob das betreffende Problem oder der gewünschte Vorschlag bereits existiert. Neue *Fehler* (z. B. Abstürze, Datenverlust, Sicherheitslücken, weiße Seiten etc.) werden **ausschließlich** über GitHub Issues entgegengenommen und bearbeitet.
 
@@ -165,7 +165,10 @@ Was passiert stattdessen konkret?
 ## 5. Log-Dateien & Screenshots (nur bei Fehlern)
 Relevante Log-Dateien (z. B. `register.log`, Browser-Konsole etc.) **müssen** beigefügt werden. Screenshots können zusätzlich hilfreich sein, ersetzen jedoch keine Logs.
 
-## 6. Feature-Requests
+## 6. Error-Requests
+Für **fehlerhafte** oder **unerwartete Requests** sollte ein entsprechendes Issue mit dem Label `bug` erstellt werden und `KevinKrummsdorf` zugeordnet werden.
+
+## 7. Feature-Requests
 Für **neue Funktionen** oder Verbesserungsvorschläge sollte ein entsprechendes Issue mit dem Label `enhancement` erstellt werden.  
 Nur klar und vollständig beschriebene Vorschläge können berücksichtigt werden.
 
