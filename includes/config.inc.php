@@ -16,14 +16,15 @@ require_once __DIR__ . '/../includes/recaptcha.inc.php';
 require_once __DIR__ . '/../includes/mailing.inc.php';
 require_once __DIR__ . '/../includes/central_logs.inc.php';
 require_once __DIR__ . '/../includes/crypto.inc.php';
+require_once __DIR__ . '/../includes/logger.inc.php';
+require_once __DIR__ . '/../src/ILogger.php';
+require_once __DIR__ . '/../src/MonologLoggerAdapter.php';
+require_once __DIR__ . '/../src/LoggerFactory.php';
+
 
 // .env laden
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
-
-// Debug-Konstanten
-define('APP_ENV', $_ENV['APP_ENV'] ?? 'production');
-define('DEBUG', ($_ENV['APP_DEBUG'] ?? 'false') === 'true');
 
 // Session starten
 if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -89,9 +90,6 @@ $config['recaptcha'] = [
     'log_file'   => __DIR__ . '/../logs/recaptcha.log',
 ];
 
-require_once __DIR__ . '/../includes/logger.inc.php';
-require_once __DIR__ . '/../src/ILogger.php';
-require_once __DIR__ . '/../src/MonologLoggerAdapter.php';
 
 // ==== Smarty Initialisierung ====
 $smarty = new Smarty();

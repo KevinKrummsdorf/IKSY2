@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
 
-$monolog = getLogger('verify');
-$log     = new MonologLoggerAdapter($monolog);
+$log = LoggerFactory::get('verify');
 
 $token = trim((string)($_GET['token'] ?? ''));
 

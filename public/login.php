@@ -6,8 +6,7 @@ header('Content-Type: text/html; charset=utf-8');
 
 require_once __DIR__ . '/../includes/config.inc.php';
 
-$monolog = getLogger('login');
-$log     = new MonologLoggerAdapter($monolog);
+$log = LoggerFactory::get('login');
 
 try {
     $identifier = trim($_POST['username_or_email'] ?? '');

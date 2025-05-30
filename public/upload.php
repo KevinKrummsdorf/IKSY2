@@ -13,7 +13,7 @@ if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-$log     = new MonologLoggerAdapter(getLogger('upload'));
+$log = LoggerFactory::get('upload');
 $error   = '';
 $success = '';
 

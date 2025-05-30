@@ -5,14 +5,12 @@ declare(strict_types=1);
 
 class DbFunctions
 {
-    private static ?PDO $pdo = null;
-    private static ?MonologLoggerAdapter $log = null;
+    private static ?PDO $pdo = null;    private static ?ILogger $log = null;
 
-    private static function getLogger(): MonologLoggerAdapter
-    {
+    private static function getLogger(): ILogger
+    {   
         if (self::$log === null) {
-            $monolog = getLogger('db');
-            self::$log = new MonologLoggerAdapter($monolog);
+            self::$log = LoggerFactory::get('db');
         }
         return self::$log;
     }
@@ -68,7 +66,7 @@ class DbFunctions
             http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'message' => defined('DEBUG') && DEBUG
+                'message' => defined('DEBUG')
                     ? 'DB-Fehler: ' . $e->getMessage()
                     : 'Interner Serverfehler. Bitte später erneut versuchen.'
             ]);
