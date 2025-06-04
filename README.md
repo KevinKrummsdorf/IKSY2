@@ -4,7 +4,7 @@ Diese Anwendung verwendet [Composer](https://getcomposer.org) zur einfachen Inst
   
 ## Repo clonen
 ```
-sudo git clone https://github.com/KevinKrummsdorf/IKSY2 /var/www/html/iksy05/StudyHub
+git clone https://github.com/KevinKrummsdorf/IKSY2 /var/www/html/iksy05/StudyHub
 ```
 ## Abhängigkeiten installieren
 ```
