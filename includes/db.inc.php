@@ -15,7 +15,8 @@ class DbFunctions
         return self::$log;
     }
 
-
+    
+ 
     /**
      * Singleton-DB-Verbindung über Konfigurationsarray
      */
@@ -74,6 +75,25 @@ class DbFunctions
         }
     }
 
+    /**Alle bestätigten Materialien abrufen**/
+    
+    public static function getApprovedUploads(): array
+    {
+        $query = '
+        SELECT id, stored_name, material_id
+        FROM uploads
+        WHERE is_rejected = 0
+    ';
+        return self::execute($query, [], true); // true = fetchAll()
+    }
+    
+    /** Material abruf für "Material finden/suchen" **/
+    public static function getAllMaterials(): array
+    {
+        $query = 'SELECT id, title, description FROM materials';
+        return self::execute($query, [], true); // true → fetchAll() wird ausgeführt
+    }
+    
     /**
      * Führt ein Prepared Statement aus und gibt Ergebnis oder Zeilenanzahl zurück.
      */
