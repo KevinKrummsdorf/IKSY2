@@ -186,7 +186,9 @@ Nur klar und vollständig beschriebene Vorschläge können berücksichtigt werde
 
 [phpdotenv](https://github.com/vlucas/phpdotenv)    
 
-[Smarty](https://github.com/smarty-php/smarty)
+[Smarty](https://github.com/smarty-php/smarty)  
+
+[Halite](https://github.com/paragonie/halite)
 
 # Verwendete Mediaquellen  
 [mixkit](https://mixkit.co)
