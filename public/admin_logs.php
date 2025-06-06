@@ -18,6 +18,7 @@ use Smarty\Smarty;
 
 /** @var Smarty $smarty */
 $smarty = new Smarty();
+$smarty->escape_html = true;
 
 // Standard-SMARTY-Einstellungen
 $smarty->setTemplateDir(__DIR__ . '/../templates/');

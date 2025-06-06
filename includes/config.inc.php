@@ -93,6 +93,7 @@ $config['recaptcha'] = [
 
 // ==== Smarty Initialisierung ====
 $smarty = new Smarty();
+$smarty->escape_html = true;
 
 $smarty->setTemplateDir(__DIR__ . '/../templates/');
 $smarty->setCompileDir(__DIR__ . '/../templates_c/');
