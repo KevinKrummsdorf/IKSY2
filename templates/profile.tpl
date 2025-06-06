@@ -11,7 +11,7 @@
         <p class="text-muted">Max</p>
 
         <strong>Benutzername:</strong>
-        <p class="text-muted">{$username}</p>
+        <p class="text-muted">{$username|escape}</p>
 
         <strong>E-Mail:</strong>
         <p class="text-muted">max@example.com</p>
