@@ -340,11 +340,72 @@ class DbFunctions
     public static function disableTwoFA(string $username): void
     {
         $sql = '
-            UPDATE users 
+            UPDATE users
             SET twofa_secret = NULL, is_twofa_enabled = 0
             WHERE username = :username
         ';
         self::execute($sql, [':username' => $username]);
+    }
+
+    /**
+     * Gibt das Profil des Benutzers zurück oder null, falls keines existiert.
+     */
+    public static function fetchUserProfile(int $userId): ?array
+    {
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare('SELECT * FROM profile WHERE user_id = :user_id');
+        $stmt->execute(['user_id' => $userId]);
+        $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $profile ?: null;
+    }
+
+    /**
+     * Lädt ein vorhandenes Profil oder legt ein leeres an.
+     */
+    public static function getOrCreateUserProfile(int $userId): array
+    {
+        $pdo = self::db_connect();
+
+        $stmt = $pdo->prepare('SELECT * FROM profile WHERE user_id = :id');
+        $stmt->execute([':id' => $userId]);
+        $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$profile) {
+            $stmt = $pdo->prepare('INSERT INTO profile (user_id) VALUES (:id)');
+            $stmt->execute([':id' => $userId]);
+
+            $stmt = $pdo->prepare('SELECT * FROM profile WHERE user_id = :id');
+            $stmt->execute([':id' => $userId]);
+            $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+
+        return $profile ?: [];
+    }
+
+    /**
+     * Aktualisiert die Profildaten des Benutzers.
+     */
+    public static function updateUserProfile(int $userId, array $fields): void
+    {
+        $pdo = self::db_connect();
+
+        $set = [];
+        $params = [':id' => $userId];
+
+        foreach ($fields as $key => $value) {
+            $set[] = "`$key` = :$key";
+            $params[":$key"] = $value;
+        }
+
+        if (empty($set)) {
+            return;
+        }
+
+        $sql = 'UPDATE profile SET ' . implode(', ', $set) . ', updated_at = NOW() WHERE user_id = :id';
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
     }
 }
 

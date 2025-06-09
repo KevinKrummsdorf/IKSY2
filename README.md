@@ -82,5 +82,15 @@ Passwort = Acces Key
 [mixkit](https://mixkit.co)
 
 # Verwendete APIs
-[Google reCaptcha](https://cloud.google.com/security/products/recaptcha)  
+[Google reCaptcha](https://cloud.google.com/security/products/recaptcha)
 [Google Fronts](https://fonts.google.com/icons) (lokal eingebunden)
+
+## Benutzerprofile
+
+Neben den Basisfunktionen stehen nun einfache Profilseiten zur Verfügung. Die Dateien
+`public/profile.php`, `public/edit_profile.php` und `public/saveprofile.php` stellen die
+Anzeige und Bearbeitung des Profils bereit. Die dazugehörigen Templates liegen im
+Verzeichnis `templates`.
+
+Die Profildaten werden in einer Tabelle `profile` gespeichert. Ein Beispielskript zum
+Anlegen dieser Tabelle findet sich unter `sql/create_profile_table.sql`.

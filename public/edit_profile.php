@@ -7,8 +7,7 @@ error_reporting(E_ALL);
 session_start();
 
 if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
-    $reason = urlencode("Du musst eingeloggt sein, um dein Profil zu bearbeiten.");
-    header("Location: /studyhub/error/403?reason={$reason}&action=both");
+    header('Location: index.php');
     exit;
 }
 

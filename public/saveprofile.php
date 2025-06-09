@@ -57,5 +57,5 @@ if (!empty($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ==
 DbFunctions::updateUserProfile($userId, $data);
 
 // Weiterleitung
-header('Location: /iksy05/StudyHub/public/profile.php?success=1');
+header('Location: profile.php?success=1');
 exit;

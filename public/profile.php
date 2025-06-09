@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-// Zentrale Initialisierung
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../includes/db.inc.php'; // 🔧 Wichtig: DB-Funktionen laden
 
 // Login-Schutz
 if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
@@ -10,16 +10,21 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
     exit;
 }
 
+$userId   = $_SESSION['user_id'];
 $username = $_SESSION['username'];
 
-// ❗ 2FA-Logik nur hier gezielt einbinden
+// 🔧 Aktuelles Profil aus der DB laden
+$profile = DbFunctions::fetchUserProfile($userId);
+
+// 🔐 2FA optional einbinden
 require_once __DIR__ . '/../includes/2fa.inc.php';
 
-// Allgemeine Smarty-Daten
+// Smarty-Daten setzen
 $smarty->assign('base_url', $config['base_url']);
 $smarty->assign('app_name', $config['app_name']);
 $smarty->assign('isLoggedIn', true);
 $smarty->assign('username', $username);
+$smarty->assign('profile', $profile); // ✅ Jetzt korrekt eingebunden
 
-// Seite anzeigen
+// Template anzeigen
 $smarty->display('profile.tpl');
