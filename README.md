@@ -82,5 +82,20 @@ Passwort = Acces Key
 [mixkit](https://mixkit.co)
 
 # Verwendete APIs
-[Google reCaptcha](https://cloud.google.com/security/products/recaptcha)  
+[Google reCaptcha](https://cloud.google.com/security/products/recaptcha)
 [Google Fronts](https://fonts.google.com/icons) (lokal eingebunden)
+
+## Lerngruppen-Funktionen
+
+Dieses Repository enthält nun eine einfache Verwaltung von Lerngruppen.
+Die benötigten Dateien befinden sich in den folgenden Verzeichnissen:
+
+* `public/lerngruppen.php` – verarbeitet Gruppenaktionen wie Erstellen,
+  Beitreten und Verlassen.
+* `includes/db.inc.php` – stellt die Datenbankfunktionen zur Verwaltung der
+  Gruppen bereit (z. B. `createGroup` oder `getGroupMembers`).
+* `templates/lerngruppen.tpl` – Smarty-Template zur Anzeige der Gruppen,
+  Mitglieder und bereitgestellten Lernmaterialien.
+
+Durch Aufruf von `lerngruppen.php` können angemeldete Nutzer Gruppen
+organisieren und Dateien innerhalb der Gruppe austauschen.
