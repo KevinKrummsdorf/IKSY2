@@ -340,11 +340,114 @@ class DbFunctions
     public static function disableTwoFA(string $username): void
     {
         $sql = '
-            UPDATE users 
+            UPDATE users
             SET twofa_secret = NULL, is_twofa_enabled = 0
             WHERE username = :username
         ';
         self::execute($sql, [':username' => $username]);
+    }
+
+    // ==== Lerngruppen-Funktionen ====
+
+    /**
+     * Liefert die Gruppe, in der der Nutzer Mitglied ist.
+     */
+    public static function fetchGroupByUser(int $userId): ?array
+    {
+        $sql = '
+            SELECT g.*
+            FROM group_members gm
+            JOIN groups g ON gm.group_id = g.id
+            WHERE gm.user_id = :uid
+            LIMIT 1
+        ';
+        return self::fetchOne($sql, [':uid' => $userId]);
+    }
+
+    /**
+     * Legt eine neue Gruppe an und fügt den Nutzer als Mitglied hinzu.
+     */
+    public static function createGroup(string $groupName, int $userId): ?int
+    {
+        $pdo = self::db_connect();
+        $pdo->beginTransaction();
+        try {
+            $stmt = $pdo->prepare('INSERT INTO groups (name) VALUES (:name)');
+            $stmt->execute([':name' => $groupName]);
+            $groupId = (int)$pdo->lastInsertId();
+
+            $stmt = $pdo->prepare('INSERT INTO group_members (group_id, user_id) VALUES (:gid, :uid)');
+            $stmt->execute([':gid' => $groupId, ':uid' => $userId]);
+
+            $pdo->commit();
+            return $groupId;
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            return null;
+        }
+    }
+
+    /**
+     * Sucht eine Gruppe anhand ihres Namens.
+     */
+    public static function fetchGroupByName(string $name): ?array
+    {
+        $sql = 'SELECT * FROM groups WHERE name = :name LIMIT 1';
+        return self::fetchOne($sql, [':name' => $name]);
+    }
+
+    /**
+     * Fügt den Nutzer einer Gruppe hinzu.
+     */
+    public static function addUserToGroup(int $groupId, int $userId): bool
+    {
+        $sql = '
+            INSERT IGNORE INTO group_members (group_id, user_id)
+            VALUES (:gid, :uid)
+        ';
+        return self::execute($sql, [':gid' => $groupId, ':uid' => $userId]) > 0;
+    }
+
+    /**
+     * Entfernt den Nutzer aus einer Gruppe.
+     */
+    public static function removeUserFromGroup(int $groupId, int $userId): bool
+    {
+        $sql = '
+            DELETE FROM group_members
+            WHERE group_id = :gid AND user_id = :uid
+        ';
+        return self::execute($sql, [':gid' => $groupId, ':uid' => $userId]) > 0;
+    }
+
+    /**
+     * Gibt alle Mitglieder einer Gruppe zurück.
+     */
+    public static function getGroupMembers(int $groupId): array
+    {
+        $sql = '
+            SELECT u.username, u.email
+            FROM group_members gm
+            JOIN users u ON gm.user_id = u.id
+            WHERE gm.group_id = :gid
+            ORDER BY u.username ASC
+        ';
+        return self::execute($sql, [':gid' => $groupId], true);
+    }
+
+    /**
+     * Gibt alle freigegebenen Uploads einer Gruppe zurück.
+     */
+    public static function getUploadsByGroup(int $groupId): array
+    {
+        $sql = '
+            SELECT u.id, u.stored_name, m.title
+            FROM uploads u
+            JOIN materials m ON u.material_id = m.id
+            WHERE u.group_id = :gid AND u.is_approved = 1 AND u.is_rejected = 0
+            ORDER BY u.uploaded_at DESC
+        ';
+        return self::execute($sql, [':gid' => $groupId], true);
     }
 }
 
