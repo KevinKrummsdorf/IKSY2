@@ -451,4 +451,9 @@ body {
 
 [data-bs-theme="dark"] .requirement-list li {
   color: var(--text-color);
+
+/* Upload Carousel */
+.upload-preview {
+  max-height: 400px;
+  object-fit: contain;
 }

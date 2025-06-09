@@ -25,6 +25,7 @@ $contactRequests = $isAdmin ? DbFunctions::getRecentContactRequests(10) : [];
 $lockedUsers     = $isAdmin ? DbFunctions::getAllLockedUsers() : [];
 $pendingUploads  = DbFunctions::getPendingUploads();
 $pendingCourses  = DbFunctions::getPendingCourseSuggestions();
+$userUploads     = DbFunctions::getApprovedUploadsByUser((int)$_SESSION['user_id']);
 
 // Flash anzeigen
 if (isset($_SESSION['flash'])) {
@@ -37,6 +38,7 @@ $smarty->assign('contact_requests', $contactRequests);
 $smarty->assign('locked_users',     $lockedUsers);
 $smarty->assign('pending_uploads',  $pendingUploads);
 $smarty->assign('pending_courses',  $pendingCourses);
+$smarty->assign('user_uploads',     $userUploads);
 $smarty->assign('isAdmin',          $isAdmin);
 $smarty->assign('isMod',            $isMod);
 

@@ -1067,6 +1067,31 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
 
     return $stmt->fetchAll();
 }
+
+    /**
+     * Holt alle genehmigten Uploads eines Benutzers.
+     *
+     * @param int $userId ID des Benutzers
+     * @return array Liste der Uploads mit Material- und Kursinformationen
+     */
+    public static function getApprovedUploadsByUser(int $userId): array
+    {
+        $pdo = self::db_connect();
+
+        $stmt = $pdo->prepare(
+            "SELECT u.id, u.stored_name, u.uploaded_at, m.title, c.name AS course_name
+             FROM uploads u
+             JOIN materials m ON u.material_id = m.id
+             JOIN courses c ON m.course_id = c.id
+             WHERE u.uploaded_by = ?
+               AND u.is_approved = 1
+               AND u.is_rejected = 0
+             ORDER BY u.uploaded_at DESC"
+        );
+        $stmt->execute([$userId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 /**
  * Zählt die Anzahl der Upload-Logs mit erweiterten Filtermöglichkeiten.
  * @param array $filters Filterkriterien
