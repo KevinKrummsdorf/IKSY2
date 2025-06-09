@@ -340,11 +340,57 @@ class DbFunctions
     public static function disableTwoFA(string $username): void
     {
         $sql = '
-            UPDATE users 
+            UPDATE users
             SET twofa_secret = NULL, is_twofa_enabled = 0
             WHERE username = :username
         ';
         self::execute($sql, [':username' => $username]);
+    }
+
+    /**
+     * Liefert die Profilinformationen eines Benutzers oder null,
+     * falls kein Profil existiert.
+     */
+    public static function fetchUserProfile(int $userId): ?array
+    {
+        $sql = 'SELECT * FROM profile WHERE user_id = :uid';
+        return self::fetchOne($sql, [':uid' => $userId]);
+    }
+
+    /**
+     * Holt das Profil eines Benutzers oder legt bei Bedarf
+     * einen neuen Datensatz an und gibt diesen anschließend zurück.
+     */
+    public static function getOrCreateUserProfile(int $userId): array
+    {
+        $profile = self::fetchUserProfile($userId);
+        if ($profile !== null) {
+            return $profile;
+        }
+
+        self::execute('INSERT INTO profile (user_id) VALUES (:uid)', [':uid' => $userId], false);
+        return self::fetchUserProfile($userId) ?: [];
+    }
+
+    /**
+     * Aktualisiert ausgewählte Profilfelder eines Benutzers.
+     */
+    public static function updateUserProfile(int $userId, array $fields): void
+    {
+        if (empty($fields)) {
+            return;
+        }
+
+        $setParts = [];
+        $params   = [':uid' => $userId];
+
+        foreach ($fields as $key => $value) {
+            $setParts[]       = "`$key` = :$key";
+            $params[":$key"] = $value;
+        }
+
+        $sql = 'UPDATE profile SET ' . implode(', ', $setParts) . ', updated_at = NOW() WHERE user_id = :uid';
+        self::execute($sql, $params, false);
     }
 }
 
