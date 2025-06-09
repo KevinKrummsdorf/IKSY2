@@ -1713,4 +1713,75 @@ public static function getFilteredLockedUsers(array $filters = []): array
 }
 
 
+    /**
+     * Speichert einen Password-Reset-Token.
+     */
+    public static function storePasswordResetToken(int $userId, string $token, int $expiresMinutes = 60): void
+    {
+        $sql = '
+            INSERT INTO password_reset_tokens (user_id, reset_token, expires_at)
+            VALUES (:uid, :token, DATE_ADD(NOW(), INTERVAL :exp MINUTE))
+            ON DUPLICATE KEY UPDATE
+                reset_token = VALUES(reset_token),
+                expires_at = VALUES(expires_at)
+        ';
+        self::getLogger()->info('Store Password Reset Token', ['user_id' => $userId]);
+        self::execute($sql, [
+            ':uid'  => $userId,
+            ':token'=> $token,
+            ':exp'  => $expiresMinutes,
+        ]);
+    }
+
+    /**
+     * Holt den Benutzer anhand des Password-Reset-Tokens.
+     */
+    public static function fetchPasswordResetUser(string $token): ?array
+    {
+        $sql = '
+            SELECT u.id, u.username, u.email, u.password_hash
+            FROM password_reset_tokens pr
+            JOIN users u ON pr.user_id = u.id
+            WHERE pr.reset_token = :token AND pr.expires_at > NOW()
+            LIMIT 1
+        ';
+        self::getLogger()->info('Fetch Password Reset User', ['token' => $token]);
+        return self::fetchOne($sql, [':token' => $token]);
+    }
+
+    /**
+     * Löscht einen Password-Reset-Token.
+     */
+    public static function deletePasswordResetToken(int $userId): int
+    {
+        $sql = 'DELETE FROM password_reset_tokens WHERE user_id = :id';
+        self::getLogger()->info('Delete Password Reset Token', ['user_id' => $userId]);
+        return self::execute($sql, [':id' => $userId], false);
+    }
+
+    /**
+     * Aktualisiert das Passwort eines Benutzers.
+     */
+    public static function updatePassword(int $userId, string $passwordHash): int
+    {
+        $sql = 'UPDATE users SET password_hash = :pw WHERE id = :id';
+        self::getLogger()->info('Update Password', ['user_id' => $userId]);
+        return self::execute($sql, [':pw' => $passwordHash, ':id' => $userId], false);
+    }
+
+    /**
+     * Holt einen Benutzer anhand seiner ID.
+     */
+    public static function fetchUserById(int $userId): ?array
+    {
+        $sql = '
+            SELECT id, username, password_hash
+            FROM users
+            WHERE id = :id
+            LIMIT 1
+        ';
+        self::getLogger()->info('Fetch User By ID', ['user_id' => $userId]);
+        return self::fetchOne($sql, [':id' => $userId]);
+    }
+
 }

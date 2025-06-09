@@ -33,6 +33,9 @@
             <span id="login-spinner" class="spinner-border spinner-border-sm me-2 d-none" role="status"></span>
             Login
           </button>
+          <div class="mt-2 text-end">
+            <a href="request_password_reset.php">Passwort vergessen?</a>
+          </div>
         </form>
       </div>
     </div>
