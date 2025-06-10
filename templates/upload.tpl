@@ -3,7 +3,7 @@
 
 {block name="content"}
 <div class="container">
-    <h1 class="mb-4 text-center">Upload & Kursvorschlag</h1>
+    <h1 class="mb-4 text-center">Materialien hochladen</h1>
 
     {if isset($error)}
     <div class="alert alert-danger">{$error}</div>
