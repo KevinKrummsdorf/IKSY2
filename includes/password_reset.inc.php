@@ -32,3 +32,33 @@ function sendPasswordResetEmail(
 
     sendMail($email, $username, $subject, $htmlBody, $altBody);
 }
+
+function sendPasswordResetSuccessEmail (
+    PDO $pdo,
+    int $userId,
+    string $username,
+    string $email,
+) : void 
+{
+    global $config;
+
+    $siteUrl = $config['site_url'] ?? $config['base_url'] ?? '';
+    if (!$siteUrl) {
+        throw new RuntimeException('Keine site_url oder base_url vorhanden.');
+    }
+
+    $link = rtrim($siteUrl, '/') . '/index.php';
+    $subject ='Passwort wurde erfolgreich zurückgesetzt';
+
+    $htmlBody = "<p>Hallo <strong>{$username}</strong>,</p>
+        <p>dein Passwort wurde erfolgreich zurückgesetzt. Du kannst dich nun mit deinem neuen Passwort einloggen.</p>
+        <p><a href=\"{$link}\">Jetzt einloggen</a></p>
+        <p>\nWenn du das Zurücksetzten des Passworts nicht veranlasst hast, wende dich bitte unverzüglich an den Support.\n</p>
+        <p>Viele Grüße,<br>StudyHub-Team</p>";
+
+    $altBody = "Hallo {$username},\n\n" .
+        "dein Passwort wurde erfolgreich zurückgesetzt" .
+        "Viele Grüße,\nStudyHub-Team";
+
+    sendMail($email, $username, $subject, $htmlBody, $altBody);
+}

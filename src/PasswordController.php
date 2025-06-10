@@ -25,6 +25,7 @@ class PasswordController
         $hash = password_hash($password, PASSWORD_DEFAULT);
         DbFunctions::updatePassword((int)$user['id'], $hash);
         DbFunctions::deletePasswordResetToken((int)$user['id']);
+        sendPasswordResetSuccessEmail(DbFunctions::db_connect(), (int)$user['id'], $user['username'], $user['email']);
     }
 
     public static function changePassword(int $userId, string $oldPassword, string $newPassword): void

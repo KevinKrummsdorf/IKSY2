@@ -16,10 +16,6 @@
 
 {if !$success}
 <form method="post" class="needs-validation" novalidate>
-    {*
-        Dieser Alert wird durch JavaScript sichtbar gemacht,
-        wenn die Felder leer oder ungültig sind (Client-seitig).
-    *}
     <div id="formAlert" class="alert alert-danger d-none">Bitte alle Felder ausfüllen.</div>
 
     <div class="mb-3">
