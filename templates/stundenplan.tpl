@@ -77,7 +77,7 @@
 
 {assign var="tage" value=["montag","dienstag","mittwoch","donnerstag","freitag"]}
 
-<form method="post" action="stundenplan_speichern.php">
+<form method="post" action="">
     <table class="stundenplan-table">
         <thead>
             <tr>
