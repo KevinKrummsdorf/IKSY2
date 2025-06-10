@@ -17,12 +17,35 @@ $log = LoggerFactory::get('upload');
 $error   = '';
 $success = '';
 
+$action = $_POST['action'] ?? ($_GET['action'] ?? 'upload');
+$action = $action === 'suggest' ? 'suggest' : 'upload';
+
 $courses = DbFunctions::getAllCourses();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])) {
         $error = 'Ungültiger CSRF-Token.';
         $log->error('CSRF-Token ungültig', ['user_id' => $_SESSION['user_id']]);
+    } elseif ($action === 'suggest') {
+        $courseSuggestion = trim($_POST['course_suggestion'] ?? '');
+        $smarty->assign('courseSuggestion', $courseSuggestion);
+
+        if ($courseSuggestion === '') {
+            $error = 'Bitte gib einen Kursnamen an.';
+        } else {
+            try {
+                DbFunctions::submitCourseSuggestion($courseSuggestion, (int)$_SESSION['user_id']);
+                $log->info('Kursvorschlag eingereicht', [
+                    'user_id'         => $_SESSION['user_id'],
+                    'course_suggested'=> $courseSuggestion,
+                ]);
+                $success = 'Kursvorschlag wurde eingereicht.';
+                $_POST = [];
+            } catch (Exception $e) {
+                $error = 'Fehler beim Speichern des Kursvorschlags.';
+                $log->error('Kursvorschlag-Fehler', ['msg' => $e->getMessage()]);
+            }
+        }
     } else {
         $title         = trim($_POST['title'] ?? '');
         $description   = trim($_POST['description'] ?? '');
@@ -129,6 +152,8 @@ $smarty->assign([
     'title'          => $_POST['title'] ?? '',
     'description'    => $_POST['description'] ?? '',
     'csrf_token'     => $_SESSION['csrf_token'],
+    'action'         => $action,
+    'courseSuggestion' => $_POST['course_suggestion'] ?? '',
 ]);
 
 if ($error) {
