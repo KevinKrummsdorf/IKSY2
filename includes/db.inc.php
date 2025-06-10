@@ -201,10 +201,9 @@ public static function insertUploadLog(int $actedBy, int $uploadId): void
 public static function fetchVerificationUser(string $token): ?array
 {
     $sql = '
-        SELECT u.id, u.username, uv.is_verified
+        SELECT u.id, u.username, u.is_verified
         FROM verification_tokens vt
         JOIN users u ON u.id = vt.user_id
-        JOIN user_verification uv ON u.id = uv.user_id
         WHERE vt.verification_token = :token
         LIMIT 1
     ';
@@ -220,7 +219,7 @@ public static function fetchVerificationUser(string $token): ?array
      */
 public static function verifyUser(int $userId): int
 {
-    $sql = 'UPDATE user_verification SET is_verified = TRUE WHERE user_id = :id';
+    $sql = 'UPDATE users SET is_verified = TRUE WHERE id = :id';
     self::getLogger()->info('Verify User', ['user_id' => $userId]);
     return self::execute($sql, [':id' => $userId], false);
 }
@@ -294,7 +293,6 @@ public static function insertUser(string $username, string $email, string $passw
     $userId = (int)self::lastInsertId();
 
     // Init-Datensätze für Normalisierungstabellen
-    self::execute('INSERT INTO user_verification (user_id) VALUES (:uid)', [':uid' => $userId]);
     self::execute('INSERT INTO user_security (user_id) VALUES (:uid)', [':uid' => $userId]);
     self::execute('INSERT INTO user_2fa (user_id) VALUES (:uid)', [':uid' => $userId]);
 
@@ -327,10 +325,9 @@ public static function fetchUserByIdentifier(string $input): ?array
             u.username,
             u.email,
             u.password_hash,
-            uv.is_verified,
+            u.is_verified,
             r.role_name AS role
         FROM users u
-        JOIN user_verification uv ON u.id = uv.user_id
         LEFT JOIN user_roles ur ON u.id = ur.user_id
         LEFT JOIN roles r ON ur.role_id = r.id
         WHERE u.username = :identUser OR u.email = :identEmail
