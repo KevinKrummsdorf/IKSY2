@@ -11,7 +11,10 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
     header("Location: /studyhub/error/403?reason={$reason}&action=both");    exit;
 }
 
+$userId   = $_SESSION['user_id'];
 $username = $_SESSION['username'];
+
+$profile = DbFunctions::getOrCreateUserProfile($userId);
 
 $pwSuccess = null;
 $pwMessage = null;
@@ -44,6 +47,7 @@ $smarty->assign('base_url', $config['base_url']);
 $smarty->assign('app_name', $config['app_name']);
 $smarty->assign('isLoggedIn', true);
 $smarty->assign('username', $username);
+$smarty->assign('profile', $profile);
 $smarty->assign('pw_success', $pwSuccess);
 $smarty->assign('pw_message', $pwMessage);
 

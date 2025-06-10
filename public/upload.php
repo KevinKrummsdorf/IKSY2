@@ -139,3 +139,4 @@ if ($success) {
 }
 
 $smarty->display('upload.tpl');
+
