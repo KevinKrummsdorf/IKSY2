@@ -41,13 +41,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $file     = $_FILES['file'];
             $finfo    = new finfo(FILEINFO_MIME_TYPE);
             $mimeType = $finfo->file($file['tmp_name']);
-            $allowed  = ['application/pdf','image/jpeg','image/png','text/plain'];
+            $allowed  = [
+                'application/pdf',
+                'image/jpeg',
+                'image/png',
+                'text/plain',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.oasis.opendocument.text',
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            ];
 
             if ($file['error'] !== UPLOAD_ERR_OK) {
                 $error = 'Fehler beim Datei-Upload.';
                 $log->error('Datei-Upload-Fehler', ['user_id' => $_SESSION['user_id'], 'error' => $file['error']]);
             } elseif (!in_array($mimeType, $allowed, true)) {
-                $error = 'Nur PDF, JPG, PNG und TXT erlaubt.';
+                $error = 'Nur PDF, JPG, PNG, TXT, DOC, DOCX, ODT, PPT und PPTX erlaubt.';
             } elseif ($file['size'] > 10 * 1024 * 1024) {
                 $error = 'Maximal 10 MB erlaubt.';
             } else {
