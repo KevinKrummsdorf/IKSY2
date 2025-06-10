@@ -278,9 +278,9 @@
           <div class="carousel-inner">
             {foreach $user_uploads as $index => $u}
             <div class="carousel-item {if $index == 0}active{/if}">
-              {if preg_match('/\.(jpg|jpeg|png)$/i', $u.stored_name)}
+              {if $u.type == 'image'}
                 <img src="{$base_url}/uploads/{$u.stored_name|escape}" class="d-block w-100 upload-preview" alt="{$u.title|escape}">
-              {elseif preg_match('/\.pdf$/i', $u.stored_name)}
+              {elseif $u.type == 'pdf'}
                 <div class="text-center py-5">
                   <span class="material-symbols-outlined" style="font-size:4rem;">picture_as_pdf</span>
                 </div>
