@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-session_start();
 require_once __DIR__ . '/../includes/config.inc.php';
-require_once __DIR__ . '/../includes/db.inc.php';
 
 if (empty($_SESSION['user_id'])) {
     http_response_code(403);
@@ -57,5 +55,5 @@ if (!empty($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ==
 DbFunctions::updateUserProfile($userId, $data);
 
 // Weiterleitung
-header('Location: /iksy05/StudyHub/public/profile.php?success=1');
+header('Location: profile.php?success=1');
 exit;
