@@ -7,17 +7,23 @@ declare(strict_types=1);
  */
 function convertToPdf(string $filePath): ?string
 {
+    $log = LoggerFactory::get('converter');
+
     $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
     if ($ext === 'pdf') {
         return $filePath; // bereits PDF
     }
 
-    $outputDir = dirname($filePath);
+    $outputDir   = dirname($filePath);
     $escapedInput = escapeshellarg($filePath);
-    $escapedDir = escapeshellarg($outputDir);
+    $escapedDir  = escapeshellarg($outputDir);
 
-    $binary = trim(shell_exec('command -v libreoffice')); // libreoffice path or empty
+    $binary = trim(shell_exec('command -v libreoffice')); // libreoffice path oder leer
     if ($binary === '') {
+        $binary = trim(shell_exec('command -v soffice'));
+    }
+    if ($binary === '') {
+        $log->warning('LibreOffice nicht gefunden', ['file' => $filePath]);
         return null; // LibreOffice nicht installiert
     }
 
@@ -29,6 +35,13 @@ function convertToPdf(string $filePath): ?string
         if (file_exists($pdfPath)) {
             return $pdfPath;
         }
+        $log->error('PDF nach erfolgreichem Lauf nicht gefunden', ['file' => $filePath, 'cmd' => $cmd]);
+    } else {
+        $log->error('LibreOffice-Konvertierung fehlgeschlagen', [
+            'cmd' => $cmd,
+            'output' => implode("\n", $out),
+            'code' => $ret,
+        ]);
     }
     return null;
 }
