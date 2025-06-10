@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $success = true;
     } catch (Throwable $e) {
         $log->error('Passwort zurücksetzen fehlgeschlagen', ['error' => $e->getMessage()]);
-        $message = defined('DEBUG') ? $e->getMessage() : 'Fehler beim Zurücksetzen des Passworts.';
+        $message = trim($e->getMessage());
     }
 }
 
