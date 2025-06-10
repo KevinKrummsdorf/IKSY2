@@ -340,11 +340,53 @@ class DbFunctions
     public static function disableTwoFA(string $username): void
     {
         $sql = '
-            UPDATE users 
+            UPDATE users
             SET twofa_secret = NULL, is_twofa_enabled = 0
             WHERE username = :username
         ';
         self::execute($sql, [':username' => $username]);
+    }
+
+    // Holt alle ToDos für den angegebenen Benutzer
+    public static function getTodosByUserId(int $userId): array
+    {
+        $query = '
+        SELECT * FROM todos
+        WHERE user_id = ?
+        ORDER BY created_at DESC
+    ';
+        return self::execute($query, [$userId], true);
+    }
+
+    // Fügt ein neues ToDo ein
+    public static function insertTodo(int $userId, string $text, ?string $dueDate): void
+    {
+        $query = '
+        INSERT INTO todos (user_id, text, due_date)
+        VALUES (?, ?, ?)
+    ';
+        self::execute($query, [$userId, $text, $dueDate]);
+    }
+
+    // Holt den aktuellen Status eines ToDos
+    public static function getTodoStatus(int $todoId, int $userId): ?array
+    {
+        $query = '
+        SELECT is_done FROM todos
+        WHERE id = ? AND user_id = ?
+    ';
+        return self::execute($query, [$todoId, $userId], false);
+    }
+
+    // Aktualisiert den Status eines ToDos
+    public static function updateTodoStatus(int $todoId, int $userId, int $newStatus): void
+    {
+        $query = '
+        UPDATE todos
+        SET is_done = ?
+        WHERE id = ? AND user_id = ?
+    ';
+        self::execute($query, [$newStatus, $todoId, $userId]);
     }
 }
 
