@@ -322,8 +322,11 @@ public static function insertUser(string $username, string $email, string $passw
 public static function fetchUserByIdentifier(string $input): ?array
 {
     $sql = '
-        SELECT 
-            u.id, u.username, u.password_hash,
+        SELECT
+            u.id,
+            u.username,
+            u.email,
+            u.password_hash,
             uv.is_verified,
             r.role_name AS role
         FROM users u
