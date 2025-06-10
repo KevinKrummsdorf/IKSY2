@@ -111,7 +111,7 @@ class DbFunctions
         SELECT is_done FROM todos
         WHERE id = ? AND user_id = ?
     ';
-        return self::execute($query, [$todoId, $userId], false);
+        return self::fetchOne($query, [$todoId, $userId]);
     }
 
     /**
