@@ -6,6 +6,20 @@
 <h1>Neues Passwort setzen</h1>
 {if $success}
     <div class="alert alert-success">Passwort wurde geändert.</div>
+<script>
+(() => {
+    'use strict';
+    const form = document.querySelector('.needs-validation');
+    form?.addEventListener('submit', e => {
+        if (!form.checkValidity()) {
+            e.preventDefault();
+            e.stopPropagation();
+            alert('Bitte alle Felder ausfüllen.');
+        }
+        form.classList.add('was-validated');
+    });
+})();
+</script>
     <a href="{$base_url}/index.php" class="btn btn-primary">Zur Startseite</a>
 {elseif $message}
     <div class="alert alert-danger">{$message}</div>

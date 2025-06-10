@@ -24,4 +24,18 @@
     </div>
     <button type="submit" class="btn btn-primary">Passwort speichern</button>
 </form>
+<script>
+(() => {
+    'use strict';
+    const form = document.querySelector('.needs-validation');
+    form?.addEventListener('submit', e => {
+        if (!form.checkValidity()) {
+            e.preventDefault();
+            e.stopPropagation();
+            alert('Bitte alle Felder ausfüllen.');
+        }
+        form.classList.add('was-validated');
+    });
+})();
+</script>
 {/block}
