@@ -52,8 +52,16 @@
 
         <div class="mb-3">
             <label for="file" class="form-label">Datei auswählen</label>
-            <input type="file" id="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.txt" required>
-            <div class="form-text">Erlaubte Dateitypen: PDF, JPG, PNG, TXT, DOC, DOCX, ODT, PPT Max. 10 MB.</div>
+            <input type="file" id="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.txt,.doc,.docx,.odt,.ppt,.pptx" required>
+            <div class="form-text">Erlaubte Dateitypen: PDF, JPG, PNG, TXT, DOC, DOCX, ODT, PPT, PPTX. Max. 10 MB.</div>
+        </div>
+
+        <div class="mb-3" id="ppt-convert-wrapper" style="display:none;">
+            <label for="convert_ppt" class="form-label">PowerPoint in PDF umwandeln?</label>
+            <select id="convert_ppt" name="convert_ppt" class="form-select">
+                <option value="1" selected>Ja</option>
+                <option value="0">Nein</option>
+            </select>
         </div>
 
         <button type="submit" class="btn btn-primary">Hochladen</button>
@@ -81,6 +89,10 @@ function toggleCustomCourse(value) {
 document.addEventListener('DOMContentLoaded', function () {
     toggleCustomCourse(document.getElementById('course').value);
     toggleAction(document.getElementById('action').value);
+    checkPpt(document.getElementById('file').value);
+    document.getElementById('file').addEventListener('change', function(){
+        checkPpt(this.value);
+    });
 });
 
 function toggleAction(val) {
@@ -93,6 +105,13 @@ function toggleAction(val) {
         uploadForm.style.display = 'block';
         suggestForm.style.display = 'none';
     }
+}
+
+function checkPpt(filename) {
+    const wrapper = document.getElementById('ppt-convert-wrapper');
+    const lower = filename.toLowerCase();
+    const show = lower.endsWith('.ppt') || lower.endsWith('.pptx');
+    wrapper.style.display = show ? 'block' : 'none';
 }
 </script>
 {/literal}

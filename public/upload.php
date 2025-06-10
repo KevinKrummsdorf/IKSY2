@@ -102,6 +102,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $destination = $uploadDir . $storedName;
 
                     if (move_uploaded_file($file['tmp_name'], $destination)) {
+                        $force = isset($_POST['convert_ppt']) && $_POST['convert_ppt'] === '1';
+                        $newName = handleUploadConversion($destination, $force);
+                        if ($newName !== basename($destination)) {
+                            $storedName = $newName;
+                            $destination = $uploadDir . $storedName;
+                        }
                         try {
                             if ($course === '__custom__') {
                                 DbFunctions::submitCourseSuggestion($customCourse, (int)$_SESSION['user_id']);
@@ -134,7 +140,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         }
                     } else {
                         $error = 'Konnte Datei nicht speichern.';
-                        $log->error('Datei konnte nicht gespeichert werden', ['user_id' => $_SESSION['user_id']]);
+                        $log->error('Datei konnte nicht gespeichert werden', [
+                            'user_id' => $_SESSION['user_id'],
+                            'tmp_name' => $file['tmp_name'],
+                            'destination' => $destination,
+                            'move_error' => error_get_last()
+                        ]);
                     }
                 }
             }
