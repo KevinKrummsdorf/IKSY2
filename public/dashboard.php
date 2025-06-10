@@ -25,6 +25,19 @@ $contactRequests = $isAdmin ? DbFunctions::getRecentContactRequests(10) : [];
 $lockedUsers     = $isAdmin ? DbFunctions::getAllLockedUsers() : [];
 $pendingUploads  = DbFunctions::getPendingUploads();
 $pendingCourses  = DbFunctions::getPendingCourseSuggestions();
+$userUploads     = DbFunctions::getApprovedUploadsByUser((int)$_SESSION['user_id']);
+// Dateityp fuer Vorschau bestimmen
+foreach ($userUploads as &$upload) {
+    $ext = strtolower(pathinfo($upload['stored_name'], PATHINFO_EXTENSION));
+    if (in_array($ext, ['jpg', 'jpeg', 'png'])) {
+        $upload['type'] = 'image';
+    } elseif ($ext === 'pdf') {
+        $upload['type'] = 'pdf';
+    } else {
+        $upload['type'] = 'other';
+    }
+}
+unset($upload);
 
 // Flash anzeigen
 if (isset($_SESSION['flash'])) {
@@ -37,6 +50,7 @@ $smarty->assign('contact_requests', $contactRequests);
 $smarty->assign('locked_users',     $lockedUsers);
 $smarty->assign('pending_uploads',  $pendingUploads);
 $smarty->assign('pending_courses',  $pendingCourses);
+$smarty->assign('user_uploads',     $userUploads);
 $smarty->assign('isAdmin',          $isAdmin);
 $smarty->assign('isMod',            $isMod);
 

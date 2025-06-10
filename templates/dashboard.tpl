@@ -269,6 +269,48 @@
 </section>
 
   {/if}
+  {if !$isAdmin && !$isMod}
+  <section class="my-5">
+    <h2 class="mb-2">Deine Uploads</h2>
+    <div>
+      {if $user_uploads|@count > 0}
+        <div id="myUploadsCarousel" class="carousel slide" data-bs-touch="true">
+          <div class="carousel-inner">
+            {foreach $user_uploads as $index => $u}
+            <div class="carousel-item {if $index == 0}active{/if}">
+              {if $u.type == 'image'}
+                <img src="{$base_url}/uploads/{$u.stored_name|escape}" class="d-block w-100 upload-preview" alt="{$u.title|escape}">
+              {elseif $u.type == 'pdf'}
+                <div class="text-center py-5">
+                  <span class="material-symbols-outlined" style="font-size:4rem;">picture_as_pdf</span>
+                </div>
+              {else}
+                <div class="text-center py-5">
+                  <span class="material-symbols-outlined" style="font-size:4rem;">description</span>
+                </div>
+              {/if}
+              <div class="carousel-caption d-none d-md-block">
+                <h5>{$u.title|escape}</h5>
+                <p>{$u.course_name|escape} – {$u.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</p>
+              </div>
+            </div>
+            {/foreach}
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#myUploadsCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#myUploadsCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      {else}
+        <div class="alert alert-info">Du hast noch keine Materialien hochgeladen.</div>
+      {/if}
+      </div>
+  </section>
+  {/if}
 </div>
 {/block}
 
