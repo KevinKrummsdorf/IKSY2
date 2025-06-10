@@ -20,9 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unlock_user_id'])) {
     $user = DbFunctions::getUserById($unlockId);
     if ($user && !empty($user['email'])) {
         $subject = 'Dein Account bei StudyHub wurde entsperrt';
-        $body = "<p>Hallo {$user['username']},</p>
-                 <p>dein Account bei StudyHub wurde von einem Administrator entsperrt. Du kannst dich ab sofort wieder anmelden.</p>
-                 <p>Viele Grüße,<br>Dein StudyHub-Team</p>";
+        $name = htmlspecialchars($user['username'], ENT_QUOTES);
+        $body = '<p>Hallo ' . $name . ',</p>' .
+                '<p>dein Account bei StudyHub wurde von einem Administrator entsperrt. Du kannst dich ab sofort wieder anmelden.</p>' .
+                '<p>Viele Grüße,<br>Dein StudyHub-Team</p>';
         try {
             sendMail($user['email'], $user['username'], $subject, $body);
         } catch (Exception $e) {

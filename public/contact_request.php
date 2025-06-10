@@ -22,11 +22,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply_contact_id'])) 
     if ($replyText !== '') {
         $contact = DbFunctions::fetchOne("SELECT name, email FROM contact_requests WHERE contact_id = ?", [$contactId]);
         if ($contact) {
-            $subject = "Antwort auf deine Kontaktanfrage bei StudyHub";
-            $body = "<p>Hallo {$contact['name']},</p>
-                     <p>wir haben deine Kontaktanfrage erhalten und möchten dir wie folgt antworten:</p>
-                     <blockquote>{$replyText}</blockquote>
-                     <p>Viele Grüße,<br>Dein StudyHub-Team</p>";
+            $subject  = 'Antwort auf deine Kontaktanfrage bei StudyHub';
+            $safeName = htmlspecialchars($contact['name'], ENT_QUOTES);
+            $safeText = nl2br(htmlspecialchars($replyText, ENT_QUOTES));
+            $body = '<p>Hallo ' . $safeName . ',</p>' .
+                    '<p>wir haben deine Kontaktanfrage erhalten und möchten dir wie folgt antworten:</p>' .
+                    '<blockquote>' . $safeText . '</blockquote>' .
+                    '<p>Viele Grüße,<br>Dein StudyHub-Team</p>';
             try {
                 sendMail($contact['email'], $contact['name'], $subject, $body);
                 $_SESSION['flash'] = ['type' => 'success', 'message' => 'Antwort erfolgreich versendet.'];

@@ -34,16 +34,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ? 'Dein Upload auf StudyHub wurde freigegeben'
                 : 'Dein Upload auf StudyHub wurde abgelehnt';
 
+            $user   = htmlspecialchars($uploadData['username'], ENT_QUOTES);
+            $title  = htmlspecialchars($uploadData['title'], ENT_QUOTES);
+            $course = htmlspecialchars($uploadData['course_name'], ENT_QUOTES);
+            $reason = htmlspecialchars($note, ENT_QUOTES);
+
             $body = ($action === 'approve')
-                ? "<p>Hallo {$uploadData['username']},</p>
-                   <p>dein Upload <strong>{$uploadData['title']}</strong> im Kurs <strong>{$uploadData['course_name']}</strong> wurde von einem Moderator freigegeben.</p>
-                   <p>Vielen Dank für deinen Beitrag!</p>
-                   <p>Viele Grüße,<br>Dein StudyHub-Team</p>"
-                : "<p>Hallo {$uploadData['username']},</p>
-                   <p>dein Upload <strong>{$uploadData['title']}</strong> im Kurs <strong>{$uploadData['course_name']}</strong> wurde leider abgelehnt.</p>
-                   <p><strong>Grund:</strong> {$note}</p>
-                   <p>Bitte überprüfe deinen Upload oder kontaktiere das Support-Team.</p>
-                   <p>Viele Grüße,<br>Dein StudyHub-Team</p>";
+                ? '<p>Hallo ' . $user . ',</p>' .
+                  '<p>dein Upload <strong>' . $title . '</strong> im Kurs <strong>' . $course . '</strong> wurde von einem Moderator freigegeben.</p>' .
+                  '<p>Vielen Dank für deinen Beitrag!</p>' .
+                  '<p>Viele Grüße,<br>Dein StudyHub-Team</p>'
+                : '<p>Hallo ' . $user . ',</p>' .
+                  '<p>dein Upload <strong>' . $title . '</strong> im Kurs <strong>' . $course . '</strong> wurde leider abgelehnt.</p>' .
+                  '<p><strong>Grund:</strong> ' . $reason . '</p>' .
+                  '<p>Bitte überprüfe deinen Upload oder kontaktiere das Support-Team.</p>' .
+                  '<p>Viele Grüße,<br>Dein StudyHub-Team</p>';
 
             sendMail($uploadData['email'], $uploadData['username'], $subject, $body);
         }

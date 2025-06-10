@@ -45,12 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $pdo->commit();
 
+            $user  = htmlspecialchars($row['username'], ENT_QUOTES);
+            $course = htmlspecialchars($row['course_name'], ENT_QUOTES);
             sendMail(
                 $row['email'], $row['username'],
                 'Kursvorschlag angenommen',
-                "<p>Hallo {$row['username']},</p>
-                 <p>dein Kursvorschlag <strong>{$row['course_name']}</strong> wurde genehmigt und steht nun zur Verfügung.</p>
-                 <p>Danke für deinen Beitrag!</p>"
+                '<p>Hallo ' . $user . ',</p>' .
+                '<p>dein Kursvorschlag <strong>' . $course . '</strong> wurde genehmigt und steht nun zur Verfügung.</p>' .
+                '<p>Danke für deinen Beitrag!</p>'
             );
 
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Vorschlag genehmigt.'];
@@ -61,12 +63,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $pdo->prepare("UPDATE pending_course_suggestions SET is_approved = 0 WHERE id = ?")
                     ->execute([$id]);
 
+                $user  = htmlspecialchars($row['username'], ENT_QUOTES);
+                $course = htmlspecialchars($row['course_name'], ENT_QUOTES);
+                $reasonEsc = htmlspecialchars($reason, ENT_QUOTES);
                 sendMail(
                     $row['email'], $row['username'],
                     'Kursvorschlag abgelehnt',
-                    "<p>Hallo {$row['username']},</p>
-                     <p>dein Kursvorschlag <strong>{$row['course_name']}</strong> wurde leider abgelehnt.</p>
-                     <p><strong>Begründung:</strong> {$reason}</p>"
+                    '<p>Hallo ' . $user . ',</p>' .
+                    '<p>dein Kursvorschlag <strong>' . $course . '</strong> wurde leider abgelehnt.</p>' .
+                    '<p><strong>Begründung:</strong> ' . $reasonEsc . '</p>'
                 );
 
                 $_SESSION['flash'] = ['type' => 'info', 'message' => 'Vorschlag abgelehnt.'];

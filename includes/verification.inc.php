@@ -53,16 +53,17 @@ function sendVerificationEmail(
     // 4. E-Mail-Inhalt vorbereiten
     $subject = $config['mail']['verify_subject'] ?? 'Bitte bestätige deine E-Mail-Adresse';
 
-    $htmlBody = "
-        <p>Hallo <strong>{$username}</strong>,</p>
-        <p>klicke auf diesen Link, um deine E-Mail zu bestätigen:</p>
-        <p><a href=\"{$link}\">E-Mail-Adresse jetzt bestätigen</a></p>
-        <p>Viele Grüße,<br>StudyHub-Team</p>
-    ";
+    $safeUser = htmlspecialchars($username, ENT_QUOTES);
+    $safeLink = htmlspecialchars($link, ENT_QUOTES);
 
-    $altBody = "Hallo {$username},\n\n"
-             . "bitte bestätige deine E-Mail über diesen Link:\n{$link}\n\n"
-             . "Viele Grüße,\nStudyHub-Team";
+    $htmlBody = '<p>Hallo <strong>' . $safeUser . '</strong>,</p>' .
+        '<p>klicke auf diesen Link, um deine E-Mail zu bestätigen:</p>' .
+        '<p><a href="' . $safeLink . '">E-Mail-Adresse jetzt bestätigen</a></p>' .
+        '<p>Viele Grüße,<br>StudyHub-Team</p>';
+
+    $altBody = 'Hallo ' . $safeUser . ",\n\n" .
+               'bitte bestätige deine E-Mail über diesen Link:\n' . $link . "\n\n" .
+               'Viele Grüße,\nStudyHub-Team';
 
     // 5. Mail versenden
     sendMail($email, $username, $subject, $htmlBody, $altBody,);
