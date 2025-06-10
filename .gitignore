@@ -1,12 +1,19 @@
-# Ignoriere einzelne Dateien
+# Ignore individual files
 publicsecret-key.txt
 .env
 .cache_ggshield
 README.md
 
-# Ignoriere ein ganzes Verzeichnis
-/vendor/
-/templates_c/
-/stats/
-/cache/
-/logs/
+# Ignore entire directories but keep placeholders
+vendor/
+templates_c/*
+!templates_c/.gitkeep
+cache/*
+!cache/.gitkeep
+stats/
+logs/*
+!logs/.gitkeep
+uploads/*
+!uploads/.gitkeep
+configs/*
+!configs/.gitkeep
