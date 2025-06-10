@@ -1785,9 +1785,14 @@ public static function getFilteredLockedUsers(array $filters = []): array
             u.password_hash,
             uv.is_verified,
             r.role_name AS role
-        FROM users u        ';
+        FROM users u
+        JOIN user_verification uv ON u.id = uv.user_id
+        LEFT JOIN user_roles ur ON u.id = ur.user_id
+        LEFT JOIN roles r ON ur.role_id = r.id
+        WHERE u.id = :userId
+        LIMIT 1
+            ';
         self::getLogger()->info('Fetch User By ID', ['user_id' => $userId]);
-        return self::fetchOne($sql, [':id' => $userId]);
-    }
+        return self::fetchOne($sql, [':userId' => $userId]);    }
 
 }
