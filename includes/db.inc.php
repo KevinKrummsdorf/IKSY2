@@ -8,11 +8,99 @@ class DbFunctions
     private static ?PDO $pdo = null;    private static ?ILogger $log = null;
 
     private static function getLogger(): ILogger
-    {   
+    {
         if (self::$log === null) {
             self::$log = LoggerFactory::get('db');
         }
         return self::$log;
+    }
+
+    // Gibt die Gruppe zurück, in der der Nutzer Mitglied ist
+    public static function fetchGroupByUser(int $userId): ?array
+    {
+        $sql = '
+        SELECT g.*
+        FROM group_members gm
+        JOIN groups g ON gm.group_id = g.id
+        WHERE gm.user_id = :uid
+        LIMIT 1
+    ';
+        return self::fetchOne($sql, [':uid' => $userId]);
+    }
+
+    // Legt eine neue Gruppe an und trägt den Nutzer als Mitglied ein
+    public static function createGroup(string $groupName, int $userId): ?int
+    {
+        $pdo = self::db_connect();
+        $pdo->beginTransaction();
+        try {
+            $stmt = $pdo->prepare('INSERT INTO groups (name) VALUES (:name)');
+            $stmt->execute([':name' => $groupName]);
+            $groupId = (int)$pdo->lastInsertId();
+
+            $stmt = $pdo->prepare('INSERT INTO group_members (group_id, user_id) VALUES (:gid, :uid)');
+            $stmt->execute([':gid' => $groupId, ':uid' => $userId]);
+
+            $pdo->commit();
+            return $groupId;
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            self::getLogger()->error('createGroup failed', ['error' => $e->getMessage()]);
+            return null;
+        }
+    }
+
+    // Holt eine Gruppe anhand ihres Namens
+    public static function fetchGroupByName(string $name): ?array
+    {
+        $sql = 'SELECT * FROM groups WHERE name = :name LIMIT 1';
+        return self::fetchOne($sql, [':name' => $name]);
+    }
+
+    // Fügt den Benutzer einer Gruppe hinzu
+    public static function addUserToGroup(int $groupId, int $userId): bool
+    {
+        $sql = '
+        INSERT IGNORE INTO group_members (group_id, user_id)
+        VALUES (:gid, :uid)
+    ';
+        return self::execute($sql, [':gid' => $groupId, ':uid' => $userId]) > 0;
+    }
+
+    // Entfernt einen Benutzer aus einer Gruppe
+    public static function removeUserFromGroup(int $groupId, int $userId): bool
+    {
+        $sql = '
+        DELETE FROM group_members
+        WHERE group_id = :gid AND user_id = :uid
+    ';
+        return self::execute($sql, [':gid' => $groupId, ':uid' => $userId]) > 0;
+    }
+
+    // Gibt alle Mitglieder einer Gruppe zurück (Username + E-Mail)
+    public static function getGroupMembers(int $groupId): array
+    {
+        $sql = '
+        SELECT u.username, u.email
+        FROM group_members gm
+        JOIN users u ON gm.user_id = u.id
+        WHERE gm.group_id = :gid
+        ORDER BY u.username ASC
+    ';
+        return self::execute($sql, [':gid' => $groupId], true);
+    }
+
+    // Gibt alle Uploads zurück, die einer Gruppe zugewiesen wurden
+    public static function getUploadsByGroup(int $groupId): array
+    {
+        $sql = '
+        SELECT u.id, u.stored_name, m.title
+        FROM uploads u
+        JOIN materials m ON u.material_id = m.id
+        WHERE u.group_id = :gid AND u.is_approved = 1 AND u.is_rejected = 0
+        ORDER BY u.uploaded_at DESC
+    ';
+        return self::execute($sql, [':gid' => $groupId], true);
     }
 
     
@@ -75,8 +163,60 @@ class DbFunctions
         }
     }
 
+    // ==== ToDo-Funktionen ====
+
+    /**
+     * Holt alle ToDos eines Benutzers.
+     */
+    public static function getTodosByUserId(int $userId): array
+    {
+        $query = '
+        SELECT * FROM todos
+        WHERE user_id = ?
+        ORDER BY created_at DESC
+    ';
+        return self::execute($query, [$userId], true);
+    }
+
+    /**
+     * Legt ein neues ToDo an.
+     */
+    public static function insertTodo(int $userId, string $text, ?string $dueDate): void
+    {
+        $query = '
+        INSERT INTO todos (user_id, text, due_date)
+        VALUES (?, ?, ?)
+    ';
+        self::execute($query, [$userId, $text, $dueDate]);
+    }
+
+    /**
+     * Liefert den aktuellen Status eines ToDos.
+     */
+    public static function getTodoStatus(int $todoId, int $userId): ?array
+    {
+        $query = '
+        SELECT is_done FROM todos
+        WHERE id = ? AND user_id = ?
+    ';
+        return self::fetchOne($query, [$todoId, $userId]);
+    }
+
+    /**
+     * Setzt den Status eines ToDos.
+     */
+    public static function updateTodoStatus(int $todoId, int $userId, int $newStatus): void
+    {
+        $query = '
+        UPDATE todos
+        SET is_done = ?
+        WHERE id = ? AND user_id = ?
+    ';
+        self::execute($query, [$newStatus, $todoId, $userId]);
+    }
+
     /**Alle bestätigten Materialien abrufen**/
-    
+
     public static function getApprovedUploads(): array
     {
         $query = '
@@ -1795,6 +1935,68 @@ public static function getFilteredLockedUsers(array $filters = []): array
         $sql = 'UPDATE users SET password_hash = :pw WHERE id = :id';
         self::getLogger()->info('Update Password', ['user_id' => $userId]);
         return self::execute($sql, [':pw' => $passwordHash, ':id' => $userId], false);
+    }
+
+    public static function fetchUserProfile(int $userId): ?array
+    {
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare('SELECT * FROM profile WHERE user_id = :user_id');
+        $stmt->execute(['user_id' => $userId]);
+        $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $profile ?: null;
+    }
+
+    public static function getOrCreateUserProfile(int $userId): array
+    {
+        $pdo = self::db_connect();
+
+        $stmt = $pdo->prepare('SELECT * FROM profile WHERE user_id = :id');
+        $stmt->execute([':id' => $userId]);
+        $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$profile) {
+            $stmt = $pdo->prepare('INSERT INTO profile (user_id) VALUES (:id)');
+            $stmt->execute([':id' => $userId]);
+
+            $stmt = $pdo->prepare('SELECT * FROM profile WHERE user_id = :id');
+            $stmt->execute([':id' => $userId]);
+            $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+
+        return $profile ?: [];
+    }
+
+    public static function updateUserProfile(int $userId, array $fields): void
+    {
+        $pdo = self::db_connect();
+
+        $set = [];
+        $params = [':id' => $userId];
+
+        foreach ($fields as $key => $value) {
+            $set[] = "`$key` = :$key";
+            $params[":$key"] = $value;
+        }
+
+        if (empty($set)) {
+            echo "⚠️ Kein Inhalt zum Speichern.<br>";
+            exit;
+        }
+
+        $sql = 'UPDATE profile SET ' . implode(', ', $set) . ', updated_at = NOW() WHERE user_id = :id';
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+        } catch (PDOException $e) {
+            self::getLogger()->error('Profil-Update fehlgeschlagen', [
+                'error' => $e->getMessage(),
+                'sql'   => $sql,
+                'params'=> $params,
+            ]);
+            throw new RuntimeException('Fehler beim Speichern des Profils: ' . $e->getMessage());
+        }
     }
 
     /**
