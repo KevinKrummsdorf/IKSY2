@@ -1,0 +1,5 @@
+CREATE TABLE user_verification (
+    user_id INT NOT NULL PRIMARY KEY,
+    is_verified TINYINT(1) NOT NULL DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
