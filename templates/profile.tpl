@@ -15,7 +15,7 @@
     </div>
 {else}
     <div class="text-center mb-4">
-        <img src="{$base_url}/images/default-profile.png" alt="Kein Profilbild" class="rounded-circle shadow" style="max-width: 150px;">
+        <img src="{$base_url}/public/assets/default_person.png" alt="Kein Profilbild" class="rounded-circle shadow" style="max-width: 150px;">
     </div>
 {/if}
 
