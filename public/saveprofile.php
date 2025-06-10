@@ -26,12 +26,20 @@ foreach ($keys as $key) {
 
 // Optional: Profilbild-Upload verarbeiten
 if (!empty($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
-    $tmpName = $_FILES['profile_picture']['tmp_name'];
-    $ext = strtolower(pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION));
-    $mimeType = mime_content_type($tmpName);
-    
+    $tmpName  = $_FILES['profile_picture']['tmp_name'];
+    $ext      = strtolower(pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION));
+
+    $mimeType = '';
+    if (function_exists('finfo_open')) {
+        $finfo    = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $tmpName) ?: '';
+        finfo_close($finfo);
+    } elseif (function_exists('mime_content_type')) {
+        $mimeType = mime_content_type($tmpName);
+    }
+
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    if (!in_array($mimeType, $allowedTypes)) {
+    if ($mimeType && !in_array($mimeType, $allowedTypes, true)) {
         exit('❌ Ungültiger Bildtyp.');
     }
     
