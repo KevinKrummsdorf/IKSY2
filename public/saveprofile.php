@@ -38,7 +38,8 @@ if (!empty($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ==
         $mimeType = mime_content_type($tmpName);
     }
 
-    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    // Einige PHP-Konfigurationen melden PNGs als image/x-png
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/x-png'];
     if ($mimeType && !in_array($mimeType, $allowedTypes, true)) {
         exit('❌ Ungültiger Bildtyp.');
     }
@@ -52,11 +53,14 @@ if (!empty($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ==
     $fileName = uniqid('profile_', true) . '.' . $ext;
     $targetPath = $uploadDir . $fileName;
     
-    if (move_uploaded_file($tmpName, $targetPath)) {
-        $data['profile_picture'] = $fileName;
-    } else {
-        exit('❌ Fehler beim Hochladen des Bildes.');
+    if (!move_uploaded_file($tmpName, $targetPath)) {
+        // Fallback falls PHP das Tmpfile nicht als Upload erkennt
+        if (!rename($tmpName, $targetPath)) {
+            exit('❌ Fehler beim Hochladen des Bildes.');
+        }
     }
+
+    $data['profile_picture'] = $fileName;
 }
 
 // Speichern in DB
