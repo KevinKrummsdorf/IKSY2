@@ -274,41 +274,43 @@
     <h2 class="mb-2">Deine Uploads</h2>
     <div>
       {if $user_uploads|@count > 0}
-        <div id="myUploadsCarousel" class="carousel slide" data-bs-touch="true">
-          <div class="carousel-inner">
-            {foreach $user_uploads as $index => $u}
-            <div class="carousel-item {if $index == 0}active{/if}">
-              {if $u.type == 'image'}
-                <img src="{$base_url}/uploads/{$u.stored_name|escape}" class="d-block w-100 upload-preview" alt="{$u.title|escape}">
-              {elseif $u.type == 'pdf'}
-                <div class="text-center py-5">
-                  <span class="material-symbols-outlined" style="font-size:4rem;">picture_as_pdf</span>
-                </div>
-              {else}
-                <div class="text-center py-5">
-                  <span class="material-symbols-outlined" style="font-size:4rem;">description</span>
-                </div>
-              {/if}
-              <div class="carousel-caption d-none d-md-block">
+
+        <div id="myUploadsCarousel" class="carousel slide" data-bs-interval="false">
+        <div class="carousel-inner">
+          {foreach $user_uploads as $index => $u}
+          <div class="carousel-item {if $index == 0}active{/if}">
+            <div class="pdf-slide">
+              <a href="{$base_url}/view_pdf.php?file={$u.stored_name|escape:'url'}" target="_blank" class="pdf-link">
+                <span class="material-symbols-outlined">picture_as_pdf</span>
                 <h5>{$u.title|escape}</h5>
                 <p>{$u.course_name|escape} – {$u.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</p>
-              </div>
+              </a>
+          
+              <a href="{$base_url}/download.php?id={$u.id}" 
+                 class="download-link mt-3" 
+                 title="{$u.original_name|escape} herunterladen"
+                 download>
+                <span class="material-symbols-outlined">download</span>
+                <span>Herunterladen</span>
+                <small class="text-muted d-block mt-1">PDF</small>
+              </a>
             </div>
-            {/foreach}
           </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#myUploadsCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#myUploadsCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
+          {/foreach}
         </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#myUploadsCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Zurück</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#myUploadsCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Weiter</span>
+        </button>
+      </div>
       {else}
         <div class="alert alert-info">Du hast noch keine Materialien hochgeladen.</div>
       {/if}
-      </div>
+    </div>
   </section>
   {/if}
 </div>
@@ -320,24 +322,15 @@
     document.querySelectorAll('.toggle-collapse-icon').forEach(btn => {
       const icon = btn.querySelector('i');
       const target = document.querySelector(btn.dataset.bsTarget);
-
-      // Falls das Ziel-Element nicht existiert, beende die Funktion für diesen Button
       if (!target) return;
-
-      // **Anpassung hier:** Prüfe den initialen Zustand des Collapse-Elements
-      // Wenn es die Klasse 'show' hat, ist es offen.
       if (target.classList.contains('show')) {
         icon.classList.replace('bi-chevron-down', 'bi-chevron-up');
       } else {
-        // Andernfalls ist es geschlossen (oder wird geschlossen), also zeige den Pfeil nach unten
         icon.classList.replace('bi-chevron-up', 'bi-chevron-down');
       }
-
-      // Event-Listener für das Bootstrap Collapse-Event
       target.addEventListener('show.bs.collapse', () => {
         icon.classList.replace('bi-chevron-down', 'bi-chevron-up');
       });
-
       target.addEventListener('hide.bs.collapse', () => {
         icon.classList.replace('bi-chevron-up', 'bi-chevron-down');
       });
