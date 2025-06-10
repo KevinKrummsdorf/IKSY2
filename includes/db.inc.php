@@ -1778,11 +1778,14 @@ public static function getFilteredLockedUsers(array $filters = []): array
     public static function fetchUserById(int $userId): ?array
     {
         $sql = '
-            SELECT id, username, password_hash
-            FROM users
-            WHERE id = :id
-            LIMIT 1
-        ';
+        SELECT
+            u.id,
+            u.username,
+            u.email,
+            u.password_hash,
+            uv.is_verified,
+            r.role_name AS role
+        FROM users u        ';
         self::getLogger()->info('Fetch User By ID', ['user_id' => $userId]);
         return self::fetchOne($sql, [':id' => $userId]);
     }

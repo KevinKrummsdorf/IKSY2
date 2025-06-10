@@ -6,6 +6,7 @@
 <h1>Neues Passwort setzen</h1>
 {if $success}
     <div class="alert alert-success">Passwort wurde geändert.</div>
+    <a href="{$base_url}/index.php" class="btn btn-primary">Zur Startseite</a>
 {elseif $message}
     <div class="alert alert-danger">{$message}</div>
 {/if}
