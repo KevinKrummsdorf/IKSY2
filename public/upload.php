@@ -140,7 +140,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         }
                     } else {
                         $error = 'Konnte Datei nicht speichern.';
-                        $log->error('Datei konnte nicht gespeichert werden', ['user_id' => $_SESSION['user_id']]);
+                        $log->error('Datei konnte nicht gespeichert werden', [
+                            'user_id' => $_SESSION['user_id'],
+                            'tmp_name' => $file['tmp_name'],
+                            'destination' => $destination,
+                            'move_error' => error_get_last()
+                        ]);
                     }
                 }
             }
