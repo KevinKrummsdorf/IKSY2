@@ -44,7 +44,7 @@
         <div class="mb-3">
             <label for="file" class="form-label">Datei auswählen</label>
             <input type="file" id="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.txt" required>
-            <div class="form-text">Erlaubte Dateitypen: PDF, JPG, PNG, TXT. Max. 10 MB.</div>
+            <div class="form-text">Erlaubte Dateitypen: PDF, JPG, PNG, TXT, DOC, DOCX, ODT, PPT Max. 10 MB.</div>
         </div>
 
         <button type="submit" class="btn btn-primary">Hochladen</button>
