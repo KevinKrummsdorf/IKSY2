@@ -24,20 +24,103 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Ungültiger CSRF-Token.';
         $log->error('CSRF-Token ungültig', ['user_id' => $_SESSION['user_id']]);
     } else {
-        $title         = trim($_POST['title'] ?? '');
-        $description   = trim($_POST['description'] ?? '');
-        $course        = trim($_POST['course'] ?? '');
-        $customCourse  = trim($_POST['custom_course'] ?? '');
+        $action = $_POST['action'] ?? 'document';
+        if ($action === 'course') {
+            $customCourse = trim($_POST['custom_course'] ?? '');
+            $smarty->assign('customCourse', $customCourse);
 
-        $smarty->assign('customCourse', $customCourse);
+            if ($customCourse === '') {
+                $error = 'Bitte gib einen Kursvorschlag an.';
+            } else {
+                try {
+                    DbFunctions::submitCourseSuggestion($customCourse, (int)$_SESSION['user_id']);
+                    $log->info('Kursvorschlag eingereicht', [
+                        'user_id'         => $_SESSION['user_id'],
+                        'course_suggested'=> $customCourse,
+                    ]);
+                    $success = 'Kursvorschlag wurde eingereicht.';
+                    $_POST   = [];
+                } catch (Exception $e) {
+                    $error = 'Fehler beim Speichern des Kursvorschlags.';
+                    $log->error('Kursvorschlag-Fehler', ['msg' => $e->getMessage()]);
+                }
+            }
+        } elseif ($action === 'group') {
+            $title       = trim($_POST['group_title'] ?? '');
+            $description = trim($_POST['group_description'] ?? '');
+            $groupName   = trim($_POST['group_name'] ?? '');
 
-        if ($title === '' || !isset($_FILES['file'])) {
-            $error = 'Titel und Datei sind erforderlich.';
-        } elseif ($course !== '__custom__' && !in_array($course, array_column($courses, 'value'), true)) {
-            $error = 'Ungültiger Kurs ausgewählt.';
-        } elseif ($course === '__custom__' && $customCourse === '') {
-            $error = 'Bitte gib einen Kursvorschlag an.';
+            if ($title === '' || $groupName === '' || !isset($_FILES['group_file'])) {
+                $error = 'Alle Felder sind erforderlich.';
+            } else {
+                $file     = $_FILES['group_file'];
+                $finfo    = new finfo(FILEINFO_MIME_TYPE);
+                $mimeType = $finfo->file($file['tmp_name']);
+                $allowed  = [
+                    'application/pdf',
+                    'image/jpeg',
+                    'image/png',
+                    'text/plain',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/vnd.oasis.opendocument.text',
+                    'application/vnd.ms-powerpoint',
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                ];
+
+                if ($file['error'] !== UPLOAD_ERR_OK) {
+                    $error = 'Fehler beim Datei-Upload.';
+                    $log->error('Datei-Upload-Fehler', ['user_id' => $_SESSION['user_id'], 'error' => $file['error']]);
+                } elseif (!in_array($mimeType, $allowed, true)) {
+                    $error = 'Nur PDF, JPG, PNG, TXT, DOC, DOCX, ODT, PPT und PPTX erlaubt.';
+                } elseif ($file['size'] > 10 * 1024 * 1024) {
+                    $error = 'Maximal 10 MB erlaubt.';
+                } else {
+                    $uploadDir = __DIR__ . '/../uploads/groups/';
+                    if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)) {
+                        $error = 'Upload-Verzeichnis konnte nicht erstellt werden.';
+                        $log->error('Upload-Verzeichnis fehlgeschlagen', ['user_id' => $_SESSION['user_id']]);
+                    } else {
+                        $originalName = basename($file['name']);
+                        $safeName     = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $originalName);
+                        $ext          = pathinfo($safeName, PATHINFO_EXTENSION);
+
+                        $prefix = strtolower(preg_replace('/[^a-z0-9]/i', '_', $groupName));
+                        $prefix = trim(preg_replace('/_+/', '_', $prefix), '_');
+
+                        $storedName  = $prefix . '_' . uniqid() . '.' . $ext;
+                        $destination = $uploadDir . $storedName;
+
+                        if (move_uploaded_file($file['tmp_name'], $destination)) {
+                            $log->info('Gruppen-Upload erfolgreich', [
+                                'user_id'     => $_SESSION['user_id'],
+                                'group'       => $groupName,
+                                'stored_name' => $storedName,
+                            ]);
+                            $success = 'Datei für Lerngruppe hochgeladen.';
+                            $_POST   = [];
+                        } else {
+                            $error = 'Konnte Datei nicht speichern.';
+                            $log->error('Datei konnte nicht gespeichert werden', ['user_id' => $_SESSION['user_id']]);
+                        }
+                    }
+                }
+            }
         } else {
+            $title         = trim($_POST['title'] ?? '');
+            $description   = trim($_POST['description'] ?? '');
+            $course        = trim($_POST['course'] ?? '');
+            $customCourse  = trim($_POST['custom_course'] ?? '');
+
+            $smarty->assign('customCourse', $customCourse);
+
+            if ($title === '' || !isset($_FILES['file'])) {
+                $error = 'Titel und Datei sind erforderlich.';
+            } elseif ($course !== '__custom__' && !in_array($course, array_column($courses, 'value'), true)) {
+                $error = 'Ungültiger Kurs ausgewählt.';
+            } elseif ($course === '__custom__' && $customCourse === '') {
+                $error = 'Bitte gib einen Kursvorschlag an.';
+            } else {
             $file     = $_FILES['file'];
             $finfo    = new finfo(FILEINFO_MIME_TYPE);
             $mimeType = $finfo->file($file['tmp_name']);
