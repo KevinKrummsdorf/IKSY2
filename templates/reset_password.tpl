@@ -6,15 +6,19 @@
 <h1>Neues Passwort setzen</h1>
 {if $success}
     <div class="alert alert-success">Passwort wurde geändert.</div>
+<div id="formAlert" class="alert alert-danger d-none">Bitte alle Felder ausfüllen.</div>
 <script>
 (() => {
     'use strict';
     const form = document.querySelector('.needs-validation');
+    const alertBox = document.getElementById('formAlert');
     form?.addEventListener('submit', e => {
         if (!form.checkValidity()) {
             e.preventDefault();
             e.stopPropagation();
-            alert('Bitte alle Felder ausfüllen.');
+            alertBox.classList.remove('d-none');
+        } else {
+            alertBox.classList.add('d-none');
         }
         form.classList.add('was-validated');
     });

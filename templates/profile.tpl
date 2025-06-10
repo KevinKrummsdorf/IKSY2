@@ -114,6 +114,49 @@
                 <button type="submit" class="btn btn-primary">2FA einrichten</button>
             </form>
         {/if}
+
+        <hr class="my-5">
+        <h3 class="mb-3">Passwort ändern</h3>
+        {if isset($pw_success)}
+            <div class="alert alert-success">{$pw_success}</div>
+        {/if}
+        {if isset($pw_message)}
+            <div class="alert alert-danger">{$pw_message}</div>
+        {/if}
+        <div id="pwFormAlert" class="alert alert-danger d-none">Bitte alle Felder ausfüllen.</div>
+        <form id="pwChangeForm" method="post" class="needs-validation" novalidate>
+            <input type="hidden" name="action" value="change_password">
+            <div class="mb-3">
+                <label for="old_password" class="form-label">Aktuelles Passwort</label>
+                <input type="password" class="form-control" id="old_password" name="old_password" required>
+            </div>
+            <div class="mb-3">
+                <label for="new_password" class="form-label">Neues Passwort</label>
+                <input type="password" class="form-control" id="new_password" name="new_password" required>
+            </div>
+            <div class="mb-3">
+                <label for="new_password_confirm" class="form-label">Passwort bestätigen</label>
+                <input type="password" class="form-control" id="new_password_confirm" name="new_password_confirm" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Passwort speichern</button>
+        </form>
+        <script>
+            (() => {
+                'use strict';
+                const form = document.getElementById('pwChangeForm');
+                const alertBox = document.getElementById('pwFormAlert');
+                form?.addEventListener('submit', e => {
+                    if (!form.checkValidity()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        alertBox.classList.remove('d-none');
+                    } else {
+                        alertBox.classList.add('d-none');
+                    }
+                    form.classList.add('was-validated');
+                });
+            })();
+        </script>
     </div>
 </div>
 {/block}
