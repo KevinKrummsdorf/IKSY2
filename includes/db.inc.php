@@ -1849,6 +1849,68 @@ public static function getFilteredLockedUsers(array $filters = []): array
         return self::execute($sql, [':pw' => $passwordHash, ':id' => $userId], false);
     }
 
+    public static function fetchUserProfile(int $userId): ?array
+    {
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare('SELECT * FROM profile WHERE user_id = :user_id');
+        $stmt->execute(['user_id' => $userId]);
+        $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $profile ?: null;
+    }
+
+    public static function getOrCreateUserProfile(int $userId): array
+    {
+        $pdo = self::db_connect();
+
+        $stmt = $pdo->prepare('SELECT * FROM profile WHERE user_id = :id');
+        $stmt->execute([':id' => $userId]);
+        $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$profile) {
+            $stmt = $pdo->prepare('INSERT INTO profile (user_id) VALUES (:id)');
+            $stmt->execute([':id' => $userId]);
+
+            $stmt = $pdo->prepare('SELECT * FROM profile WHERE user_id = :id');
+            $stmt->execute([':id' => $userId]);
+            $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+
+        return $profile ?: [];
+    }
+
+    public static function updateUserProfile(int $userId, array $fields): void
+    {
+        $pdo = self::db_connect();
+
+        $set = [];
+        $params = [':id' => $userId];
+
+        foreach ($fields as $key => $value) {
+            $set[] = "`$key` = :$key";
+            $params[":$key"] = $value;
+        }
+
+        if (empty($set)) {
+            echo "⚠️ Kein Inhalt zum Speichern.<br>";
+            exit;
+        }
+
+        $sql = 'UPDATE profile SET ' . implode(', ', $set) . ', updated_at = NOW() WHERE user_id = :id';
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+        } catch (PDOException $e) {
+            self::getLogger()->error('Profil-Update fehlgeschlagen', [
+                'error' => $e->getMessage(),
+                'sql'   => $sql,
+                'params'=> $params,
+            ]);
+            throw new RuntimeException('Fehler beim Speichern des Profils: ' . $e->getMessage());
+        }
+    }
+
     /**
      * Holt einen Benutzer anhand seiner ID.
      */

@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-session_start();
 require_once __DIR__ . '/../includes/config.inc.php';
-require_once __DIR__ . '/../includes/db.inc.php';
 
 if (empty($_SESSION['user_id'])) {
     http_response_code(403);
@@ -28,12 +26,21 @@ foreach ($keys as $key) {
 
 // Optional: Profilbild-Upload verarbeiten
 if (!empty($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
-    $tmpName = $_FILES['profile_picture']['tmp_name'];
-    $ext = strtolower(pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION));
-    $mimeType = mime_content_type($tmpName);
-    
-    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    if (!in_array($mimeType, $allowedTypes)) {
+    $tmpName  = $_FILES['profile_picture']['tmp_name'];
+    $ext      = strtolower(pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION));
+
+    $mimeType = '';
+    if (function_exists('finfo_open')) {
+        $finfo    = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $tmpName) ?: '';
+        finfo_close($finfo);
+    } elseif (function_exists('mime_content_type')) {
+        $mimeType = mime_content_type($tmpName);
+    }
+
+    // Einige PHP-Konfigurationen melden PNGs als image/x-png
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/x-png'];
+    if ($mimeType && !in_array($mimeType, $allowedTypes, true)) {
         exit('❌ Ungültiger Bildtyp.');
     }
     
@@ -46,16 +53,19 @@ if (!empty($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ==
     $fileName = uniqid('profile_', true) . '.' . $ext;
     $targetPath = $uploadDir . $fileName;
     
-    if (move_uploaded_file($tmpName, $targetPath)) {
-        $data['profile_picture'] = $fileName;
-    } else {
-        exit('❌ Fehler beim Hochladen des Bildes.');
+    if (!move_uploaded_file($tmpName, $targetPath)) {
+        // Fallback falls PHP das Tmpfile nicht als Upload erkennt
+        if (!rename($tmpName, $targetPath)) {
+            exit('❌ Fehler beim Hochladen des Bildes.');
+        }
     }
+
+    $data['profile_picture'] = $fileName;
 }
 
 // Speichern in DB
 DbFunctions::updateUserProfile($userId, $data);
 
 // Weiterleitung
-header('Location: /iksy05/StudyHub/public/profile.php?success=1');
+header('Location: profile.php?success=1');
 exit;
