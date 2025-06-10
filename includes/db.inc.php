@@ -5,19 +5,18 @@ declare(strict_types=1);
 
 class DbFunctions
 {
-    private static ?PDO $pdo = null;
-    private static ?MonologLoggerAdapter $log = null;
+    private static ?PDO $pdo = null;    private static ?ILogger $log = null;
 
-    private static function getLogger(): MonologLoggerAdapter
-    {
+    private static function getLogger(): ILogger
+    {   
         if (self::$log === null) {
-            $monolog = getLogger('db');
-            self::$log = new MonologLoggerAdapter($monolog);
+            self::$log = LoggerFactory::get('db');
         }
         return self::$log;
     }
 
-
+    
+ 
     /**
      * Singleton-DB-Verbindung über Konfigurationsarray
      */
@@ -68,7 +67,7 @@ class DbFunctions
             http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'message' => defined('DEBUG') && DEBUG
+                'message' => defined('DEBUG')
                     ? 'DB-Fehler: ' . $e->getMessage()
                     : 'Interner Serverfehler. Bitte später erneut versuchen.'
             ]);
@@ -76,6 +75,25 @@ class DbFunctions
         }
     }
 
+    /**Alle bestätigten Materialien abrufen**/
+    
+    public static function getApprovedUploads(): array
+    {
+        $query = '
+        SELECT id, stored_name, material_id
+        FROM uploads
+        WHERE is_rejected = 0
+    ';
+        return self::execute($query, [], true); // true = fetchAll()
+    }
+    
+    /** Material abruf für "Material finden/suchen" **/
+    public static function getAllMaterials(): array
+    {
+        $query = 'SELECT id, title, description FROM materials';
+        return self::execute($query, [], true); // true → fetchAll() wird ausgeführt
+    }
+    
     /**
      * Führt ein Prepared Statement aus und gibt Ergebnis oder Zeilenanzahl zurück.
      */
@@ -304,8 +322,11 @@ public static function insertUser(string $username, string $email, string $passw
 public static function fetchUserByIdentifier(string $input): ?array
 {
     $sql = '
-        SELECT 
-            u.id, u.username, u.password_hash,
+        SELECT
+            u.id,
+            u.username,
+            u.email,
+            u.password_hash,
             uv.is_verified,
             r.role_name AS role
         FROM users u
@@ -1049,6 +1070,31 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
 
     return $stmt->fetchAll();
 }
+
+    /**
+     * Holt alle genehmigten Uploads eines Benutzers.
+     *
+     * @param int $userId ID des Benutzers
+     * @return array Liste der Uploads mit Material- und Kursinformationen
+     */
+    public static function getApprovedUploadsByUser(int $userId): array
+    {
+        $pdo = self::db_connect();
+
+        $stmt = $pdo->prepare(
+            "SELECT u.id, u.stored_name, u.uploaded_at, m.title, c.name AS course_name
+             FROM uploads u
+             JOIN materials m ON u.material_id = m.id
+             JOIN courses c ON m.course_id = c.id
+             WHERE u.uploaded_by = ?
+               AND u.is_approved = 1
+               AND u.is_rejected = 0
+             ORDER BY u.uploaded_at DESC"
+        );
+        $stmt->execute([$userId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 /**
  * Zählt die Anzahl der Upload-Logs mit erweiterten Filtermöglichkeiten.
  * @param array $filters Filterkriterien
@@ -1694,5 +1740,84 @@ public static function getFilteredLockedUsers(array $filters = []): array
     return $stmt->fetchAll();
 }
 
+
+    /**
+     * Speichert einen Password-Reset-Token.
+     */
+    public static function storePasswordResetToken(int $userId, string $token, int $expiresMinutes = 60): void
+    {
+        $sql = '
+            INSERT INTO password_reset_tokens (user_id, reset_token, expires_at)
+            VALUES (:uid, :token, DATE_ADD(NOW(), INTERVAL :exp MINUTE))
+            ON DUPLICATE KEY UPDATE
+                reset_token = VALUES(reset_token),
+                expires_at = VALUES(expires_at)
+        ';
+        self::getLogger()->info('Store Password Reset Token', ['user_id' => $userId]);
+        self::execute($sql, [
+            ':uid'  => $userId,
+            ':token'=> $token,
+            ':exp'  => $expiresMinutes,
+        ]);
+    }
+
+    /**
+     * Holt den Benutzer anhand des Password-Reset-Tokens.
+     */
+    public static function fetchPasswordResetUser(string $token): ?array
+    {
+        $sql = '
+            SELECT u.id, u.username, u.email, u.password_hash
+            FROM password_reset_tokens pr
+            JOIN users u ON pr.user_id = u.id
+            WHERE pr.reset_token = :token AND pr.expires_at > NOW()
+            LIMIT 1
+        ';
+        self::getLogger()->info('Fetch Password Reset User', ['token' => $token]);
+        return self::fetchOne($sql, [':token' => $token]);
+    }
+
+    /**
+     * Löscht einen Password-Reset-Token.
+     */
+    public static function deletePasswordResetToken(int $userId): int
+    {
+        $sql = 'DELETE FROM password_reset_tokens WHERE user_id = :id';
+        self::getLogger()->info('Delete Password Reset Token', ['user_id' => $userId]);
+        return self::execute($sql, [':id' => $userId], false);
+    }
+
+    /**
+     * Aktualisiert das Passwort eines Benutzers.
+     */
+    public static function updatePassword(int $userId, string $passwordHash): int
+    {
+        $sql = 'UPDATE users SET password_hash = :pw WHERE id = :id';
+        self::getLogger()->info('Update Password', ['user_id' => $userId]);
+        return self::execute($sql, [':pw' => $passwordHash, ':id' => $userId], false);
+    }
+
+    /**
+     * Holt einen Benutzer anhand seiner ID.
+     */
+    public static function fetchUserById(int $userId): ?array
+    {
+        $sql = '
+        SELECT
+            u.id,
+            u.username,
+            u.email,
+            u.password_hash,
+            uv.is_verified,
+            r.role_name AS role
+        FROM users u
+        JOIN user_verification uv ON u.id = uv.user_id
+        LEFT JOIN user_roles ur ON u.id = ur.user_id
+        LEFT JOIN roles r ON ur.role_id = r.id
+        WHERE u.id = :userId
+        LIMIT 1
+            ';
+        self::getLogger()->info('Fetch User By ID', ['user_id' => $userId]);
+        return self::fetchOne($sql, [':userId' => $userId]);    }
 
 }

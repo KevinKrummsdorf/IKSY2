@@ -11,8 +11,7 @@ $success   = false;
 $input     = ['name' => '', 'email' => '', 'subject' => '', 'message' => ''];
 $contactId = null;
 
-$monolog = getLogger('contact');
-$log     = new MonologLoggerAdapter($monolog);
+$log = LoggerFactory::get('contact');
 $ip      = getClientIp();
 $maskedIp= maskIp($ip);
 

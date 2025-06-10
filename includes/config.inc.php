@@ -16,14 +16,15 @@ require_once __DIR__ . '/../includes/recaptcha.inc.php';
 require_once __DIR__ . '/../includes/mailing.inc.php';
 require_once __DIR__ . '/../includes/central_logs.inc.php';
 require_once __DIR__ . '/../includes/crypto.inc.php';
+require_once __DIR__ . '/../includes/logger.inc.php';
+require_once __DIR__ . '/../src/ILogger.php';
+require_once __DIR__ . '/../src/MonologLoggerAdapter.php';
+require_once __DIR__ . '/../src/LoggerFactory.php';
+
 
 // .env laden
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
-
-// Debug-Konstanten
-define('APP_ENV', $_ENV['APP_ENV'] ?? 'production');
-define('DEBUG', ($_ENV['APP_DEBUG'] ?? 'false') === 'true');
 
 // Session starten
 if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -31,12 +32,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 
 // Konfigurationen
-
-//Logger
-$config['log'] = [
-    'debug'    => true,
-    'log_days' => 30
-];
 
 // Halite Key
 try {
@@ -54,10 +49,16 @@ try {
     exit('Fehlerhafte Schlüsselkonfiguration');
 }
 
+//Logger
+$config['log'] = [
+    'debug'    => true,
+    'log_days' => 30
+];
 
 $config['app_name']  = $_ENV['APP_NAME'] ?? 'StudyHub';
-$config['base_url'] = 'http://127.0.0.1/iksy05/IKSY2/public';
-$config['site_url'] = 'http://127.0.0.1/iksy05/IKSY2/public';
+$config['base_url'] = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+$config['site_url'] = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $config['base_url'];
+
 
 //DB
 $config['db'] = [
@@ -77,6 +78,7 @@ $config['mail'] = [
     'from_name'  => $_ENV['SMTP_FROM_NAME'] ?? 'StudyHub',
     'encryption' => PHPMailer::ENCRYPTION_STARTTLS,
     'verify_subject' => 'Bitte bestätige deine E-Mail-Adresse',
+    'reset_subject'  => 'Passwort zurücksetzen',
     'contact_email' => $_ENV['CONTACT_EMAIL'] ?? ''
 ];
 
@@ -89,9 +91,6 @@ $config['recaptcha'] = [
     'log_file'   => __DIR__ . '/../logs/recaptcha.log',
 ];
 
-require_once __DIR__ . '/../includes/logger.inc.php';
-require_once __DIR__ . '/../src/ILogger.php';
-require_once __DIR__ . '/../src/MonologLoggerAdapter.php';
 
 // ==== Smarty Initialisierung ====
 $smarty = new Smarty();

@@ -452,3 +452,212 @@ body {
 [data-bs-theme="dark"] .requirement-list li {
   color: var(--text-color);
 }
+
+/* Upload Carousel */
+.upload-preview {
+  max-height: 400px;
+  object-fit: contain;
+}
+
+[data-bs-theme="dark"] .carousel-item .text-center {
+  background: rgba(0, 0, 0, 0.6); /* dunkler Hintergrund im Dark Mode */
+  color: #fff;
+}
+
+/* PDF-Slide: kompakte Box */
+.carousel-item.pdf-slide {
+  background: rgba(255, 255, 255, 0.9);  /* leicht transparentes Weiß */
+  border-radius: 12px;
+  width: 300px;
+  margin: 2rem auto;
+  padding: 2rem 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* PDF-Icon */
+.carousel-item.pdf-slide .material-symbols-outlined {
+  font-size: 4rem;
+  color: #dc3545;
+  margin-bottom: 1rem;
+}
+
+/* Beschreibung unterhalb */
+.carousel-item.pdf-slide .carousel-caption {
+  position: static;
+  margin-top: 0.5rem;
+  color: #000;
+}
+
+/* Dunkelmodus-Kompatibilität */
+[data-bs-theme="dark"] .carousel-item.pdf-slide {
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+[data-bs-theme="dark"] .carousel-item.pdf-slide .material-symbols-outlined {
+  color: #f28b82;
+}
+
+/* Schwarze Karussell-Pfeile */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(1); /* macht sie schwarz */
+}
+
+/* Carousel zentriert und ein Slide pro Ansicht */
+#myUploadsCarousel {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+
+/* Nur ein Item gleichzeitig */
+.carousel-inner {
+  width: 100%;
+  overflow: hidden;
+}
+
+
+.carousel-item {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+
+/* Slide-Inhalt */
+.carousel-item.pdf-slide {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 2rem 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 480px;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* PDF-Icon */
+.carousel-item.pdf-slide .material-symbols-outlined {
+  font-size: 4rem;
+  color: #dc3545;
+  margin-bottom: 1rem;
+}
+
+/* Text unter dem Icon */
+.carousel-item.pdf-slide .carousel-caption {
+  position: static;
+  margin-top: 0.5rem;
+  color: #000;
+}
+
+/* Dark Mode Unterstützung */
+[data-bs-theme="dark"] .carousel-item.pdf-slide {
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+[data-bs-theme="dark"] .carousel-item.pdf-slide .material-symbols-outlined {
+  color: #f28b82;
+}
+
+/* Pfeile sichtbar (schwarz) */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(1);
+}
+
+.pdf-slide {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 2rem 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.pdf-slide .material-symbols-outlined {
+  font-size: 4rem;
+  color: #dc3545;
+  margin-bottom: 1rem;
+}
+
+.pdf-slide h5,
+.pdf-slide p {
+  margin: 0.5rem 0;
+  color: var(--text-color);
+}
+
+[data-bs-theme="dark"] .pdf-slide {
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+[data-bs-theme="dark"] .pdf-slide .material-symbols-outlined {
+  color: #f28b82;
+}
+
+.pdf-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.pdf-link:hover .pdf-slide {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.download-link {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted-color);
+  text-decoration: none;
+  border: 1px solid var(--border-light-color);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  background-color: transparent;
+  transition: all 0.2s ease;
+  min-width: 130px;
+}
+
+.download-link:hover {
+  background-color: var(--btn-light-hover-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+.download-link .material-symbols-outlined {
+  font-size: 24px;
+  color: inherit;
+}
+
+.download-link small {
+  font-size: 0.75rem;
+  color: var(--text-muted-color);
+}
+
+[data-bs-theme="dark"] .download-link {
+  color: #ccc;
+  border-color: #555;
+}
+
+[data-bs-theme="dark"] .download-link:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border-color: #999;
+}
+
+[data-bs-theme="dark"] .download-link small {
+  color: #aaa;
+}
+

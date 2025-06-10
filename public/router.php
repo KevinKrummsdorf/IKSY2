@@ -18,7 +18,7 @@ $page = $_GET['page'] ?? 'start';
 
 if (!isset($validPages[$page])) {
     $reason = urlencode("Die Seite '$page' existiert nicht.");
-    header("Location: /error/404?reason={$reason}");
+    header("Location: /studyhub/error/404?reason={$reason}");
     exit;
 }
 
@@ -42,11 +42,11 @@ if ($type === 'tpl') {
         require $phpPath;
     } else {
         $reason = urlencode("Die Datei '$file' existiert nicht.");
-        header("Location: /error/500?reason={$reason}");
+        header("Location: /studyhub/error/500?reason={$reason}");
         exit;
     }
 } else {
     $reason = urlencode("Ungültiger Seitentyp: '$type'");
-    header("Location: /error/500?reason={$reason}");
+    header("Location: /studyhub/error/500?reason={$reason}");
     exit;
 }

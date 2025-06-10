@@ -7,6 +7,6 @@
         <img src="{$base_url}/assets/503.png" alt="503 Roboter" class="mb-4" style="max-width: 320px;">
         <h1 class="display-4 text-secondary">503 – Service nicht verfügbar</h1>
         <p class="lead">{$reason|default:"Der Dienst ist vorübergehend nicht erreichbar. Bitte versuche es später erneut."}</p>
-        <a href="/" class="btn btn-primary mt-4">Zur Startseite</a>
+        <a href="/studyhub/index.php" class="btn btn-primary mt-4">Zur Startseite</a>
     </div>
 {/block}

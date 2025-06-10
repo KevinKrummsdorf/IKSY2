@@ -14,8 +14,7 @@ $userId   = $_SESSION['user_id_pending'] ?? null;
 $role     = $_SESSION['role_pending'] ?? 'user';
 $ip       = getClientIp();
 $maskedIp = maskIp($ip);
-$monolog  = getLogger('2fa');
-$log      = new MonologLoggerAdapter($monolog);
+$log = LoggerFactory::get('2fa');
 
 $log->info('2FA start', [
     'ip'       => $maskedIp,

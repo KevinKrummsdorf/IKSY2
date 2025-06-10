@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
 
-$monolog = getLogger('verify');
-$log     = new MonologLoggerAdapter($monolog);
+$log = LoggerFactory::get('verify');
 
 $token = trim((string)($_GET['token'] ?? ''));
 
@@ -48,7 +47,7 @@ try {
         $verifyData['alertType']  = 'success';
         $verifyData['message']    = 'Deine E-Mail wurde erfolgreich verifiziert!';
         $verifyData['buttonText'] = 'Jetzt einloggen';
-        $verifyData['buttonLink'] = 'index.php#loginModal';
+        $verifyData['buttonLink'] = 'index.php#show=login';
     }
 
 } catch (Throwable $e) {

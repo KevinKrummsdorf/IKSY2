@@ -4,8 +4,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../includes/config.inc.php';
 
-$monolog  = getLogger('register');
-$log      = new MonologLoggerAdapter($monolog);
+$log = LoggerFactory::get('register');
 $response = ['success' => false];
 
 $pdo = DbFunctions::db_connect();
@@ -103,7 +102,7 @@ try {
 
 } catch (Throwable $e) {
     $log->error('Unerwarteter Fehler bei Registrierung', ['error' => $e->getMessage()]);
-    $response['message'] = DEBUG
+    $response['message'] = (defined('DEBUG'))
         ? $e->getMessage()
         : 'Interner Serverfehler. Bitte später erneut versuchen.';
     DbFunctions::rollBack();

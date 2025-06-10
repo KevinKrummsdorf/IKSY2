@@ -12,7 +12,7 @@
 {if $action == 'login' || $action == 'register' || $action == 'both'}
     <div class="d-flex justify-content-center align-items-center gap-3 mt-4 flex-wrap">
         {if $action == 'login' || $action == 'both'}
-            <a href="/index.php?show=login" class="btn btn-primary">Jetzt einloggen</a>
+            <a href="/studyhub/index.php?show=login" class="btn btn-primary">Jetzt einloggen</a>
         {/if}
 
         {if $action == 'both'}
@@ -20,13 +20,13 @@
         {/if}
 
         {if $action == 'register' || $action == 'both'}
-            <a href="/index.php?show=register" class="btn btn-outline-secondary">Account erstellen</a>
+            <a href="/studyhub/index.php?show=register" class="btn btn-outline-secondary">Account erstellen</a>
         {/if}
     </div>
 {/if}
 
 
 
-        <a href="/" class="btn btn-link d-block mt-3">Zur Startseite</a>
+        <a href="/studyhub/index.php" class="btn btn-link d-block mt-3">Zur Startseite</a>
     </div>
 {/block}

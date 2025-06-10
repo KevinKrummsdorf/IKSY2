@@ -1,9 +1,9 @@
 RewriteEngine On
-RewriteBase /
+RewriteBase /studyhub/
 
-# Fehlerseiten
+# Fehlerseiten umleiten
 RewriteRule ^error/([0-9]{3})$ error.php?code=$1 [QSA,L]
-RewriteCond %{REQUEST_URI} ^/error\.php [NC]
+RewriteCond %{REQUEST_URI} ^/studyhub/error\.php [NC]
 RewriteRule ^ - [L]
 
 # Upload-Zugriffe umleiten
@@ -14,11 +14,11 @@ RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Router
+# Alles andere an router.php übergeben
 RewriteRule ^(.*)$ router.php?page=$1 [QSA,L]
 
-# Fehlerseiten
-ErrorDocument 403 /error/403
-ErrorDocument 404 /error/404
-ErrorDocument 500 /error/500
-ErrorDocument 503 /error/503
+# Fehlerseiten definieren
+ErrorDocument 403 /studyhub/error/403
+ErrorDocument 404 /studyhub/error/404
+ErrorDocument 500 /studyhub/error/500
+ErrorDocument 503 /studyhub/error/503
