@@ -8,103 +8,14 @@ class DbFunctions
     private static ?PDO $pdo = null;    private static ?ILogger $log = null;
 
     private static function getLogger(): ILogger
-    {
+    {   
         if (self::$log === null) {
             self::$log = LoggerFactory::get('db');
         }
         return self::$log;
     }
 
-    // Gibt die Gruppe zurück, in der der Nutzer Mitglied ist
-    public static function fetchGroupByUser(int $userId): ?array
-    {
-        $sql = '
-        SELECT g.*
-        FROM group_members gm
-        JOIN groups g ON gm.group_id = g.id
-        WHERE gm.user_id = :uid
-        LIMIT 1
-    ';
-        return self::fetchOne($sql, [':uid' => $userId]);
-    }
 
-    // Legt eine neue Gruppe an und trägt den Nutzer als Mitglied ein
-    public static function createGroup(string $groupName, int $userId): ?int
-    {
-        $pdo = self::db_connect();
-        $pdo->beginTransaction();
-        try {
-            $stmt = $pdo->prepare('INSERT INTO groups (name) VALUES (:name)');
-            $stmt->execute([':name' => $groupName]);
-            $groupId = (int)$pdo->lastInsertId();
-
-            $stmt = $pdo->prepare('INSERT INTO group_members (group_id, user_id) VALUES (:gid, :uid)');
-            $stmt->execute([':gid' => $groupId, ':uid' => $userId]);
-
-            $pdo->commit();
-            return $groupId;
-        } catch (Exception $e) {
-            $pdo->rollBack();
-            self::getLogger()->error('createGroup failed', ['error' => $e->getMessage()]);
-            return null;
-        }
-    }
-
-    // Holt eine Gruppe anhand ihres Namens
-    public static function fetchGroupByName(string $name): ?array
-    {
-        $sql = 'SELECT * FROM groups WHERE name = :name LIMIT 1';
-        return self::fetchOne($sql, [':name' => $name]);
-    }
-
-    // Fügt den Benutzer einer Gruppe hinzu
-    public static function addUserToGroup(int $groupId, int $userId): bool
-    {
-        $sql = '
-        INSERT IGNORE INTO group_members (group_id, user_id)
-        VALUES (:gid, :uid)
-    ';
-        return self::execute($sql, [':gid' => $groupId, ':uid' => $userId]) > 0;
-    }
-
-    // Entfernt einen Benutzer aus einer Gruppe
-    public static function removeUserFromGroup(int $groupId, int $userId): bool
-    {
-        $sql = '
-        DELETE FROM group_members
-        WHERE group_id = :gid AND user_id = :uid
-    ';
-        return self::execute($sql, [':gid' => $groupId, ':uid' => $userId]) > 0;
-    }
-
-    // Gibt alle Mitglieder einer Gruppe zurück (Username + E-Mail)
-    public static function getGroupMembers(int $groupId): array
-    {
-        $sql = '
-        SELECT u.username, u.email
-        FROM group_members gm
-        JOIN users u ON gm.user_id = u.id
-        WHERE gm.group_id = :gid
-        ORDER BY u.username ASC
-    ';
-        return self::execute($sql, [':gid' => $groupId], true);
-    }
-
-    // Gibt alle Uploads zurück, die einer Gruppe zugewiesen wurden
-    public static function getUploadsByGroup(int $groupId): array
-    {
-        $sql = '
-        SELECT u.id, u.stored_name, m.title
-        FROM uploads u
-        JOIN materials m ON u.material_id = m.id
-        WHERE u.group_id = :gid AND u.is_approved = 1 AND u.is_rejected = 0
-        ORDER BY u.uploaded_at DESC
-    ';
-        return self::execute($sql, [':gid' => $groupId], true);
-    }
-
-    
- 
     /**
      * Singleton-DB-Verbindung über Konfigurationsarray
      */
@@ -163,77 +74,6 @@ class DbFunctions
         }
     }
 
-    // ==== ToDo-Funktionen ====
-
-    /**
-     * Holt alle ToDos eines Benutzers.
-     */
-    public static function getTodosByUserId(int $userId): array
-    {
-        $query = '
-        SELECT * FROM todos
-        WHERE user_id = ?
-        ORDER BY created_at DESC
-    ';
-        return self::execute($query, [$userId], true);
-    }
-
-    /**
-     * Legt ein neues ToDo an.
-     */
-    public static function insertTodo(int $userId, string $text, ?string $dueDate): void
-    {
-        $query = '
-        INSERT INTO todos (user_id, text, due_date)
-        VALUES (?, ?, ?)
-    ';
-        self::execute($query, [$userId, $text, $dueDate]);
-    }
-
-    /**
-     * Liefert den aktuellen Status eines ToDos.
-     */
-    public static function getTodoStatus(int $todoId, int $userId): ?array
-    {
-        $query = '
-        SELECT is_done FROM todos
-        WHERE id = ? AND user_id = ?
-    ';
-        return self::fetchOne($query, [$todoId, $userId]);
-    }
-
-    /**
-     * Setzt den Status eines ToDos.
-     */
-    public static function updateTodoStatus(int $todoId, int $userId, int $newStatus): void
-    {
-        $query = '
-        UPDATE todos
-        SET is_done = ?
-        WHERE id = ? AND user_id = ?
-    ';
-        self::execute($query, [$newStatus, $todoId, $userId]);
-    }
-
-    /**Alle bestätigten Materialien abrufen**/
-
-    public static function getApprovedUploads(): array
-    {
-        $query = '
-        SELECT id, stored_name, material_id
-        FROM uploads
-        WHERE is_rejected = 0
-    ';
-        return self::execute($query, [], true); // true = fetchAll()
-    }
-    
-    /** Material abruf für "Material finden/suchen" **/
-    public static function getAllMaterials(): array
-    {
-        $query = 'SELECT id, title, description FROM materials';
-        return self::execute($query, [], true); // true → fetchAll() wird ausgeführt
-    }
-    
     /**
      * Führt ein Prepared Statement aus und gibt Ergebnis oder Zeilenanzahl zurück.
      */
@@ -462,11 +302,8 @@ public static function insertUser(string $username, string $email, string $passw
 public static function fetchUserByIdentifier(string $input): ?array
 {
     $sql = '
-        SELECT
-            u.id,
-            u.username,
-            u.email,
-            u.password_hash,
+        SELECT 
+            u.id, u.username, u.password_hash,
             uv.is_verified,
             r.role_name AS role
         FROM users u
@@ -1210,31 +1047,6 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
 
     return $stmt->fetchAll();
 }
-
-    /**
-     * Holt alle genehmigten Uploads eines Benutzers.
-     *
-     * @param int $userId ID des Benutzers
-     * @return array Liste der Uploads mit Material- und Kursinformationen
-     */
-    public static function getApprovedUploadsByUser(int $userId): array
-    {
-        $pdo = self::db_connect();
-
-        $stmt = $pdo->prepare(
-            "SELECT u.id, u.stored_name, u.uploaded_at, m.title, c.name AS course_name
-             FROM uploads u
-             JOIN materials m ON u.material_id = m.id
-             JOIN courses c ON m.course_id = c.id
-             WHERE u.uploaded_by = ?
-               AND u.is_approved = 1
-               AND u.is_rejected = 0
-             ORDER BY u.uploaded_at DESC"
-        );
-        $stmt->execute([$userId]);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
 /**
  * Zählt die Anzahl der Upload-Logs mit erweiterten Filtermöglichkeiten.
  * @param array $filters Filterkriterien
@@ -1878,165 +1690,35 @@ public static function getFilteredLockedUsers(array $filters = []): array
     $stmt->execute($params);
 
     return $stmt->fetchAll();
-}
-
-
-    /**
-     * Speichert einen Password-Reset-Token.
-     */
-    public static function storePasswordResetToken(int $userId, string $token, int $expiresMinutes = 60): void
-    {
-        $sql = '
-            INSERT INTO password_reset_tokens (user_id, reset_token, expires_at)
-            VALUES (:uid, :token, DATE_ADD(NOW(), INTERVAL :exp MINUTE))
-            ON DUPLICATE KEY UPDATE
-                reset_token = VALUES(reset_token),
-                expires_at = VALUES(expires_at)
-        ';
-        self::getLogger()->info('Store Password Reset Token', ['user_id' => $userId]);
-        self::execute($sql, [
-            ':uid'  => $userId,
-            ':token'=> $token,
-            ':exp'  => $expiresMinutes,
-        ]);
     }
 
-    /**
-     * Holt den Benutzer anhand des Password-Reset-Tokens.
-     */
-    public static function fetchPasswordResetUser(string $token): ?array
+    
+    private static function getPdo(): PDO
     {
-        $sql = '
-            SELECT u.id, u.username, u.email, u.password_hash
-            FROM password_reset_tokens pr
-            JOIN users u ON pr.user_id = u.id
-            WHERE pr.reset_token = :token AND pr.expires_at > NOW()
-            LIMIT 1
-        ';
-        self::getLogger()->info('Fetch Password Reset User', ['token' => $token]);
-        return self::fetchOne($sql, [':token' => $token]);
-    }
-
-    /**
-     * Löscht einen Password-Reset-Token.
-     */
-    public static function deletePasswordResetToken(int $userId): int
-    {
-        $sql = 'DELETE FROM password_reset_tokens WHERE user_id = :id';
-        self::getLogger()->info('Delete Password Reset Token', ['user_id' => $userId]);
-        return self::execute($sql, [':id' => $userId], false);
-    }
-
-    /**
-     * Aktualisiert das Passwort eines Benutzers.
-     */
-    public static function updatePassword(int $userId, string $passwordHash): int
-    {
-        $sql = 'UPDATE users SET password_hash = :pw WHERE id = :id';
-        self::getLogger()->info('Update Password', ['user_id' => $userId]);
-        return self::execute($sql, [':pw' => $passwordHash, ':id' => $userId], false);
-    }
-
-    public static function fetchUserProfile(int $userId): ?array
-    {
-        $pdo = self::db_connect();
-        $stmt = $pdo->prepare('SELECT * FROM profile WHERE user_id = :user_id');
-        $stmt->execute(['user_id' => $userId]);
-        $profile = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $profile ?: null;
-    }
-
-    public static function getOrCreateUserProfile(int $userId): array
-    {
-        $pdo = self::db_connect();
-
-        $stmt = $pdo->prepare('SELECT * FROM profile WHERE user_id = :id');
-        $stmt->execute([':id' => $userId]);
-        $profile = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$profile) {
-            $stmt = $pdo->prepare('INSERT INTO profile (user_id) VALUES (:id)');
-            $stmt->execute([':id' => $userId]);
-
-            $stmt = $pdo->prepare('SELECT * FROM profile WHERE user_id = :id');
-            $stmt->execute([':id' => $userId]);
-            $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (self::$pdo === null) {
+            $config = require __DIR__ . '/config.inc.php';
+            
+            self::$pdo = new PDO(
+                "mysql:host={$config['db']['host']};dbname={$config['db']['name']};charset=utf8mb4",
+                $config['db']['user'],
+                $config['db']['pass']
+            );
+            
+            self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
-
-        return $profile ?: [];
+        
+        return self::$pdo;
     }
-
-    public static function updateUserProfile(int $userId, array $fields): void
-    {
-        $pdo = self::db_connect();
-
-        $set = [];
-        $params = [':id' => $userId];
-
-        foreach ($fields as $key => $value) {
-            $set[] = "`$key` = :$key";
-            $params[":$key"] = $value;
-        }
-
-        if (empty($set)) {
-            echo "⚠️ Kein Inhalt zum Speichern.<br>";
-            exit;
-        }
-
-        $sql = 'UPDATE profile SET ' . implode(', ', $set) . ', updated_at = NOW() WHERE user_id = :id';
-
-        try {
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute($params);
-        } catch (PDOException $e) {
-            self::getLogger()->error('Profil-Update fehlgeschlagen', [
-                'error' => $e->getMessage(),
-                'sql'   => $sql,
-                'params'=> $params,
-            ]);
-            throw new RuntimeException('Fehler beim Speichern des Profils: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Holt einen Benutzer anhand seiner ID.
-     */
-    public static function fetchUserById(int $userId): ?array
-    {
-        $sql = '
-        SELECT
-            u.id,
-            u.username,
-            u.email,
-            u.password_hash,
-            uv.is_verified,
-            r.role_name AS role
-        FROM users u
-        JOIN user_verification uv ON u.id = uv.user_id
-        LEFT JOIN user_roles ur ON u.id = ur.user_id
-        LEFT JOIN roles r ON ur.role_id = r.id
-        WHERE u.id = :userId
-        LIMIT 1
-            ';
-        self::getLogger()->info('Fetch User By ID', ['user_id' => $userId]);
-        return self::fetchOne($sql, [':userId' => $userId]);
-    }
-
-    /**
-     * Löscht alle Einträge im Stundenplan eines Nutzers.
-     */
+    // Löscht alle Einträge für den angegebenen Nutzer
     public static function deleteAllTimetableEntries(int $userId): void
     {
-        $pdo = self::db_connect();
-
+        $pdo = self::getPdo();
+        
         $stmt = $pdo->prepare('DELETE FROM timetable WHERE user_id = ?');
         $stmt->execute([$userId]);
     }
-
-    /**
-     * Fügt einen Eintrag in den Stundenplan ein.
-     */
+    
+    // Fügt einen Eintrag in den Stundenplan ein
     public static function insertTimetableEntry(
         int $userId,
         string $weekday,
@@ -2044,32 +1726,32 @@ public static function getFilteredLockedUsers(array $filters = []): array
         string $subject,
         string $room,
         int $slotIndex
-    ): void {
-        $pdo = self::db_connect();
-
-        $stmt = $pdo->prepare(
-            'INSERT INTO timetable (user_id, weekday, time, subject, room, slot_index)
+        ): void {
+            $pdo = self::getPdo();
+            
+            $stmt = $pdo->prepare(
+                'INSERT INTO timetable (user_id, weekday, time, subject, room, slot_index)
              VALUES (?, ?, ?, ?, ?, ?)'
-        );
-
-        $stmt->execute([$userId, $weekday, $time, $subject, $room, $slotIndex]);
+                );
+            
+            $stmt->execute([$userId, $weekday, $time, $subject, $room, $slotIndex]);
     }
-
-    /**
-     * Holt den Stundenplan eines Nutzers für einen bestimmten Wochentag.
-     */
+    
+    // Holt den Stundenplan eines bestimmten Nutzers und Tages
     public static function getTimetableByDay(int $userId, string $weekday): array
     {
-        $pdo = self::db_connect();
-
+        $pdo = self::getPdo();
+        
         $stmt = $pdo->prepare(
             'SELECT * FROM timetable
              WHERE user_id = ? AND weekday = ?
              ORDER BY slot_index'
-        );
-
+            );
+        
         $stmt->execute([$userId, $weekday]);
         return $stmt->fetchAll();
     }
-
 }
+
+
+   
