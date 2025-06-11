@@ -41,7 +41,6 @@
                 {foreach from=$courses item=course}
                     <option value="{$course.value|escape}" {if $course.value == $selectedCourse}selected{/if}>{$course.name|escape}</option>
                 {/foreach}
-                <option value="__custom__" {if $selectedCourse == '__custom__'}selected{/if}>Anderer (bitte angeben)</option>
             </select>
         </div>
 
