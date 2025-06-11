@@ -65,7 +65,7 @@
     <li><a href="{$base_url}/todos.php"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
     <li><a href="{$base_url}/browse.php"><span class="material-symbols-outlined">search</span><span>Material finden</span></a></li>
     <li><a href="{$base_url}/upload.php"><span class="material-symbols-outlined">arrow_circle_up</span><span>Material hochladen</span></a></li>
-    <li><a href="{$base_url}/stundenplan.php"><span class="material-symbols-outlined">calendar_month</span><span>Stundenplan</span></a></li>
+    <li><a href="{$base_url}/timetable.php"><span class="material-symbols-outlined">calendar_month</span><span>Stundenplan</span></a></li>
     <li><a href="#" id="theme-toggle"><span id="theme-icon" class="material-symbols-outlined">dark_mode</span><span id="theme-label">Darkmode</span></a></li>
 
   </ul>
@@ -84,7 +84,7 @@
       <li><a href="{$base_url}/todos.php"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
       <li><a href="{$base_url}/browse.php"><span class="material-symbols-outlined">search</span><span>Material finden</span></a></li>
       <li><a href="{$base_url}/upload.php"><span class="material-symbols-outlined">arrow_circle_up</span><span>Material hochladen</span></a></li>
-    <li><a href="{$base_url}/stundenplan.php"><span class="material-symbols-outlined">calendar_month</span><span>Stundenplan</span></a></li>
+    <li><a href="{$base_url}/timetable.php"><span class="material-symbols-outlined">calendar_month</span><span>Stundenplan</span></a></li>
       <li><a href="#" id="theme-toggle"><span id="theme-icon" class="material-symbols-outlined">dark_mode</span><span id="theme-label">Darkmode</span></a></li>
     </ul>
   </div>
