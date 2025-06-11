@@ -78,6 +78,7 @@ $config['mail'] = [
     'from_name'  => $_ENV['SMTP_FROM_NAME'] ?? 'StudyHub',
     'encryption' => PHPMailer::ENCRYPTION_STARTTLS,
     'verify_subject' => 'Bitte bestätige deine E-Mail-Adresse',
+    'reset_subject'  => 'Passwort zurücksetzen',
     'contact_email' => $_ENV['CONTACT_EMAIL'] ?? ''
 ];
 

@@ -17,12 +17,35 @@ $log = LoggerFactory::get('upload');
 $error   = '';
 $success = '';
 
+$action = $_POST['action'] ?? ($_GET['action'] ?? 'upload');
+$action = $action === 'suggest' ? 'suggest' : 'upload';
+
 $courses = DbFunctions::getAllCourses();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])) {
         $error = 'Ungültiger CSRF-Token.';
         $log->error('CSRF-Token ungültig', ['user_id' => $_SESSION['user_id']]);
+    } elseif ($action === 'suggest') {
+        $courseSuggestion = trim($_POST['course_suggestion'] ?? '');
+        $smarty->assign('courseSuggestion', $courseSuggestion);
+
+        if ($courseSuggestion === '') {
+            $error = 'Bitte gib einen Kursnamen an.';
+        } else {
+            try {
+                DbFunctions::submitCourseSuggestion($courseSuggestion, (int)$_SESSION['user_id']);
+                $log->info('Kursvorschlag eingereicht', [
+                    'user_id'         => $_SESSION['user_id'],
+                    'course_suggested'=> $courseSuggestion,
+                ]);
+                $success = 'Kursvorschlag wurde eingereicht.';
+                $_POST = [];
+            } catch (Exception $e) {
+                $error = 'Fehler beim Speichern des Kursvorschlags.';
+                $log->error('Kursvorschlag-Fehler', ['msg' => $e->getMessage()]);
+            }
+        }
     } else {
         $title         = trim($_POST['title'] ?? '');
         $description   = trim($_POST['description'] ?? '');
@@ -41,13 +64,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $file     = $_FILES['file'];
             $finfo    = new finfo(FILEINFO_MIME_TYPE);
             $mimeType = $finfo->file($file['tmp_name']);
-            $allowed  = ['application/pdf','image/jpeg','image/png','text/plain'];
+            $allowed  = [
+                'application/pdf',
+                'image/jpeg',
+                'image/png',
+                'text/plain',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.oasis.opendocument.text',
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            ];
 
             if ($file['error'] !== UPLOAD_ERR_OK) {
                 $error = 'Fehler beim Datei-Upload.';
                 $log->error('Datei-Upload-Fehler', ['user_id' => $_SESSION['user_id'], 'error' => $file['error']]);
             } elseif (!in_array($mimeType, $allowed, true)) {
-                $error = 'Nur PDF, JPG, PNG und TXT erlaubt.';
+                $error = 'Nur PDF, JPG, PNG, TXT, DOC, DOCX, ODT, PPT und PPTX erlaubt.';
             } elseif ($file['size'] > 10 * 1024 * 1024) {
                 $error = 'Maximal 10 MB erlaubt.';
             } else {
@@ -119,6 +152,8 @@ $smarty->assign([
     'title'          => $_POST['title'] ?? '',
     'description'    => $_POST['description'] ?? '',
     'csrf_token'     => $_SESSION['csrf_token'],
+    'action'         => $action,
+    'courseSuggestion' => $_POST['course_suggestion'] ?? '',
 ]);
 
 if ($error) {
@@ -129,3 +164,4 @@ if ($success) {
 }
 
 $smarty->display('upload.tpl');
+

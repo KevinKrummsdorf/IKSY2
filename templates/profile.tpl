@@ -7,20 +7,57 @@
 
 <div class="container my-5">
     <div class="profile-box">
-        <strong>Name:</strong>
-        <p class="text-muted">Max</p>
+      
+        {* PROFILBILD *}
+{if $profile.profile_picture}
+    <div class="text-center mb-4">
+        <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture}" alt="Profilbild" class="rounded-circle shadow" style="max-width: 150px;">
+    </div>
+{else}
+    <div class="text-center mb-4">
+        <img src="{$base_url}/assets/default-profile.png" alt="Kein Profilbild" class="rounded-circle shadow" style="max-width: 150px;">
+    </div>
+{/if}
 
-        <strong>Benutzername:</strong>
-        <p class="text-muted">{$username}</p>
+       
 
-        <strong>E-Mail:</strong>
-        <p class="text-muted">max@example.com</p>
+        {* PERSÖNLICHE INFOS *}
+        <div class="card mb-4">
+            <div class="card-body">
+                
 
-        <strong>Andere Netzwerke:</strong>
-        <p class="text-muted">Instagram, TikTok, Discord, MS Teams</p>
+                <strong>Benutzername:</strong>
+                <p class="text-muted">{$username}</p>
+
+                <strong>Vorname:</strong>
+                <p class="text-muted">{$profile.first_name}</p>
+
+                <strong>Nachname:</strong>
+                <p class="text-muted">{$profile.last_name}</p>
+
+                <strong>Geburtsdatum:</strong>
+                <p class="text-muted">
+                    {if $profile.birthdate}{$profile.birthdate|date_format:"%d.%m.%Y"}{else}-{/if}
+                </p>
+
+                <strong>Wohnort:</strong>
+                <p class="text-muted">{$profile.location}</p>
+
+                <strong>Über mich:</strong>
+                <p class="text-muted">{$profile.about_me|default:"Noch nichts eingetragen."}</p>
+
+                <strong>Andere Netzwerke:</strong>
+                <ul class="text-muted list-unstyled">
+                    {if $profile.instagram}<li>📸 <a href="{$profile.instagram}" target="_blank">Instagram</a></li>{/if}
+                    {if $profile.tiktok}<li>🎵 <a href="{$profile.tiktok}" target="_blank">TikTok</a></li>{/if}
+                    {if $profile.discord}<li>💬 {$profile.discord}</li>{/if}
+                    {if $profile.ms_teams}<li>🧑‍💼 {$profile.ms_teams}</li>{/if}
+                </ul>
+            </div>
+        </div>
 
         <section class="text-center">
-            <a href="bearbeiten.php" class="btn btn-primary btn-lg mt-30">Profil bearbeiten</a>
+            <a href="edit_profile.php" class="btn btn-primary btn-lg mt-30">Profil bearbeiten</a>
         </section>
 
         <hr class="my-5">
@@ -114,6 +151,48 @@
                 <button type="submit" class="btn btn-primary">2FA einrichten</button>
             </form>
         {/if}
+        <hr class="my-5">
+        <h3 class="mb-3">Passwort ändern</h3>
+        {if isset($pw_success)}
+            <div class="alert alert-success">{$pw_success}</div>
+        {/if}
+        {if isset($pw_message)}
+            <div class="alert alert-danger">{$pw_message}</div>
+        {/if}
+        <div id="pwFormAlert" class="alert alert-danger d-none">Bitte alle Felder ausfüllen.</div>
+        <form id="pwChangeForm" method="post" class="needs-validation" novalidate>
+            <input type="hidden" name="action" value="change_password">
+            <div class="mb-3">
+                <label for="old_password" class="form-label">Aktuelles Passwort</label>
+                <input type="password" class="form-control" id="old_password" name="old_password" required>
+            </div>
+            <div class="mb-3">
+                <label for="new_password" class="form-label">Neues Passwort</label>
+                <input type="password" class="form-control" id="new_password" name="new_password" required>
+            </div>
+            <div class="mb-3">
+                <label for="new_password_confirm" class="form-label">Passwort bestätigen</label>
+                <input type="password" class="form-control" id="new_password_confirm" name="new_password_confirm" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Passwort speichern</button>
+        </form>
+        <script>
+            (() => {
+                'use strict';
+                const form = document.getElementById('pwChangeForm');
+                const alertBox = document.getElementById('pwFormAlert');
+                form?.addEventListener('submit', e => {
+                    if (!form.checkValidity()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        alertBox.classList.remove('d-none');
+                    } else {
+                        alertBox.classList.add('d-none');
+                    }
+                    form.classList.add('was-validated');
+                });
+            })();
+        </script>
     </div>
 </div>
 {/block}
