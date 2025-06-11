@@ -2020,6 +2020,56 @@ public static function getFilteredLockedUsers(array $filters = []): array
         LIMIT 1
             ';
         self::getLogger()->info('Fetch User By ID', ['user_id' => $userId]);
-        return self::fetchOne($sql, [':userId' => $userId]);    }
+        return self::fetchOne($sql, [':userId' => $userId]);
+    }
+
+    /**
+     * Löscht alle Einträge im Stundenplan eines Nutzers.
+     */
+    public static function deleteAllTimetableEntries(int $userId): void
+    {
+        $pdo = self::db_connect();
+
+        $stmt = $pdo->prepare('DELETE FROM timetable WHERE user_id = ?');
+        $stmt->execute([$userId]);
+    }
+
+    /**
+     * Fügt einen Eintrag in den Stundenplan ein.
+     */
+    public static function insertTimetableEntry(
+        int $userId,
+        string $weekday,
+        string $time,
+        string $subject,
+        string $room,
+        int $slotIndex
+    ): void {
+        $pdo = self::db_connect();
+
+        $stmt = $pdo->prepare(
+            'INSERT INTO timetable (user_id, weekday, time, subject, room, slot_index)
+             VALUES (?, ?, ?, ?, ?, ?)'
+        );
+
+        $stmt->execute([$userId, $weekday, $time, $subject, $room, $slotIndex]);
+    }
+
+    /**
+     * Holt den Stundenplan eines Nutzers für einen bestimmten Wochentag.
+     */
+    public static function getTimetableByDay(int $userId, string $weekday): array
+    {
+        $pdo = self::db_connect();
+
+        $stmt = $pdo->prepare(
+            'SELECT * FROM timetable
+             WHERE user_id = ? AND weekday = ?
+             ORDER BY slot_index'
+        );
+
+        $stmt->execute([$userId, $weekday]);
+        return $stmt->fetchAll();
+    }
 
 }
