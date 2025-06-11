@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Dotenv\Dotenv;
 use PHPMailer\PHPMailer\PHPMailer;
-use Smarty\Smarty;
 use ParagonIE\Halite\KeyFactory;
 use ParagonIE\HiddenString\HiddenString;
 
@@ -20,6 +19,7 @@ require_once __DIR__ . '/../includes/logger.inc.php';
 require_once __DIR__ . '/../src/ILogger.php';
 require_once __DIR__ . '/../src/MonologLoggerAdapter.php';
 require_once __DIR__ . '/../src/LoggerFactory.php';
+require_once __DIR__ . '/../includes/SmartyEscaped.inc.php';
 
 
 // .env laden
@@ -92,7 +92,7 @@ $config['recaptcha'] = [
 
 
 // ==== Smarty Initialisierung ====
-$smarty = new Smarty();
+$smarty = new SmartyEscaped();
 
 $smarty->setTemplateDir(__DIR__ . '/../templates/');
 $smarty->setCompileDir(__DIR__ . '/../templates_c/');
