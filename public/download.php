@@ -33,10 +33,14 @@ if ($upload['group_id'] !== null) {
     }
 }
 
-$basePath = realpath(__DIR__ . '/../uploads/');
-$filePath = $basePath . DIRECTORY_SEPARATOR . $upload['stored_name'];
+$basePath = realpath(__DIR__ . '/../uploads');
+if ($basePath === false) {
+    http_response_code(500);
+    exit('Upload-Verzeichnis fehlt.');
+}
+$filePath = realpath($basePath . '/' . $upload['stored_name']);
 
-if (!is_file($filePath)) {
+if ($filePath === false || strpos($filePath, $basePath) !== 0 || !is_file($filePath)) {
     http_response_code(404);
     exit('Datei nicht gefunden.');
 }

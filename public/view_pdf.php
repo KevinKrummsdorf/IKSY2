@@ -2,10 +2,23 @@
 require_once __DIR__ . '/../includes/config.inc.php';
 session_start();
 
-// Sicherheitscheck – nur Dateinamen zulassen
-$filename = basename($_GET['file'] ?? '');
+// Relativen Pfad ermitteln und auf Gültigkeit prüfen
+$relative = ltrim((string)($_GET['file'] ?? ''), '/');
+$basePath = realpath(__DIR__ . '/../uploads');
+if ($basePath === false) {
+    http_response_code(500);
+    exit('Upload-Verzeichnis fehlt.');
+}
 
-$upload = DbFunctions::getApprovedUploadByStoredName($filename);
+$filePath = realpath($basePath . '/' . $relative);
+if ($filePath === false || strpos($filePath, $basePath) !== 0) {
+    http_response_code(404);
+    exit('Datei nicht gefunden.');
+}
+
+$filename = basename($filePath);
+
+$upload = DbFunctions::getApprovedUploadByStoredName($relative);
 if (!$upload) {
     http_response_code(404);
     exit('Datei nicht gefunden.');
@@ -23,9 +36,9 @@ if ($upload['group_id'] !== null) {
     }
 }
 
-$path = __DIR__ . '/../uploads/' . $filename;
+$path = $filePath;
 
-if (!preg_match('/\.pdf$/i', $filename) || !file_exists($path)) {
+if (!preg_match('/\.pdf$/i', $filename) || !is_file($path)) {
     http_response_code(404);
     exit('Datei nicht gefunden.');
 }

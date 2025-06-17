@@ -99,7 +99,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } elseif ($file['size'] > 10 * 1024 * 1024) {
                 $error = 'Maximal 10 MB erlaubt.';
             } else {
-                $uploadDir = __DIR__ . '/../uploads/';
+                $baseUploadDir = __DIR__ . '/../uploads/';
+                $uploadDir = $baseUploadDir;
+                $storedPrefix = '';
+                if ($groupUpload) {
+                    $uploadDir .= 'groups/' . $selectedGroupId . '/';
+                    $storedPrefix = 'groups/' . $selectedGroupId . '/';
+                }
                 if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)) {
                     $error = 'Upload-Verzeichnis konnte nicht erstellt werden.';
                     $log->error('Upload-Verzeichnis fehlgeschlagen', ['user_id' => $_SESSION['user_id']]);
@@ -127,13 +133,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $log->error('PDF-Konvertierung fehlgeschlagen', ['msg' => $e->getMessage()]);
                             $storedName = $storedNameTmp;
                         }
+                        $dbStoredName = $storedPrefix . $storedName;
                         try {
                             if ($course === '__custom__') {
                                 DbFunctions::submitCourseSuggestion($customCourse, (int)$_SESSION['user_id']);
                                 $log->info('Kursvorschlag eingereicht', [
                                     'user_id'         => $_SESSION['user_id'],
                                     'course_suggested'=> $customCourse,
-                                    'stored_name'     => $storedName,
+                                    'stored_name'     => $dbStoredName,
                                 ]);
                                 $success = 'Kursvorschlag wurde eingereicht. Datei wird erst nach Freigabe akzeptiert.';
                             } else {
@@ -143,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                                 if ($groupUpload) {
                                     $uploadId = DbFunctions::uploadFile(
-                                        $storedName,
+                                        $dbStoredName,
                                         $materialId,
                                         (int)$_SESSION['user_id'],
                                         $selectedGroupId,
@@ -151,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     );
                                     $success = 'Datei erfolgreich für deine Gruppe hochgeladen.';
                                 } else {
-                                    $uploadId = DbFunctions::uploadFile($storedName, $materialId, (int)$_SESSION['user_id']);
+                                    $uploadId = DbFunctions::uploadFile($dbStoredName, $materialId, (int)$_SESSION['user_id']);
                                     $success  = 'Datei erfolgreich hochgeladen und wartet auf Freigabe.';
                                 }
 
@@ -160,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 $log->info('Upload erfolgreich', [
                                     'user_id'     => $_SESSION['user_id'],
                                     'upload_id'   => $uploadId,
-                                    'stored_name' => $storedName,
+                                    'stored_name' => $dbStoredName,
                                     'material_id' => $materialId,
                                     'group_id'    => $groupUpload ? $selectedGroupId : null
                                 ]);
