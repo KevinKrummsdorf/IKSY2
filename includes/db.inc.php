@@ -103,6 +103,65 @@ class DbFunctions
         return self::execute($sql, [':gid' => $groupId], true);
     }
 
+    /**
+     * Liefert alle Gruppen (id und Name)
+     */
+    public static function fetchAllGroups(): array
+    {
+        $sql = 'SELECT id, name FROM `groups` ORDER BY name ASC';
+        return self::execute($sql, [], true);
+    }
+
+    /**
+     * Holt eine Gruppe anhand ihrer ID.
+     */
+    public static function fetchGroupById(int $groupId): ?array
+    {
+        $sql = 'SELECT id, name FROM `groups` WHERE id = :gid LIMIT 1';
+        return self::fetchOne($sql, [':gid' => $groupId]);
+    }
+
+    /**
+     * Liefert die Rolle eines Nutzers in einer Gruppe oder null.
+     */
+    public static function fetchUserRoleInGroup(int $groupId, int $userId): ?string
+    {
+        $sql = '
+            SELECT role
+            FROM group_roles
+            WHERE group_id = :gid AND user_id = :uid
+            LIMIT 1
+        ';
+        $row = self::fetchOne($sql, [':gid' => $groupId, ':uid' => $userId]);
+        return $row['role'] ?? null;
+    }
+
+    /**
+     * Setzt die Rolle eines Nutzers in einer Gruppe.
+     */
+    public static function setUserRoleInGroup(int $groupId, int $userId, string $role): bool
+    {
+        $sql = '
+            INSERT INTO group_roles (group_id, user_id, role)
+            VALUES (:gid, :uid, :role)
+            ON DUPLICATE KEY UPDATE role = VALUES(role)
+        ';
+        return self::execute($sql, [
+            ':gid'  => $groupId,
+            ':uid'  => $userId,
+            ':role' => $role,
+        ]) > 0;
+    }
+
+    /**
+     * Löscht eine Gruppe vollständig.
+     */
+    public static function deleteGroup(int $groupId): bool
+    {
+        $sql = 'DELETE FROM `groups` WHERE id = :gid';
+        return self::execute($sql, [':gid' => $groupId]) > 0;
+    }
+
     
  
     /**
@@ -982,17 +1041,28 @@ public static function getUserById(int $userId): ?array
  * Fügt einen neuen Upload in die Datenbank ein.
  * Gibt die ID des neuen Uploads zurück.
  */
-public static function uploadFile(string $storedName, int $materialId, int $userId): int
-{
+public static function uploadFile(
+    string $storedName,
+    int $materialId,
+    int $userId,
+    ?int $groupId = null,
+    bool $autoApprove = false
+): int {
     $pdo = self::db_connect();
 
-    $stmt = $pdo->prepare("
-        INSERT INTO uploads (stored_name, material_id, uploaded_by, uploaded_at, is_approved)
-        VALUES (:storedName, :materialId, :userId, NOW(), 0)
-    ");
-    $stmt->execute([$storedName, $materialId, $userId]);
+    $stmt = $pdo->prepare(
+        "INSERT INTO uploads (stored_name, material_id, uploaded_by, uploaded_at, is_approved, group_id)
+         VALUES (:storedName, :materialId, :userId, NOW(), :approved, :groupId)"
+    );
+    $stmt->execute([
+        ':storedName' => $storedName,
+        ':materialId' => $materialId,
+        ':userId'     => $userId,
+        ':approved'   => $autoApprove ? 1 : 0,
+        ':groupId'    => $groupId,
+    ]);
 
-    return (int)$pdo->lastInsertId(); // <--- das brauchst du!
+    return (int)$pdo->lastInsertId();
 }
 
 /*

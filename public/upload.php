@@ -18,6 +18,8 @@ $error   = '';
 $success = '';
 
 $courses = DbFunctions::getAllCourses();
+$userGroup = DbFunctions::fetchGroupByUser((int)$_SESSION['user_id']);
+$groupUpload = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])) {
@@ -28,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $description   = trim($_POST['description'] ?? '');
         $course        = trim($_POST['course'] ?? '');
         $customCourse  = trim($_POST['custom_course'] ?? '');
+        $groupUpload   = isset($_POST['group_upload']) && $userGroup;
 
         $smarty->assign('customCourse', $customCourse);
 
@@ -89,9 +92,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 $success = 'Kursvorschlag wurde eingereicht. Datei wird erst nach Freigabe akzeptiert.';
                             } else {
                                 // Material automatisch anlegen oder wiederverwenden
-                                $courseId    = DbFunctions::getCourseIdByName($course);
-                                $materialId  = DbFunctions::getOrCreateMaterial($courseId, $title, $description);
-                                $uploadId    = DbFunctions::uploadFile($storedName, $materialId, (int)$_SESSION['user_id']);
+                                $courseId   = DbFunctions::getCourseIdByName($course);
+                                $materialId = DbFunctions::getOrCreateMaterial($courseId, $title, $description);
+
+                                if ($groupUpload) {
+                                    $uploadId = DbFunctions::uploadFile(
+                                        $storedName,
+                                        $materialId,
+                                        (int)$_SESSION['user_id'],
+                                        (int)$userGroup['id'],
+                                        true
+                                    );
+                                    $success = 'Datei erfolgreich für deine Lerngruppe hochgeladen.';
+                                } else {
+                                    $uploadId = DbFunctions::uploadFile($storedName, $materialId, (int)$_SESSION['user_id']);
+                                    $success  = 'Datei erfolgreich hochgeladen und wartet auf Freigabe.';
+                                }
 
                                 DbFunctions::insertUploadLog((int)$_SESSION['user_id'], $uploadId);
 
@@ -99,10 +115,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     'user_id'     => $_SESSION['user_id'],
                                     'upload_id'   => $uploadId,
                                     'stored_name' => $storedName,
-                                    'material_id' => $materialId
+                                    'material_id' => $materialId,
+                                    'group_id'    => $groupUpload ? $userGroup['id'] : null
                                 ]);
-
-                                $success = 'Datei erfolgreich hochgeladen und wartet auf Freigabe.';
                             }
 
                             $_POST = [];
@@ -126,6 +141,8 @@ $smarty->assign([
     'isLoggedIn'     => isset($_SESSION['user_id']),
     'username'       => $_SESSION['username'] ?? null,
     'courses'        => $courses,
+    'userGroup'      => $userGroup,
+    'groupUploadChecked' => $_POST['group_upload'] ?? false,
     'selectedCourse' => $_POST['course'] ?? '',
     'title'          => $_POST['title'] ?? '',
     'description'    => $_POST['description'] ?? '',
