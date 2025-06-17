@@ -12,6 +12,10 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
     exit;
 }
 
+// Eingeloggter Benutzer (für layout.tpl)
+$smarty->assign('username', $_SESSION['username']);
+$smarty->assign('isLoggedIn', true);
+
 // Standardmäßig eigenes Profil laden
 $profileUserId = $_SESSION['user_id'];
 
@@ -20,7 +24,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $profileUserId = (int) $_GET['id'];
 }
 
-// Profil abrufen (du hast vermutlich bereits eine Funktion in DbFunctions)
+// Profil abrufen (aus users + profile)
 $profile = DbFunctions::getOrCreateUserProfile($profileUserId);
 
 // Optional: Prüfen, ob es ein fremdes Profil ist

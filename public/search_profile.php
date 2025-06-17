@@ -1,11 +1,6 @@
 <?php
-
-
 declare(strict_types=1);
-
-
 require_once __DIR__ . '/../includes/config.inc.php';
-
 if (empty($_SESSION['user_id'])) {
     http_response_code(403);
     exit('Nicht eingeloggt.');
@@ -32,7 +27,7 @@ if ($searchTerm !== '') {
         exit;
     }
 }
-echo '<p>DEBUG (PHP): Mein Benutzername aus der Session ist: <strong>' . htmlspecialchars($_SESSION['username'] ?? 'Nicht gesetzt', ENT_QUOTES, 'UTF-8') . '</strong></p>';
+
 
 // Smarty-Zuweisungen
 
