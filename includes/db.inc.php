@@ -56,6 +56,11 @@ class DbFunctions
             $stmt = $pdo->prepare('INSERT INTO group_members (group_id, user_id) VALUES (:gid, :uid)');
             $stmt->execute([':gid' => $groupId, ':uid' => $userId]);
 
+            $stmt = $pdo->prepare(
+                'INSERT INTO group_roles (group_id, user_id, role) VALUES (:gid, :uid, :role)'
+            );
+            $stmt->execute([':gid' => $groupId, ':uid' => $userId, ':role' => 'admin']);
+
             $pdo->commit();
             return $groupId;
         } catch (Exception $e) {
@@ -85,6 +90,12 @@ class DbFunctions
     // Entfernt einen Benutzer aus einer Gruppe
     public static function removeUserFromGroup(int $groupId, int $userId): bool
     {
+        // Rolle entfernen
+        self::execute(
+            'DELETE FROM group_roles WHERE group_id = :gid AND user_id = :uid',
+            [':gid' => $groupId, ':uid' => $userId]
+        );
+
         $sql = '
         DELETE FROM group_members
         WHERE group_id = :gid AND user_id = :uid
