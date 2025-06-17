@@ -1323,20 +1323,26 @@ public static function getApprovedUploadById(int $uploadId): ?array
 
     return $stmt->fetch() ?: null;
 }
-public static function getApprovedUploadByStoredName(string $storedName): ?array
-{
-    $pdo = self::db_connect();
+    /**
+     * Gibt einen genehmigten Upload anhand seines gespeicherten Dateinamens zurück.
+     *
+     * @param string $storedName Serverseitig gespeicherter Dateiname
+     * @return array|null Array mit Upload-Details oder null, wenn nicht gefunden
+     */
+    public static function getApprovedUploadByStoredName(string $storedName): ?array
+    {
+        $pdo = self::db_connect();
 
-    $stmt = $pdo->prepare("
-        SELECT id, stored_name, group_id
-        FROM uploads
-        WHERE stored_name = ? AND is_approved = 1
-        LIMIT 1"
-    );
-    $stmt->execute([$storedName]);
+        $stmt = $pdo->prepare(
+            "SELECT id, stored_name, group_id
+            FROM uploads
+            WHERE stored_name = ? AND is_approved = 1
+            LIMIT 1"
+        );
+        $stmt->execute([$storedName]);
 
-    return $stmt->fetch() ?: null;
-}
+        return $stmt->fetch() ?: null;
+    }
 
 /**
  * Holt alle Kurse als Key-Value-Paar (name als value und name als name).
