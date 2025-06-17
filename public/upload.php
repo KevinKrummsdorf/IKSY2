@@ -99,17 +99,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } elseif ($file['size'] > 10 * 1024 * 1024) {
                 $error = 'Maximal 10 MB erlaubt.';
             } else {
-                $baseUploadDir = __DIR__ . '/../uploads/';
-                $uploadDir = $baseUploadDir;
-                $storedPrefix = '';
-                if ($groupUpload) {
-                    $uploadDir .= 'groups/' . $selectedGroupId . '/';
-                    $storedPrefix = 'groups/' . $selectedGroupId . '/';
-                }
-                if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)) {
-                    $error = 'Upload-Verzeichnis konnte nicht erstellt werden.';
-                    $log->error('Upload-Verzeichnis fehlgeschlagen', ['user_id' => $_SESSION['user_id']]);
+                $baseUploadDir = get_upload_base_path();
+                if ($baseUploadDir === null) {
+                    $error = 'Upload-Verzeichnis fehlt.';
+                    $log->error('Upload-Verzeichnis fehlt', ['user_id' => $_SESSION['user_id']]);
                 } else {
+                    $uploadDir = $baseUploadDir . '/';
+                    $storedPrefix = '';
+                    if ($groupUpload) {
+                        $uploadDir .= 'groups/' . $selectedGroupId . '/';
+                        $storedPrefix = 'groups/' . $selectedGroupId . '/';
+                    }
+                    if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)) {
+                        $error = 'Upload-Verzeichnis konnte nicht erstellt werden.';
+                        $log->error('Upload-Verzeichnis fehlgeschlagen', ['user_id' => $_SESSION['user_id']]);
+                    } else {
                     $originalName = basename($file['name']);
                     $safeName     = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $originalName);
                     $ext          = pathinfo($safeName, PATHINFO_EXTENSION);

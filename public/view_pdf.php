@@ -2,27 +2,22 @@
 require_once __DIR__ . '/../includes/config.inc.php';
 session_start();
 
-// Relativen Pfad ermitteln und auf Gültigkeit prüfen
+// Angeforderten relativen Pfad ermitteln
 $relative = ltrim((string)($_GET['file'] ?? ''), '/');
-$basePath = realpath(__DIR__ . '/../uploads');
-if ($basePath === false) {
-    http_response_code(500);
-    exit('Upload-Verzeichnis fehlt.');
-}
-
-$filePath = realpath($basePath . '/' . $relative);
-if ($filePath === false || strpos($filePath, $basePath) !== 0) {
-    http_response_code(404);
-    exit('Datei nicht gefunden.');
-}
-
-$filename = basename($filePath);
 
 $upload = DbFunctions::getApprovedUploadByStoredName($relative);
 if (!$upload) {
     http_response_code(404);
     exit('Datei nicht gefunden.');
 }
+
+$filePath = resolve_upload_path($upload['stored_name'], $upload['group_id']);
+if ($filePath === null || !is_file($filePath)) {
+    http_response_code(404);
+    exit('Datei nicht gefunden.');
+}
+
+$filename = basename($filePath);
 
 if ($upload['group_id'] !== null) {
     if (empty($_SESSION['user_id'])) {

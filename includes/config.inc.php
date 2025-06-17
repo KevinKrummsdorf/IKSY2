@@ -16,6 +16,7 @@ require_once __DIR__ . '/../includes/mailing.inc.php';
 require_once __DIR__ . '/../includes/central_logs.inc.php';
 require_once __DIR__ . '/../includes/crypto.inc.php';
 require_once __DIR__ . '/../includes/logger.inc.php';
+require_once __DIR__ . '/../includes/upload_path.inc.php';
 require_once __DIR__ . '/../src/ILogger.php';
 require_once __DIR__ . '/../src/MonologLoggerAdapter.php';
 require_once __DIR__ . '/../src/LoggerFactory.php';
