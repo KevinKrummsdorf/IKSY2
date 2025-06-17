@@ -97,7 +97,7 @@ class DbFunctions
         SELECT u.id, u.stored_name, m.title
         FROM uploads u
         JOIN materials m ON u.material_id = m.id
-        WHERE u.group_id = :gid AND u.is_approved = 1
+        WHERE u.group_id = :gid AND u.is_approved = 1 AND u.is_rejected = 0
         ORDER BY u.uploaded_at DESC
     ';
         return self::execute($sql, [':gid' => $groupId], true);
@@ -217,53 +217,86 @@ class DbFunctions
 
     /**Alle bestätigten Materialien abrufen**/
 
-    public static function getApprovedUploads(): array
-    {
-        $query = '
+    public static function getApprovedUploads() {
+        $pdo = self::db_connect();
+        
+        $stmt = $pdo->prepare("
         SELECT id, stored_name, material_id, uploaded_by
         FROM uploads
-        WHERE is_approved = 1
-    ';
-        return self::execute($query, [], true); // true = fetchAll()
-    }
-    
-    /** Material abruf für "Material finden/suchen" **/
-    public static function getAllMaterials(): array
-    {
-        $query = 'SELECT id, title, description FROM materials';
-        return self::execute($query, [], true); // true → fetchAll() wird ausgeführt
-    }
-
-    public static function getMaterialsByTitle(string $searchTerm): array
-    {
-        $pdo = self::db_connect();
-        $stmt = $pdo->prepare('SELECT * FROM materials WHERE title LIKE :search');
-        $stmt->execute(['search' => '%' . $searchTerm . '%']);
+        WHERE is_approved = 1 AND is_rejected = 0");
+        
+        $stmt->execute();
+        
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
+    
+    
     public static function getAverageMaterialRating(int $materialId): ?array
     {
-        $sql = 'SELECT AVG(rating) AS average_rating, COUNT(*) AS total_ratings FROM material_ratings WHERE material_id = :material_id';
+        
+        $sql = "SELECT AVG(rating) AS average_rating, COUNT(*) AS total_ratings FROM material_ratings WHERE material_id = :material_id";
         return self::fetchOne($sql, ['material_id' => $materialId]);
     }
-
+    
     public static function getUserMaterialRating(int $materialId, int $userId): ?array
     {
-        $sql = 'SELECT rating FROM material_ratings WHERE material_id = :material_id AND user_id = :user_id';
+        
+        $sql = "SELECT rating FROM material_ratings WHERE material_id = :material_id AND user_id = :user_id";
         return self::fetchOne($sql, ['material_id' => $materialId, 'user_id' => $userId]);
     }
-
-    public static function getProfilesByUserIds(array $userIds): array
-    {
+    
+    
+    
+    /** Material abruf für "Material finden/suchen" **/
+    public static function getAllMaterials() {
+        $pdo = self::db_connect();
+        
+        $stmt = $pdo->prepare("
+        SELECT id, course_id, title, description
+        FROM materials
+        ORDER BY title ASC");
+        
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**Materialien nach Titel suchen (für die Suchfunktion) **/
+    public static function getMaterialsByTitle(string $searchTerm): array {
+        $pdo = self::db_connect();
+        
+        /**Bereite sicheres SQL-Statement mit LIKE vor**/
+        $stmt = $pdo->prepare("SELECT * FROM materials WHERE title LIKE :search");
+        
+        /**Platzhalter befüllen (mit % für Teilübereinstimmung)**/
+        $stmt->execute([
+            'search' => '%' . $searchTerm . '%'
+        ]);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    
+    /**Profil des Uploders holen über die Userid**/
+    public static function getProfilesByUserIds($userIds) {
         if (empty($userIds)) {
             return [];
         }
-
+        
         $pdo = self::db_connect();
+        
+        // Dynamisch Platzhalter für Prepared Statement erstellen
         $placeholders = implode(',', array_fill(0, count($userIds), '?'));
-        $stmt = $pdo->prepare("SELECT user_id, first_name, last_name, profile_picture FROM profile WHERE user_id IN ($placeholders)");
-        $stmt->execute(array_values($userIds));
+        
+        $stmt = $pdo->prepare("
+        SELECT user_id, first_name, last_name, profile_picture
+        FROM profile
+        WHERE user_id IN ($placeholders)
+    ");
+        // Sicherstellen, dass wir einen numerischen Array an execute() übergeben
+        $userIds = array_values($userIds);
+        $stmt->execute($userIds);
+        
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
@@ -1261,6 +1294,7 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
              JOIN courses c ON m.course_id = c.id
              WHERE u.uploaded_by = ?
                AND u.is_approved = 1
+               AND u.is_rejected = 0
              ORDER BY u.uploaded_at DESC"
         );
         $stmt->execute([$userId]);
@@ -1982,23 +2016,20 @@ public static function getFilteredLockedUsers(array $filters = []): array
     public static function getOrCreateUserProfile(int $userId): array
     {
         $pdo = self::db_connect();
-
-        $stmt = $pdo->prepare('SELECT * FROM profile WHERE user_id = :id');
+        
+        $stmt = $pdo->prepare('SELECT profile.*, users.username FROM profile JOIN users ON profile.user_id = users.id WHERE profile.user_id = :id');
         $stmt->execute([':id' => $userId]);
         $profile = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        
         if (!$profile) {
-            $stmt = $pdo->prepare('INSERT INTO profile (user_id) VALUES (:id)');
-            $stmt->execute([':id' => $userId]);
-
-            $stmt = $pdo->prepare('SELECT * FROM profile WHERE user_id = :id');
+            $pdo->prepare('INSERT INTO profile (user_id) VALUES (:id)')->execute([':id' => $userId]);
             $stmt->execute([':id' => $userId]);
             $profile = $stmt->fetch(PDO::FETCH_ASSOC);
         }
-
+        
         return $profile ?: [];
     }
-
+    
     public static function updateUserProfile(int $userId, array $fields): void
     {
         $pdo = self::db_connect();

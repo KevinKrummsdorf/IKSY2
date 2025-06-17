@@ -97,7 +97,7 @@ class DbFunctions
         SELECT u.id, u.stored_name, m.title
         FROM uploads u
         JOIN materials m ON u.material_id = m.id
-        WHERE u.group_id = :gid AND u.is_approved = 1
+        WHERE u.group_id = :gid AND u.is_approved = 1 AND u.is_rejected = 0
         ORDER BY u.uploaded_at DESC
     ';
         return self::execute($sql, [':gid' => $groupId], true);
@@ -220,9 +220,9 @@ class DbFunctions
     public static function getApprovedUploads(): array
     {
         $query = '
-        SELECT id, stored_name, material_id, uploaded_by
+        SELECT id, stored_name, material_id
         FROM uploads
-        WHERE is_approved = 1
+        WHERE is_rejected = 0
     ';
         return self::execute($query, [], true); // true = fetchAll()
     }
@@ -232,39 +232,6 @@ class DbFunctions
     {
         $query = 'SELECT id, title, description FROM materials';
         return self::execute($query, [], true); // true → fetchAll() wird ausgeführt
-    }
-
-    public static function getMaterialsByTitle(string $searchTerm): array
-    {
-        $pdo = self::db_connect();
-        $stmt = $pdo->prepare('SELECT * FROM materials WHERE title LIKE :search');
-        $stmt->execute(['search' => '%' . $searchTerm . '%']);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public static function getAverageMaterialRating(int $materialId): ?array
-    {
-        $sql = 'SELECT AVG(rating) AS average_rating, COUNT(*) AS total_ratings FROM material_ratings WHERE material_id = :material_id';
-        return self::fetchOne($sql, ['material_id' => $materialId]);
-    }
-
-    public static function getUserMaterialRating(int $materialId, int $userId): ?array
-    {
-        $sql = 'SELECT rating FROM material_ratings WHERE material_id = :material_id AND user_id = :user_id';
-        return self::fetchOne($sql, ['material_id' => $materialId, 'user_id' => $userId]);
-    }
-
-    public static function getProfilesByUserIds(array $userIds): array
-    {
-        if (empty($userIds)) {
-            return [];
-        }
-
-        $pdo = self::db_connect();
-        $placeholders = implode(',', array_fill(0, count($userIds), '?'));
-        $stmt = $pdo->prepare("SELECT user_id, first_name, last_name, profile_picture FROM profile WHERE user_id IN ($placeholders)");
-        $stmt->execute(array_values($userIds));
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     /**
@@ -1261,6 +1228,7 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
              JOIN courses c ON m.course_id = c.id
              WHERE u.uploaded_by = ?
                AND u.is_approved = 1
+               AND u.is_rejected = 0
              ORDER BY u.uploaded_at DESC"
         );
         $stmt->execute([$userId]);
@@ -2055,53 +2023,107 @@ public static function getFilteredLockedUsers(array $filters = []): array
         return self::fetchOne($sql, [':userId' => $userId]);
     }
 
-    /**
-     * Löscht alle Einträge im Stundenplan eines Nutzers.
-     */
-    public static function deleteAllTimetableEntries(int $userId): void
-    {
-        $pdo = self::db_connect();
-
-        $stmt = $pdo->prepare('DELETE FROM timetable WHERE user_id = ?');
-        $stmt->execute([$userId]);
-    }
-
-    /**
-     * Fügt einen Eintrag in den Stundenplan ein.
-     */
-    public static function insertTimetableEntry(
-        int $userId,
-        string $weekday,
-        string $time,
-        string $subject,
-        string $room,
-        int $slotIndex
-    ): void {
-        $pdo = self::db_connect();
-
-        $stmt = $pdo->prepare(
-            'INSERT INTO timetable (user_id, weekday, time, subject, room, slot_index)
+        /**
+         * Löscht alle Stundenplan-Einträge eines Nutzers.
+         */
+        public static function deleteAllTimetableEntries(int $userId): void
+        {
+            $pdo = self::db_connect();
+            
+            $stmt = $pdo->prepare('DELETE FROM timetable WHERE user_id = ?');
+            $stmt->execute([$userId]);
+        }
+        
+        /**
+         * Fügt einen Eintrag in den Stundenplan ein (mit Normalisierung).
+         */
+        public static function insertTimetableEntry(
+            int $userId,
+            string $weekday,
+            string $time,
+            string $subject,
+            string $room,
+            int $slotIndex
+            ): void {
+                $pdo = self::db_connect();
+                
+                $subjectId = self::getOrCreateSubjectId($subject);
+                $roomId    = self::getOrCreateRoomId($room);
+                
+                $stmt = $pdo->prepare(
+                    'INSERT INTO timetable (user_id, weekday, time, subject_id, room_id, slot_index)
              VALUES (?, ?, ?, ?, ?, ?)'
-        );
-
-        $stmt->execute([$userId, $weekday, $time, $subject, $room, $slotIndex]);
+                    );
+                
+                $stmt->execute([$userId, $weekday, $time, $subjectId, $roomId, $slotIndex]);
+        }
+        
+        /**
+         * Holt den Stundenplan eines Nutzers für einen bestimmten Wochentag (mit JOIN).
+         */
+        public static function getTimetableByDay(int $userId, string $weekday): array
+        {
+            $pdo = self::db_connect();
+            
+            $stmt = $pdo->prepare(
+                'SELECT t.*, s.name AS subject, r.name AS room
+             FROM timetable t
+             LEFT JOIN subjects s ON t.subject_id = s.id
+             LEFT JOIN rooms r    ON t.room_id = r.id
+             WHERE t.user_id = ? AND t.weekday = ?
+             ORDER BY t.slot_index'
+                );
+            
+            $stmt->execute([$userId, $weekday]);
+            return $stmt->fetchAll();
+        }
+        
+        /**
+         * Holt oder erstellt eine subject_id.
+         */
+        private static function getOrCreateSubjectId(string $subject): ?int
+        {
+            if (trim($subject) === '') {
+                return null;
+            }
+            
+            $pdo = self::db_connect();
+            $stmt = $pdo->prepare('SELECT id FROM subjects WHERE name = ?');
+            $stmt->execute([$subject]);
+            $id = $stmt->fetchColumn();
+            
+            if ($id) {
+                return (int)$id;
+            }
+            
+            $stmt = $pdo->prepare('INSERT INTO subjects (name) VALUES (?)');
+            $stmt->execute([$subject]);
+            return (int)$pdo->lastInsertId();
+        }
+        
+        /**
+         * Holt oder erstellt eine room_id.
+         */
+        private static function getOrCreateRoomId(string $room): ?int
+        {
+            if (trim($room) === '') {
+                return null;
+            }
+            
+            $pdo = self::db_connect();
+            $stmt = $pdo->prepare('SELECT id FROM rooms WHERE name = ?');
+            $stmt->execute([$room]);
+            $id = $stmt->fetchColumn();
+            
+            if ($id) {
+                return (int)$id;
+            }
+            
+            $stmt = $pdo->prepare('INSERT INTO rooms (name) VALUES (?)');
+            $stmt->execute([$room]);
+            return (int)$pdo->lastInsertId();
+        }
+        
+     
     }
-
-    /**
-     * Holt den Stundenplan eines Nutzers für einen bestimmten Wochentag.
-     */
-    public static function getTimetableByDay(int $userId, string $weekday): array
-    {
-        $pdo = self::db_connect();
-
-        $stmt = $pdo->prepare(
-            'SELECT * FROM timetable
-             WHERE user_id = ? AND weekday = ?
-             ORDER BY slot_index'
-        );
-
-        $stmt->execute([$userId, $weekday]);
-        return $stmt->fetchAll();
-    }
-
-}
+    

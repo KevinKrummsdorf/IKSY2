@@ -15,6 +15,75 @@ class DbFunctions
         return self::$log;
     }
 
+        // … vorhandener Code …
+        
+        /**
+         * Liefert alle Gruppen (id + name).
+         */
+        public static function fetchAllGroups(): array
+        {
+            $sql = 'SELECT id, name FROM `groups` ORDER BY name ASC';
+            // true → fetchAll()
+            return self::execute($sql, [], true);
+        }
+        
+        /**
+         * Holt eine einzelne Gruppe anhand ihrer ID.
+         */
+        public static function fetchGroupById(int $groupId): ?array
+        {
+            $sql = 'SELECT id, name FROM `groups` WHERE id = :gid LIMIT 1';
+            return self::fetchOne($sql, [':gid' => $groupId]);
+        }
+        
+        /**
+         * Liefert die Rolle eines Users in einer Gruppe (admin/member) oder null, wenn kein Mitglied.
+         */
+        public static function fetchUserRoleInGroup(int $groupId, int $userId): ?string
+        {
+            $sql = '
+            SELECT role
+            FROM group_roles
+            WHERE group_id = :gid AND user_id = :uid
+            LIMIT 1
+        ';
+            $row = self::fetchOne($sql, [
+                ':gid' => $groupId,
+                ':uid' => $userId
+            ]);
+            return $row['role'] ?? null;
+        }
+        
+        /**
+         * Setzt die Rolle eines Users in einer Gruppe (z.B. 'member' oder 'admin').
+         * Fügt bei Bedarf einen neuen Eintrag in group_roles.
+         */
+        public static function setUserRoleInGroup(int $groupId, int $userId, string $role): bool
+        {
+            // entweder INSERT ... ON DUPLICATE KEY UPDATE
+            $sql = '
+            INSERT INTO group_roles (group_id, user_id, role)
+            VALUES (:gid, :uid, :role)
+            ON DUPLICATE KEY UPDATE role = VALUES(role)
+        ';
+            return self::execute($sql, [
+                ':gid'  => $groupId,
+                ':uid'  => $userId,
+                ':role' => $role
+            ]) > 0;
+        }
+        
+        /**
+         * Löscht eine Gruppe vollständig (inkl. aller Verknüpfungen).
+         */
+        public static function deleteGroup(int $groupId): bool
+        {
+            $sql = 'DELETE FROM `groups` WHERE id = :gid';
+            return self::execute($sql, [':gid' => $groupId]) > 0;
+        }
+        
+      
+    
     // Gibt die Gruppe zurück, in der der Nutzer Mitglied ist
     public static function fetchGroupByUser(int $userId): ?array
     {
@@ -40,6 +109,13 @@ class DbFunctions
 
             $stmt = $pdo->prepare('INSERT INTO group_members (group_id, user_id) VALUES (:gid, :uid)');
             $stmt->execute([':gid' => $groupId, ':uid' => $userId]);
+            
+            $stmt = $pdo->prepare(
+                'INSERT INTO group_roles (group_id, user_id, role)
+            VALUES (:gid, :uid, "admin")'
+                );
+            $stmt->execute([':gid' => $groupId, ':uid' => $userId]);
+            
 
             $pdo->commit();
             return $groupId;
@@ -97,7 +173,7 @@ class DbFunctions
         SELECT u.id, u.stored_name, m.title
         FROM uploads u
         JOIN materials m ON u.material_id = m.id
-        WHERE u.group_id = :gid AND u.is_approved = 1
+        WHERE u.group_id = :gid AND u.is_approved = 1 AND u.is_rejected = 0
         ORDER BY u.uploaded_at DESC
     ';
         return self::execute($sql, [':gid' => $groupId], true);
@@ -220,9 +296,9 @@ class DbFunctions
     public static function getApprovedUploads(): array
     {
         $query = '
-        SELECT id, stored_name, material_id, uploaded_by
+        SELECT id, stored_name, material_id
         FROM uploads
-        WHERE is_approved = 1
+        WHERE is_rejected = 0
     ';
         return self::execute($query, [], true); // true = fetchAll()
     }
@@ -232,39 +308,6 @@ class DbFunctions
     {
         $query = 'SELECT id, title, description FROM materials';
         return self::execute($query, [], true); // true → fetchAll() wird ausgeführt
-    }
-
-    public static function getMaterialsByTitle(string $searchTerm): array
-    {
-        $pdo = self::db_connect();
-        $stmt = $pdo->prepare('SELECT * FROM materials WHERE title LIKE :search');
-        $stmt->execute(['search' => '%' . $searchTerm . '%']);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public static function getAverageMaterialRating(int $materialId): ?array
-    {
-        $sql = 'SELECT AVG(rating) AS average_rating, COUNT(*) AS total_ratings FROM material_ratings WHERE material_id = :material_id';
-        return self::fetchOne($sql, ['material_id' => $materialId]);
-    }
-
-    public static function getUserMaterialRating(int $materialId, int $userId): ?array
-    {
-        $sql = 'SELECT rating FROM material_ratings WHERE material_id = :material_id AND user_id = :user_id';
-        return self::fetchOne($sql, ['material_id' => $materialId, 'user_id' => $userId]);
-    }
-
-    public static function getProfilesByUserIds(array $userIds): array
-    {
-        if (empty($userIds)) {
-            return [];
-        }
-
-        $pdo = self::db_connect();
-        $placeholders = implode(',', array_fill(0, count($userIds), '?'));
-        $stmt = $pdo->prepare("SELECT user_id, first_name, last_name, profile_picture FROM profile WHERE user_id IN ($placeholders)");
-        $stmt->execute(array_values($userIds));
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     /**
@@ -1261,6 +1304,7 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
              JOIN courses c ON m.course_id = c.id
              WHERE u.uploaded_by = ?
                AND u.is_approved = 1
+               AND u.is_rejected = 0
              ORDER BY u.uploaded_at DESC"
         );
         $stmt->execute([$userId]);
