@@ -28,6 +28,21 @@ class DbFunctions
         return self::fetchOne($sql, [':uid' => $userId]);
     }
 
+    /**
+     * Liefert alle Gruppen, in denen der Nutzer Mitglied ist.
+     */
+    public static function fetchGroupsByUser(int $userId): array
+    {
+        $sql = '
+            SELECT g.*
+            FROM group_members gm
+            JOIN groups g ON gm.group_id = g.id
+            WHERE gm.user_id = :uid
+            ORDER BY g.name ASC
+        ';
+        return self::execute($sql, [':uid' => $userId], true);
+    }
+
     // Legt eine neue Gruppe an und trägt den Nutzer als Mitglied ein
     public static function createGroup(string $groupName, int $userId): ?int
     {
@@ -40,6 +55,11 @@ class DbFunctions
 
             $stmt = $pdo->prepare('INSERT INTO group_members (group_id, user_id) VALUES (:gid, :uid)');
             $stmt->execute([':gid' => $groupId, ':uid' => $userId]);
+
+            $stmt = $pdo->prepare(
+                'INSERT INTO group_roles (group_id, user_id, role) VALUES (:gid, :uid, :role)'
+            );
+            $stmt->execute([':gid' => $groupId, ':uid' => $userId, ':role' => 'admin']);
 
             $pdo->commit();
             return $groupId;
@@ -70,6 +90,12 @@ class DbFunctions
     // Entfernt einen Benutzer aus einer Gruppe
     public static function removeUserFromGroup(int $groupId, int $userId): bool
     {
+        // Rolle entfernen
+        self::execute(
+            'DELETE FROM group_roles WHERE group_id = :gid AND user_id = :uid',
+            [':gid' => $groupId, ':uid' => $userId]
+        );
+
         $sql = '
         DELETE FROM group_members
         WHERE group_id = :gid AND user_id = :uid
@@ -77,16 +103,22 @@ class DbFunctions
         return self::execute($sql, [':gid' => $groupId, ':uid' => $userId]) > 0;
     }
 
-    // Gibt alle Mitglieder einer Gruppe zurück (Username + E-Mail)
+    // Gibt alle Mitglieder einer Gruppe zurück (id, Username, E-Mail, Rolle)
     public static function getGroupMembers(int $groupId): array
     {
         $sql = '
-        SELECT u.username, u.email
-        FROM group_members gm
-        JOIN users u ON gm.user_id = u.id
-        WHERE gm.group_id = :gid
-        ORDER BY u.username ASC
-    ';
+            SELECT
+                u.id   AS user_id,
+                u.username,
+                u.email,
+                gr.role
+            FROM group_members gm
+            JOIN users u ON gm.user_id = u.id
+            LEFT JOIN group_roles gr
+                ON gr.group_id = gm.group_id AND gr.user_id = gm.user_id
+            WHERE gm.group_id = :gid
+            ORDER BY u.username ASC
+        ';
         return self::execute($sql, [':gid' => $groupId], true);
     }
 
@@ -97,10 +129,91 @@ class DbFunctions
         SELECT u.id, u.stored_name, m.title
         FROM uploads u
         JOIN materials m ON u.material_id = m.id
-        WHERE u.group_id = :gid AND u.is_approved = 1 AND u.is_rejected = 0
+        WHERE u.group_id = :gid AND u.is_approved = 1
         ORDER BY u.uploaded_at DESC
     ';
         return self::execute($sql, [':gid' => $groupId], true);
+    }
+
+    /**
+     * Liefert alle Gruppen (id und Name)
+     */
+    public static function fetchAllGroups(): array
+    {
+        $sql = 'SELECT id, name FROM `groups` ORDER BY name ASC';
+        return self::execute($sql, [], true);
+    }
+
+    /**
+     * Holt eine Gruppe anhand ihrer ID.
+     */
+    public static function fetchGroupById(int $groupId): ?array
+    {
+        $sql = 'SELECT id, name FROM `groups` WHERE id = :gid LIMIT 1';
+        return self::fetchOne($sql, [':gid' => $groupId]);
+    }
+
+    /**
+     * Liefert die Rolle eines Nutzers in einer Gruppe oder null.
+     */
+    public static function fetchUserRoleInGroup(int $groupId, int $userId): ?string
+    {
+        $sql = '
+            SELECT role
+            FROM group_roles
+            WHERE group_id = :gid AND user_id = :uid
+            LIMIT 1
+        ';
+        $row = self::fetchOne($sql, [':gid' => $groupId, ':uid' => $userId]);
+        return $row['role'] ?? null;
+    }
+
+    /**
+     * Setzt die Rolle eines Nutzers in einer Gruppe.
+     */
+    public static function setUserRoleInGroup(int $groupId, int $userId, string $role): bool
+    {
+        $sql = '
+            INSERT INTO group_roles (group_id, user_id, role)
+            VALUES (:gid, :uid, :role)
+            ON DUPLICATE KEY UPDATE role = VALUES(role)
+        ';
+        return self::execute($sql, [
+            ':gid'  => $groupId,
+            ':uid'  => $userId,
+            ':role' => $role,
+        ]) > 0;
+    }
+
+    /**
+     * Löscht eine Gruppe vollständig.
+     */
+    public static function deleteGroup(int $groupId): bool
+    {
+        $pdo = self::db_connect();
+
+        $pdo->beginTransaction();
+        try {
+            // Abhängigkeiten entfernen
+            $pdo->prepare('DELETE FROM group_roles WHERE group_id = ?')
+                ->execute([$groupId]);
+            $pdo->prepare('DELETE FROM group_members WHERE group_id = ?')
+                ->execute([$groupId]);
+
+            // Uploads der Gruppe lösen
+            $pdo->prepare('UPDATE uploads SET group_id = NULL WHERE group_id = ?')
+                ->execute([$groupId]);
+
+            $pdo->prepare('DELETE FROM `groups` WHERE id = ?')
+                ->execute([$groupId]);
+
+            $pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            self::getLogger()->error('deleteGroup failed', ['error' => $e->getMessage()]);
+            return false;
+        }
     }
 
     
@@ -220,18 +333,64 @@ class DbFunctions
     public static function getApprovedUploads(): array
     {
         $query = '
-        SELECT id, stored_name, material_id
+        SELECT id, stored_name, material_id, uploaded_by
         FROM uploads
-        WHERE is_rejected = 0
+        WHERE is_approved = 1
     ';
         return self::execute($query, [], true); // true = fetchAll()
     }
     
     /** Material abruf für "Material finden/suchen" **/
     public static function getAllMaterials(): array
+{
+    $query = '
+        SELECT DISTINCT m.id, m.title, m.description, c.name AS course_name
+        FROM materials m
+        JOIN uploads u ON u.material_id = m.id
+        JOIN courses c ON m.course_id = c.id
+        WHERE u.is_approved = 1
+    ';
+    return self::execute($query, [], true);
+}
+
+public static function getMaterialsByTitle(string $searchTerm): array
+{
+    $pdo = self::db_connect();
+    $stmt = $pdo->prepare('
+        SELECT DISTINCT m.id, m.title, m.description, c.name AS course_name
+        FROM materials m
+        JOIN uploads u ON u.material_id = m.id
+        JOIN courses c ON m.course_id = c.id
+        WHERE u.is_approved = 1 AND m.title LIKE :search
+    ');
+    $stmt->execute(['search' => '%' . $searchTerm . '%']);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+    public static function getAverageMaterialRating(int $materialId): ?array
     {
-        $query = 'SELECT id, title, description FROM materials';
-        return self::execute($query, [], true); // true → fetchAll() wird ausgeführt
+        $sql = 'SELECT AVG(rating) AS average_rating, COUNT(*) AS total_ratings FROM material_ratings WHERE material_id = :material_id';
+        return self::fetchOne($sql, ['material_id' => $materialId]);
+    }
+
+    public static function getUserMaterialRating(int $materialId, int $userId): ?array
+    {
+        $sql = 'SELECT rating FROM material_ratings WHERE material_id = :material_id AND user_id = :user_id';
+        return self::fetchOne($sql, ['material_id' => $materialId, 'user_id' => $userId]);
+    }
+
+    public static function getProfilesByUserIds(array $userIds): array
+    {
+        if (empty($userIds)) {
+            return [];
+        }
+
+        $pdo = self::db_connect();
+        $placeholders = implode(',', array_fill(0, count($userIds), '?'));
+        $stmt = $pdo->prepare("SELECT user_id, first_name, last_name, profile_picture FROM profile WHERE user_id IN ($placeholders)");
+        $stmt->execute(array_values($userIds));
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     /**
@@ -946,17 +1105,28 @@ public static function getUserById(int $userId): ?array
  * Fügt einen neuen Upload in die Datenbank ein.
  * Gibt die ID des neuen Uploads zurück.
  */
-public static function uploadFile(string $storedName, int $materialId, int $userId): int
-{
+public static function uploadFile(
+    string $storedName,
+    int $materialId,
+    int $userId,
+    ?int $groupId = null,
+    bool $autoApprove = false
+): int {
     $pdo = self::db_connect();
 
-    $stmt = $pdo->prepare("
-        INSERT INTO uploads (stored_name, material_id, uploaded_by, uploaded_at, is_approved)
-        VALUES (?, ?, ?, NOW(), 0)
-    ");
-    $stmt->execute([$storedName, $materialId, $userId]);
+    $stmt = $pdo->prepare(
+        "INSERT INTO uploads (stored_name, material_id, uploaded_by, uploaded_at, is_approved, group_id)
+         VALUES (:storedName, :materialId, :userId, NOW(), :approved, :groupId)"
+    );
+    $stmt->execute([
+        ':storedName' => $storedName,
+        ':materialId' => $materialId,
+        ':userId'     => $userId,
+        ':approved'   => $autoApprove ? 1 : 0,
+        ':groupId'    => $groupId,
+    ]);
 
-    return (int)$pdo->lastInsertId(); // <--- das brauchst du!
+    return (int)$pdo->lastInsertId();
 }
 
 /*
@@ -1238,7 +1408,6 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
              JOIN courses c ON m.course_id = c.id
              WHERE u.uploaded_by = ?
                AND u.is_approved = 1
-               AND u.is_rejected = 0
              ORDER BY u.uploaded_at DESC"
         );
         $stmt->execute([$userId]);
@@ -2066,13 +2235,15 @@ public static function getFilteredLockedUsers(array $filters = []): array
         int $slotIndex
     ): void {
         $pdo = self::db_connect();
+        $subjectId = self::getOrCreateSubjectId($subject);
+        $roomId    = self::getOrCreateRoomId($room);
 
         $stmt = $pdo->prepare(
-            'INSERT INTO timetable (user_id, weekday, time, subject, room, slot_index)
-             VALUES (?, ?, ?, ?, ?, ?)'
+            'INSERT INTO timetable (user_id, weekday, time, subject_id, room_id, slot_index)'
+            . ' VALUES (?, ?, ?, ?, ?, ?)'
         );
 
-        $stmt->execute([$userId, $weekday, $time, $subject, $room, $slotIndex]);
+        $stmt->execute([$userId, $weekday, $time, $subjectId, $roomId, $slotIndex]);
     }
 
     /**
@@ -2083,13 +2254,58 @@ public static function getFilteredLockedUsers(array $filters = []): array
         $pdo = self::db_connect();
 
         $stmt = $pdo->prepare(
-            'SELECT * FROM timetable
-             WHERE user_id = ? AND weekday = ?
-             ORDER BY slot_index'
+            'SELECT t.*, s.name AS subject, r.name AS room FROM timetable t LEFT JOIN subjects s ON t.subject_id = s.id LEFT JOIN rooms r ON t.room_id = r.id
+             WHERE t.user_id = ? AND t.weekday = ?
+             ORDER BY t.slot_index'
         );
 
         $stmt->execute([$userId, $weekday]);
         return $stmt->fetchAll();
     }
 
+    /**
+     * Holt oder erstellt eine subject_id.
+     */
+    private static function getOrCreateSubjectId(string $subject): ?int
+    {
+        if (trim($subject) === '') {
+            return null;
+        }
+
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare('SELECT id FROM subjects WHERE name = ?');
+        $stmt->execute([$subject]);
+        $id = $stmt->fetchColumn();
+
+        if ($id) {
+            return (int) $id;
+        }
+
+        $stmt = $pdo->prepare('INSERT INTO subjects (name) VALUES (?)');
+        $stmt->execute([$subject]);
+        return (int) $pdo->lastInsertId();
+    }
+
+    /**
+     * Holt oder erstellt eine room_id.
+     */
+    private static function getOrCreateRoomId(string $room): ?int
+    {
+        if (trim($room) === '') {
+            return null;
+        }
+
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare('SELECT id FROM rooms WHERE name = ?');
+        $stmt->execute([$room]);
+        $id = $stmt->fetchColumn();
+
+        if ($id) {
+            return (int) $id;
+        }
+
+        $stmt = $pdo->prepare('INSERT INTO rooms (name) VALUES (?)');
+        $stmt->execute([$room]);
+        return (int) $pdo->lastInsertId();
+    }
 }

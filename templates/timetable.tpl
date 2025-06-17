@@ -1,20 +1,19 @@
 {extends file="./layouts/layout.tpl"}
 
-{block name="title"}Your Timetable{/block}
+{block name="title"}Dein Stundenplan{/block}
 
 {block name="content"}
 
 {if $success}
-    <p style="text-align:center; color:green; font-weight:bold;">✔ Timetable saved!</p>
+    <p style="text-align:center; color:green; font-weight:bold;">✔ Stundenplan gespeichert!</p>
 {/if}
 
-<h2 style="text-align: center; margin-bottom: 20px;">Timetable</h2>
+<h2 style="text-align: center; margin-bottom: 20px;">Stundenplan</h2>
 
 <style>
     .timetable-table {
         width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
+        border-collapse: collapse;
         table-layout: fixed;
         font-family: Arial, sans-serif;
         background-color: rgba(255, 255, 255, 0.03);
@@ -75,42 +74,39 @@
     }
 </style>
 
-{assign var="days" value=["montag","dienstag","mittwoch","donnerstag","freitag"]}
-
 <form method="post" action="timetable.php">
     <table class="timetable-table">
         <thead>
             <tr>
-                <th>Time</th>
-                {foreach from=$days item=day}
+                <th>Zeit</th>
+                {foreach $days as $day}
                     <th>{$day|capitalize}</th>
                 {/foreach}
             </tr>
         </thead>
         <tbody>
-            {section name=row loop=10}
-            <tr>
-                <td>
-                    <input type="text" name="time[{$smarty.section.row.index}]" 
-                           value="{$timetable.montag[$smarty.section.row.index].time|default:''}" 
-                           placeholder="e.g. 08:00 - 08:45" />
-                </td>
-                {foreach from=$days item=day}
-                <td>
-                    <input type="text" name="timetable[{$day}][{$smarty.section.row.index}][fach]" 
-                           value="{$timetable[$day][$smarty.section.row.index].subject|default:''}" 
-                           placeholder="Subject" /><br>
-                    <input type="text" name="timetable[{$day}][{$smarty.section.row.index}][raum]" 
-                           value="{$timetable[$day][$smarty.section.row.index].room|default:''}" 
-                           placeholder="Room" />
-                </td>
-                {/foreach}
-            </tr>
-            {/section}
+            {foreach $timeSlots as $idx => $slotRange}
+                <tr>
+                    <td>{$slotRange}</td>
+                    {foreach $days as $day}
+                        {assign var="entry" value=$timetable[$day][$idx]|default:null}
+                        <td>
+                            <input type="text"
+                                   name="timetable[{$day}][{$idx}][fach]"
+                                   value="{$entry.subject|default:''|escape:'html'}"
+                                   placeholder="Subject" /><br>
+                            <input type="text"
+                                   name="timetable[{$day}][{$idx}][raum]"
+                                   value="{$entry.room|default:''|escape:'html'}"
+                                   placeholder="Room" />
+                        </td>
+                    {/foreach}
+                </tr>
+            {/foreach}
         </tbody>
     </table>
 
-    <button type="submit" class="submit-button">Save</button>
+    <button type="submit" class="submit-button">Speichern</button>
 </form>
 
 {/block}

@@ -8,18 +8,32 @@ require_once __DIR__ . '/../src/PasswordController.php';
 // Login-Schutz
 if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
     $reason = urlencode("Du musst eingeloggt sein, um dein Profil zu sehen.");
-    header("Location: /studyhub/error/403?reason={$reason}&action=both");    exit;
+    header("Location: /studyhub/error/403?reason={$reason}&action=both");
+    exit;
 }
 
 $userId   = $_SESSION['user_id'];
 $username = $_SESSION['username'];
 
-$profile = DbFunctions::getOrCreateUserProfile($userId);
+// Standardmäßig eigenes Profil laden
+$profileUserId = $userId;
+
+// Fremdprofil über GET laden
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $profileUserId = (int) $_GET['id'];
+}
+
+// Profil abrufen
+$profile = DbFunctions::getOrCreateUserProfile($profileUserId);
+
+// Prüfen, ob es das eigene Profil ist
+$isOwnProfile = ($profileUserId === $userId);
 
 $pwSuccess = null;
 $pwMessage = null;
 
-if (($_POST['action'] ?? '') === 'change_password') {
+// Passwortänderung nur für eigenes Profil erlauben
+if ($isOwnProfile && ($_POST['action'] ?? '') === 'change_password') {
     $old     = $_POST['old_password'] ?? '';
     $new     = $_POST['new_password'] ?? '';
     $confirm = $_POST['new_password_confirm'] ?? '';
@@ -31,7 +45,7 @@ if (($_POST['action'] ?? '') === 'change_password') {
         if ($new !== $confirm) {
             throw new RuntimeException('Passwörter stimmen nicht überein');
         }
-        PasswordController::changePassword((int)$_SESSION['user_id'], $old, $new);
+        PasswordController::changePassword($userId, $old, $new);
         $pwSuccess = 'Passwort wurde aktualisiert.';
     } catch (Throwable $e) {
         $log->error('Passwort ändern fehlgeschlagen', ['error' => $e->getMessage()]);
@@ -39,8 +53,17 @@ if (($_POST['action'] ?? '') === 'change_password') {
     }
 }
 
-// 2FA-Logik nur hier gezielt einbinden
-require_once __DIR__ . '/../includes/2fa.inc.php';
+// 2FA nur für eigenes Profil laden
+if ($isOwnProfile) {
+    require_once __DIR__ . '/../includes/2fa.inc.php';
+    $smarty->assign('twofa_enabled', $twofa_enabled ?? false);
+    $smarty->assign('show_2fa_form', $show_2fa_form ?? false);
+    $smarty->assign('qrCodeUrl', $qrCodeUrl ?? '');
+} else {
+    $smarty->assign('twofa_enabled', false);
+    $smarty->assign('show_2fa_form', false);
+    $smarty->assign('qrCodeUrl', '');
+}
 
 // Allgemeine Smarty-Daten
 $smarty->assign('base_url', $config['base_url']);
@@ -48,6 +71,7 @@ $smarty->assign('app_name', $config['app_name']);
 $smarty->assign('isLoggedIn', true);
 $smarty->assign('username', $username);
 $smarty->assign('profile', $profile);
+$smarty->assign('isOwnProfile', $isOwnProfile);
 $smarty->assign('pw_success', $pwSuccess);
 $smarty->assign('pw_message', $pwMessage);
 
