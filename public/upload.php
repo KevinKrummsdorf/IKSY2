@@ -102,20 +102,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $prefix = trim(preg_replace('/_+/', '_', $prefix), '_');
 
                     $baseName      = $prefix . '_' . uniqid();
-                    $storedNameTmp = $baseName . '.' . $ext;
-                    $destination   = $uploadDir . $storedNameTmp;
+                    $storedName    = $baseName . '.' . $ext;
+                    $destination   = $uploadDir . $storedName;
 
                     if (move_uploaded_file($file['tmp_name'], $destination)) {
-                        $pdfName = $baseName . '.pdf';
-                        $pdfPath = $uploadDir . $pdfName;
-                        try {
-                            convert_file_to_pdf($destination, $pdfPath);
-                            unlink($destination);
-                            $storedName = $pdfName;
-                        } catch (Exception $e) {
-                            $log->error('PDF-Konvertierung fehlgeschlagen', ['msg' => $e->getMessage()]);
-                            $storedName = $storedNameTmp;
-                        }
                         try {
                             if ($course === '__custom__') {
                                 DbFunctions::submitCourseSuggestion($customCourse, (int)$_SESSION['user_id']);
@@ -126,7 +116,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 ]);
                                 $success = 'Kursvorschlag wurde eingereicht. Datei wird erst nach Freigabe akzeptiert.';
                             } else {
-                                // Material automatisch anlegen oder wiederverwenden
                                 $courseId   = DbFunctions::getCourseIdByName($course);
                                 $materialId = DbFunctions::getOrCreateMaterial($courseId, $title, $description);
 
