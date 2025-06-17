@@ -25,6 +25,14 @@ if (!$upload) {
     exit('Upload nicht gefunden oder nicht freigegeben.');
 }
 
+if ($upload['group_id'] !== null) {
+    $role = DbFunctions::fetchUserRoleInGroup((int)$upload['group_id'], (int)$_SESSION['user_id']);
+    if ($role === null) {
+        http_response_code(403);
+        exit('Zugriff verweigert.');
+    }
+}
+
 $basePath = realpath(__DIR__ . '/../uploads/');
 $filePath = $basePath . DIRECTORY_SEPARATOR . $upload['stored_name'];
 
