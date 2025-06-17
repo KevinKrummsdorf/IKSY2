@@ -3,7 +3,14 @@
 {block name="title"}Profil{/block}
 
 {block name="content"}
-<h1 class="text-center">Mein Profil</h1>
+<h1 class="text-center">
+    {if $isOwnProfile}
+        Mein Profil
+    {else}
+        Profil von {$profile.username}
+    {/if}
+</h1>
+
 
 <div class="container my-5">
     <div class="profile-box">
@@ -27,7 +34,7 @@
                 
 
                 <strong>Benutzername:</strong>
-                <p class="text-muted">{$username}</p>
+                <p class="text-muted">{$profile.username}</p>
 
                 <strong>Vorname:</strong>
                 <p class="text-muted">{$profile.first_name}</p>
@@ -55,10 +62,12 @@
                 </ul>
             </div>
         </div>
-
+        
+{if $isOwnProfile}
         <section class="text-center">
             <a href="edit_profile.php" class="btn btn-primary btn-lg mt-30">Profil bearbeiten</a>
         </section>
+        
 
         <hr class="my-5">
 
@@ -176,6 +185,7 @@
             </div>
             <button type="submit" class="btn btn-primary">Passwort speichern</button>
         </form>
+        {/if}
         <script>
             (() => {
                 'use strict';

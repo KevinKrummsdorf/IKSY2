@@ -5,21 +5,32 @@ declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../src/PasswordController.php';
 
-// Login-Schutz
+// Login-Schutz (für eigenes Profil weiterhin erforderlich)
 if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
     $reason = urlencode("Du musst eingeloggt sein, um dein Profil zu sehen.");
-    header("Location: /studyhub/error/403?reason={$reason}&action=both");    exit;
+    header("Location: /studyhub/error/403?reason={$reason}&action=both");
+    exit;
 }
 
-$userId   = $_SESSION['user_id'];
-$username = $_SESSION['username'];
+// Standardmäßig eigenes Profil laden
+$profileUserId = $_SESSION['user_id'];
 
-$profile = DbFunctions::getOrCreateUserProfile($userId);
+// Prüfen ob über URL jemand anderes angefordert wird (z.B. profile.php?id=5)
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $profileUserId = (int) $_GET['id'];
+}
+
+// Profil abrufen (du hast vermutlich bereits eine Funktion in DbFunctions)
+$profile = DbFunctions::getOrCreateUserProfile($profileUserId);
+
+// Optional: Prüfen, ob es ein fremdes Profil ist
+$isOwnProfile = ($profileUserId === (int)$_SESSION['user_id']);
 
 $pwSuccess = null;
 $pwMessage = null;
 
-if (($_POST['action'] ?? '') === 'change_password') {
+// Passwort ändern nur für eigenes Profil erlauben:
+if ($isOwnProfile && ($_POST['action'] ?? '') === 'change_password') {
     $old     = $_POST['old_password'] ?? '';
     $new     = $_POST['new_password'] ?? '';
     $confirm = $_POST['new_password_confirm'] ?? '';
@@ -39,15 +50,25 @@ if (($_POST['action'] ?? '') === 'change_password') {
     }
 }
 
-// ❗ 2FA-Logik nur hier gezielt einbinden
-require_once __DIR__ . '/../includes/2fa.inc.php';
+// Nur für eigenes Profil 2FA laden und Variablen zuweisen
+if ($isOwnProfile) {
+    require_once __DIR__ . '/../includes/2fa.inc.php';
+    $smarty->assign('twofa_enabled', $twofa_enabled ?? false);
+    $smarty->assign('show_2fa_form', $show_2fa_form ?? false);
+    $smarty->assign('qrCodeUrl', $qrCodeUrl ?? '');
+} else {
+    // Für fremde Profile keine 2FA-Daten setzen (nicht sichtbar)
+    $smarty->assign('twofa_enabled', false);
+    $smarty->assign('show_2fa_form', false);
+    $smarty->assign('qrCodeUrl', '');
+}
 
 // Allgemeine Smarty-Daten
 $smarty->assign('base_url', $config['base_url']);
 $smarty->assign('app_name', $config['app_name']);
 $smarty->assign('isLoggedIn', true);
-$smarty->assign('username', $username);
 $smarty->assign('profile', $profile);
+$smarty->assign('isOwnProfile', $isOwnProfile);
 $smarty->assign('pw_success', $pwSuccess);
 $smarty->assign('pw_message', $pwMessage);
 
