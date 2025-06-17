@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     // Upload-Link
     elseif (isset($_POST['upload_group']) && $myRole !== 'none') {
-        header("Location: upload.php?group_id={$groupId}");
+        header('Location: upload.php?action=group_upload');
         exit;
     }
 }
