@@ -366,6 +366,16 @@ public static function verifyUser(int $userId): int
 }
 
     /**
+     * Markiert den Benutzer als nicht verifiziert.
+     */
+public static function unverifyUser(int $userId): int
+{
+    $sql = 'UPDATE user_verification SET is_verified = FALSE WHERE user_id = :id';
+    self::getLogger()->info('Unverify User', ['user_id' => $userId]);
+    return self::execute($sql, [':id' => $userId], false);
+}
+
+    /**
      * löscht den Verifizierungstoken
      */
     public static function deleteVerificationToken(int $userId): int
@@ -1935,6 +1945,16 @@ public static function getFilteredLockedUsers(array $filters = []): array
         $sql = 'UPDATE users SET password_hash = :pw WHERE id = :id';
         self::getLogger()->info('Update Password', ['user_id' => $userId]);
         return self::execute($sql, [':pw' => $passwordHash, ':id' => $userId], false);
+    }
+
+    /**
+     * Aktualisiert die E-Mail-Adresse eines Benutzers.
+     */
+    public static function updateEmail(int $userId, string $email): int
+    {
+        $sql = 'UPDATE users SET email = :email WHERE id = :id';
+        self::getLogger()->info('Update Email', ['user_id' => $userId]);
+        return self::execute($sql, [':email' => $email, ':id' => $userId], false);
     }
 
     public static function fetchUserProfile(int $userId): ?array

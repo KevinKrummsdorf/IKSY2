@@ -39,7 +39,7 @@ if (($_POST['action'] ?? '') === 'change_password') {
     }
 }
 
-// ❗ 2FA-Logik nur hier gezielt einbinden
+// 2FA-Logik nur hier gezielt einbinden
 require_once __DIR__ . '/../includes/2fa.inc.php';
 
 // Allgemeine Smarty-Daten
