@@ -29,7 +29,7 @@
                 data-bs-target="#collapseLockedUsers"
                 aria-expanded="false"
                 aria-controls="collapseLockedUsers">
-          <i class="bi bi-chevron-down"></i>
+          <span class="material-symbols-outlined collapse-icon">expand_more</span>
         </button>
       </div>
 
@@ -80,7 +80,7 @@
                 data-bs-target="#collapseContactRequests"
                 aria-expanded="false"
                 aria-controls="collapseContactRequests">
-          <i class="bi bi-chevron-down"></i>
+          <span class="material-symbols-outlined collapse-icon">expand_more</span>
         </button>
       </div>
 
@@ -129,7 +129,7 @@
                 data-bs-target="#collapseUploadLogs"
                 aria-expanded="false"
                 aria-controls="collapseUploadLogs">
-          <i class="bi bi-chevron-down"></i>
+          <span class="material-symbols-outlined collapse-icon">expand_more</span>
         </button>
       </div>
 
@@ -170,106 +170,107 @@
       </div>
     </section>
 
-  {* Abschnitt 4 : Ungeprüfte Uploads *}
-<section class="my-5">
-  <div class="d-flex justify-content-between align-items-center mb-2">
-    <h2 class="mb-0">Ungeprüfte Uploads</h2>
-    <button class="btn btn-outline-secondary btn-sm"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#collapsePendingUploads"
-            aria-expanded="false"
-            aria-controls="collapsePendingUploads">
-      <i class="bi bi-chevron-down"></i>
-    </button>
-  </div>
-
-  <div class="collapse" id="collapsePendingUploads">
-    {if $pending_uploads|@count > 0}
-      <div class="table-responsive">
-        <table class="table table-striped table-bordered align-middle">
-          <thead class="table-dark text-center">
-            <tr>
-              <th>#</th>
-              <th>Dateiname</th>
-              <th>Titel</th>
-              <th>Kurs</th>
-              <th>Uploader</th>
-              <th>Hochgeladen am</th>
-            </tr>
-          </thead>
-          <tbody>
-            {foreach $pending_uploads as $index => $u}
-            <tr>
-              <td>{$index+1}</td>
-              <td>{$u.stored_name|escape}</td>
-              <td>{$u.title|escape}</td>
-              <td>{$u.course_name|escape}</td>
-              <td>{$u.username|default:'Unbekannt'|escape}</td>
-              <td>{$u.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</td>
-            </tr>
-            {/foreach}
-          </tbody>
-        </table>
+    {* Abschnitt 4 : Ungeprüfte Uploads *}
+    <section class="my-5">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="mb-0">Ungeprüfte Uploads</h2>
+        <button class="btn btn-outline-secondary btn-sm toggle-collapse-icon"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapsePendingUploads"
+                aria-expanded="false"
+                aria-controls="collapsePendingUploads">
+          <span class="material-symbols-outlined collapse-icon">expand_more</span>
+        </button>
       </div>
-      <div class="mt-3 text-end">
-        <a href="{$base_url}/pending_uploads.php" class="btn btn-sm btn-primary">Alle ungeprüften Uploads anzeigen</a>
-      </div>
-    {else}
-      <div class="alert alert-info">Keine neuen Uploads vorhanden.</div>
-    {/if}
-  </div>
-</section>
 
-{* Abschnitt 5 : Offene Kursvorschläge *}
-<section class="my-5">
-  <div class="d-flex justify-content-between align-items-center mb-2">
-    <h2 class="mb-0">Offene Kursvorschläge</h2>
-    <button class="btn btn-outline-secondary btn-sm"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#collapsePendingCourses"
-            aria-expanded="false"
-            aria-controls="collapsePendingCourses">
-      <i class="bi bi-chevron-down"></i>
-    </button>
-  </div>
-
-  <div class="collapse" id="collapsePendingCourses">
-    {if $pending_courses|@count > 0}
-      <div class="table-responsive">
-        <table class="table table-striped table-bordered align-middle">
-          <thead class="table-dark text-center">
-            <tr>
-              <th>#</th>
-              <th>Kursname</th>
-              <th>Vorgeschlagen von</th>
-              <th>Zeitpunkt</th>
-            </tr>
-          </thead>
-          <tbody>
-            {foreach $pending_courses as $index => $pc}
-            <tr>
-              <td>{$index+1}</td>
-              <td>{$pc.course_name|escape}</td>
-              <td>{$pc.username|escape}</td>
-              <td>{$pc.suggested_at|date_format:"%d.%m.%Y %H:%M"}</td>
-            </tr>
-            {/foreach}
-          </tbody>
-        </table>
+      <div class="collapse" id="collapsePendingUploads">
+        {if $pending_uploads|@count > 0}
+          <div class="table-responsive">
+            <table class="table table-striped table-bordered align-middle">
+              <thead class="table-dark text-center">
+                <tr>
+                  <th>#</th>
+                  <th>Dateiname</th>
+                  <th>Titel</th>
+                  <th>Kurs</th>
+                  <th>Uploader</th>
+                  <th>Hochgeladen am</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $pending_uploads as $index => $u}
+                <tr>
+                  <td>{$index+1}</td>
+                  <td>{$u.stored_name|escape}</td>
+                  <td>{$u.title|escape}</td>
+                  <td>{$u.course_name|escape}</td>
+                  <td>{$u.username|default:'Unbekannt'|escape}</td>
+                  <td>{$u.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</td>
+                </tr>
+                {/foreach}
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-3 text-end">
+            <a href="{$base_url}/pending_uploads.php" class="btn btn-sm btn-primary">Alle ungeprüften Uploads anzeigen</a>
+          </div>
+        {else}
+          <div class="alert alert-info">Keine neuen Uploads vorhanden.</div>
+        {/if}
       </div>
-      <div class="mt-3 text-end">
-        <a href="{$base_url}/pending_courses.php" class="btn btn-sm btn-primary">Alle offenen Kursvorschläge anzeigen</a>
-      </div>
-    {else}
-      <div class="alert alert-info">Keine offenen Kursvorschläge vorhanden.</div>
-    {/if}
-  </div>
-</section>
+    </section>
 
+    {* Abschnitt 5 : Offene Kursvorschläge *}
+    <section class="my-5">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="mb-0">Offene Kursvorschläge</h2>
+        <button class="btn btn-outline-secondary btn-sm toggle-collapse-icon"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapsePendingCourses"
+                aria-expanded="false"
+                aria-controls="collapsePendingCourses">
+          <span class="material-symbols-outlined collapse-icon">expand_more</span>
+        </button>
+      </div>
+
+      <div class="collapse" id="collapsePendingCourses">
+        {if $pending_courses|@count > 0}
+          <div class="table-responsive">
+            <table class="table table-striped table-bordered align-middle">
+              <thead class="table-dark text-center">
+                <tr>
+                  <th>#</th>
+                  <th>Kursname</th>
+                  <th>Vorgeschlagen von</th>
+                  <th>Zeitpunkt</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $pending_courses as $index => $pc}
+                <tr>
+                  <td>{$index+1}</td>
+                  <td>{$pc.course_name|escape}</td>
+                  <td>{$pc.username|escape}</td>
+                  <td>{$pc.suggested_at|date_format:"%d.%m.%Y %H:%M"}</td>
+                </tr>
+                {/foreach}
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-3 text-end">
+            <a href="{$base_url}/pending_courses.php" class="btn btn-sm btn-primary">Alle offenen Kursvorschläge anzeigen</a>
+          </div>
+        {else}
+          <div class="alert alert-info">Keine offenen Kursvorschläge vorhanden.</div>
+        {/if}
+      </div>
+    </section>
   {/if}
+
   {if !$isAdmin && !$isMod}
+  {* Nutzer-Uploads *}
   <section class="my-5">
     <h2 class="mb-2">Deine Uploads</h2>
     <div>
@@ -285,7 +286,7 @@
                 <h5>{$u.title|escape}</h5>
                 <p>{$u.course_name|escape} – {$u.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</p>
               </a>
-          
+
               <a href="{$base_url}/download.php?id={$u.id}" 
                  class="download-link mt-3" 
                  title="{$u.original_name|escape} herunterladen"
@@ -320,20 +321,18 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.toggle-collapse-icon').forEach(btn => {
-      const icon = btn.querySelector('i');
+      const icon = btn.querySelector('.collapse-icon');
       const target = document.querySelector(btn.dataset.bsTarget);
-      if (!target) return;
-      if (target.classList.contains('show')) {
-        icon.classList.replace('bi-chevron-down', 'bi-chevron-up');
-      } else {
-        icon.classList.replace('bi-chevron-up', 'bi-chevron-down');
-      }
-      target.addEventListener('show.bs.collapse', () => {
-        icon.classList.replace('bi-chevron-down', 'bi-chevron-up');
-      });
-      target.addEventListener('hide.bs.collapse', () => {
-        icon.classList.replace('bi-chevron-up', 'bi-chevron-down');
-      });
+      if (!target || !icon) return;
+
+      const updateIcon = (expanded) => {
+        icon.textContent = expanded ? 'expand_less' : 'expand_more';
+      };
+
+      updateIcon(target.classList.contains('show'));
+
+      target.addEventListener('show.bs.collapse', () => updateIcon(true));
+      target.addEventListener('hide.bs.collapse', () => updateIcon(false));
     });
   });
 </script>
