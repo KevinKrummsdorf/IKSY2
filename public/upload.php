@@ -90,15 +90,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 $success = 'Kursvorschlag wurde eingereicht. Datei wird erst nach Freigabe akzeptiert.';
                             } else {
                                 $courseId    = DbFunctions::getCourseIdByName($course);
-                                $materialId  = DbFunctions::getOrCreateMaterial($courseId, $title, $description);
-                                $uploadId    = DbFunctions::uploadFile($storedName, $materialId, (int)$_SESSION['user_id']);
+                                $uploadId    = DbFunctions::uploadFile(
+                                    $storedName,
+                                    $courseId,
+                                    $title,
+                                    $description,
+                                    (int)$_SESSION['user_id']
+                                );
                                 DbFunctions::insertUploadLog((int)$_SESSION['user_id'], $uploadId);
 
                                 $log->info('Upload erfolgreich', [
                                     'user_id'     => $_SESSION['user_id'],
                                     'upload_id'   => $uploadId,
                                     'stored_name' => $storedName,
-                                    'material_id' => $materialId
+                                    'course_id'   => $courseId
                                 ]);
 
                                 $success = 'Datei erfolgreich hochgeladen und wartet auf Freigabe.';

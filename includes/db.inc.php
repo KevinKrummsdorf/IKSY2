@@ -969,17 +969,22 @@ public static function getUserById(int $userId): ?array
  * Fügt einen neuen Upload in die Datenbank ein.
  * Gibt die ID des neuen Uploads zurück.
  */
-public static function uploadFile(string $storedName, int $materialId, int $userId): int
-{
+public static function uploadFile(
+    string $storedName,
+    int $courseId,
+    string $title,
+    string $description,
+    int $userId
+): int {
     $pdo = self::db_connect();
 
-    $stmt = $pdo->prepare("
-        INSERT INTO uploads (stored_name, material_id, uploaded_by, uploaded_at, is_approved)
-        VALUES (?, ?, ?, NOW(), 0)
-    ");
-    $stmt->execute([$storedName, $materialId, $userId]);
+    $stmt = $pdo->prepare(
+        'INSERT INTO uploads (stored_name, course_id, title, description, uploaded_by, uploaded_at, is_approved)' .
+        ' VALUES (?, ?, ?, ?, ?, NOW(), 0)'
+    );
+    $stmt->execute([$storedName, $courseId, $title, $description, $userId]);
 
-    return (int)$pdo->lastInsertId(); // <--- das brauchst du!
+    return (int)$pdo->lastInsertId();
 }
 
 /*
@@ -991,12 +996,9 @@ public static function approveUpload(int $uploadId, int $adminId): bool
     $pdo = self::db_connect();
 
     // Upload-Details holen
-    $upload = $pdo->prepare("
-        SELECT u.*, m.title, m.description, m.course_id
-        FROM uploads u
-        JOIN materials m ON u.material_id = m.id
-        WHERE u.id = ?
-    ");
+    $upload = $pdo->prepare(
+        'SELECT * FROM uploads WHERE id = ?'
+    );
     $upload->execute([$uploadId]);
     $data = $upload->fetch();
 
@@ -1122,13 +1124,12 @@ public static function getPendingUploads(): array
     $pdo = self::db_connect();
 
     $stmt = $pdo->query("
-        SELECT u.*, us.username, m.title, m.description, c.name AS course_name
-        FROM uploads u
-        LEFT JOIN users us ON u.uploaded_by = us.id
-        LEFT JOIN materials m ON u.material_id = m.id
-        LEFT JOIN courses c ON m.course_id = c.id
-        WHERE u.is_approved = 0 AND u.is_rejected = 0
-        ORDER BY u.uploaded_at DESC
+        SELECT u.*, us.username, c.name AS course_name
+         FROM uploads u
+         LEFT JOIN users us ON u.uploaded_by = us.id
+         LEFT JOIN courses c ON u.course_id = c.id
+         WHERE u.is_approved = 0 AND u.is_rejected = 0
+         ORDER BY u.uploaded_at DESC
     ");
 
     return $stmt->fetchAll();
@@ -1146,12 +1147,11 @@ public static function getUploadDetails(int $uploadId): ?array
     $stmt = $pdo->prepare("
         SELECT u.id, u.stored_name, u.uploaded_at,
                us.username, us.email,
-               m.title, c.name AS course_name
-        FROM uploads u
-        JOIN materials m ON u.material_id = m.id
-        JOIN courses c ON m.course_id = c.id
-        LEFT JOIN users us ON u.uploaded_by = us.id
-        WHERE u.id = ?
+               u.title, c.name AS course_name
+         FROM uploads u
+         JOIN courses c ON u.course_id = c.id
+         LEFT JOIN users us ON u.uploaded_by = us.id
+         WHERE u.id = ?
     ");
     $stmt->execute([$uploadId]);
 
@@ -1723,10 +1723,9 @@ public static function getFilteredPendingUploads(array $filters = [], ?int $limi
 {
     $pdo = self::db_connect();
     $sql = "
-        SELECT u.*, m.title, c.name AS course_name, us.username
+        SELECT u.*, c.name AS course_name, us.username
         FROM uploads u
-        JOIN materials m ON u.material_id = m.id
-        JOIN courses c ON m.course_id = c.id
+        JOIN courses c ON u.course_id = c.id
         LEFT JOIN users us ON u.uploaded_by = us.id
         WHERE u.is_approved = 0 AND u.is_rejected = 0
     ";
@@ -1734,7 +1733,7 @@ public static function getFilteredPendingUploads(array $filters = [], ?int $limi
     $params = [];
 
     if (!empty($filters['title'])) {
-        $sql .= " AND m.title LIKE ?";
+        $sql .= " AND u.title LIKE ?";
         $params[] = '%' . $filters['title'] . '%';
     }
 
@@ -1786,8 +1785,7 @@ public static function countFilteredPendingUploads(array $filters = []): int
     $sql = "
         SELECT COUNT(*)
         FROM uploads u
-        JOIN materials m ON u.material_id = m.id
-        JOIN courses c ON m.course_id = c.id
+        JOIN courses c ON u.course_id = c.id
         LEFT JOIN users us ON u.uploaded_by = us.id
         WHERE u.is_approved = 0 AND u.is_rejected = 0
     ";
@@ -1795,7 +1793,7 @@ public static function countFilteredPendingUploads(array $filters = []): int
     $params = [];
 
     if (!empty($filters['title'])) {
-        $sql .= " AND m.title LIKE ?";
+        $sql .= " AND u.title LIKE ?";
         $params[] = '%' . $filters['title'] . '%';
     }
 
