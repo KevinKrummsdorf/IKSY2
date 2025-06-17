@@ -97,7 +97,7 @@ class DbFunctions
         SELECT u.id, u.stored_name, m.title
         FROM uploads u
         JOIN materials m ON u.material_id = m.id
-        WHERE u.group_id = :gid AND u.is_approved = 1 AND u.is_rejected = 0
+        WHERE u.group_id = :gid AND u.is_approved = 1
         ORDER BY u.uploaded_at DESC
     ';
         return self::execute($sql, [':gid' => $groupId], true);
@@ -222,7 +222,7 @@ class DbFunctions
         $query = '
         SELECT id, stored_name, material_id, uploaded_by
         FROM uploads
-        WHERE is_approved = 1 AND is_rejected = 0
+        WHERE is_approved = 1
     ';
         return self::execute($query, [], true); // true = fetchAll()
     }
@@ -1261,7 +1261,6 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
              JOIN courses c ON m.course_id = c.id
              WHERE u.uploaded_by = ?
                AND u.is_approved = 1
-               AND u.is_rejected = 0
              ORDER BY u.uploaded_at DESC"
         );
         $stmt->execute([$userId]);
