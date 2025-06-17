@@ -9,23 +9,19 @@
     <div class="profile-box">
       
         {* PROFILBILD *}
-{if $profile.profile_picture}
-    <div class="text-center mb-4">
-        <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture}" alt="Profilbild" class="rounded-circle shadow" style="max-width: 150px;">
-    </div>
-{else}
-    <div class="text-center mb-4">
-        <img src="{$base_url}/assets/default-profile.png" alt="Kein Profilbild" class="rounded-circle shadow" style="max-width: 150px;">
-    </div>
-{/if}
-
-       
+        {if $profile.profile_picture}
+            <div class="text-center mb-4">
+                <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture}" alt="Profilbild" class="rounded-circle shadow" style="max-width: 150px;">
+            </div>
+        {else}
+            <div class="text-center mb-4">
+                <img src="{$base_url}/assets/default-profile.png" alt="Kein Profilbild" class="rounded-circle shadow" style="max-width: 150px;">
+            </div>
+        {/if}
 
         {* PERSÖNLICHE INFOS *}
         <div class="card mb-4">
             <div class="card-body">
-                
-
                 <strong>Benutzername:</strong>
                 <p class="text-muted">{$username}</p>
 
@@ -64,11 +60,11 @@
 
         <h3 class="mb-3">Zwei-Faktor-Authentifizierung</h3>
 
-        {if isset($success)}
+        {if $success}
             <div class="alert alert-success">{$success}</div>
         {/if}
 
-        {if isset($message)}
+        {if $message}
             <div class="alert alert-danger">{$message}</div>
         {/if}
 
@@ -124,7 +120,6 @@
             </form>
 
             <script>
-                // Bootstrap Validierung & Eingabe filtern
                 (() => {
                     'use strict';
                     const forms = document.querySelectorAll('.needs-validation');
@@ -151,15 +146,20 @@
                 <button type="submit" class="btn btn-primary">2FA einrichten</button>
             </form>
         {/if}
+
         <hr class="my-5">
         <h3 class="mb-3">Passwort ändern</h3>
-        {if isset($pw_success)}
+
+        {if $pw_success}
             <div class="alert alert-success">{$pw_success}</div>
         {/if}
-        {if isset($pw_message)}
+
+        {if $pw_message}
             <div class="alert alert-danger">{$pw_message}</div>
         {/if}
+
         <div id="pwFormAlert" class="alert alert-danger d-none">Bitte alle Felder ausfüllen.</div>
+
         <form id="pwChangeForm" method="post" class="needs-validation" novalidate>
             <input type="hidden" name="action" value="change_password">
             <div class="mb-3">
@@ -176,6 +176,7 @@
             </div>
             <button type="submit" class="btn btn-primary">Passwort speichern</button>
         </form>
+
         <script>
             (() => {
                 'use strict';
