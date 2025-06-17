@@ -82,10 +82,9 @@
                                                      class="rounded-circle shadow profile-picture" 
                                                      style="width: 40px; height: 40px; object-fit: cover;">
                                             {else}
-                                                <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center" 
-                                                     style="width: 40px; height: 40px;">
-                                                    {$profile.first_name|truncate:1:""|upper}
-                                                </div>
+                                                <img src="{$base_url}/assets/default_person.png" alt="Kein Profilbild"
+                                                     class="rounded-circle shadow profile-picture"
+                                                     style="width: 40px; height: 40px; object-fit: cover;">
                                             {/if}
                                         </a>
                                     {/if}

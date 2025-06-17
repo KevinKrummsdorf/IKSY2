@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'], $_POST[
         
         // Datei löschen, wenn vorhanden
         if ($filename) {
-            $filepath = __DIR__ . '/../uploads/' . basename($filename);
+            $filepath = __DIR__ . '/../uploads/profile_pictures/' . basename($filename);
             if (file_exists($filepath)) {
                 unlink($filepath);
             }
