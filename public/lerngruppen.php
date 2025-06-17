@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $groupId = (int)$group['id'];
                 if (DbFunctions::addUserToGroup($groupId, $userId)) {
+                    DbFunctions::setUserRoleInGroup($groupId, $userId, 'member');
                     $success = 'Du bist der Gruppe beigetreten.';
                 } else {
                     $error = 'Fehler: dem Gruppenbeitritt ist fehlgeschlagen.';

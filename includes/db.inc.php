@@ -190,8 +190,30 @@ class DbFunctions
      */
     public static function deleteGroup(int $groupId): bool
     {
-        $sql = 'DELETE FROM `groups` WHERE id = :gid';
-        return self::execute($sql, [':gid' => $groupId]) > 0;
+        $pdo = self::db_connect();
+
+        $pdo->beginTransaction();
+        try {
+            // Abhängigkeiten entfernen
+            $pdo->prepare('DELETE FROM group_roles WHERE group_id = ?')
+                ->execute([$groupId]);
+            $pdo->prepare('DELETE FROM group_members WHERE group_id = ?')
+                ->execute([$groupId]);
+
+            // Uploads der Gruppe lösen
+            $pdo->prepare('UPDATE uploads SET group_id = NULL WHERE group_id = ?')
+                ->execute([$groupId]);
+
+            $pdo->prepare('DELETE FROM `groups` WHERE id = ?')
+                ->execute([$groupId]);
+
+            $pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            self::getLogger()->error('deleteGroup failed', ['error' => $e->getMessage()]);
+            return false;
+        }
     }
 
     
