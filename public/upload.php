@@ -99,36 +99,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } elseif ($file['size'] > 10 * 1024 * 1024) {
                 $error = 'Maximal 10 MB erlaubt.';
             } else {
-                $baseUploadDir = get_upload_base_path();
-                if ($baseUploadDir === null) {
+                $groupIdForPath = $groupUpload ? $selectedGroupId : null;
+                $storedPrefix   = $groupUpload ? 'groups/' . $selectedGroupId . '/' : '';
+
+                $originalName = basename($file['name']);
+                $safeName     = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $originalName);
+                $ext          = pathinfo($safeName, PATHINFO_EXTENSION);
+
+                $prefix = $course === '__custom__' ? $customCourse : $course;
+                $prefix = strtolower(preg_replace('/[^a-z0-9]/i', '_', $prefix));
+                $prefix = trim(preg_replace('/_+/', '_', $prefix), '_');
+
+                $baseName      = $prefix . '_' . uniqid();
+                $storedNameTmp = $baseName . '.' . $ext;
+                $destination   = resolve_upload_path($storedNameTmp, $groupIdForPath);
+
+                if ($destination === null) {
                     $error = 'Upload-Verzeichnis fehlt.';
                     $log->error('Upload-Verzeichnis fehlt', ['user_id' => $_SESSION['user_id']]);
                 } else {
-                    $uploadDir = $baseUploadDir . '/';
-                    $storedPrefix = '';
-                    if ($groupUpload) {
-                        $uploadDir .= 'groups/' . $selectedGroupId . '/';
-                        $storedPrefix = 'groups/' . $selectedGroupId . '/';
-                    }
+                    $uploadDir = dirname($destination);
                     if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)) {
                         $error = 'Upload-Verzeichnis konnte nicht erstellt werden.';
                         $log->error('Upload-Verzeichnis fehlgeschlagen', ['user_id' => $_SESSION['user_id']]);
                     } else {
-                    $originalName = basename($file['name']);
-                    $safeName     = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $originalName);
-                    $ext          = pathinfo($safeName, PATHINFO_EXTENSION);
-
-                    $prefix = $course === '__custom__' ? $customCourse : $course;
-                    $prefix = strtolower(preg_replace('/[^a-z0-9]/i', '_', $prefix));
-                    $prefix = trim(preg_replace('/_+/', '_', $prefix), '_');
-
-                    $baseName      = $prefix . '_' . uniqid();
-                    $storedNameTmp = $baseName . '.' . $ext;
-                    $destination   = $uploadDir . $storedNameTmp;
 
                     if (move_uploaded_file($file['tmp_name'], $destination)) {
                         $pdfName = $baseName . '.pdf';
-                        $pdfPath = $uploadDir . $pdfName;
+                        $pdfPath = resolve_upload_path($pdfName, $groupIdForPath);
                         try {
                             convert_file_to_pdf($destination, $pdfPath);
                             unlink($destination);
