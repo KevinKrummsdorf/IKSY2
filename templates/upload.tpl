@@ -17,12 +17,13 @@
         <select id="action" name="action" class="form-select" onchange="toggleAction(this.value)">
             <option value="upload" {if $action == 'upload'}selected{/if}>Material hochladen</option>
             <option value="suggest" {if $action == 'suggest'}selected{/if}>Kurs vorschlagen</option>
+            <option value="group_upload" {if $action == 'group_upload'}selected{/if}>Für eine Gruppe hochladen</option>
         </select>
     </div>
 
     <form id="upload-form" action="{$base_url}/upload.php" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{$csrf_token}">
-        <input type="hidden" name="action" value="upload">
+        <input type="hidden" name="action" id="action-field" value="{$action|escape}">
 
         <div class="mb-3">
             <label for="title" class="form-label">Titel</label>
@@ -49,10 +50,14 @@
             <input type="text" id="custom_course" name="custom_course" class="form-control" value="{$customCourse|escape}" placeholder="z. B. Informatik 1">
         </div>
 
-        {if $userGroup}
-        <div class="mb-3 form-check">
-            <input class="form-check-input" type="checkbox" id="group_upload" name="group_upload" value="1" {if $groupUploadChecked}checked{/if}>
-            <label class="form-check-label" for="group_upload">Für meine Lerngruppe hochladen</label>
+        {if $userGroups|@count}
+        <div class="mb-3" id="group-select-wrapper" style="display:none;">
+            <label for="group_id" class="form-label">Gruppe</label>
+            <select id="group_id" name="group_id" class="form-select">
+                {foreach from=$userGroups item=grp}
+                    <option value="{$grp.id}" {if $grp.id == $selectedGroupId}selected{/if}>{$grp.name|escape}</option>
+                {/foreach}
+            </select>
         </div>
         {/if}
 
@@ -92,12 +97,20 @@ document.addEventListener('DOMContentLoaded', function () {
 function toggleAction(val) {
     const uploadForm = document.getElementById('upload-form');
     const suggestForm = document.getElementById('suggest-form');
+    const groupWrapper = document.getElementById('group-select-wrapper');
+    const actionField = document.getElementById('action-field');
     if (val === 'suggest') {
         uploadForm.style.display = 'none';
         suggestForm.style.display = 'block';
     } else {
         uploadForm.style.display = 'block';
         suggestForm.style.display = 'none';
+    }
+    if (groupWrapper) {
+        groupWrapper.style.display = (val === 'group_upload') ? 'block' : 'none';
+    }
+    if (actionField) {
+        actionField.value = val;
     }
 }
 </script>
