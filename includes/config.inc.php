@@ -19,8 +19,6 @@ require_once __DIR__ . '/../includes/logger.inc.php';
 require_once __DIR__ . '/../src/ILogger.php';
 require_once __DIR__ . '/../src/MonologLoggerAdapter.php';
 require_once __DIR__ . '/../src/LoggerFactory.php';
-require_once __DIR__ . '/../includes/SmartyEscaped.inc.php';
-
 
 // .env laden
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
