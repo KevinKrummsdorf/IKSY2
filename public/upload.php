@@ -19,10 +19,17 @@ $error   = '';
 $success = '';
 
 $action = $_POST['action'] ?? ($_GET['action'] ?? 'upload');
-$action = $action === 'suggest' ? 'suggest' : 'upload';
+if (!in_array($action, ['upload', 'suggest', 'upload_group'], true)) {
+    $action = 'upload';
+}
 
 $courses = DbFunctions::getAllCourses();
-$userGroup = DbFunctions::fetchGroupByUser((int)$_SESSION['user_id']);
+$userGroup   = DbFunctions::fetchGroupByUser((int)$_SESSION['user_id']);
+$userGroups  = DbFunctions::fetchGroupsByUser((int)$_SESSION['user_id']);
+$selectedGroupId = isset($_POST['group_id']) ? (int)$_POST['group_id'] : (int)($_GET['group_id'] ?? 0);
+if ($action !== 'suggest' && $selectedGroupId > 0) {
+    $action = 'upload_group';
+}
 $groupUpload = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -54,7 +61,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $description   = trim($_POST['description'] ?? '');
         $course        = trim($_POST['course'] ?? '');
         $customCourse  = trim($_POST['custom_course'] ?? '');
-        $groupUpload   = isset($_POST['group_upload']) && $userGroup;
+        if ($action === 'upload_group') {
+            $groupUpload = true;
+            $selectedGroupId = (int)($_POST['group_id'] ?? 0);
+            $validIds = array_column($userGroups, 'id');
+            if (!in_array($selectedGroupId, $validIds, true)) {
+                $error = 'Ungültige Gruppe ausgewählt.';
+            }
+        } else {
+            $groupUpload = isset($_POST['group_upload']) && $userGroup;
+            if ($groupUpload) {
+                $selectedGroupId = (int)$userGroup['id'];
+            }
+        }
 
         $smarty->assign('customCourse', $customCourse);
 
@@ -135,10 +154,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         $storedName,
                                         $materialId,
                                         (int)$_SESSION['user_id'],
-                                        (int)$userGroup['id'],
+                                        $selectedGroupId,
                                         true
                                     );
-                                    $success = 'Datei erfolgreich für deine Lerngruppe hochgeladen.';
+                                    $success = 'Datei erfolgreich für die Gruppe hochgeladen.';
                                 } else {
                                     $uploadId = DbFunctions::uploadFile($storedName, $materialId, (int)$_SESSION['user_id']);
                                     $success  = 'Datei erfolgreich hochgeladen und wartet auf Freigabe.';
@@ -151,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     'upload_id'   => $uploadId,
                                     'stored_name' => $storedName,
                                     'material_id' => $materialId,
-                                    'group_id'    => $groupUpload ? $userGroup['id'] : null
+                                    'group_id'    => $groupUpload ? $selectedGroupId : null
                                 ]);
                             }
 
@@ -177,7 +196,9 @@ $smarty->assign([
     'username'            => $_SESSION['username'] ?? null,
     'courses'             => $courses,
     'userGroup'           => $userGroup,
+    'userGroups'          => $userGroups,
     'groupUploadChecked'  => $_POST['group_upload'] ?? false,
+    'selectedGroupId'     => $selectedGroupId,
     'selectedCourse'      => $_POST['course'] ?? '',
     'title'               => $_POST['title'] ?? '',
     'description'         => $_POST['description'] ?? '',
