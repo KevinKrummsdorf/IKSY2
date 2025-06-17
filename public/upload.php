@@ -13,7 +13,7 @@ if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-$log = LoggerFactory::get('upload');
+$log     = LoggerFactory::get('upload');
 $error   = '';
 $success = '';
 
@@ -70,7 +70,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $safeName     = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $originalName);
                     $ext          = pathinfo($safeName, PATHINFO_EXTENSION);
 
-                    // 🎯 Kurs-Name als Prefix
                     $prefix = $course === '__custom__' ? $customCourse : $course;
                     $prefix = strtolower(preg_replace('/[^a-z0-9]/i', '_', $prefix));
                     $prefix = trim(preg_replace('/_+/', '_', $prefix), '_');
@@ -89,9 +88,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 ]);
                                 $success = 'Kursvorschlag wurde eingereicht. Datei wird erst nach Freigabe akzeptiert.';
                             } else {
+                                // Material automatisch anlegen oder wiederverwenden
                                 $courseId    = DbFunctions::getCourseIdByName($course);
                                 $materialId  = DbFunctions::getOrCreateMaterial($courseId, $title, $description);
                                 $uploadId    = DbFunctions::uploadFile($storedName, $materialId, (int)$_SESSION['user_id']);
+
                                 DbFunctions::insertUploadLog((int)$_SESSION['user_id'], $uploadId);
 
                                 $log->info('Upload erfolgreich', [
@@ -139,4 +140,3 @@ if ($success) {
 }
 
 $smarty->display('upload.tpl');
-
