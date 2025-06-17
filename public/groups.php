@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['join_group'])) {
         } else {
             $id = (int)$group['id'];
             if (DbFunctions::addUserToGroup($id, $userId)) {
+                DbFunctions::setUserRoleInGroup($id, $userId, 'member');
                 header("Location: /studyhub/gruppe.php?id={$id}");
                 exit;
             } else {

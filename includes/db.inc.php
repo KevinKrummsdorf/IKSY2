@@ -56,6 +56,11 @@ class DbFunctions
             $stmt = $pdo->prepare('INSERT INTO group_members (group_id, user_id) VALUES (:gid, :uid)');
             $stmt->execute([':gid' => $groupId, ':uid' => $userId]);
 
+            $stmt = $pdo->prepare(
+                'INSERT INTO group_roles (group_id, user_id, role) VALUES (:gid, :uid, :role)'
+            );
+            $stmt->execute([':gid' => $groupId, ':uid' => $userId, ':role' => 'admin']);
+
             $pdo->commit();
             return $groupId;
         } catch (Exception $e) {
@@ -85,6 +90,12 @@ class DbFunctions
     // Entfernt einen Benutzer aus einer Gruppe
     public static function removeUserFromGroup(int $groupId, int $userId): bool
     {
+        // Rolle entfernen
+        self::execute(
+            'DELETE FROM group_roles WHERE group_id = :gid AND user_id = :uid',
+            [':gid' => $groupId, ':uid' => $userId]
+        );
+
         $sql = '
         DELETE FROM group_members
         WHERE group_id = :gid AND user_id = :uid
@@ -92,16 +103,22 @@ class DbFunctions
         return self::execute($sql, [':gid' => $groupId, ':uid' => $userId]) > 0;
     }
 
-    // Gibt alle Mitglieder einer Gruppe zurück (Username + E-Mail)
+    // Gibt alle Mitglieder einer Gruppe zurück (id, Username, E-Mail, Rolle)
     public static function getGroupMembers(int $groupId): array
     {
         $sql = '
-        SELECT u.username, u.email
-        FROM group_members gm
-        JOIN users u ON gm.user_id = u.id
-        WHERE gm.group_id = :gid
-        ORDER BY u.username ASC
-    ';
+            SELECT
+                u.id   AS user_id,
+                u.username,
+                u.email,
+                gr.role
+            FROM group_members gm
+            JOIN users u ON gm.user_id = u.id
+            LEFT JOIN group_roles gr
+                ON gr.group_id = gm.group_id AND gr.user_id = gm.user_id
+            WHERE gm.group_id = :gid
+            ORDER BY u.username ASC
+        ';
         return self::execute($sql, [':gid' => $groupId], true);
     }
 
@@ -173,8 +190,30 @@ class DbFunctions
      */
     public static function deleteGroup(int $groupId): bool
     {
-        $sql = 'DELETE FROM `groups` WHERE id = :gid';
-        return self::execute($sql, [':gid' => $groupId]) > 0;
+        $pdo = self::db_connect();
+
+        $pdo->beginTransaction();
+        try {
+            // Abhängigkeiten entfernen
+            $pdo->prepare('DELETE FROM group_roles WHERE group_id = ?')
+                ->execute([$groupId]);
+            $pdo->prepare('DELETE FROM group_members WHERE group_id = ?')
+                ->execute([$groupId]);
+
+            // Uploads der Gruppe lösen
+            $pdo->prepare('UPDATE uploads SET group_id = NULL WHERE group_id = ?')
+                ->execute([$groupId]);
+
+            $pdo->prepare('DELETE FROM `groups` WHERE id = ?')
+                ->execute([$groupId]);
+
+            $pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            self::getLogger()->error('deleteGroup failed', ['error' => $e->getMessage()]);
+            return false;
+        }
     }
 
     
