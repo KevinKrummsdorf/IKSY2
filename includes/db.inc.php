@@ -28,6 +28,21 @@ class DbFunctions
         return self::fetchOne($sql, [':uid' => $userId]);
     }
 
+    /**
+     * Liefert alle Gruppen, in denen der Nutzer Mitglied ist.
+     */
+    public static function fetchGroupsByUser(int $userId): array
+    {
+        $sql = '
+            SELECT g.*
+            FROM group_members gm
+            JOIN groups g ON gm.group_id = g.id
+            WHERE gm.user_id = :uid
+            ORDER BY g.name ASC
+        ';
+        return self::execute($sql, [':uid' => $userId], true);
+    }
+
     // Legt eine neue Gruppe an und trägt den Nutzer als Mitglied ein
     public static function createGroup(string $groupName, int $userId): ?int
     {
