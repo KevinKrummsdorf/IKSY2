@@ -11,11 +11,13 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
 
 $userId   = $_SESSION['user_id'];
 $username = $_SESSION['username'];
-
-// Profildaten laden
 $profile = DbFunctions::getOrCreateUserProfile($userId);
 
-
+// CSRF-Token erzeugen
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$smarty->assign('csrf_token', $_SESSION['csrf_token']);
 
 // Smarty-Zuweisungen
 $smarty->assign('base_url', $config['base_url']);

@@ -15,17 +15,16 @@
 <div class="container my-5">
     <div class="profile-box">
       
-        {* PROFILBILD *}
-{if $profile.profile_picture}
-    <div class="text-center mb-4">
-        <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture}" alt="Profilbild" class="rounded-circle shadow" style="max-width: 150px;">
-    </div>
-{else}
-    <div class="text-center mb-4">
-        <img src="{$base_url}/assets/default-profile.png" alt="Kein Profilbild" class="rounded-circle shadow" style="max-width: 150px;">
-    </div>
-{/if}
-
+{* PROFILBILD OBEN *}
+<div class="text-center mb-4">
+    {if $profile.profile_picture}
+        <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture}" alt="Profilbild"
+             class="rounded-circle shadow mb-2" style="max-width: 150px;">
+    {else}
+        <img src="{$base_url}/assets/default-profile.png" alt="Kein Profilbild"
+             class="rounded-circle shadow mb-2" style="max-width: 150px;">
+    {/if}
+</div>
        
 
         {* PERSÖNLICHE INFOS *}
@@ -53,14 +52,15 @@
                 <strong>Über mich:</strong>
                 <p class="text-muted">{$profile.about_me|default:"Noch nichts eingetragen."}</p>
 
-                <strong>Andere Netzwerke:</strong>
-                <ul class="text-muted list-unstyled">
-                    {if $profile.instagram}<li>📸 <a href="{$profile.instagram}" target="_blank">Instagram</a></li>{/if}
-                    {if $profile.tiktok}<li>🎵 <a href="{$profile.tiktok}" target="_blank">TikTok</a></li>{/if}
-                    {if $profile.discord}<li>💬 {$profile.discord}</li>{/if}
-                    {if $profile.ms_teams}<li>🧑‍💼 {$profile.ms_teams}</li>{/if}
-                </ul>
-            </div>
+                {if $profile.instagram || $profile.tiktok || $profile.discord || $profile.ms_teams}
+    <strong>Andere Netzwerke:</strong>
+    <ul class="text-muted list-unstyled">
+        {if $profile.instagram}<li>📸 Instagram: {$profile.instagram}</li>{/if}
+        {if $profile.tiktok}<li>🎵 TikTok: {$profile.tiktok}</li>{/if}
+        {if $profile.discord}<li>💬 Discord: {$profile.discord}</li>{/if}
+        {if $profile.ms_teams}<li>🧑‍💼 MS Teams: {$profile.ms_teams}</li>{/if}
+    </ul>
+{/if}
         </div>
         
 {if $isOwnProfile}

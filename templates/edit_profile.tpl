@@ -3,10 +3,42 @@
 {block name="title"}Profil bearbeiten{/block}
 
 {block name="content"}
-<h1 class="text-center">Profil bearbeiten</h1>
 
 <div class="container my-5">
-    <form method="post" action="saveprofile.php" enctype="multipart/form-data" class="card p-4">
+
+    <h1 class="text-center">Profil bearbeiten</h1>
+
+    {* PROFILBILD OBEN + LÖSCHBUTTON *}
+    <div class="text-center mb-4">
+        {if $profile.profile_picture}
+            <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture}" alt="Profilbild"
+                 class="rounded-circle shadow mb-2" style="max-width: 150px; display: block; margin: 0 auto;">
+            <div>
+                <form method="post" action="delete_profile_picture.php" class="d-inline-block mt-2">
+                    <input type="hidden" name="csrf_token" value="{$csrf_token}">
+                    <button type="submit" class="btn btn-outline-danger btn-sm"
+                            onclick="return confirm('Profilbild wirklich löschen?')">
+                        Profilbild löschen
+                    </button>
+                </form>
+            </div>
+        {else}
+            <img src="{$base_url}/assets/default-profile.png" alt="Kein Profilbild"
+                 class="rounded-circle shadow mb-2" style="max-width: 150px; display: block; margin: 0 auto;">
+        {/if}
+    </div>
+
+    {if $smarty.get.img_deleted == 1}
+        <div class="alert alert-success text-center">Profilbild wurde erfolgreich gelöscht.</div>
+    {/if}
+
+    {* PROFILBEARBEITUNGSFORMULAR *}
+    <form method="post" action="saveprofile.php" enctype="multipart/form-data" class="card p-4 mb-4">
+
+        <div class="mb-3">
+            <label for="profile_picture" class="form-label">Neues Profilbild</label>
+            <input type="file" class="form-control" name="profile_picture" accept="image/*">
+        </div>
 
         <div class="mb-3">
             <label for="first_name" class="form-label">Vorname</label>
@@ -33,6 +65,7 @@
             <textarea class="form-control" name="about_me" rows="4">{$profile.about_me}</textarea>
         </div>
 
+        {* Netzwerke als reine Texteingabe (kein Link) *}
         <div class="mb-3">
             <label for="instagram" class="form-label">Instagram</label>
             <input type="text" class="form-control" name="instagram" value="{$profile.instagram}">
@@ -53,16 +86,12 @@
             <input type="text" class="form-control" name="ms_teams" value="{$profile.ms_teams}">
         </div>
 
-        <div class="mb-3">
-            <label for="profile_picture" class="form-label">Neues Profilbild</label>
-            <input type="file" class="form-control" name="profile_picture" accept="image/*">
-        </div>
-
         <button type="submit" class="btn btn-success">Speichern</button>
     </form>
-</div>
-{if $smarty.get.success == 1}
-<div class="alert alert-success">Profil wurde erfolgreich gespeichert.</div>
-{/if}
 
+    {if $smarty.get.success == 1}
+        <div class="alert alert-success text-center">Profil wurde erfolgreich gespeichert.</div>
+    {/if}
+
+</div>
 {/block}
