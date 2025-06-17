@@ -13,7 +13,7 @@
                 name="search" 
                 class="form-control" 
                 placeholder="Materialien suchen..." 
-                value="{$searchTerm|escape}" {* XSS-Schutz durch escape *}
+                value="{$searchTerm|escape}" 
                 aria-label="Materialien suchen"
             >
             <button class="btn btn-primary" type="submit">Suchen</button>
@@ -29,6 +29,11 @@
                         <div class="card-body">
                             <h5 class="card-title">{$material.title|escape}</h5>
                             <p class="card-text">{$material.description|escape}</p>
+
+                            {* Kursname anzeigen *}
+                            {if $material.course_name}
+                                <p class="text-muted mb-2"><i>Kurs: {$material.course_name|escape}</i></p>
+                            {/if}
 
                             {* Download/Ansicht-Logik *}
                             {assign var="fileFound" value=false}

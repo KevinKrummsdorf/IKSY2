@@ -229,24 +229,31 @@ class DbFunctions
     
     /** Material abruf für "Material finden/suchen" **/
     public static function getAllMaterials(): array
-    {
-        $query = 'SELECT DISTINCT m.id, m.title, m.description
-                  FROM materials m
-                  JOIN uploads u ON u.material_id = m.id
-                  WHERE u.is_approved = 1';
-        return self::execute($query, [], true);
-    }
+{
+    $query = '
+        SELECT DISTINCT m.id, m.title, m.description, c.name AS course_name
+        FROM materials m
+        JOIN uploads u ON u.material_id = m.id
+        JOIN courses c ON m.course_id = c.id
+        WHERE u.is_approved = 1
+    ';
+    return self::execute($query, [], true);
+}
 
-    public static function getMaterialsByTitle(string $searchTerm): array
-    {
-        $pdo = self::db_connect();
-        $stmt = $pdo->prepare('SELECT DISTINCT m.*
-            FROM materials m
-            JOIN uploads u ON u.material_id = m.id
-            WHERE u.is_approved = 1 AND m.title LIKE :search');
-        $stmt->execute(['search' => '%' . $searchTerm . '%']);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+public static function getMaterialsByTitle(string $searchTerm): array
+{
+    $pdo = self::db_connect();
+    $stmt = $pdo->prepare('
+        SELECT DISTINCT m.id, m.title, m.description, c.name AS course_name
+        FROM materials m
+        JOIN uploads u ON u.material_id = m.id
+        JOIN courses c ON m.course_id = c.id
+        WHERE u.is_approved = 1 AND m.title LIKE :search
+    ');
+    $stmt->execute(['search' => '%' . $searchTerm . '%']);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 
     public static function getAverageMaterialRating(int $materialId): ?array
     {
@@ -981,7 +988,7 @@ public static function uploadFile(string $storedName, int $materialId, int $user
 
     $stmt = $pdo->prepare("
         INSERT INTO uploads (stored_name, material_id, uploaded_by, uploaded_at, is_approved)
-        VALUES (?, ?, ?, NOW(), 0)
+        VALUES (:storedName, :materialId, :userId, NOW(), 0)
     ");
     $stmt->execute([$storedName, $materialId, $userId]);
 
