@@ -50,7 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'Kursvorschlag angenommen',
                 "<p>Hallo {$row['username']},</p>
                  <p>dein Kursvorschlag <strong>{$row['course_name']}</strong> wurde genehmigt und steht nun zur Verfügung.</p>
-                 <p>Danke für deinen Beitrag!</p>"
+                 <p>Danke für deinen Beitrag!</p>
+                 <p>Viele Grüße,<br>Dein StudyHub-Team</p>"
             );
 
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Vorschlag genehmigt.'];
@@ -66,7 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'Kursvorschlag abgelehnt',
                     "<p>Hallo {$row['username']},</p>
                      <p>dein Kursvorschlag <strong>{$row['course_name']}</strong> wurde leider abgelehnt.</p>
-                     <p><strong>Begründung:</strong> {$reason}</p>"
+                     <p><strong>Begründung:</strong> {$reason}</p>
+                     <p>Bei Fragen wende dich bitte an den Support.<br>
+                     <p>Viele Grüße,<br>Dein StudyHub-Team</p>"
                 );
 
                 $_SESSION['flash'] = ['type' => 'info', 'message' => 'Vorschlag abgelehnt.'];
