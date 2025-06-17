@@ -230,14 +230,20 @@ class DbFunctions
     /** Material abruf für "Material finden/suchen" **/
     public static function getAllMaterials(): array
     {
-        $query = 'SELECT id, title, description FROM materials';
-        return self::execute($query, [], true); // true → fetchAll() wird ausgeführt
+        $query = 'SELECT DISTINCT m.id, m.title, m.description
+                  FROM materials m
+                  JOIN uploads u ON u.material_id = m.id
+                  WHERE u.is_approved = 1';
+        return self::execute($query, [], true);
     }
 
     public static function getMaterialsByTitle(string $searchTerm): array
     {
         $pdo = self::db_connect();
-        $stmt = $pdo->prepare('SELECT * FROM materials WHERE title LIKE :search');
+        $stmt = $pdo->prepare('SELECT DISTINCT m.*
+            FROM materials m
+            JOIN uploads u ON u.material_id = m.id
+            WHERE u.is_approved = 1 AND m.title LIKE :search');
         $stmt->execute(['search' => '%' . $searchTerm . '%']);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

@@ -101,6 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     'material_id' => $materialId
                                 ]);
 
+                                // Material erscheint erst nach Freigabe in den Listen
                                 $success = 'Datei erfolgreich hochgeladen und wartet auf Freigabe.';
                             }
 
