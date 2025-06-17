@@ -19,11 +19,14 @@ $error   = '';
 $success = '';
 
 $action = $_POST['action'] ?? ($_GET['action'] ?? 'upload');
-$action = $action === 'suggest' ? 'suggest' : 'upload';
+$validActions = ['upload', 'suggest', 'group_upload'];
+if (!in_array($action, $validActions, true)) {
+    $action = 'upload';
+}
 
 $courses = DbFunctions::getAllCourses();
 $userGroup = DbFunctions::fetchGroupByUser((int)$_SESSION['user_id']);
-$groupUpload = false;
+$groupUpload = ($action === 'group_upload' && $userGroup);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])) {
@@ -54,7 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $description   = trim($_POST['description'] ?? '');
         $course        = trim($_POST['course'] ?? '');
         $customCourse  = trim($_POST['custom_course'] ?? '');
-        $groupUpload   = isset($_POST['group_upload']) && $userGroup;
+        $groupUpload   = (
+            ($action === 'group_upload' && $userGroup) ||
+            (isset($_POST['group_upload']) && $userGroup)
+        );
 
         $smarty->assign('customCourse', $customCourse);
 
@@ -166,7 +172,9 @@ $smarty->assign([
     'username'            => $_SESSION['username'] ?? null,
     'courses'             => $courses,
     'userGroup'           => $userGroup,
-    'groupUploadChecked'  => $_POST['group_upload'] ?? false,
+    'groupUploadChecked'  => $action === 'group_upload'
+        ? true
+        : ($_POST['group_upload'] ?? false),
     'selectedCourse'      => $_POST['course'] ?? '',
     'title'               => $_POST['title'] ?? '',
     'description'         => $_POST['description'] ?? '',
