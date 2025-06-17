@@ -47,7 +47,7 @@ function sendPasswordResetSuccessEmail (
         throw new RuntimeException('Keine site_url oder base_url vorhanden.');
     }
 
-    $link = rtrim($siteUrl, '/') . '/index.php';
+    $link = rtrim($siteUrl, '/') . 'index.php?show=login';
     $subject ='Passwort wurde erfolgreich zurückgesetzt';
 
     $htmlBody = "<p>Hallo <strong>{$username}</strong>,</p>

@@ -9,6 +9,8 @@ if (empty($_SESSION['user_id'])) {
 }
 
 $userId = $_SESSION['user_id'];
+$currentUser = DbFunctions::fetchUserById($userId);
+$currentEmail = $currentUser['email'] ?? '';
 
 // POST-Daten holen und vorbereiten
 $data = [];
@@ -22,6 +24,21 @@ foreach ($keys as $key) {
     } else {
         $data[$key] = trim($value);
     }
+}
+
+$newEmail = trim($_POST['email'] ?? '');
+if ($newEmail !== '' && $newEmail !== $currentEmail) {
+    if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
+        exit('Ungültige E-Mail-Adresse.');
+    }
+    $count = DbFunctions::countWhere('users', 'email', $newEmail);
+    if ($count > 0) {
+        exit('E-Mail-Adresse wird bereits verwendet.');
+    }
+    DbFunctions::updateEmail($userId, $newEmail);
+    DbFunctions::unverifyUser($userId);
+    require_once __DIR__ . '/../includes/verification.inc.php';
+    sendVerificationEmail(DbFunctions::db_connect(), $userId, $currentUser['username'], $newEmail);
 }
 
 // Optional: Profilbild-Upload verarbeiten

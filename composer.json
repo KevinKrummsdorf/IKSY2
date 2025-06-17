@@ -6,6 +6,7 @@
         "twbs/bootstrap": "^5.3",
         "smarty/smarty": "^5.4",
         "robthree/twofactorauth": "1.8",
-        "paragonie/halite": "^5.1"
+        "paragonie/halite": "^5.1",
+        "tecnickcom/tcpdf": "^6.6"
     }
 }

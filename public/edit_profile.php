@@ -12,6 +12,8 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
 $userId   = $_SESSION['user_id'];
 $username = $_SESSION['username'];
 $profile = DbFunctions::getOrCreateUserProfile($userId);
+$userData = DbFunctions::fetchUserById($userId);
+$email    = $userData['email'] ?? '';
 
 // CSRF-Token erzeugen
 if (!isset($_SESSION['csrf_token'])) {
@@ -25,6 +27,7 @@ $smarty->assign('app_name', $config['app_name']);
 $smarty->assign('isLoggedIn', true);
 $smarty->assign('username', $username);
 $smarty->assign('profile', $profile);
+$smarty->assign('email', $email);
 
 // Template anzeigen
 $smarty->display('edit_profile.tpl');

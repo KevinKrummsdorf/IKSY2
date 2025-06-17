@@ -1,9 +1,9 @@
 {extends file="./layouts/layout.tpl"}
-{block name="title"}Material hochladen{/block}
+{block name="title"}Upload & Kursvorschlag{/block}
 
 {block name="content"}
 <div class="container">
-    <h1 class="mb-4 text-center">Material hochladen</h1>
+    <h1 class="mb-4 text-center">Materialien hochladen</h1>
 
     {if isset($error)}
     <div class="alert alert-danger">{$error}</div>
@@ -12,8 +12,17 @@
     <div class="alert alert-success">{$success}</div>
     {/if}
 
-    <form action="{$base_url}/upload.php" method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="action" class="form-label">Aktion wählen</label>
+        <select id="action" name="action" class="form-select" onchange="toggleAction(this.value)">
+            <option value="upload" {if $action == 'upload'}selected{/if}>Material hochladen</option>
+            <option value="suggest" {if $action == 'suggest'}selected{/if}>Kurs vorschlagen</option>
+        </select>
+    </div>
+
+    <form id="upload-form" action="{$base_url}/upload.php" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{$csrf_token}">
+        <input type="hidden" name="action" value="upload">
 
         <div class="mb-3">
             <label for="title" class="form-label">Titel</label>
@@ -32,7 +41,6 @@
                 {foreach from=$courses item=course}
                     <option value="{$course.value|escape}" {if $course.value == $selectedCourse}selected{/if}>{$course.name|escape}</option>
                 {/foreach}
-                <option value="__custom__" {if $selectedCourse == '__custom__'}selected{/if}>Anderer (bitte angeben)</option>
             </select>
         </div>
 
@@ -49,12 +57,24 @@
         {/if}
 
         <div class="mb-3">
-            <label for="file" class="form-label">Datei auswählen</label>
-            <input type="file" id="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.txt" required>
-            <div class="form-text">Erlaubte Dateitypen: PDF, JPG, PNG, TXT, DOC, DOCX, ODT, PPT Max. 10 MB.</div>
+        <input type="file" id="file" name="file" class="form-control"
+            accept=".pdf,.jpg,.jpeg,.png,.txt,.doc,.docx,.odt,.ppt,.pptx" required>
+            <div class="form-text">Erlaubte Dateitypen: PDF, JPG, PNG, TXT, DOC, DOCX, ODT, PPT, PPTX Max. 10 MB.</div>
         </div>
 
         <button type="submit" class="btn btn-primary">Hochladen</button>
+    </form>
+
+    <form id="suggest-form" action="{$base_url}/upload.php" method="post" style="display:none;">
+        <input type="hidden" name="csrf_token" value="{$csrf_token}">
+        <input type="hidden" name="action" value="suggest">
+
+        <div class="mb-3">
+            <label for="course_suggestion" class="form-label">Kursname</label>
+            <input type="text" id="course_suggestion" name="course_suggestion" class="form-control" value="{$courseSuggestion|escape}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Vorschlagen</button>
     </form>
 </div>
 
@@ -66,7 +86,20 @@ function toggleCustomCourse(value) {
 }
 document.addEventListener('DOMContentLoaded', function () {
     toggleCustomCourse(document.getElementById('course').value);
+    toggleAction(document.getElementById('action').value);
 });
+
+function toggleAction(val) {
+    const uploadForm = document.getElementById('upload-form');
+    const suggestForm = document.getElementById('suggest-form');
+    if (val === 'suggest') {
+        uploadForm.style.display = 'none';
+        suggestForm.style.display = 'block';
+    } else {
+        uploadForm.style.display = 'block';
+        suggestForm.style.display = 'none';
+    }
+}
 </script>
 {/literal}
 {/block}

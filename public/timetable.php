@@ -9,8 +9,10 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
+// Prüfen, ob Nutzer eingeloggt ist
+if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
+    $reason = urlencode("Du musst eingeloggt sein, um dein Stundenplan zu sehen.");
+    header("Location: /studyhub/error/403?reason={$reason}&action=both");
     exit;
 }
 

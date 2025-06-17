@@ -293,7 +293,7 @@
                  download>
                 <span class="material-symbols-outlined">download</span>
                 <span>Herunterladen</span>
-                <small class="text-muted d-block mt-1">PDF</small>
+                <small class="text-muted d-block mt-1"></small>
               </a>
             </div>
           </div>
