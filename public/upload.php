@@ -2,6 +2,7 @@
 declare(strict_types=1);
 session_start();
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../includes/pdf_utils.inc.php';
 
 if (empty($_SESSION['user_id'])) {
     $reason = urlencode("Du musst eingeloggt sein, um Dateien hochladen zu können.");
@@ -98,10 +99,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $prefix = strtolower(preg_replace('/[^a-z0-9]/i', '_', $prefix));
                     $prefix = trim(preg_replace('/_+/', '_', $prefix), '_');
 
-                    $storedName  = $prefix . '_' . uniqid() . '.' . $ext;
-                    $destination = $uploadDir . $storedName;
+                    $baseName      = $prefix . '_' . uniqid();
+                    $storedNameTmp = $baseName . '.' . $ext;
+                    $destination   = $uploadDir . $storedNameTmp;
 
                     if (move_uploaded_file($file['tmp_name'], $destination)) {
+                        $pdfName = $baseName . '.pdf';
+                        $pdfPath = $uploadDir . $pdfName;
+                        try {
+                            convert_file_to_pdf($destination, $pdfPath);
+                            unlink($destination);
+                            $storedName = $pdfName;
+                        } catch (Exception $e) {
+                            $log->error('PDF-Konvertierung fehlgeschlagen', ['msg' => $e->getMessage()]);
+                            $storedName = $storedNameTmp;
+                        }
                         try {
                             if ($course === '__custom__') {
                                 DbFunctions::submitCourseSuggestion($customCourse, (int)$_SESSION['user_id']);
