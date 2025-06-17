@@ -153,13 +153,16 @@
         {/if}
         <hr class="my-5">
         <h3 class="mb-3">Passwort ändern</h3>
-        {if isset($pw_success)}
+        
+        {if $pw_success}
             <div class="alert alert-success">{$pw_success}</div>
         {/if}
-        {if isset($pw_message)}
+        {if $pw_message}
             <div class="alert alert-danger">{$pw_message}</div>
         {/if}
+        
         <div id="pwFormAlert" class="alert alert-danger d-none">Bitte alle Felder ausfüllen.</div>
+        
         <form id="pwChangeForm" method="post" class="needs-validation" novalidate>
             <input type="hidden" name="action" value="change_password">
             <div class="mb-3">
@@ -176,7 +179,7 @@
             </div>
             <button type="submit" class="btn btn-primary">Passwort speichern</button>
         </form>
-        <script>
+                <script>
             (() => {
                 'use strict';
                 const form = document.getElementById('pwChangeForm');

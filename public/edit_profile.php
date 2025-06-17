@@ -14,6 +14,8 @@ $username = $_SESSION['username'];
 
 // Profildaten laden
 $profile = DbFunctions::getOrCreateUserProfile($userId);
+$userData = DbFunctions::fetchUserById($userId);
+$email    = $userData['email'] ?? '';
 
 
 
@@ -23,6 +25,7 @@ $smarty->assign('app_name', $config['app_name']);
 $smarty->assign('isLoggedIn', true);
 $smarty->assign('username', $username);
 $smarty->assign('profile', $profile);
+$smarty->assign('email', $email);
 
 // Template anzeigen
 $smarty->display('edit_profile.tpl');

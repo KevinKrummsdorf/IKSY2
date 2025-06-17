@@ -19,6 +19,11 @@
         </div>
 
         <div class="mb-3">
+            <label for="email" class="form-label">E-Mail</label>
+            <input type="email" class="form-control" name="email" value="{$email}">
+        </div>
+
+        <div class="mb-3">
             <label for="birthdate" class="form-label">Geburtsdatum</label>
             <input type="date" class="form-control" name="birthdate" value="{$profile.birthdate}">
         </div>
