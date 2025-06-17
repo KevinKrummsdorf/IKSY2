@@ -51,6 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// Erfolgreiches Löschen anzeigen
+if (isset($_GET['deleted']) && $_GET['deleted'] === '1') {
+    $success = 'Die Gruppe wurde erfolgreich gelöscht.';
+}
+
 // Alle Gruppen des Nutzers abrufen
 $myGroups = DbFunctions::fetchGroupsByUser($userId);
 
