@@ -41,6 +41,13 @@
             <input type="text" id="custom_course" name="custom_course" class="form-control" value="{$customCourse|escape}" placeholder="z. B. Informatik 1">
         </div>
 
+        {if $userGroup}
+        <div class="mb-3 form-check">
+            <input class="form-check-input" type="checkbox" id="group_upload" name="group_upload" value="1" {if $groupUploadChecked}checked{/if}>
+            <label class="form-check-label" for="group_upload">Für meine Lerngruppe hochladen</label>
+        </div>
+        {/if}
+
         <div class="mb-3">
             <label for="file" class="form-label">Datei auswählen</label>
             <input type="file" id="file" name="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.txt" required>
