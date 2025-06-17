@@ -36,3 +36,20 @@
     'GRAD' 0,
     'opsz' 48;
 }
+
+/* 3. Collapse-Buttons rahmenlos darstellen
+   (betrifft alle Elemente mit Klasse .toggle-collapse-icon) */
+   .toggle-collapse-icon {
+    background: none !important;   /* kein Hintergrund */
+    border: none !important;       /* kein Rahmen */
+    box-shadow: none !important;   /* kein Shadow von .btn */
+    padding: .25rem;               /* kleiner Klick-Bereich */
+    line-height: 1;                /* Icon zentriert */
+  }
+  
+  /* Optional: Fokus-Ring für Tastatur-Nutzer */
+  .toggle-collapse-icon:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+  }
+  

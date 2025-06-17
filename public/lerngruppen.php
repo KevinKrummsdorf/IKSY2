@@ -14,7 +14,7 @@ $userId  = (int)$_SESSION['user_id'];
 $error   = '';
 $success = '';
 
-// Gruppenaktionen verarbeiten (Erstellen/Beitreten/Verlassen)
+// Gruppenaktionen verarbeiten (Erstellen/Beitreten)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['create_group'])) {
         $groupName = trim($_POST['group_name'] ?? '');
@@ -47,31 +47,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
-    } elseif (isset($_POST['leave_group'])) {
-        $currentGroup = DbFunctions::fetchGroupByUser($userId);
-        if ($currentGroup && DbFunctions::removeUserFromGroup((int)$currentGroup['id'], $userId)) {
-            $success = 'Du hast die Gruppe verlassen.';
-        } else {
-            $error = 'Fehler: Konnte die Gruppe nicht verlassen.';
-        }
     }
 }
 
-// Aktuelle Gruppeninformationen abrufen
-$currentGroup = DbFunctions::fetchGroupByUser($userId);
-$members      = [];
-$groupFiles   = [];
-if ($currentGroup) {
-    $groupId    = (int)$currentGroup['id'];
-    $members    = DbFunctions::getGroupMembers($groupId);
-    $groupFiles = DbFunctions::getUploadsByGroup($groupId);
-}
+// Alle Gruppen des Nutzers abrufen
+$myGroups = DbFunctions::fetchGroupsByUser($userId);
 
 // Smarty-Variablen zuweisen
 $smarty->assign([
-    'group'         => $currentGroup,
-    'members'       => $members,
-    'group_uploads' => $groupFiles,
+    'myGroups' => $myGroups,
 ]);
 if ($error !== '') {
     $smarty->assign('error', $error);
