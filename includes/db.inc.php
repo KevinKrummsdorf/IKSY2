@@ -2091,13 +2091,15 @@ public static function getFilteredLockedUsers(array $filters = []): array
         int $slotIndex
     ): void {
         $pdo = self::db_connect();
+        $subjectId = self::getOrCreateSubjectId($subject);
+        $roomId    = self::getOrCreateRoomId($room);
 
         $stmt = $pdo->prepare(
-            'INSERT INTO timetable (user_id, weekday, time, subject, room, slot_index)
-             VALUES (?, ?, ?, ?, ?, ?)'
+            'INSERT INTO timetable (user_id, weekday, time, subject_id, room_id, slot_index)'
+            . ' VALUES (?, ?, ?, ?, ?, ?)'
         );
 
-        $stmt->execute([$userId, $weekday, $time, $subject, $room, $slotIndex]);
+        $stmt->execute([$userId, $weekday, $time, $subjectId, $roomId, $slotIndex]);
     }
 
     /**
@@ -2108,13 +2110,58 @@ public static function getFilteredLockedUsers(array $filters = []): array
         $pdo = self::db_connect();
 
         $stmt = $pdo->prepare(
-            'SELECT * FROM timetable
-             WHERE user_id = ? AND weekday = ?
-             ORDER BY slot_index'
+            'SELECT t.*, s.name AS subject, r.name AS room FROM timetable t LEFT JOIN subjects s ON t.subject_id = s.id LEFT JOIN rooms r ON t.room_id = r.id
+             WHERE t.user_id = ? AND t.weekday = ?
+             ORDER BY t.slot_index'
         );
 
         $stmt->execute([$userId, $weekday]);
         return $stmt->fetchAll();
     }
 
+    /**
+     * Holt oder erstellt eine subject_id.
+     */
+    private static function getOrCreateSubjectId(string $subject): ?int
+    {
+        if (trim($subject) === '') {
+            return null;
+        }
+
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare('SELECT id FROM subjects WHERE name = ?');
+        $stmt->execute([$subject]);
+        $id = $stmt->fetchColumn();
+
+        if ($id) {
+            return (int) $id;
+        }
+
+        $stmt = $pdo->prepare('INSERT INTO subjects (name) VALUES (?)');
+        $stmt->execute([$subject]);
+        return (int) $pdo->lastInsertId();
+    }
+
+    /**
+     * Holt oder erstellt eine room_id.
+     */
+    private static function getOrCreateRoomId(string $room): ?int
+    {
+        if (trim($room) === '') {
+            return null;
+        }
+
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare('SELECT id FROM rooms WHERE name = ?');
+        $stmt->execute([$room]);
+        $id = $stmt->fetchColumn();
+
+        if ($id) {
+            return (int) $id;
+        }
+
+        $stmt = $pdo->prepare('INSERT INTO rooms (name) VALUES (?)');
+        $stmt->execute([$room]);
+        return (int) $pdo->lastInsertId();
+    }
 }

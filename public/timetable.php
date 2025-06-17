@@ -1,38 +1,40 @@
 <?php
-// Fehleranzeige aktivieren – hilfreich beim Entwickeln
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+@ini_set('display_errors', 1);
+@ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Konfiguration laden (Smarty, DB, Session, etc.)
 require_once __DIR__ . '/../includes/config.inc.php';
 
-// Session starten, falls noch nicht aktiv
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-// Prüfen, ob Nutzer eingeloggt ist
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
-$userId = (int) $_SESSION['user_id'];
 
-// Wochentage definieren
+$userId = (int) $_SESSION['user_id'];
 $days = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag'];
 
-// === Verarbeitung der Formular-Daten ===
+// Zeitbereiche vorberechnen (08:00 - 09:00 bis 19:00 - 20:00)
+$timeSlots = [];
+$slotTimes = []; // interne Startzeit-Werte für Speicherung
+for ($h = 8; $h <= 19; $h++) {
+    $start = sprintf('%02d:00', $h);
+    $end = sprintf('%02d:00', $h + 1);
+    $timeSlots[] = "$start - $end";
+    $slotTimes[] = $start; // wird in DB gespeichert
+}
+
+// === Formular absenden ===
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Bisherige Einträge dieses Nutzers löschen
     DbFunctions::deleteAllTimetableEntries($userId);
     
-    // Neue Einträge aus Formular speichern
-    foreach ($_POST['timetable'] as $day => $entries) {
-        foreach ($entries as $index => $data) {
-            $time    = $_POST['time'][$index] ?? '';
-            $subject = trim($data['fach'] ?? '');
-            $room    = trim($data['raum'] ?? '');
+    foreach ($days as $day) {
+        foreach ($slotTimes as $index => $time) {
+            $subject = trim($_POST['timetable'][$day][$index]['fach'] ?? '');
+            $room    = trim($_POST['timetable'][$day][$index]['raum'] ?? '');
             
             if ($subject !== '' || $room !== '') {
                 DbFunctions::insertTimetableEntry($userId, $day, $time, $subject, $room, $index);
@@ -40,19 +42,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    // Nach dem Speichern zurück zur Seite mit Erfolgsmeldung
     header('Location: timetable.php?success=1');
     exit;
 }
 
-// === Stundenplan für diesen Nutzer laden ===
+// === Stundenplan laden ===
 $timetable = [];
 foreach ($days as $day) {
-    $timetable[$day] = DbFunctions::getTimetableByDay($userId, $day);
+    $entries = DbFunctions::getTimetableByDay($userId, $day);
+    $timetable[$day] = [];
+    foreach ($entries as $entry) {
+        $timetable[$day][$entry['slot_index']] = $entry;
+    }
 }
 
-// An Smarty übergeben
+// === Smarty anzeigen ===
 $smarty->assign('title', 'Stundenplan');
+$smarty->assign('days', $days);
+$smarty->assign('timeSlots', $timeSlots); // Anzeige: „08:00 - 09:00“ etc.
 $smarty->assign('timetable', $timetable);
 $smarty->assign('success', isset($_GET['success']));
 $smarty->display('timetable.tpl');
