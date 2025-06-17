@@ -103,16 +103,22 @@ class DbFunctions
         return self::execute($sql, [':gid' => $groupId, ':uid' => $userId]) > 0;
     }
 
-    // Gibt alle Mitglieder einer Gruppe zurück (Username + E-Mail)
+    // Gibt alle Mitglieder einer Gruppe zurück (id, Username, E-Mail, Rolle)
     public static function getGroupMembers(int $groupId): array
     {
         $sql = '
-        SELECT u.username, u.email
-        FROM group_members gm
-        JOIN users u ON gm.user_id = u.id
-        WHERE gm.group_id = :gid
-        ORDER BY u.username ASC
-    ';
+            SELECT
+                u.id   AS user_id,
+                u.username,
+                u.email,
+                gr.role
+            FROM group_members gm
+            JOIN users u ON gm.user_id = u.id
+            LEFT JOIN group_roles gr
+                ON gr.group_id = gm.group_id AND gr.user_id = gm.user_id
+            WHERE gm.group_id = :gid
+            ORDER BY u.username ASC
+        ';
         return self::execute($sql, [':gid' => $groupId], true);
     }
 

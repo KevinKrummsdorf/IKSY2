@@ -24,8 +24,13 @@
   <h3>Mitglieder</h3>
   <ul class="list-group mb-4">
     {foreach $members as $m}
-      <li class="list-group-item d-flex justify-content-between">
-        {$m.username|escape}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>
+          {$m.username|escape}
+          {if $m.role}
+            <span class="badge bg-secondary ms-1">{$m.role|escape}</span>
+          {/if}
+        </span>
         {if $myRole === 'admin' && $m.user_id != $smarty.session.user_id}
           <form method="post" style="margin:0">
             <input type="hidden" name="user_id" value="{$m.user_id}">
