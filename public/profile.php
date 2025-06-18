@@ -14,6 +14,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
 
 $userId   = $_SESSION['user_id'];
 $username = $_SESSION['username'];
+$isAdmin = ($_SESSION['role'] ?? '') === 'admin';
 
 // Standardmäßig eigenes Profil laden
 $profileUserId = $userId;
@@ -49,6 +50,15 @@ if ($profileOwner) {
 
 // Prüfen, ob es das eigene Profil ist
 $isOwnProfile = ($profileUserId === $userId);
+$socialEntries = [];
+if ($isOwnProfile || $isAdmin) {
+    $socialEntries = DbFunctions::getUserSocialMedia($profileUserId);
+    $tmp = [];
+    foreach ($socialEntries as $s) {
+        $tmp[$s['platform']] = $s['username'];
+    }
+    $socialEntries = $tmp;
+}
 
 $pwSuccess = null;
 $pwMessage = null;
@@ -92,7 +102,9 @@ $smarty->assign('app_name', $config['app_name']);
 $smarty->assign('isLoggedIn', true);
 $smarty->assign('username', $username);
 $smarty->assign('profile', $profile);
+$smarty->assign('socials', $socialEntries);
 $smarty->assign('isOwnProfile', $isOwnProfile);
+$smarty->assign('isAdmin', $isAdmin);
 $smarty->assign('pw_success', $pwSuccess);
 $smarty->assign('pw_message', $pwMessage);
 

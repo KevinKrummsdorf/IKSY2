@@ -56,12 +56,34 @@
         <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#personalModal">Ändern</button>
       {/if}
 
-      <h2 class="h4">Social Media</h2>
-      <p class="mb-1">Instagram: {$profile.instagram|escape}</p>
-      <p class="mb-1">Discord: {$profile.discord|escape}</p>
-      <p class="mb-3">MS Teams: {$profile.ms_teams|escape}</p>
-      {if $isOwnProfile}
-        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#socialModal">Ändern</button>
+      {if $isOwnProfile || $isAdmin}
+        <h2 class="h4">Social Media</h2>
+        <ul class="list-unstyled mb-3">
+          {if $socials.instagram}
+            <li><i class="bi bi-instagram"></i> <a href="https://instagram.com/{$socials.instagram|escape:'url'}" target="_blank">{$socials.instagram|escape:'html'}</a></li>
+          {/if}
+          {if $socials.tiktok}
+            <li><i class="bi bi-tiktok"></i> <a href="https://www.tiktok.com/@{$socials.tiktok|escape:'url'}" target="_blank">{$socials.tiktok|escape:'html'}</a></li>
+          {/if}
+          {if $socials.discord}
+            <li><i class="bi bi-discord"></i> {$socials.discord|escape:'html'}</li>
+          {/if}
+          {if $socials.ms_teams}
+            <li><i class="bi bi-microsoft"></i> {$socials.ms_teams|escape:'html'}</li>
+          {/if}
+          {if $socials.twitter}
+            <li><i class="bi bi-twitter"></i> <a href="https://twitter.com/{$socials.twitter|escape:'url'}" target="_blank">{$socials.twitter|escape:'html'}</a></li>
+          {/if}
+          {if $socials.linkedin}
+            <li><i class="bi bi-linkedin"></i> <a href="https://www.linkedin.com/in/{$socials.linkedin|escape:'url'}" target="_blank">{$socials.linkedin|escape:'html'}</a></li>
+          {/if}
+          {if $socials.github}
+            <li><i class="bi bi-github"></i> <a href="https://github.com/{$socials.github|escape:'url'}" target="_blank">{$socials.github|escape:'html'}</a></li>
+          {/if}
+        </ul>
+        {if $isOwnProfile}
+          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#socialModal">Ändern</button>
+        {/if}
       {/if}
     </div>
   </div>
@@ -189,15 +211,31 @@
           <input type="hidden" name="action" value="update_socials">
           <div class="mb-3">
             <label for="instagram" class="form-label">Instagram</label>
-            <input type="text" class="form-control" id="instagram" name="instagram" value="{$profile.instagram|escape}">
+            <input type="text" class="form-control" id="instagram" name="instagram" value="{$socials.instagram|default:''|escape}">
+          </div>
+          <div class="mb-3">
+            <label for="tiktok" class="form-label">TikTok</label>
+            <input type="text" class="form-control" id="tiktok" name="tiktok" value="{$socials.tiktok|default:''|escape}">
           </div>
           <div class="mb-3">
             <label for="discord" class="form-label">Discord</label>
-            <input type="text" class="form-control" id="discord" name="discord" value="{$profile.discord|escape}">
+            <input type="text" class="form-control" id="discord" name="discord" value="{$socials.discord|default:''|escape}">
           </div>
           <div class="mb-3">
             <label for="ms_teams" class="form-label">MS Teams</label>
-            <input type="text" class="form-control" id="ms_teams" name="ms_teams" value="{$profile.ms_teams|escape}">
+            <input type="text" class="form-control" id="ms_teams" name="ms_teams" value="{$socials.ms_teams|default:''|escape}">
+          </div>
+          <div class="mb-3">
+            <label for="twitter" class="form-label">Twitter (X)</label>
+            <input type="text" class="form-control" id="twitter" name="twitter" value="{$socials.twitter|default:''|escape}">
+          </div>
+          <div class="mb-3">
+            <label for="linkedin" class="form-label">LinkedIn</label>
+            <input type="text" class="form-control" id="linkedin" name="linkedin" value="{$socials.linkedin|default:''|escape}">
+          </div>
+          <div class="mb-3">
+            <label for="github" class="form-label">GitHub</label>
+            <input type="text" class="form-control" id="github" name="github" value="{$socials.github|default:''|escape}">
           </div>
           <button type="submit" class="btn btn-primary">Speichern</button>
         </form>

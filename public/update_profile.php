@@ -90,12 +90,11 @@ try {
             break;
 
         case 'update_socials':
-            $fields = [
-                'instagram' => trim($_POST['instagram'] ?? ''),
-                'discord'   => trim($_POST['discord'] ?? ''),
-                'ms_teams'  => trim($_POST['ms_teams'] ?? '')
-            ];
-            DbFunctions::updateUserProfile($userId, $fields);
+            $platforms = ['instagram', 'tiktok', 'discord', 'ms_teams', 'twitter', 'linkedin', 'github'];
+            foreach ($platforms as $platform) {
+                $handle = htmlspecialchars(trim($_POST[$platform] ?? ''), ENT_QUOTES, 'UTF-8');
+                DbFunctions::saveUserSocialMedia($userId, $platform, $handle);
+            }
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Social-Media-Daten aktualisiert.'];
             break;
 

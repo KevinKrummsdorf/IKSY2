@@ -2504,4 +2504,45 @@ public static function getFilteredLockedUsers(array $filters = []): array
         $stmt->execute([$room]);
         return (int) $pdo->lastInsertId();
     }
+
+    /**
+     * Gibt alle Social-Media-Einträge eines Nutzers zurück.
+     *
+     * @param int $userId Die ID des Nutzers
+     * @return array[] Liste aus [platform => string, username => string]
+     */
+    public static function getUserSocialMedia(int $userId): array
+    {
+        $sql = 'SELECT platform, username FROM social_media WHERE user_id = :uid';
+        return self::execute($sql, [':uid' => $userId], true);
+    }
+
+    /**
+     * Speichert einen Social-Media-Eintrag. Existiert bereits einer mit gleicher
+     * Plattform für den Nutzer, wird dieser aktualisiert.
+     *
+     * @param int    $userId   Die ID des Nutzers
+     * @param string $platform Die Plattform
+     * @param string $username Der Benutzername
+     */
+    public static function saveUserSocialMedia(int $userId, string $platform, string $username): void
+    {
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare('SELECT id FROM social_media WHERE user_id = :uid AND platform = :platform');
+        $stmt->execute([':uid' => $userId, ':platform' => $platform]);
+        $existingId = $stmt->fetchColumn();
+
+        if ($existingId) {
+            if ($username === '') {
+                $del = $pdo->prepare('DELETE FROM social_media WHERE id = :id');
+                $del->execute([':id' => $existingId]);
+            } else {
+                $update = $pdo->prepare('UPDATE social_media SET username = :uname WHERE id = :id');
+                $update->execute([':uname' => $username, ':id' => $existingId]);
+            }
+        } elseif ($username !== '') {
+            $insert = $pdo->prepare('INSERT INTO social_media (user_id, platform, username) VALUES (:uid, :platform, :uname)');
+            $insert->execute([':uid' => $userId, ':platform' => $platform, ':uname' => $username]);
+        }
+    }
 }
