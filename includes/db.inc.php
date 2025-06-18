@@ -1423,20 +1423,30 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
     {
         $pdo = self::db_connect();
 
-        $stmt = $pdo->prepare('SELECT stored_name FROM uploads WHERE id = ? AND uploaded_by = ?');
-        $stmt->execute([$uploadId, $userId]);
-        $name = $stmt->fetchColumn();
+        $pdo->beginTransaction();
+        try {
+            $stmt = $pdo->prepare('SELECT stored_name FROM uploads WHERE id = ? AND uploaded_by = ?');
+            $stmt->execute([$uploadId, $userId]);
+            $name = $stmt->fetchColumn();
 
-        if (!$name) {
-            return null;
+            if (!$name) {
+                $pdo->rollBack();
+                return null;
+            }
+
+            // Erst loggen, dann löschen, damit Foreign Keys nicht scheitern
+            self::logUploadAction($uploadId, 'deleted', $userId, 'Upload gelöscht');
+
+            $del = $pdo->prepare('DELETE FROM uploads WHERE id = ? AND uploaded_by = ?');
+            $del->execute([$uploadId, $userId]);
+
+            $pdo->commit();
+            return $name;
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            self::getLogger()->error('deleteUpload failed', ['error' => $e->getMessage()]);
+            throw $e;
         }
-
-        $del = $pdo->prepare('DELETE FROM uploads WHERE id = ? AND uploaded_by = ?');
-        $del->execute([$uploadId, $userId]);
-
-        self::logUploadAction($uploadId, 'deleted', $userId, 'Upload gelöscht');
-
-        return $name;
     }
 /**
  * Zählt die Anzahl der Upload-Logs mit erweiterten Filtermöglichkeiten.
