@@ -18,20 +18,33 @@
     </small>
   </h1>
 
-  <section class="my-4" id="learn-timer-section">
-    <h2 class="h4 mb-3">Lerntimer</h2>
-    <div class="row g-2 align-items-center">
-      <div class="col-auto">
-        <label for="timerDuration" class="col-form-label">Dauer (Minuten)</label>
+<div class="row row-cols-1 row-cols-md-2 g-4 my-4">
+  <div class="col">
+    <section class="h-100 p-3 border rounded" id="learn-timer-section">
+      <h2 class="h4 mb-3">Lerntimer</h2>
+      <div class="row g-2 align-items-center">
+        <div class="col-auto">
+          <label for="timerDuration" class="col-form-label">Dauer (Minuten)</label>
+        </div>
+        <div class="col-auto">
+          <input type="number" class="form-control" id="timerDuration" min="1" value="30">
+        </div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-primary" id="startTimerBtn">Start</button>
+        </div>
       </div>
-      <div class="col-auto">
-        <input type="number" class="form-control" id="timerDuration" min="1" value="30">
-      </div>
-      <div class="col-auto">
-        <button type="button" class="btn btn-primary" id="startTimerBtn">Start</button>
-      </div>
-    </div>
-  </section>
+    </section>
+  </div>
+
+  <div class="col">
+    <section class="h-100 p-3 border rounded">
+      <h2 class="h4 mb-3">Kalender</h2>
+      {include file='partials/today_tasks.tpl'}
+      {include file='partials/calendar_month.tpl'}
+    </section>
+  </div>
+</div>
+
 
   {if $isAdmin}
     {* Abschnitt 1 : locked User *}

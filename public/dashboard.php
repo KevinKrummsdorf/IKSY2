@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 // Zentrale Initialisierung
 require_once __DIR__ . '/../includes/config.inc.php';
-session_start();
+require_once __DIR__ . '/../includes/calendar.inc.php';
+
+$pdo = DbFunctions::db_connect();
 
 // Zugriffsschutz: Login + 2FA erforderlich
 if (
@@ -42,6 +44,10 @@ foreach ($userUploads as &$upload) {
     }
 }
 unset($upload);
+
+// Kalender- und Tagesansicht laden
+assignUserCalendarToSmarty($pdo, $smarty);
+assignTodayTodosToSmarty($pdo, $smarty);
 
 // Flash anzeigen
 if (isset($_SESSION['flash'])) {
