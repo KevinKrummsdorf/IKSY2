@@ -10,7 +10,7 @@
   {if $group.join_type === 'invite'}
     <p class="text-muted">Beitritt nur per Einladung.</p>
   {elseif $group.join_type === 'code'}
-    <p class="text-muted">Beitritt nur per Einladungscode.</p>
+    <p class="text-muted">Beitritt per Einladungscode oder Einladung.</p>
     {if $myRole === 'admin'}
       <div class="alert alert-info">Einladungscode: <code>{$group.invite_code|escape}</code></div>
     {/if}
