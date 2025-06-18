@@ -86,5 +86,11 @@ $smarty->assign('isOwnProfile', $isOwnProfile);
 $smarty->assign('pw_success', $pwSuccess);
 $smarty->assign('pw_message', $pwMessage);
 
+// Flash Message anzeigen
+if (isset($_SESSION['flash'])) {
+    $smarty->assign('flash', $_SESSION['flash']);
+    unset($_SESSION['flash']);
+}
+
 // Seite anzeigen
 $smarty->display('profile.tpl');

@@ -10,6 +10,7 @@ if (empty($_SESSION['user_id'])) {
 
 $userId = (int)$_SESSION['user_id'];
 $action = $_POST['action'] ?? '';
+$_SESSION['flash'] = null; // clear previous flash
 
 try {
     switch ($action) {
@@ -26,6 +27,7 @@ try {
                 ':id' => $userId
             ], false);
             $_SESSION['username'] = $username;
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Benutzername aktualisiert.'];
             break;
 
         case 'update_email':
@@ -37,6 +39,7 @@ try {
                 throw new RuntimeException('E-Mail-Adresse wird bereits verwendet.');
             }
             DbFunctions::updateEmail($userId, $email);
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'E-Mail-Adresse aktualisiert.'];
             break;
 
         case 'update_password':
@@ -55,6 +58,19 @@ try {
             }
             $hash = password_hash($new, PASSWORD_DEFAULT);
             DbFunctions::updatePassword($userId, $hash);
+
+            // Confirmation email
+            try {
+                $subject = 'Passwort geändert';
+                $html    = "<p>Hallo {$user['username']},</p><p>dein Passwort wurde erfolgreich geändert. " .
+                           "Wenn du das nicht warst, kontaktiere bitte sofort den Support.</p>" .
+                           '<p>Viele Grüße,<br>StudyHub-Team</p>';
+                sendMail($user['email'], $user['username'], $subject, $html);
+            } catch (Throwable $mailEx) {
+                error_log('Passwort-Change-E-Mail fehlgeschlagen: ' . $mailEx->getMessage());
+            }
+
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Passwort erfolgreich geändert.'];
             break;
 
         case 'update_personal':
@@ -64,6 +80,7 @@ try {
                 'about_me'   => trim($_POST['about_me'] ?? '')
             ];
             DbFunctions::updateUserProfile($userId, $fields);
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Persönliche Daten aktualisiert.'];
             break;
 
         case 'update_socials':
@@ -73,6 +90,7 @@ try {
                 'ms_teams'  => trim($_POST['ms_teams'] ?? '')
             ];
             DbFunctions::updateUserProfile($userId, $fields);
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Social-Media-Daten aktualisiert.'];
             break;
 
         default:
@@ -82,7 +100,8 @@ try {
     header('Location: profile.php');
     exit;
 } catch (Throwable $e) {
-    http_response_code(400);
-    echo $e->getMessage();
+    $_SESSION['flash'] = ['type' => 'danger', 'message' => $e->getMessage()];
+    header('Location: profile.php');
+    exit;
 }
 
