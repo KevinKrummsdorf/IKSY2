@@ -38,7 +38,16 @@
 
       <h2 class="h4">Persönliche Angaben</h2>
       <p class="mb-1">Vorname: {$profile.first_name|escape}</p>
-      <p class="mb-3">Nachname: {$profile.last_name|escape}</p>
+      <p class="mb-1">Nachname: {$profile.last_name|escape}</p>
+      <p class="mb-3">
+        Geburtsdatum:
+        {if $profile.birthdate}
+          {$profile.birthdate|escape}
+          {if $profile.age}({$profile.age} Jahre){/if}
+        {else}
+          -
+        {/if}
+      </p>
       <div class="mb-4">
         <label class="form-label">About Me</label>
         <textarea class="form-control" rows="4" readonly>{$profile.about_me|escape}</textarea>
@@ -151,6 +160,10 @@
           <div class="mb-3">
             <label for="last_name" class="form-label">Nachname</label>
             <input type="text" class="form-control" id="last_name" name="last_name" value="{$profile.last_name|escape}" required>
+          </div>
+          <div class="mb-3">
+            <label for="birthdate" class="form-label">Geburtsdatum</label>
+            <input type="date" class="form-control" id="birthdate" name="birthdate" value="{$profile.birthdate|escape}">
           </div>
           <div class="mb-3">
             <label for="about_me_edit" class="form-label">About Me</label>

@@ -26,6 +26,16 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 // Profil abrufen
 $profile = DbFunctions::getOrCreateUserProfile($profileUserId);
 
+// Alter berechnen, falls Geburtsdatum vorhanden ist
+if (!empty($profile['birthdate'])) {
+    try {
+        $birth = new DateTime($profile['birthdate']);
+        $profile['age'] = $birth->diff(new DateTime('today'))->y;
+    } catch (Throwable $e) {
+        $profile['age'] = null;
+    }
+}
+
 // Username des Profilbesitzers abrufen
 $profileOwner = DbFunctions::fetchUserById($profileUserId);
 if ($profileOwner) {

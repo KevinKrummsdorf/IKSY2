@@ -78,10 +78,12 @@ try {
             break;
 
         case 'update_personal':
+            $birthRaw = trim($_POST['birthdate'] ?? '');
             $fields = [
                 'first_name' => trim($_POST['first_name'] ?? ''),
                 'last_name'  => trim($_POST['last_name'] ?? ''),
-                'about_me'   => trim($_POST['about_me'] ?? '')
+                'about_me'   => trim($_POST['about_me'] ?? ''),
+                'birthdate'  => $birthRaw === '' ? null : $birthRaw,
             ];
             DbFunctions::updateUserProfile($userId, $fields);
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Persönliche Daten aktualisiert.'];
