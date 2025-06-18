@@ -26,10 +26,25 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 // Profil abrufen
 $profile = DbFunctions::getOrCreateUserProfile($profileUserId);
 
+// Alter berechnen, falls Geburtsdatum vorhanden ist
+if (!empty($profile['birthdate'])) {
+    try {
+        $birth = new DateTime($profile['birthdate']);
+        $profile['age'] = $birth->diff(new DateTime('today'))->y;
+    } catch (Throwable $e) {
+        $profile['age'] = null;
+    }
+}
+
 // Username des Profilbesitzers abrufen
 $profileOwner = DbFunctions::fetchUserById($profileUserId);
-if ($profileOwner && isset($profileOwner['username'])) {
-    $profile['username'] = $profileOwner['username'];
+if ($profileOwner) {
+    if (isset($profileOwner['username'])) {
+        $profile['username'] = $profileOwner['username'];
+    }
+    if (isset($profileOwner['email'])) {
+        $profile['email'] = $profileOwner['email'];
+    }
 }
 
 // Prüfen, ob es das eigene Profil ist
@@ -80,6 +95,12 @@ $smarty->assign('profile', $profile);
 $smarty->assign('isOwnProfile', $isOwnProfile);
 $smarty->assign('pw_success', $pwSuccess);
 $smarty->assign('pw_message', $pwMessage);
+
+// Flash Message anzeigen
+if (isset($_SESSION['flash'])) {
+    $smarty->assign('flash', $_SESSION['flash']);
+    unset($_SESSION['flash']);
+}
 
 // Seite anzeigen
 $smarty->display('profile.tpl');
