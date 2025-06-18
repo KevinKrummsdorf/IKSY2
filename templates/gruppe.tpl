@@ -25,7 +25,7 @@
         <button name="join_group" class="btn btn-primary">Beitreten</button>
       </form>
     {else}
-      <p class="text-muted">Beitritt nur per Einladung.</p>
+      
     {/if}
   {else}
     <form method="post" class="d-inline"><button name="leave_group" class="btn btn-outline-warning">Verlassen</button></form>
