@@ -155,11 +155,11 @@
           <input type="hidden" name="action" value="update_personal">
           <div class="mb-3">
             <label for="first_name" class="form-label">Vorname</label>
-            <input type="text" class="form-control" id="first_name" name="first_name" value="{$profile.first_name|escape}" required>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{$profile.first_name|escape}">
           </div>
           <div class="mb-3">
             <label for="last_name" class="form-label">Nachname</label>
-            <input type="text" class="form-control" id="last_name" name="last_name" value="{$profile.last_name|escape}" required>
+            <input type="text" class="form-control" id="last_name" name="last_name" value="{$profile.last_name|escape}">
           </div>
           <div class="mb-3">
             <label for="birthdate" class="form-label">Geburtsdatum</label>
