@@ -474,7 +474,7 @@ class DbFunctions
         self::execute($query, [$userId]);
     }
 
-    }
+    
 
     /**Alle bestätigten Materialien abrufen**/
 
