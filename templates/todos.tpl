@@ -47,6 +47,16 @@
                         <span class="badge ms-2 {if $todo.priority=='high'}bg-danger{elseif $todo.priority=='medium'}bg-warning text-dark{else}bg-success{/if}">
                             {if $todo.priority=='high'}Hoch{elseif $todo.priority=='medium'}Mittel{else}Niedrig{/if}
                         </span>
+                        <form method="post" class="d-inline ms-2">
+                            <input type="hidden" name="update_priority" value="1">
+                            <input type="hidden" name="todo_id" value="{$todo.id}">
+                            <select name="priority" class="form-select form-select-sm d-inline-block w-auto me-1">
+                                <option value="high" {if $todo.priority=='high'}selected{/if}>Hoch</option>
+                                <option value="medium" {if $todo.priority=='medium'}selected{/if}>Mittel</option>
+                                <option value="low" {if $todo.priority=='low'}selected{/if}>Niedrig</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Speichern</button>
+                        </form>
                     </div>
 
                     {* Link zum Togglen des Status (erledigt) *}

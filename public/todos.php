@@ -18,6 +18,15 @@ if (empty($_SESSION['user_id'])) {
 $userId   = (int)$_SESSION['user_id'];
 $showDone = isset($_GET['show_done']) && $_GET['show_done'] == '1';
 
+// Priorität eines offenen ToDos aktualisieren
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_priority'])) {
+    $todoId  = (int)$_POST['todo_id'];
+    $priority = $_POST['priority'] ?? 'medium';
+    DbFunctions::updateTodoPriority($todoId, $userId, $priority);
+    header('Location: todos.php');
+    exit;
+}
+
 // Neues ToDo hinzufügen, inklusive Fälligkeitsdatum
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['new_todo'])) {
     $text = trim($_POST['new_todo']);

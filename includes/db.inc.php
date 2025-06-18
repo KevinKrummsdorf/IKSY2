@@ -329,6 +329,19 @@ class DbFunctions
     }
 
     /**
+     * Aktualisiert die Priorität eines ToDos.
+     */
+    public static function updateTodoPriority(int $todoId, int $userId, string $priority): void
+    {
+        $query = '
+        UPDATE todos
+        SET priority = ?
+        WHERE id = ? AND user_id = ? AND is_done = 0
+    ';
+        self::execute($query, [$priority, $todoId, $userId]);
+    }
+
+    /**
      * Löscht ein erledigtes ToDo.
      */
     public static function deleteTodo(int $todoId, int $userId): void
