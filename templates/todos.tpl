@@ -44,7 +44,7 @@
                                 Fällig: {$todo.due_date|date_format:"%d.%m.%Y"}
                             </div>
                         {/if}
-                        <span class="badge ms-2 {if $todo.priority=='high'}bg-danger{elseif $todo.priority=='medium'}bg-warning text-dark{else}bg-secondary{/if}">
+                        <span class="badge ms-2 {if $todo.priority=='high'}bg-danger{elseif $todo.priority=='medium'}bg-warning text-dark{else}bg-success{/if}">
                             {if $todo.priority=='high'}Hoch{elseif $todo.priority=='medium'}Mittel{else}Niedrig{/if}
                         </span>
                     </div>
@@ -97,7 +97,7 @@
                                     Fällig: {$todo.due_date|date_format:"%d.%m.%Y"}
                                 </div>
                             {/if}
-                            <span class="badge ms-2 {if $todo.priority=='high'}bg-danger{elseif $todo.priority=='medium'}bg-warning text-dark{else}bg-secondary{/if}">
+                            <span class="badge ms-2 {if $todo.priority=='high'}bg-danger{elseif $todo.priority=='medium'}bg-warning text-dark{else}bg-success{/if}">
                                 {if $todo.priority=='high'}Hoch{elseif $todo.priority=='medium'}Mittel{else}Niedrig{/if}
                             </span>
                         </div>
