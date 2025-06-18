@@ -103,12 +103,14 @@
                         </div>
 
                         {* Rückgängig-Link (erneutes Togglen auf "nicht erledigt") *}
-                        <a href="?toggle={$todo.id}&show_done=1" class="btn btn-sm btn-outline-danger">
-                            Rückgängig
-                        </a>
-                        <a href="?delete={$todo.id}&show_done=1" class="btn btn-sm btn-outline-secondary ms-2" onclick="return confirm('ToDo wirklich löschen?');">
-                            Löschen
-                        </a>
+                        <div class="d-flex gap-2">
+                            <a href="?toggle={$todo.id}&show_done=1" class="btn btn-sm btn-outline-danger">
+                                Rückgängig
+                            </a>
+                            <a href="?delete={$todo.id}&show_done=1" class="btn btn-sm btn-outline-secondary" onclick="return confirm('ToDo wirklich löschen?');">
+                                Löschen
+                            </a>
+                        </div>
                     </li>
                 {/foreach}
             </ul>
