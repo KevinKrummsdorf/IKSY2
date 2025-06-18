@@ -28,7 +28,7 @@
             {foreach $user_uploads as $index => $u}
               <div class="carousel-item {if $index == 0}active{/if}">
                 <div class="pdf-slide">
-                  <a href="{$base_url}/uploads/{$u.stored_name|escape:'url'}" target="_blank" class="pdf-link">
+                  <a href="{$base_url}/view_pdf.php?file={$u.stored_name|escape:'url'}" target="_blank" class="pdf-link">
                     {if $u.type == 'image'}
                       <img src="{$base_url}/uploads/{$u.stored_name|escape:'url'}" alt="{$u.title|escape}" class="img-fluid mb-2" style="max-height:160px;">
                     {else}
@@ -36,6 +36,14 @@
                     {/if}
                     <h5>{$u.title|escape:'html'}</h5>
                     <p>{$u.course_name|escape:'html'} – {$u.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</p>
+                  </a>
+                  <a href="{$base_url}/download.php?id={$u.id}"
+                     class="download-link mt-3"
+                     title="{$u.original_name|escape} herunterladen"
+                     download>
+                    <span class="material-symbols-outlined">download</span>
+                    <span>Herunterladen</span>
+                    <small class="text-muted d-block mt-1"></small>
                   </a>
                 </div>
               </div>
@@ -59,7 +67,7 @@
   <div class="row row-cols-1 row-cols-md-2 g-4 my-4">
   <div class="col">
     <section class="h-100 p-3 border rounded" id="learn-timer-section">
-      <h2 class="h4 mb-3">Lerntimer</h2>
+      <h2 class="h4 mb-3 text-center">Lerntimer</h2>
       <div class="row g-2 align-items-center">
         <div class="col-auto">
           <label for="timerDuration" class="col-form-label">Dauer (Minuten)</label>
@@ -76,7 +84,7 @@
 
   <div class="col">
     <section class="h-100 p-3 border rounded">
-      <h2 class="h4 mb-3">Kalender</h2>
+      <h2 class="h4 mb-3 text-center">Kalender</h2>
       {include file='partials/today_tasks.tpl'}
       {include file='partials/calendar_month.tpl'}
     </section>
