@@ -302,14 +302,20 @@
                 <p>{$u.course_name|escape} – {$u.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</p>
               </a>
 
-              <a href="{$base_url}/download.php?id={$u.id}" 
-                 class="download-link mt-3" 
+              <a href="{$base_url}/download.php?id={$u.id}"
+                 class="download-link mt-3"
                  title="{$u.original_name|escape} herunterladen"
                  download>
                 <span class="material-symbols-outlined">download</span>
                 <span>Herunterladen</span>
                 <small class="text-muted d-block mt-1"></small>
               </a>
+
+              <form method="post" action="{$base_url}/delete_upload.php" class="mt-2">
+                <input type="hidden" name="csrf_token" value="{$csrf_token}">
+                <input type="hidden" name="upload_id" value="{$u.id}">
+                <button type="submit" class="btn btn-sm btn-danger">Löschen</button>
+              </form>
             </div>
           </div>
           {/foreach}

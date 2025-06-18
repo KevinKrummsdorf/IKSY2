@@ -1414,6 +1414,30 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Löscht einen Upload des angegebenen Nutzers und gibt den Dateinamen
+     * zurück. Gibt null zurück, wenn der Upload nicht gefunden wurde.
+     */
+    public static function deleteUpload(int $uploadId, int $userId): ?string
+    {
+        $pdo = self::db_connect();
+
+        $stmt = $pdo->prepare('SELECT stored_name FROM uploads WHERE id = ? AND uploaded_by = ?');
+        $stmt->execute([$uploadId, $userId]);
+        $name = $stmt->fetchColumn();
+
+        if (!$name) {
+            return null;
+        }
+
+        $del = $pdo->prepare('DELETE FROM uploads WHERE id = ? AND uploaded_by = ?');
+        $del->execute([$uploadId, $userId]);
+
+        self::logUploadAction($uploadId, 'deleted', $userId, 'Upload gelöscht');
+
+        return $name;
+    }
 /**
  * Zählt die Anzahl der Upload-Logs mit erweiterten Filtermöglichkeiten.
  * @param array $filters Filterkriterien
