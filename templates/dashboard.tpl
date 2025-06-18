@@ -5,7 +5,7 @@
 {block name="content"}
 <div class="container mt-5">
   <h1>
-    Hallo, {$username}!<br>
+    Hallo, {$username|escape}!<br>
     <small class="text-muted">
         Rolle:
         {if $isAdmin}
@@ -17,6 +17,21 @@
         {/if}
     </small>
   </h1>
+
+  <section class="my-4" id="learn-timer-section">
+    <h2 class="h4 mb-3">Lerntimer</h2>
+    <div class="row g-2 align-items-center">
+      <div class="col-auto">
+        <label for="timerDuration" class="col-form-label">Dauer (Minuten)</label>
+      </div>
+      <div class="col-auto">
+        <input type="number" class="form-control" id="timerDuration" min="1" value="30">
+      </div>
+      <div class="col-auto">
+        <button type="button" class="btn btn-primary" id="startTimerBtn">Start</button>
+      </div>
+    </div>
+  </section>
 
   {if $isAdmin}
     {* Abschnitt 1 : locked User *}
@@ -315,25 +330,27 @@
   </section>
   {/if}
 </div>
+
+<!-- Lerntimer Modal -->
+<div class="modal fade" id="timerModal" tabindex="-1" aria-labelledby="timerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header">
+        <h5 class="modal-title" id="timerModalLabel">Lerntimer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+      <div class="modal-body">
+        <div id="timerDisplay" class="display-1 fw-bold">00:00</div>
+        <p id="timerMessage" class="h4 mt-3"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary d-none" id="closeTimerBtn" data-bs-dismiss="modal">Beenden</button>
+      </div>
+    </div>
+  </div>
+</div>
 {/block}
 
 {block name="scripts"}
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.toggle-collapse-icon').forEach(btn => {
-      const icon = btn.querySelector('.collapse-icon');
-      const target = document.querySelector(btn.dataset.bsTarget);
-      if (!target || !icon) return;
-
-      const updateIcon = (expanded) => {
-        icon.textContent = expanded ? 'expand_less' : 'expand_more';
-      };
-
-      updateIcon(target.classList.contains('show'));
-
-      target.addEventListener('show.bs.collapse', () => updateIcon(true));
-      target.addEventListener('hide.bs.collapse', () => updateIcon(false));
-    });
-  });
-</script>
+<script src="{$base_url}/js/dashboard.js"></script>
 {/block}

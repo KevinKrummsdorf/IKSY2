@@ -29,7 +29,7 @@
   </div>
   <nav class="header-auth-links">
     {if $isLoggedIn}
-      <span class="me-3">Willkommen, {$username}!</span>
+      <span class="me-3">Willkommen, {$username|escape}!</span>
       <a href="{$base_url}/logout.php" class="btn btn-sm btn-outline-secondary">Logout</a>
     {else}
       <a href="#" class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
