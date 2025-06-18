@@ -328,6 +328,33 @@ class DbFunctions
         self::execute($query, [$newStatus, $todoId, $userId]);
     }
 
+    /**
+     * Liefert alle ToDos eines Benutzers innerhalb eines Datumsbereichs.
+     */
+    public static function getTodosForDateRange(int $userId, string $startDate, string $endDate): array
+    {
+        $query = '
+        SELECT id, title, due_date, priority
+        FROM todos
+        WHERE user_id = :uid
+          AND due_date BETWEEN :start AND :end
+        ORDER BY due_date
+    ';
+        return self::execute($query, [
+            ':uid' => $userId,
+            ':start' => $startDate,
+            ':end' => $endDate,
+        ], true);
+    }
+
+    /**
+     * Liefert alle ToDos eines Benutzers an einem bestimmten Datum.
+     */
+    public static function getTodosForDate(int $userId, string $date): array
+    {
+        return self::getTodosForDateRange($userId, $date, $date);
+    }
+
     /**Alle bestätigten Materialien abrufen**/
 
     public static function getApprovedUploads(): array

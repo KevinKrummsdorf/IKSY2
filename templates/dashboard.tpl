@@ -18,6 +18,9 @@
     </small>
   </h1>
 
+  {include file='partials/today_tasks.tpl'}
+  {include file='partials/calendar_month.tpl'}
+
   {if $isAdmin}
     {* Abschnitt 1 : locked User *}
     <section class="my-5">
