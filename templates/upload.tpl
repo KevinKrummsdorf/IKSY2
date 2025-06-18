@@ -49,10 +49,21 @@
             <input type="text" id="custom_course" name="custom_course" class="form-control" value="{$customCourse|escape}" placeholder="z. B. Informatik 1">
         </div>
 
-        {if $userGroup}
-        <div class="mb-3 form-check">
-            <input class="form-check-input" type="checkbox" id="group_upload" name="group_upload" value="1" {if $groupUploadChecked}checked{/if}>
-            <label class="form-check-label" for="group_upload">Für meine Lerngruppe hochladen</label>
+        {if $userGroups|@count > 0}
+        <div class="mb-3">
+            <label for="upload_target" class="form-label">Upload-Ziel</label>
+            <select id="upload_target" name="upload_target" class="form-select" onchange="toggleGroupSelect(this.value)">
+                <option value="public" {if $uploadTarget != 'group'}selected{/if}>Normal hochladen</option>
+                <option value="group" {if $uploadTarget == 'group'}selected{/if}>Eine Lerngruppe hochladen</option>
+            </select>
+        </div>
+        <div class="mb-3" id="group-select" style="display:none;">
+            <label for="group_id" class="form-label">Lerngruppe</label>
+            <select id="group_id" name="group_id" class="form-select">
+                {foreach from=$userGroups item=g}
+                    <option value="{$g.id}" {if $selectedGroupId == $g.id}selected{/if}>{$g.name|escape}</option>
+                {/foreach}
+            </select>
         </div>
         {/if}
 
@@ -87,6 +98,10 @@ function toggleCustomCourse(value) {
 document.addEventListener('DOMContentLoaded', function () {
     toggleCustomCourse(document.getElementById('course').value);
     toggleAction(document.getElementById('action').value);
+    const tgt = document.getElementById('upload_target');
+    if (tgt) {
+        toggleGroupSelect(tgt.value);
+    }
 });
 
 function toggleAction(val) {
@@ -98,6 +113,13 @@ function toggleAction(val) {
     } else {
         uploadForm.style.display = 'block';
         suggestForm.style.display = 'none';
+    }
+}
+
+function toggleGroupSelect(val) {
+    const wrapper = document.getElementById('group-select');
+    if (wrapper) {
+        wrapper.style.display = (val === 'group') ? 'block' : 'none';
     }
 }
 </script>
