@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 use Smarty\Smarty;
-use DbFunctions;
 
 /**
  * Prepares a monthly calendar with user tasks and assigns it to Smarty.
