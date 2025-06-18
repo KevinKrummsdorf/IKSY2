@@ -70,13 +70,13 @@
               <td>{$upload.username|escape}</td>
               <td>{$upload.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</td>
               <td>
-                <input type="text" name="note" class="form-control form-control-sm" placeholder="Optionaler Ablehnungsgrund">
+                <input type="text" name="note" class="form-control form-control-sm" placeholder="Ablehnungsgrund... (Pflicht bei Ablehnung)">
               </td>
               <td class="text-center">
                 <input type="hidden" name="upload_id" value="{$upload.id}">
                 <div class="btn-group" role="group">
                   <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">Freigeben</button>
-                  <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">Ablehnen</button>
+                  <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm reject-btn">Ablehnen</button>
                   <a href="{$base_url}/uploads/{$upload.stored_name|escape}" target="_blank" class="btn btn-outline-secondary btn-sm">Ansehen</a>
                 </div>
               </td>
@@ -111,4 +111,17 @@
     <div class="alert alert-info">Keine ungeprüften Uploads gefunden.</div>
   {/if}
 </div>
+<script>
+  // Pflichtfeldprüfung für Ablehnung
+  document.querySelectorAll('.reject-btn').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+      const row = this.closest('tr');
+      const noteInput = row.querySelector('input[name="note"]');
+      if (!noteInput.value.trim()) {
+        e.preventDefault();
+        alert('Bitte gib einen Ablehnungsgrund an.');
+      }
+    });
+  });
+</script>
 {/block}
