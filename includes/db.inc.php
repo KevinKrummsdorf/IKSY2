@@ -1395,6 +1395,10 @@ public static function countUploadLogs(): int
  */
 public static function rejectUpload(int $uploadId, int $modId, ?string $note = null): bool
 {
+    if ($note === null || trim($note) === '') {
+        throw new InvalidArgumentException('Ablehnungsgrund erforderlich');
+    }
+
     $pdo = self::db_connect();
 
     // Upload als abgelehnt markieren
