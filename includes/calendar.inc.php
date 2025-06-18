@@ -72,15 +72,19 @@ function assignUserCalendarToSmarty(PDO $pdo, Smarty $smarty): void
         $calendar[] = $week;
     }
 
-    $formatter = new IntlDateFormatter(
-        'de_DE',
-        IntlDateFormatter::LONG,
-        IntlDateFormatter::NONE,
-        'Europe/Berlin',
-        IntlDateFormatter::GREGORIAN,
-        'LLLL yyyy'
-    );
-    $monthLabel = $formatter->format($current);
+    if (class_exists('IntlDateFormatter')) {
+        $fmt = new IntlDateFormatter(
+            'de_DE',
+            IntlDateFormatter::LONG,
+            IntlDateFormatter::NONE,
+            'Europe/Berlin',
+            IntlDateFormatter::GREGORIAN,
+            'LLLL yyyy'
+        );
+        $monthLabel = $fmt->format($current);
+    } else {
+        $monthLabel = strftime('%B %Y', $current->getTimestamp());
+    }
 
     $prev  = $current->modify('-1 month');
     $next  = $current->modify('+1 month');
@@ -117,14 +121,19 @@ function assignTodayTodosToSmarty(PDO $pdo, Smarty $smarty): void
         $today
     );
 
-    $formatter = new IntlDateFormatter(
-        'de_DE',
-        IntlDateFormatter::FULL,
-        IntlDateFormatter::NONE,
-        'Europe/Berlin',
-        IntlDateFormatter::GREGORIAN
-    );
+    if (class_exists('IntlDateFormatter')) {
+        $fmt = new IntlDateFormatter(
+            'de_DE',
+            IntlDateFormatter::FULL,
+            IntlDateFormatter::NONE,
+            'Europe/Berlin',
+            IntlDateFormatter::GREGORIAN
+        );
+        $todayLabel = $fmt->format(new DateTimeImmutable('today'));
+    } else {
+        $todayLabel = strftime('%A, %e. %B %Y');
+    }
 
-    $smarty->assign('todayLabel', $formatter->format(new DateTimeImmutable('today')));
+    $smarty->assign('todayLabel', $todayLabel);
     $smarty->assign('todayTodos', $todos);
 }
