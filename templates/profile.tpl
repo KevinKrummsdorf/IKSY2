@@ -34,6 +34,7 @@
         <label class="form-label">About Me</label>
         <textarea class="form-control" rows="4" readonly>{$profile.about_me|escape}</textarea>
       </div>
+      <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#personalModal">Ändern</button>
 
       <h2 class="h4">Social Media</h2>
       <p class="mb-1">Instagram: {$profile.instagram|escape}</p>
@@ -53,10 +54,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="#">
+        <form method="post" action="update_profile.php">
+          <input type="hidden" name="action" value="update_username">
           <div class="mb-3">
             <label for="new_username" class="form-label">Neuer Benutzername</label>
-            <input type="text" class="form-control" id="new_username" name="new_username" required>
+            <input type="text" class="form-control" id="new_username" name="username" required>
           </div>
           <button type="submit" class="btn btn-primary">Speichern</button>
         </form>
@@ -74,10 +76,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="#">
+        <form method="post" action="update_profile.php">
+          <input type="hidden" name="action" value="update_email">
           <div class="mb-3">
             <label for="new_email" class="form-label">Neue E-Mail-Adresse</label>
-            <input type="email" class="form-control" id="new_email" name="new_email" required>
+            <input type="email" class="form-control" id="new_email" name="email" required>
           </div>
           <button type="submit" class="btn btn-primary">Speichern</button>
         </form>
@@ -95,7 +98,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="#">
+        <form method="post" action="update_profile.php">
+          <input type="hidden" name="action" value="update_password">
           <div class="mb-3">
             <label for="new_password" class="form-label">Neues Passwort</label>
             <input type="password" class="form-control" id="new_password" name="new_password" required>
@@ -103,6 +107,36 @@
           <div class="mb-3">
             <label for="new_password_confirm" class="form-label">Passwort bestätigen</label>
             <input type="password" class="form-control" id="new_password_confirm" name="new_password_confirm" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Speichern</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Personal Data Modal -->
+<div class="modal fade" id="personalModal" tabindex="-1" aria-labelledby="personalModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="personalModalLabel">Persönliche Angaben bearbeiten</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="update_profile.php">
+          <input type="hidden" name="action" value="update_personal">
+          <div class="mb-3">
+            <label for="first_name" class="form-label">Vorname</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{$profile.first_name|escape}" required>
+          </div>
+          <div class="mb-3">
+            <label for="last_name" class="form-label">Nachname</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" value="{$profile.last_name|escape}" required>
+          </div>
+          <div class="mb-3">
+            <label for="about_me_edit" class="form-label">About Me</label>
+            <textarea class="form-control" id="about_me_edit" name="about_me" rows="4">{$profile.about_me|escape}</textarea>
           </div>
           <button type="submit" class="btn btn-primary">Speichern</button>
         </form>
@@ -120,7 +154,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="#">
+        <form method="post" action="update_profile.php">
+          <input type="hidden" name="action" value="update_socials">
           <div class="mb-3">
             <label for="instagram" class="form-label">Instagram</label>
             <input type="text" class="form-control" id="instagram" name="instagram" value="{$profile.instagram|escape}">
