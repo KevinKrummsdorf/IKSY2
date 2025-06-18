@@ -4,7 +4,6 @@ declare(strict_types=1);
 // Zentrale Initialisierung
 require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../includes/calendar.inc.php';
-session_start();
 
 $pdo = DbFunctions::db_connect();
 

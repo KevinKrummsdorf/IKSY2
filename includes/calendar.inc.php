@@ -32,11 +32,16 @@ function assignUserCalendarToSmarty(PDO $pdo, Smarty $smarty): void
     $startDate = $current->format('Y-m-01');
     $endDate   = $current->format('Y-m-' . str_pad((string)$daysInMonth, 2, '0', STR_PAD_LEFT));
 
-    $rows = DbFunctions::getTodosForDateRange(
-        (int)$_SESSION['user_id'],
-        $startDate,
-        $endDate
-    );
+    try {
+        $rows = DbFunctions::getTodosForDateRange(
+            (int)$_SESSION['user_id'],
+            $startDate,
+            $endDate
+        );
+    } catch (Throwable $e) {
+        error_log('Calendar DB error: ' . $e->getMessage());
+        $rows = [];
+    }
 
     $tasksByDay = [];
     foreach ($rows as $row) {
@@ -114,11 +119,16 @@ function assignTodayTodosToSmarty(PDO $pdo, Smarty $smarty): void
 
     $today = (new DateTimeImmutable('today'))->format('Y-m-d');
 
-    $todos = DbFunctions::getTodosForDateRange(
-        (int)$_SESSION['user_id'],
-        $today,
-        $today
-    );
+    try {
+        $todos = DbFunctions::getTodosForDateRange(
+            (int)$_SESSION['user_id'],
+            $today,
+            $today
+        );
+    } catch (Throwable $e) {
+        error_log('Calendar DB error: ' . $e->getMessage());
+        $todos = [];
+    }
 
     if (class_exists('IntlDateFormatter')) {
         $fmt = new IntlDateFormatter(
