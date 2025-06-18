@@ -50,14 +50,10 @@ if ($profileOwner) {
 
 // Prüfen, ob es das eigene Profil ist
 $isOwnProfile = ($profileUserId === $userId);
+$entries = DbFunctions::getUserSocialMedia($profileUserId);
 $socialEntries = [];
-if ($isOwnProfile || $isAdmin) {
-    $socialEntries = DbFunctions::getUserSocialMedia($profileUserId);
-    $tmp = [];
-    foreach ($socialEntries as $s) {
-        $tmp[$s['platform']] = $s['username'];
-    }
-    $socialEntries = $tmp;
+foreach ($entries as $s) {
+    $socialEntries[$s['platform']] = $s['username'];
 }
 
 $pwSuccess = null;
