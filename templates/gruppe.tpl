@@ -41,6 +41,16 @@
     {/foreach}
   </ul>
 
+  {if $myRole === 'admin'}
+    <h4>Benutzer einladen</h4>
+    <form method="post" class="mb-4">
+      <div class="mb-3">
+        <input type="text" name="invite_username" class="form-control" placeholder="Benutzername" required>
+      </div>
+      <button name="invite_user" class="btn btn-primary">Einladen</button>
+    </form>
+  {/if}
+
   <h3>Materialien</h3>
   {if $uploads|@count}
     <ul class="list-group mb-3">
