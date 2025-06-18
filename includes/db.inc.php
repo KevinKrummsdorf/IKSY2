@@ -1425,20 +1425,30 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
 
         $pdo->beginTransaction();
         try {
-            $stmt = $pdo->prepare('SELECT stored_name FROM uploads WHERE id = ? AND uploaded_by = ?');
+            $stmt = $pdo->prepare('SELECT stored_name, material_id FROM uploads WHERE id = ? AND uploaded_by = ?');
             $stmt->execute([$uploadId, $userId]);
-            $name = $stmt->fetchColumn();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if (!$name) {
+            if (!$row) {
                 $pdo->rollBack();
                 return null;
             }
+
+            $name = $row['stored_name'];
+            $materialId = (int)$row['material_id'];
 
             // Erst loggen, dann löschen, damit Foreign Keys nicht scheitern
             self::logUploadAction($uploadId, 'deleted', $userId, 'Upload gelöscht');
 
             $del = $pdo->prepare('DELETE FROM uploads WHERE id = ? AND uploaded_by = ?');
             $del->execute([$uploadId, $userId]);
+
+            // Material entfernen, wenn keine Uploads mehr darauf verweisen
+            $check = $pdo->prepare('SELECT COUNT(*) FROM uploads WHERE material_id = ?');
+            $check->execute([$materialId]);
+            if ((int)$check->fetchColumn() === 0) {
+                $pdo->prepare('DELETE FROM materials WHERE id = ?')->execute([$materialId]);
+            }
 
             $pdo->commit();
             return $name;
