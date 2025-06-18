@@ -32,12 +32,18 @@ $myRole = DbFunctions::fetchUserRoleInGroup($groupId, $userId) ?? 'none';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Beitreten
     if (isset($_POST['join_group']) && $myRole === 'none') {
-        if (DbFunctions::addUserToGroup($groupId, $userId)) {
-            DbFunctions::setUserRoleInGroup($groupId, $userId, 'member');
-            $success = 'Beigetreten.';
-            $myRole = 'member';
+        if ($group['join_type'] === 'open' || ($group['join_type'] === 'code' && ($_POST['invite_code'] ?? '') === $group['invite_code'])) {
+            if (DbFunctions::addUserToGroup($groupId, $userId)) {
+                DbFunctions::setUserRoleInGroup($groupId, $userId, 'member');
+                $success = 'Beigetreten.';
+                $myRole = 'member';
+            } else {
+                $error = 'Fehler beim Beitreten.';
+            }
+        } elseif ($group['join_type'] === 'code') {
+            $error = 'Ungültiger Einladungscode.';
         } else {
-            $error = 'Fehler beim Beitreten.';
+            $error = 'Dieser Gruppe kann nur per Einladung beigetreten werden.';
         }
     }
     // Verlassen
@@ -59,6 +65,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $uid = (int)$_POST['user_id'];
         DbFunctions::removeUserFromGroup($groupId, $uid);
         $success = 'Mitglied entfernt.';
+    }
+    // Benutzer einladen (nur Admin)
+    elseif (isset($_POST['invite_user']) && $myRole === 'admin') {
+        $username = trim($_POST['invite_username'] ?? '');
+        if ($username === '') {
+            $error = 'Bitte gib einen Benutzernamen ein.';
+        } else {
+            try {
+                $invUser = DbFunctions::fetchUserByIdentifier($username);
+                if (!$invUser) {
+                    $error = 'Benutzer nicht gefunden.';
+                } elseif (DbFunctions::fetchUserRoleInGroup($groupId, (int)$invUser['id'])) {
+                    $error = 'Benutzer ist bereits Mitglied.';
+                } elseif (DbFunctions::fetchActiveGroupInvite($groupId, (int)$invUser['id'])) {
+                    $error = 'Es besteht bereits eine aktive Einladung.';
+                } else {
+                    $token = bin2hex(random_bytes(32));
+                    if (DbFunctions::createGroupInvite($groupId, (int)$invUser['id'], $token)) {
+                        sendGroupInviteEmail(
+                            $invUser['email'],
+                            $invUser['username'],
+                            $group['name'],
+                            $_SESSION['username'],
+                            $token
+                        );
+                        $success = 'Einladung versendet.';
+                    } else {
+                        $error = 'Einladung konnte nicht erstellt werden.';
+                    }
+                }
+            } catch (Throwable $e) {
+                $log = LoggerFactory::get('gruppe');
+                $log->error('Invite user failed', ['error' => $e->getMessage()]);
+                $error = 'Fehler beim Versenden der Einladung.';
+            }
+        }
     }
     // Upload-Link
     elseif (isset($_POST['upload_group']) && $myRole !== 'none') {

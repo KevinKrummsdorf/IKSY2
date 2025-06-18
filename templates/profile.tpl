@@ -7,7 +7,7 @@
     {if $isOwnProfile}
         Mein Profil
     {else}
-        Profil von {$profile.username}
+        Profil von {$profile.username|escape}
     {/if}
 </h1>
 
@@ -17,7 +17,7 @@
         {* PROFILBILD OBEN *}
         <div class="text-center mb-4">
             {if $profile.profile_picture}
-                <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture}" alt="Profilbild"
+                <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture|escape}" alt="Profilbild"
                      class="rounded-circle shadow mb-2" style="max-width: 150px;">
             {else}
                 <img src="{$base_url}/assets/default_person.png" alt="Kein Profilbild"
@@ -29,13 +29,13 @@
         <div class="card mb-4">
             <div class="card-body">
                 <strong>Benutzername:</strong>
-                <p class="text-muted">{$profile.username}</p>
+                <p class="text-muted">{$profile.username|escape}</p>
 
                 <strong>Vorname:</strong>
-                <p class="text-muted">{$profile.first_name}</p>
+                <p class="text-muted">{$profile.first_name|escape}</p>
 
                 <strong>Nachname:</strong>
-                <p class="text-muted">{$profile.last_name}</p>
+                <p class="text-muted">{$profile.last_name|escape}</p>
 
                 <strong>Geburtsdatum:</strong>
                 <p class="text-muted">
@@ -43,18 +43,18 @@
                 </p>
 
                 <strong>Wohnort:</strong>
-                <p class="text-muted">{$profile.location}</p>
+                <p class="text-muted">{$profile.location|escape}</p>
 
                 <strong>Über mich:</strong>
-                <p class="text-muted">{$profile.about_me|default:"Noch nichts eingetragen."}</p>
+                <p class="text-muted">{$profile.about_me|default:"Noch nichts eingetragen."|escape}</p>
 
                 {if $profile.instagram || $profile.tiktok || $profile.discord || $profile.ms_teams}
                     <strong>Andere Netzwerke:</strong>
                     <ul class="text-muted list-unstyled">
-                        {if $profile.instagram}<li>📸 Instagram: {$profile.instagram}</li>{/if}
-                        {if $profile.tiktok}<li>🎵 TikTok: {$profile.tiktok}</li>{/if}
-                        {if $profile.discord}<li>💬 Discord: {$profile.discord}</li>{/if}
-                        {if $profile.ms_teams}<li>🧑‍💼 MS Teams: {$profile.ms_teams}</li>{/if}
+                        {if $profile.instagram}<li>📸 Instagram: {$profile.instagram|escape}</li>{/if}
+                        {if $profile.tiktok}<li>🎵 TikTok: {$profile.tiktok|escape}</li>{/if}
+                        {if $profile.discord}<li>💬 Discord: {$profile.discord|escape}</li>{/if}
+                        {if $profile.ms_teams}<li>🧑‍💼 MS Teams: {$profile.ms_teams|escape}</li>{/if}
                     </ul>
                 {/if}
             </div>
@@ -70,11 +70,11 @@
             <h3 class="mb-3">Zwei-Faktor-Authentifizierung</h3>
 
             {if $success}
-                <div class="alert alert-success">{$success}</div>
+                <div class="alert alert-success">{$success|escape}</div>
             {/if}
 
             {if $message}
-                <div class="alert alert-danger">{$message}</div>
+                <div class="alert alert-danger">{$message|escape}</div>
             {/if}
 
             {if $twofa_enabled}
@@ -159,10 +159,10 @@
             <hr class="my-5">
             <h3 class="mb-3">Passwort ändern</h3>
             {if isset($pw_success)}
-                <div class="alert alert-success">{$pw_success}</div>
+                <div class="alert alert-success">{$pw_success|escape}</div>
             {/if}
             {if isset($pw_message)}
-                <div class="alert alert-danger">{$pw_message}</div>
+                <div class="alert alert-danger">{$pw_message|escape}</div>
             {/if}
             <div id="pwFormAlert" class="alert alert-danger d-none">Bitte alle Felder ausfüllen.</div>
             <form id="pwChangeForm" method="post" class="needs-validation" novalidate>

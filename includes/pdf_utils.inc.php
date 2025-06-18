@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use TCPDF;
+//use TCPDF;
 
 /**
  * Konvertiert eine Datei mit TCPDF nach PDF.

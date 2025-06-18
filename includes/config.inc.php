@@ -13,6 +13,7 @@ require_once __DIR__ . '/../includes/db.inc.php';
 require_once __DIR__ . '/../includes/ip_utils.inc.php';
 require_once __DIR__ . '/../includes/recaptcha.inc.php';
 require_once __DIR__ . '/../includes/mailing.inc.php';
+require_once __DIR__ . '/../includes/group_invites.inc.php';
 require_once __DIR__ . '/../includes/central_logs.inc.php';
 require_once __DIR__ . '/../includes/crypto.inc.php';
 require_once __DIR__ . '/../includes/logger.inc.php';
