@@ -26,6 +26,12 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 // Profil abrufen
 $profile = DbFunctions::getOrCreateUserProfile($profileUserId);
 
+// Username des Profilbesitzers abrufen
+$profileOwner = DbFunctions::fetchUserById($profileUserId);
+if ($profileOwner && isset($profileOwner['username'])) {
+    $profile['username'] = $profileOwner['username'];
+}
+
 // Prüfen, ob es das eigene Profil ist
 $isOwnProfile = ($profileUserId === $userId);
 
