@@ -372,7 +372,7 @@ class DbFunctions
         $query = '
         SELECT id, stored_name, material_id, uploaded_by
         FROM uploads
-        WHERE is_approved = 1
+        WHERE is_approved = 1 AND group_id IS NULL
     ';
         return self::execute($query, [], true); // true = fetchAll()
     }
@@ -385,7 +385,7 @@ class DbFunctions
         FROM materials m
         JOIN uploads u ON u.material_id = m.id
         JOIN courses c ON m.course_id = c.id
-        WHERE u.is_approved = 1
+        WHERE u.is_approved = 1 AND u.group_id IS NULL
     ';
     return self::execute($query, [], true);
 }
@@ -398,7 +398,7 @@ public static function getMaterialsByTitle(string $searchTerm): array
         FROM materials m
         JOIN uploads u ON u.material_id = m.id
         JOIN courses c ON m.course_id = c.id
-        WHERE u.is_approved = 1 AND m.title LIKE :search
+        WHERE u.is_approved = 1 AND u.group_id IS NULL AND m.title LIKE :search
     ');
     $stmt->execute(['search' => '%' . $searchTerm . '%']);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
