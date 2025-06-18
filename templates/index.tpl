@@ -21,8 +21,9 @@
       <li class="d-flex align-items-start mb-2"><span class="material-symbols-outlined me-2" aria-hidden="true">groups</span> Lerngruppen beitreten oder erstellen</li>
       <li class="d-flex align-items-start mb-2"><span class="material-symbols-outlined me-2" aria-hidden="true">calendar_month</span> Eigene Aufgaben im Kalender verwalten</li>
       <li class="d-flex align-items-start mb-2"><span class="material-symbols-outlined me-2" aria-hidden="true">person</span> Persönliches Profil bearbeiten</li>
-      <li class="d-flex align-items-start mb-2"><span class="material-symbols-outlined me-2" aria-hidden="true">lock</span> Zwei-Faktor-Authentifizierung aktivieren</li>
-      <li class="d-flex align-items-start"><span class="material-symbols-outlined me-2" aria-hidden="true">history</span> Upload- und Login-Verlauf einsehen</li>
+      <li class="d-flex align-items-start mb-2"><span class="material-symbols-outlined me-2" aria-hidden="true">checklist</span> Eigene To-dos anlegen</li>
+      <li class="d-flex align-items-start mb-2"><span class="material-symbols-outlined me-2" aria-hidden="true">calendar_month</span> Stundenplan erstellen</li>
+      <li class="d-flex align-items-start"><span class="material-symbols-outlined me-2" aria-hidden="true">timer</span> Lerntimer im Dashboard nutzen</li>
     </ul>
   </section>
 
