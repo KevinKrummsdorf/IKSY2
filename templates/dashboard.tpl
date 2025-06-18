@@ -5,7 +5,7 @@
 {block name="content"}
 <div class="container mt-5">
   <h1>
-    Hallo, {$username}!<br>
+    Hallo, {$username|escape}!<br>
     <small class="text-muted">
         Rolle:
         {if $isAdmin}

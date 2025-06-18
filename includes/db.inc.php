@@ -216,6 +216,57 @@ class DbFunctions
         }
     }
 
+    /**
+     * Prüft, ob eine aktive Einladung für Benutzer und Gruppe existiert.
+     */
+    public static function fetchActiveGroupInvite(int $groupId, int $userId): ?array
+    {
+        $sql = 'SELECT * FROM group_invites
+                WHERE group_id = :gid AND invited_user_id = :uid
+                  AND used_at IS NULL AND expires_at > NOW()
+                LIMIT 1';
+        return self::fetchOne($sql, [':gid' => $groupId, ':uid' => $userId]);
+    }
+
+    /**
+     * Erstellt eine neue Einladung f\xC3\xBCr eine Lerngruppe.
+     */
+    public static function createGroupInvite(int $groupId, int $userId, string $token, int $expiresHours = 48): bool
+    {
+        if (self::fetchActiveGroupInvite($groupId, $userId)) {
+            return false;
+        }
+
+        $sql = 'INSERT INTO group_invites (group_id, invited_user_id, token, created_at, expires_at)
+                VALUES (:gid, :uid, :token, NOW(), DATE_ADD(NOW(), INTERVAL :exp HOUR))';
+
+        return self::execute($sql, [
+            ':gid'  => $groupId,
+            ':uid'  => $userId,
+            ':token'=> $token,
+            ':exp'  => $expiresHours,
+        ]) > 0;
+    }
+
+    /**
+     * Holt eine Einladung anhand ihres Tokens.
+     */
+    public static function fetchGroupInviteByToken(string $token): ?array
+    {
+        $sql = 'SELECT * FROM group_invites
+                WHERE token = :token AND used_at IS NULL AND expires_at > NOW()
+                LIMIT 1';
+        return self::fetchOne($sql, [':token' => $token]);
+    }
+
+    /**
+     * Markiert eine Einladung als benutzt.
+     */
+    public static function markGroupInviteUsed(int $inviteId): void
+    {
+        self::execute('UPDATE group_invites SET used_at = NOW() WHERE id = :id', [':id' => $inviteId]);
+    }
+
     
  
     /**
