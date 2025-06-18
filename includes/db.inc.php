@@ -294,13 +294,13 @@ class DbFunctions
     /**
      * Legt ein neues ToDo an.
      */
-    public static function insertTodo(int $userId, string $text, ?string $dueDate): void
+    public static function insertTodo(int $userId, string $text, ?string $dueDate, string $priority = 'medium'): void
     {
         $query = '
-        INSERT INTO todos (user_id, text, due_date)
-        VALUES (?, ?, ?)
+        INSERT INTO todos (user_id, text, due_date, priority)
+        VALUES (?, ?, ?, ?)
     ';
-        self::execute($query, [$userId, $text, $dueDate]);
+        self::execute($query, [$userId, $text, $dueDate, $priority]);
     }
 
     /**
@@ -326,6 +326,43 @@ class DbFunctions
         WHERE id = ? AND user_id = ?
     ';
         self::execute($query, [$newStatus, $todoId, $userId]);
+    }
+
+    /**
+     * Aktualisiert die Priorität eines ToDos.
+     */
+    public static function updateTodoPriority(int $todoId, int $userId, string $priority): void
+    {
+        $query = '
+        UPDATE todos
+        SET priority = ?
+        WHERE id = ? AND user_id = ? AND is_done = 0
+    ';
+        self::execute($query, [$priority, $todoId, $userId]);
+    }
+
+    /**
+     * Löscht ein erledigtes ToDo.
+     */
+    public static function deleteTodo(int $todoId, int $userId): void
+    {
+        $query = '
+        DELETE FROM todos
+        WHERE id = ? AND user_id = ? AND is_done = 1
+    ';
+        self::execute($query, [$todoId, $userId]);
+    }
+
+    /**
+     * Löscht alle erledigten ToDos eines Benutzers.
+     */
+    public static function deleteCompletedTodos(int $userId): void
+    {
+        $query = '
+        DELETE FROM todos
+        WHERE user_id = ? AND is_done = 1
+    ';
+        self::execute($query, [$userId]);
     }
 
     /**Alle bestätigten Materialien abrufen**/

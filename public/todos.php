@@ -18,13 +18,23 @@ if (empty($_SESSION['user_id'])) {
 $userId   = (int)$_SESSION['user_id'];
 $showDone = isset($_GET['show_done']) && $_GET['show_done'] == '1';
 
+// Priorität eines offenen ToDos aktualisieren
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_priority'])) {
+    $todoId  = (int)$_POST['todo_id'];
+    $priority = $_POST['priority'] ?? 'medium';
+    DbFunctions::updateTodoPriority($todoId, $userId, $priority);
+    header('Location: todos.php');
+    exit;
+}
+
 // Neues ToDo hinzufügen, inklusive Fälligkeitsdatum
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['new_todo'])) {
     $text = trim($_POST['new_todo']);
     $dueDate = !empty($_POST['due_date']) ? $_POST['due_date'] : null;
+    $priority = $_POST['priority'] ?? 'medium';
 
     if ($text !== '') {
-        DbFunctions::insertTodo($userId, $text, $dueDate); 
+        DbFunctions::insertTodo($userId, $text, $dueDate, $priority);
     }
 
     // Nach dem Hinzufügen neu laden (Vermeidung von POST-Resubmits)
@@ -50,6 +60,21 @@ if (isset($_GET['toggle'])) {
     }
     
     header("Location: todos.php");
+    exit;
+}
+
+// Einzelnes erledigtes ToDo löschen
+if (isset($_GET['delete'])) {
+    $todoId = (int)$_GET['delete'];
+    DbFunctions::deleteTodo($todoId, $userId);
+    header('Location: todos.php?show_done=1');
+    exit;
+}
+
+// Alle erledigten ToDos löschen
+if (isset($_GET['delete_completed'])) {
+    DbFunctions::deleteCompletedTodos($userId);
+    header('Location: todos.php?show_done=1');
     exit;
 }
 
