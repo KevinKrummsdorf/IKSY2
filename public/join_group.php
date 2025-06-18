@@ -34,11 +34,14 @@ try {
         throw new RuntimeException('Diese Einladung ist nicht f\xC3\xBCr deinen Account.');
     }
 
+    $group = DbFunctions::fetchGroupById((int)$invite['group_id']);
+    if (!$group || $group['join_type'] !== 'invite') {
+        throw new RuntimeException('Diese Gruppe erlaubt keinen Beitritt per Einladung.');
+    }
+
     DbFunctions::addUserToGroup((int)$invite['group_id'], (int)$invite['invited_user_id']);
     DbFunctions::setUserRoleInGroup((int)$invite['group_id'], (int)$invite['invited_user_id'], 'member');
     DbFunctions::markGroupInviteUsed((int)$invite['id']);
-
-    $group = DbFunctions::fetchGroupById((int)$invite['group_id']);
 
     $data['alertType']  = 'success';
     $data['message']    = 'Du bist der Gruppe ' . htmlspecialchars($group['name'], ENT_QUOTES) . ' beigetreten.';

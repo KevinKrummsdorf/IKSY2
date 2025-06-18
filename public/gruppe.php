@@ -32,12 +32,18 @@ $myRole = DbFunctions::fetchUserRoleInGroup($groupId, $userId) ?? 'none';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Beitreten
     if (isset($_POST['join_group']) && $myRole === 'none') {
-        if (DbFunctions::addUserToGroup($groupId, $userId)) {
-            DbFunctions::setUserRoleInGroup($groupId, $userId, 'member');
-            $success = 'Beigetreten.';
-            $myRole = 'member';
+        if ($group['join_type'] === 'open' || ($group['join_type'] === 'code' && ($_POST['invite_code'] ?? '') === $group['invite_code'])) {
+            if (DbFunctions::addUserToGroup($groupId, $userId)) {
+                DbFunctions::setUserRoleInGroup($groupId, $userId, 'member');
+                $success = 'Beigetreten.';
+                $myRole = 'member';
+            } else {
+                $error = 'Fehler beim Beitreten.';
+            }
+        } elseif ($group['join_type'] === 'code') {
+            $error = 'Ungültiger Einladungscode.';
         } else {
-            $error = 'Fehler beim Beitreten.';
+            $error = 'Dieser Gruppe kann nur per Einladung beigetreten werden.';
         }
     }
     // Verlassen
