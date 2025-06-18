@@ -59,10 +59,19 @@ function assignUserCalendarToSmarty(PDO $pdo, Smarty $smarty): void
         $week[] = null;
     }
 
+    $todayDate = new DateTimeImmutable('today');
+
     for ($day = 1; $day <= $daysInMonth; $day++) {
+        $isToday = (
+            $day === (int)$todayDate->format('j') &&
+            $month === (int)$todayDate->format('n') &&
+            $year === (int)$todayDate->format('Y')
+        );
+
         $week[] = [
             'day' => $day,
             'tasks' => $tasksByDay[$day] ?? [],
+            'is_today' => $isToday,
         ];
         if (count($week) === 7) {
             $calendar[] = $week;

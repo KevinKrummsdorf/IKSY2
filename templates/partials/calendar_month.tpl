@@ -22,8 +22,8 @@
     <div class="row g-0">
       {foreach $week as $day}
         {if $day}
-          <div class="col calendar-cell">
-            <small class="calendar-date">{$day.day}</small>
+          <div class="col calendar-cell{if $day.is_today} calendar-today{/if}">
+            <span class="calendar-date">{$day.day}</span>
             {foreach $day.tasks as $task}
               {assign var="bg" value="#d4edda"}
               {if $task.priority == 'medium'}{assign var="bg" value="#fff3cd"}{/if}
