@@ -44,13 +44,24 @@ class DbFunctions
     }
 
     // Legt eine neue Gruppe an und trägt den Nutzer als Mitglied ein
-    public static function createGroup(string $groupName, int $userId): ?int
+    public static function createGroup(
+        string $groupName,
+        int $userId,
+        string $joinType = 'open',
+        ?string $inviteCode = null
+    ): ?int
     {
         $pdo = self::db_connect();
         $pdo->beginTransaction();
         try {
-            $stmt = $pdo->prepare('INSERT INTO groups (name) VALUES (:name)');
-            $stmt->execute([':name' => $groupName]);
+            $stmt = $pdo->prepare(
+                'INSERT INTO groups (name, join_type, invite_code) VALUES (:name, :jtype, :icode)'
+            );
+            $stmt->execute([
+                ':name'  => $groupName,
+                ':jtype' => $joinType,
+                ':icode' => $inviteCode,
+            ]);
             $groupId = (int)$pdo->lastInsertId();
 
             $stmt = $pdo->prepare('INSERT INTO group_members (group_id, user_id) VALUES (:gid, :uid)');
@@ -73,7 +84,7 @@ class DbFunctions
     // Holt eine Gruppe anhand ihres Namens
     public static function fetchGroupByName(string $name): ?array
     {
-        $sql = 'SELECT * FROM groups WHERE name = :name LIMIT 1';
+        $sql = 'SELECT id, name, join_type, invite_code FROM groups WHERE name = :name LIMIT 1';
         return self::fetchOne($sql, [':name' => $name]);
     }
 
@@ -149,8 +160,17 @@ class DbFunctions
      */
     public static function fetchGroupById(int $groupId): ?array
     {
-        $sql = 'SELECT id, name FROM `groups` WHERE id = :gid LIMIT 1';
+        $sql = 'SELECT id, name, join_type, invite_code FROM `groups` WHERE id = :gid LIMIT 1';
         return self::fetchOne($sql, [':gid' => $groupId]);
+    }
+
+    /**
+     * Holt eine Gruppe anhand ihres Einladungscodes.
+     */
+    public static function fetchGroupByInviteCode(string $code): ?array
+    {
+        $sql = 'SELECT id, name, join_type, invite_code FROM `groups` WHERE invite_code = :code LIMIT 1';
+        return self::fetchOne($sql, [':code' => $code]);
     }
 
     /**

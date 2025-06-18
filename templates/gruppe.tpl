@@ -7,9 +7,26 @@
   {if $success}<div class="alert alert-success">{$success}</div>{/if}
 
   <h1 class="mb-4">{$group.name|escape}</h1>
+  {if $group.join_type === 'invite'}
+    <p class="text-muted">Beitritt nur per Einladung.</p>
+  {elseif $group.join_type === 'code'}
+    <p class="text-muted">Beitritt nur per Einladungscode.</p>
+    {if $myRole === 'admin'}
+      <div class="alert alert-info">Einladungscode: <code>{$group.invite_code|escape}</code></div>
+    {/if}
+  {/if}
 
   {if $myRole === 'none'}
-    <form method="post"><button name="join_group" class="btn btn-primary">Beitreten</button></form>
+    {if $group.join_type === 'open'}
+      <form method="post"><button name="join_group" class="btn btn-primary">Beitreten</button></form>
+    {elseif $group.join_type === 'code'}
+      <form method="post" class="mb-3">
+        <div class="mb-2"><input type="text" name="invite_code" class="form-control" placeholder="Einladungscode" required></div>
+        <button name="join_group" class="btn btn-primary">Beitreten</button>
+      </form>
+    {else}
+      <p class="text-muted">Beitritt nur per Einladung.</p>
+    {/if}
   {else}
     <form method="post" class="d-inline"><button name="leave_group" class="btn btn-outline-warning">Verlassen</button></form>
     {if $myRole === 'admin'}
