@@ -40,10 +40,18 @@ try {
             break;
 
         case 'update_password':
-            $new = $_POST['new_password'] ?? '';
+            $old     = $_POST['old_password'] ?? '';
+            $new     = $_POST['new_password'] ?? '';
             $confirm = $_POST['new_password_confirm'] ?? '';
-            if ($new === '' || $new !== $confirm) {
+            if ($old === '' || $new === '' || $confirm === '') {
+                throw new RuntimeException('Alle Felder müssen ausgefüllt werden.');
+            }
+            if ($new !== $confirm) {
                 throw new RuntimeException('Passwörter stimmen nicht überein.');
+            }
+            $user = DbFunctions::fetchUserById($userId);
+            if (!$user || !verifyPassword($old, $user['password_hash'])) {
+                throw new RuntimeException('Aktuelles Passwort falsch.');
             }
             $hash = password_hash($new, PASSWORD_DEFAULT);
             DbFunctions::updatePassword($userId, $hash);

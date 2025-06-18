@@ -101,6 +101,10 @@
         <form method="post" action="update_profile.php">
           <input type="hidden" name="action" value="update_password">
           <div class="mb-3">
+            <label for="current_password" class="form-label">Aktuelles Passwort</label>
+            <input type="password" class="form-control" id="current_password" name="old_password" required>
+          </div>
+          <div class="mb-3">
             <label for="new_password" class="form-label">Neues Passwort</label>
             <input type="password" class="form-control" id="new_password" name="new_password" required>
           </div>

@@ -28,8 +28,13 @@ $profile = DbFunctions::getOrCreateUserProfile($profileUserId);
 
 // Username des Profilbesitzers abrufen
 $profileOwner = DbFunctions::fetchUserById($profileUserId);
-if ($profileOwner && isset($profileOwner['username'])) {
-    $profile['username'] = $profileOwner['username'];
+if ($profileOwner) {
+    if (isset($profileOwner['username'])) {
+        $profile['username'] = $profileOwner['username'];
+    }
+    if (isset($profileOwner['email'])) {
+        $profile['email'] = $profileOwner['email'];
+    }
 }
 
 // Prüfen, ob es das eigene Profil ist
