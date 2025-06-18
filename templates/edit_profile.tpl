@@ -70,25 +70,40 @@
             <textarea class="form-control" name="about_me" rows="4">{$profile.about_me|escape}</textarea>
         </div>
 
-        {* Netzwerke als reine Texteingabe (kein Link) *}
+        {* Social-Media Handles *}
         <div class="mb-3">
             <label for="instagram" class="form-label">Instagram</label>
-            <input type="text" class="form-control" name="instagram" value="{$profile.instagram|escape}">
+            <input type="text" class="form-control" name="instagram" value="{$socials.instagram|default:''|escape}">
         </div>
 
         <div class="mb-3">
             <label for="tiktok" class="form-label">TikTok</label>
-            <input type="text" class="form-control" name="tiktok" value="{$profile.tiktok|escape}">
+            <input type="text" class="form-control" name="tiktok" value="{$socials.tiktok|default:''|escape}">
         </div>
 
         <div class="mb-3">
             <label for="discord" class="form-label">Discord</label>
-            <input type="text" class="form-control" name="discord" value="{$profile.discord|escape}">
+            <input type="text" class="form-control" name="discord" value="{$socials.discord|default:''|escape}">
         </div>
 
         <div class="mb-3">
             <label for="ms_teams" class="form-label">MS Teams</label>
-            <input type="text" class="form-control" name="ms_teams" value="{$profile.ms_teams|escape}">
+            <input type="text" class="form-control" name="ms_teams" value="{$socials.ms_teams|default:''|escape}">
+        </div>
+
+        <div class="mb-3">
+            <label for="twitter" class="form-label">Twitter (X)</label>
+            <input type="text" class="form-control" name="twitter" value="{$socials.twitter|default:''|escape}">
+        </div>
+
+        <div class="mb-3">
+            <label for="linkedin" class="form-label">LinkedIn</label>
+            <input type="text" class="form-control" name="linkedin" value="{$socials.linkedin|default:''|escape}">
+        </div>
+
+        <div class="mb-3">
+            <label for="github" class="form-label">GitHub</label>
+            <input type="text" class="form-control" name="github" value="{$socials.github|default:''|escape}">
         </div>
 
         <button type="submit" class="btn btn-success">Speichern</button>
