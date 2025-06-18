@@ -4,6 +4,13 @@
 
 {block name="content"}
 <div class="container my-5">
+  <h1 class="text-center mb-4">
+    {if $isOwnProfile}
+      Mein Profil
+    {else}
+      Profil von {$profile.username|escape}
+    {/if}
+  </h1>
   <div class="row">
     <div class="col-md-3 text-center mb-4">
       {if $profile.profile_picture}
@@ -13,19 +20,21 @@
       {/if}
     </div>
     <div class="col-md-9">
-      <h2 class="h4">Login-Daten</h2>
-      <div class="mb-3 d-flex justify-content-between align-items-center">
-        <span>Benutzername: {$profile.username|escape}</span>
-        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#usernameModal">Ändern</button>
-      </div>
-      <div class="mb-3 d-flex justify-content-between align-items-center">
-        <span>E-Mail-Adresse: {$profile.email|escape}</span>
-        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#emailModal">Ändern</button>
-      </div>
-      <div class="mb-4 d-flex justify-content-between align-items-center">
-        <span>Passwort: ********</span>
-        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#passwordModal">Ändern</button>
-      </div>
+      {if $isOwnProfile}
+        <h2 class="h4">Login-Daten</h2>
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+          <span>Benutzername: {$profile.username|escape}</span>
+          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#usernameModal">Ändern</button>
+        </div>
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+          <span>E-Mail-Adresse: {$profile.email|escape}</span>
+          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#emailModal">Ändern</button>
+        </div>
+        <div class="mb-4 d-flex justify-content-between align-items-center">
+          <span>Passwort: ********</span>
+          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#passwordModal">Ändern</button>
+        </div>
+      {/if}
 
       <h2 class="h4">Persönliche Angaben</h2>
       <p class="mb-1">Vorname: {$profile.first_name|escape}</p>
@@ -34,17 +43,22 @@
         <label class="form-label">About Me</label>
         <textarea class="form-control" rows="4" readonly>{$profile.about_me|escape}</textarea>
       </div>
-      <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#personalModal">Ändern</button>
+      {if $isOwnProfile}
+        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#personalModal">Ändern</button>
+      {/if}
 
       <h2 class="h4">Social Media</h2>
       <p class="mb-1">Instagram: {$profile.instagram|escape}</p>
       <p class="mb-1">Discord: {$profile.discord|escape}</p>
       <p class="mb-3">MS Teams: {$profile.ms_teams|escape}</p>
-      <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#socialModal">Ändern</button>
+      {if $isOwnProfile}
+        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#socialModal">Ändern</button>
+      {/if}
     </div>
   </div>
 </div>
 
+{if $isOwnProfile}
 <!-- Username Modal -->
 <div class="modal fade" id="usernameModal" tabindex="-1" aria-labelledby="usernameModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -178,5 +192,7 @@
     </div>
   </div>
 </div>
+
+{/if}
 
 {/block}

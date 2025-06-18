@@ -39,7 +39,11 @@ try {
                 throw new RuntimeException('E-Mail-Adresse wird bereits verwendet.');
             }
             DbFunctions::updateEmail($userId, $email);
-            $_SESSION['flash'] = ['type' => 'success', 'message' => 'E-Mail-Adresse aktualisiert.'];
+            DbFunctions::unverifyUser($userId);
+            require_once __DIR__ . '/../includes/verification.inc.php';
+            $user = DbFunctions::fetchUserById($userId);
+            sendVerificationEmail(DbFunctions::db_connect(), $userId, $user['username'], $email);
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'E-Mail-Adresse aktualisiert. Bitte bestätige sie erneut.'];
             break;
 
         case 'update_password':
