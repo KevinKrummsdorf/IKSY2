@@ -11,6 +11,11 @@ git clone https://github.com/KevinKrummsdorf/IKSY2 /var/www/html/iksy05/StudyHub
 cd /var/www/html/iksy05/StudyHub
 composer install
 ```
+
+Nach dem Klonen funktioniert die Anwendung sofort mit einer einfachen
+`.htaccess`-Datei. Diese deaktiviert Pretty URLs und eigene Fehlerseiten,
+damit der Webserver auch ohne besondere Rechte korrekt arbeitet.
+Erweiterte Funktionen können später mit `manager.sh` aktiviert werden.
 ## Repo aktualisieren
   
 Verzeichnis öffnen  
