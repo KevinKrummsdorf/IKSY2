@@ -19,7 +19,7 @@
         <img src="{$base_url}/assets/default_person.png" alt="Kein Profilbild" class="rounded-circle shadow" style="width:150px;height:150px;object-fit:cover;">
       {/if}
       {if $isOwnProfile}
-        <button class="btn btn-sm btn-outline-primary d-block mx-auto mt-2" data-bs-toggle="modal" data-bs-target="#pictureModal">Profilbild ändern</button>
+        <button class="btn btn-sm btn-outline-primary d-block mx-auto mt-2 mb-3" data-bs-toggle="modal" data-bs-target="#pictureModal">Profilbild ändern</button>
       {/if}
     </div>
     <div class="col-md-9">
@@ -27,15 +27,15 @@
         <h2 class="h4">Login-Daten</h2>
         <div class="mb-3 d-flex justify-content-between align-items-center">
           <span>Benutzername: {$profile.username|escape}</span>
-          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#usernameModal">Ändern</button>
+          <button class="btn btn-sm btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#usernameModal">Ändern</button>
         </div>
         <div class="mb-3 d-flex justify-content-between align-items-center">
           <span>E-Mail-Adresse: {$profile.email|escape}</span>
-          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#emailModal">Ändern</button>
+          <button class="btn btn-sm btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#emailModal">Ändern</button>
         </div>
         <div class="mb-4 d-flex justify-content-between align-items-center">
           <span>Passwort: ********</span>
-          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#passwordModal">Ändern</button>
+          <button class="btn btn-sm btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#passwordModal">Ändern</button>
         </div>
       {/if}
 
@@ -84,7 +84,7 @@
           {/if}
       </ul>
       {if $isOwnProfile}
-        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#socialModal">Ändern</button>
+        <button class="btn btn-sm btn-outline-primary mb-3" data-bs-toggle="modal" data-bs-target="#socialModal">Ändern</button>
       {/if}
     </div>
   </div>
