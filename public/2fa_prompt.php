@@ -14,21 +14,10 @@ $userId   = $_SESSION['user_id_pending'] ?? null;
 $role     = $_SESSION['role_pending'] ?? 'user';
 $ip       = getClientIp();
 $maskedIp = maskIp($ip);
-$log = LoggerFactory::get('2fa');
 
-$log->info('2FA start', [
-    'ip'       => $maskedIp,
-    'username' => $username,
-    'user_id'  => $userId,
-]);
 
 if (!$username || !$userId) {
     header('Location: index.php');
-    $log->warning('2FA access without session', [
-        'ip'       => $maskedIp,
-        'username' => $username,
-        'user_id'  => $userId,
-    ]);
     exit;
 }
 
@@ -69,7 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             unset($_SESSION['2fa_user'], $_SESSION['user_id_pending'], $_SESSION['role_pending']);
 
             DbFunctions::insertLoginLog((int)$userId, $maskedIp, true);
-            $log->info('2FA success', ['user' => $username, 'ip' => $maskedIp]);
 
             $_SESSION['flash'] = [
                 'type'    => 'success',
@@ -81,12 +69,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         } else {
             DbFunctions::insertLoginLog((int)$userId, $maskedIp, false, 'wrong_2fa_code');
-            $log->warning('2FA code invalid', ['user' => $username, 'ip' => $maskedIp]);
 
             $smarty->assign('message', 'Falscher Code. Bitte erneut eingeben.');
         }
     } catch (Throwable $e) {
-        $log->error('2FA-Verifizierung fehlgeschlagen', [
             'error' => $e->getMessage()
         ]);
         $smarty->assign('message', 'Fehler beim Verifizieren des 2FA-Codes: ' . $e->getMessage());

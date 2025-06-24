@@ -6,7 +6,6 @@ header('Content-Type: text/html; charset=utf-8');
 
 require_once __DIR__ . '/../includes/config.inc.php';
 
-$log = LoggerFactory::get('login');
 
 try {
     $identifier = trim($_POST['username_or_email'] ?? '');
@@ -22,10 +21,6 @@ try {
     $user = DbFunctions::fetchUserByIdentifier($identifier);
 
     if (!$user) {
-        $log->warning('Login attempt with non-existing user', [
-            'ip'         => $maskedIp,
-            'identifier' => $identifier,
-        ]);
         $_SESSION['flash'] = [
             'type'    => 'danger',
             'message' => 'Benutzer nicht gefunden. Bitte überprüfe Benutzername oder E-Mail.',
@@ -38,10 +33,6 @@ try {
 
     // 2) Konto gesperrt?
     if (DbFunctions::isAccountLocked($userId)) {
-        $log->warning('Login attempt on locked account', [
-            'ip'   => $maskedIp,
-            'user' => $user['username'],
-        ]);
         $_SESSION['flash'] = [
             'type'    => 'danger',
             'message' => 'Dein Account ist vorübergehend gesperrt. Bitte versuche es später erneut.',
@@ -52,10 +43,6 @@ try {
 
     // 3) Verifiziert?
     if ((int)$user['is_verified'] !== 1) {
-        $log->warning('Login attempt with unverified account', [
-            'ip'         => $maskedIp,
-            'identifier' => $identifier,
-        ]);
         $_SESSION['flash'] = [
             'type'    => 'warning',
             'message' => 'Dein Account ist noch nicht verifiziert. Bitte prüfe deine E-Mails.',
@@ -68,10 +55,6 @@ try {
     if (!verifyPassword($password, $user['password_hash'])) {
         DbFunctions::updateFailedAttempts($userId);
 
-        $log->warning('Login attempt with wrong password', [
-            'ip'         => $maskedIp,
-            'identifier' => $identifier,
-        ]);
 
         // Optional: direkt sperren ab X Fehlversuchen (z. B. 5)
         $attempts = DbFunctions::fetchValue('SELECT failed_attempts FROM user_security WHERE user_id = :id', [':id' => $userId]);
@@ -108,10 +91,6 @@ try {
 
     // 7) Login erfolgreich: Zeit und Logs
     DbFunctions::updateLastLogin($userId);
-    $log->info('User logged in successfully', [
-        'ip'         => $maskedIp,
-        'identifier' => $identifier,
-    ]);
 
     // 8) Session setzen
     $_SESSION['user_id']       = $userId;
@@ -137,7 +116,6 @@ try {
     exit;
 
 } catch (Throwable $e) {
-    $log->error('Unerwarteter Fehler bei Login', ['error' => $e->getMessage()]);
     $_SESSION['flash'] = [
         'type'    => 'danger',
         'message' => 'Interner Serverfehler. Bitte versuche es später erneut.',

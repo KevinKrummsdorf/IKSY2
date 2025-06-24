@@ -6,7 +6,6 @@ header('Content-Type: text/html; charset=utf-8');
 require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../src/PasswordController.php';
 
-$log   = LoggerFactory::get('reset_password');
 $token = trim($_GET['token'] ?? '');
 $success = false;
 $message = '';
@@ -24,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         PasswordController::resetPassword($token, $password);
         $success = true;
     } catch (Throwable $e) {
-        $log->error('Passwort zurücksetzen fehlgeschlagen', ['error' => $e->getMessage()]);
         $message = trim($e->getMessage());
     }
 }

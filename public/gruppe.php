@@ -104,8 +104,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
             } catch (Throwable $e) {
-                $log = LoggerFactory::get('gruppe');
-                $log->error('Invite user failed', ['error' => $e->getMessage()]);
                 $error = 'Fehler beim Versenden der Einladung.';
             }
         }

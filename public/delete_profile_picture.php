@@ -4,9 +4,6 @@ declare(strict_types=1);
 session_start();
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../src/ILogger.php';
-require_once __DIR__ . '/../src/MonologLoggerAdapter.php';
-require_once __DIR__ . '/../src/LoggerFactory.php';
 require_once __DIR__ . '/../includes/db.inc.php';
 
 // Zugriff prüfen: POST und gültiger Token
