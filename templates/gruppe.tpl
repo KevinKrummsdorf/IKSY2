@@ -79,10 +79,10 @@
           <span>
             <a href="{$base_url}/download.php?id={$u.id}" download class="btn btn-sm btn-outline-primary{if $myRole === 'admin'} me-2{/if}">Herunterladen</a>
             {if $myRole === 'admin'}
-              <form method="post" class="d-inline" onsubmit="return confirm('Upload wirklich l\xC3\xB6schen?');">
+              <form method="post" class="d-inline" onsubmit="return confirm('Upload wirklich löschen?');">
                 <input type="hidden" name="csrf_token" value="{$csrf_token}">
                 <input type="hidden" name="upload_id" value="{$u.id}">
-                <button type="submit" name="delete_upload" class="btn btn-sm btn-danger">L\xC3\xB6schen</button>
+                <button type="submit" name="delete_upload" class="btn btn-sm btn-danger">Löschen</button>
               </form>
             {/if}
           </span>
