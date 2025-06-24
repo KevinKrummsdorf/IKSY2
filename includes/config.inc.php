@@ -146,9 +146,6 @@ function handle_error(int $code, string $reason = '', string $action = ''): void
         header("Location: $url");
     } else {
         http_response_code($code);
-        if ($reason !== '') {
-            echo htmlspecialchars($reason, ENT_QUOTES, 'UTF-8');
-        }
     }
     exit;
 }
