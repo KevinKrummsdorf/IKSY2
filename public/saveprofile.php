@@ -18,11 +18,26 @@ $keys = ['first_name', 'last_name', 'birthdate', 'location', 'about_me'];
 
 foreach ($keys as $key) {
     $value = $_POST[$key] ?? null;
-    
+
     if ($key === 'birthdate' && trim($value) === '') {
         $data[$key] = null;
     } else {
         $data[$key] = trim($value);
+    }
+}
+
+if (!empty($data['birthdate'])) {
+    try {
+        $birthObj = new DateTime($data['birthdate']);
+        $minDate  = new DateTime('-16 years');
+
+        if ($birthObj > $minDate) {
+            exit('Du musst mindestens 16 Jahre alt sein.');
+        }
+
+        $data['birthdate'] = $birthObj->format('Y-m-d');
+    } catch (Throwable $e) {
+        exit('Ungültiges Geburtsdatum.');
     }
 }
 

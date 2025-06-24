@@ -100,6 +100,7 @@ $smarty->assign('username', $username);
 $smarty->assign('profile', $profile);
 $smarty->assign('socials', $socialEntries);
 $smarty->assign('isOwnProfile', $isOwnProfile);
+$smarty->assign('max_birthdate', (new DateTime('-16 years'))->format('Y-m-d'));
 $smarty->assign('isAdmin', $isAdmin);
 $smarty->assign('pw_success', $pwSuccess);
 $smarty->assign('pw_message', $pwMessage);
