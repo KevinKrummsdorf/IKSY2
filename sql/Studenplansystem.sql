@@ -1,7 +1,7 @@
 -- Tabelle: courses (Kurse)
 CREATE TABLE courses (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    course_name VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL UNIQUE,
     professor VARCHAR(255)
 );
 
@@ -23,7 +23,8 @@ CREATE TABLE time_slots (
 CREATE TABLE user_schedules (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    course_id INT NOT NULL,
+    course_id INT NULL,
+    custom_course_name VARCHAR(255),
     weekday_id TINYINT NOT NULL,
     time_slot_id INT NOT NULL,
     room VARCHAR(50),

@@ -1494,6 +1494,19 @@ public static function getAllCourses(): array
     $stmt = $pdo->query("SELECT name AS value, name AS name FROM courses ORDER BY name ASC");
     return $stmt->fetchAll();
 }
+
+/**
+ * Sucht Kursnamen, die dem Suchbegriff entsprechen.
+ * @param string $query Suchstring
+ * @return string[] Liste der Kursnamen
+ */
+public static function searchCourses(string $query): array
+{
+    $pdo = self::db_connect();
+    $stmt = $pdo->prepare('SELECT name FROM courses WHERE name LIKE ? ORDER BY name LIMIT 10');
+    $stmt->execute([ $query . '%' ]);
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+}
 /* * Holt alle ausstehenden Kursempfehlungen, die noch nicht genehmigt wurden.
  * @return array Liste der ausstehenden Kursempfehlungen
  */
@@ -2794,9 +2807,11 @@ public static function getFilteredLockedUsers(array $filters = []): array
     {
         $pdo = self::db_connect();
         $stmt = $pdo->prepare(
-            'SELECT us.weekday_id, us.time_slot_id, c.name AS subject, us.room
+            'SELECT us.weekday_id, us.time_slot_id,
+                    COALESCE(c.name, us.custom_course_name) AS subject,
+                    us.room
              FROM user_schedules us
-             JOIN courses c ON us.course_id = c.id
+             LEFT JOIN courses c ON us.course_id = c.id
              WHERE us.user_id = ?'
         );
         $stmt->execute([$userId]);
@@ -2827,8 +2842,8 @@ public static function getFilteredLockedUsers(array $filters = []): array
             $pdo->prepare('DELETE FROM user_schedules WHERE user_id = ?')->execute([$userId]);
 
             $stmt = $pdo->prepare('INSERT INTO user_schedules
-                (user_id, course_id, weekday_id, time_slot_id, room)
-                VALUES (?, ?, ?, ?, ?)');
+                (user_id, course_id, custom_course_name, weekday_id, time_slot_id, room)
+                VALUES (?, ?, ?, ?, ?, ?)');
 
             foreach ($schedule as $weekdayId => $slots) {
                 foreach ($slots as $slotId => $entry) {
@@ -2839,8 +2854,12 @@ public static function getFilteredLockedUsers(array $filters = []): array
                         continue; // kein Fach angegeben
                     }
 
-                    $courseId = self::getOrCreateCourseId($subject);
-                    $stmt->execute([$userId, $courseId, $weekdayId, $slotId, $room]);
+                    $courseId = self::lookupCourseId($subject);
+                    $custom   = null;
+                    if ($courseId === null) {
+                        $custom = $subject;
+                    }
+                    $stmt->execute([$userId, $courseId, $custom, $weekdayId, $slotId, $room]);
                 }
             }
 
@@ -2874,6 +2893,18 @@ public static function getFilteredLockedUsers(array $filters = []): array
         $stmt = $pdo->prepare('INSERT INTO courses (name) VALUES (?)');
         $stmt->execute([$courseName]);
         return (int) $pdo->lastInsertId();
+    }
+
+    /**
+     * Gibt die Kurs-ID zurück oder null, falls nicht vorhanden.
+     */
+    private static function lookupCourseId(string $courseName): ?int
+    {
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare('SELECT id FROM courses WHERE name = ?');
+        $stmt->execute([$courseName]);
+        $id = $stmt->fetchColumn();
+        return $id ? (int)$id : null;
     }
 
         /*
