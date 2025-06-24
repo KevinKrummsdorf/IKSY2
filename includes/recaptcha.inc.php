@@ -20,14 +20,6 @@ function recaptcha_get_hidden_field(): string
 }
 
 /**
- * Schreibt einen Logeintrag in das reCAPTCHA-Logfile.
- */
-function recaptcha_write_log(string $line, string $logFile): void
-{
-    file_put_contents($logFile, date('c') . ' ' . $line . "\n", FILE_APPEND);
-}
-
-/**
  * Protokolliert ein reCAPTCHA-Resultat in der Datenbank.
  */
 
@@ -39,22 +31,19 @@ function recaptcha_write_log(string $line, string $logFile): void
  * @param string $secret Dein geheimer Schlüssel
  * @param float $minScore Mindestscore (z.B. 0.5)
  * @param array $validActions Erlaubte Actions wie ['register','login']
- * @param string|null $logFile Optionales Logfile für Debug
  * @return bool true wenn gültig
- */
+*/
 function recaptcha_verify(
     PDO $pdo,
     string $token,
     string $secret,
     float $minScore = 0.5,
-    array $validActions = ['register', 'login', 'contact'],
-    ?string $logFile = null
+    array $validActions = ['register', 'login', 'contact']
 ): bool {
     $errorReason = null;
 
     if (empty($token)) {
         $errorReason = 'no_token';
-        if ($logFile) recaptcha_write_log("[no_token] token='(leer)'", $logFile);
         return false;
     }
 
@@ -66,9 +55,6 @@ function recaptcha_verify(
 
     $resp = json_decode((string)@file_get_contents($url), true) ?: [];
 
-    if ($logFile) {
-        recaptcha_write_log("[API] Response: " . print_r($resp, true), $logFile);
-    }
 
     if (empty($resp['success'])) {
         $errorReason = 'success=false';
@@ -78,14 +64,6 @@ function recaptcha_verify(
         $errorReason = 'wrong_action:' . ($resp['action'] ?? '(none)');
     }
 
-    if ($logFile) {
-        recaptcha_write_log(
-            $errorReason
-                ? "[FAIL] reason={$errorReason}"
-                : "[OK] success, score=" . ($resp['score'] ?? 'null'),
-            $logFile
-        );
-    }
 
     return $errorReason === null;
 }
@@ -102,7 +80,6 @@ function recaptcha_verify_auto(PDO $pdo, string $token): bool
         $token,
         $config['recaptcha']['secret_key'],
         $config['recaptcha']['min_score'],
-        $config['recaptcha']['actions'],
-        $config['recaptcha']['log_file']
+        $config['recaptcha']['actions']
     );
 }

@@ -26,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unlock_user_id'])) {
         try {
             sendMail($user['email'], $user['username'], $subject, $body);
         } catch (Exception $e) {
-            error_log('[Entsperr-Mail] Fehler: ' . $e->getMessage());
         }
     }
 

@@ -12,7 +12,6 @@ if (empty($_SESSION['user_id'])) {
     exit;
 }
 
-$log = LoggerFactory::get('password_change');
 $success = false;
 $message = '';
 
@@ -30,8 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         PasswordController::changePassword((int)$_SESSION['user_id'], $old, $new);
         $success = true;
     } catch (Throwable $e) {
-        $log->error('Passwort ändern fehlgeschlagen', ['error' => $e->getMessage()]);
-        $message = defined('DEBUG') ? $e->getMessage() : 'Fehler beim Ändern des Passworts.';
+                $message = defined('DEBUG') ? $e->getMessage() : 'Fehler beim Ändern des Passworts.';
     }
 }
 

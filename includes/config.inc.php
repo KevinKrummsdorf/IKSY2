@@ -14,12 +14,7 @@ require_once __DIR__ . '/../includes/ip_utils.inc.php';
 require_once __DIR__ . '/../includes/recaptcha.inc.php';
 require_once __DIR__ . '/../includes/mailing.inc.php';
 require_once __DIR__ . '/../includes/group_invites.inc.php';
-require_once __DIR__ . '/../includes/central_logs.inc.php';
 require_once __DIR__ . '/../includes/crypto.inc.php';
-require_once __DIR__ . '/../includes/logger.inc.php';
-require_once __DIR__ . '/../src/ILogger.php';
-require_once __DIR__ . '/../src/MonologLoggerAdapter.php';
-require_once __DIR__ . '/../src/LoggerFactory.php';
 
 // .env laden
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
@@ -43,16 +38,9 @@ try {
         new HiddenString($rawKey)
     );
 } catch (Throwable $e) {
-    error_log('Fehler beim Laden des Halite-Keys: ' . $e->getMessage());
     http_response_code(500);
     exit('Fehlerhafte Schlüsselkonfiguration');
 }
-
-//Logger
-$config['log'] = [
-    'debug'    => true,
-    'log_days' => 30
-];
 
 // Aufbewahrungsdauer für abgelehnte Uploads in Tagen
 $config['uploads'] = [
@@ -92,7 +80,6 @@ $config['recaptcha'] = [
     'secret_key' => $_ENV['RECAPTCHA_SECRET']   ?? '',
     'min_score'  => (float)($_ENV['RECAPTCHA_MIN_SCORE'] ?? 0.5),
     'actions'    => ['contact', 'login', 'register'],
-    'log_file'   => __DIR__ . '/../logs/recaptcha.log',
 ];
 
 

@@ -2,7 +2,6 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.inc.php';
 
-$log = LoggerFactory::get('join_group');
 
 if (empty($_SESSION['user_id'])) {
     $reason = urlencode('Du musst eingeloggt sein, um einer Gruppe beizutreten.');
@@ -48,7 +47,6 @@ try {
     $data['buttonText'] = 'Zur Gruppe';
     $data['buttonLink'] = 'groups/' . rawurlencode($group['name']);
 } catch (Throwable $e) {
-    $log->error('join_group failed', ['error' => $e->getMessage()]);
 }
 
 $smarty->assign($data);

@@ -6,7 +6,6 @@ header('Content-Type: text/html; charset=utf-8');
 require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../src/PasswordController.php';
 
-$log = LoggerFactory::get('request_password_reset');
 $success = false;
 $message = '';
 
@@ -19,8 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         PasswordController::requestReset($identifier);
         $success = true;
     } catch (Throwable $e) {
-        $log->error('Passwort-Reset-Anfrage fehlgeschlagen', ['error' => $e->getMessage()]);
-        $message = defined('DEBUG') ? $e->getMessage() : 'Fehler beim Versenden der E-Mail.';
+                $message = defined('DEBUG') ? $e->getMessage() : 'Fehler beim Versenden der E-Mail.';
     }
 }
 

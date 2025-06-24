@@ -14,7 +14,6 @@ if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-$log     = LoggerFactory::get('upload');
 $error   = '';
 $success = '';
 $warning = '';
@@ -43,7 +42,6 @@ if (isset($_GET['group_id'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])) {
         $error = 'Ungültiger CSRF-Token.';
-        $log->error('CSRF-Token ungültig', ['user_id' => $_SESSION['user_id']]);
     } elseif ($action === 'suggest') {
         $courseSuggestion = trim($_POST['course_suggestion'] ?? '');
         $confirmSimilar   = isset($_POST['confirm_similar']);
@@ -58,16 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 try {
                     DbFunctions::submitCourseSuggestion($courseSuggestion, (int)$_SESSION['user_id']);
-                    $log->info('Kursvorschlag eingereicht', [
-                        'user_id'         => $_SESSION['user_id'],
-                        'course_suggested'=> $courseSuggestion,
-                    ]);
-                    $success = 'Kursvorschlag wurde eingereicht.';
+                                        $success = 'Kursvorschlag wurde eingereicht.';
                     $_POST = [];
                 } catch (Exception $e) {
                     $error = 'Fehler beim Speichern des Kursvorschlags.';
-                    $log->error('Kursvorschlag-Fehler', ['msg' => $e->getMessage()]);
-                }
+                                    }
             }
         }
     } else {
@@ -115,7 +108,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($file['error'] !== UPLOAD_ERR_OK) {
                 $error = 'Fehler beim Datei-Upload.';
-                $log->error('Datei-Upload-Fehler', ['user_id' => $_SESSION['user_id'], 'error' => $file['error']]);
             } elseif (!in_array($mimeType, $allowed, true)) {
                 $error = 'Nur PDF, JPG, PNG, TXT, DOC, DOCX, ODT, PPT und PPTX erlaubt.';
             } elseif ($file['size'] > 10 * 1024 * 1024) {
@@ -124,7 +116,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $uploadDir = __DIR__ . '/../uploads/';
                 if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)) {
                     $error = 'Upload-Verzeichnis konnte nicht erstellt werden.';
-                    $log->error('Upload-Verzeichnis fehlgeschlagen', ['user_id' => $_SESSION['user_id']]);
                 } else {
                     $originalName = basename($file['name']);
                     $safeName     = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $originalName);
@@ -146,8 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             if (rename($tmpPath, $pdfPath)) {
                                 $storedName = $pdfName;
                             } else {
-                                $log->error('PDF konnte nicht verschoben werden', ['user_id' => $_SESSION['user_id']]);
-                            }
+                                                            }
                         } else {
                             try {
                                 $converted = convert_file_to_pdf($tmpPath, $pdfPath);
@@ -155,20 +145,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     unlink($tmpPath);
                                     $storedName = $pdfName;
                                 } else {
-                                    $log->error('PDF-Konvertierung fehlgeschlagen', ['user_id' => $_SESSION['user_id']]);
-                                }
+                                                                    }
                             } catch (Exception $e) {
-                                $log->error('PDF-Konvertierung fehlgeschlagen', ['msg' => $e->getMessage()]);
-                            }
+                                                            }
                         }
                         try {
                             if ($course === '__custom__') {
                                 DbFunctions::submitCourseSuggestion($customCourse, (int)$_SESSION['user_id']);
-                                $log->info('Kursvorschlag eingereicht', [
-                                    'user_id'         => $_SESSION['user_id'],
-                                    'course_suggested'=> $customCourse,
-                                    'stored_name'     => $storedName,
-                                ]);
                                 $success = 'Kursvorschlag wurde eingereicht. Datei wird erst nach Freigabe akzeptiert.';
                             } else {
                                 $courseId   = DbFunctions::getCourseIdByName($course);
@@ -190,23 +173,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                                 DbFunctions::insertUploadLog((int)$_SESSION['user_id'], $uploadId);
 
-                                $log->info('Upload erfolgreich', [
-                                    'user_id'     => $_SESSION['user_id'],
-                                    'upload_id'   => $uploadId,
-                                    'stored_name' => $storedName,
-                                    'material_id' => $materialId,
-                                    'group_id'    => $groupUpload ? $selectedGroupId : null
-                                ]);
-                            }
+                                                            }
 
                             $_POST = [];
                         } catch (Exception $e) {
                             $error = 'Fehler beim Speichern des Uploads.';
-                            $log->error('Upload-Fehler', ['msg' => $e->getMessage()]);
                         }
                     } else {
                         $error = 'Konnte Datei nicht speichern.';
-                        $log->error('Datei konnte nicht gespeichert werden', ['user_id' => $_SESSION['user_id']]);
                     }
                 }
             }

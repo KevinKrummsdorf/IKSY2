@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
 
-$log = LoggerFactory::get('verify');
 
 $token = trim((string)($_GET['token'] ?? ''));
 
@@ -22,11 +21,9 @@ try {
 
     // 1) Hole User- und Token-Daten
     $user = DbFunctions::fetchVerificationUser($token);
-    $log->info('Verifizierungstoken geprüft', ['token' => $token]);
-
+    
     if (!$user) {
-        $log->warning('Verifizierungstoken nicht gefunden', ['token' => $token]);
-        throw new RuntimeException('Token ungültig oder abgelaufen.');
+                throw new RuntimeException('Token ungültig oder abgelaufen.');
     }
 
     // 2) Bereits verifiziert?
@@ -38,12 +35,10 @@ try {
     } else {
         // 3) Verifizieren
         DbFunctions::verifyUser((int)$user['id']);
-        $log->info('Nutzer verifiziert', ['user_id' => $user['id']]);
-
+        
         // 4) Token löschen
         DbFunctions::deleteVerificationToken((int)$user['id']);
-        $log->info('Verifizierungstoken gelöscht', ['user_id' => $user['id']]);
-
+        
         $verifyData['alertType']  = 'success';
         $verifyData['message']    = 'Deine E-Mail wurde erfolgreich verifiziert!';
         $verifyData['buttonText'] = 'Jetzt einloggen';
@@ -51,11 +46,7 @@ try {
     }
 
 } catch (Throwable $e) {
-    $log->error('Verifizierung fehlgeschlagen', [
-        'error' => $e->getMessage(),
-        'token' => $token,
-    ]);
-
+    
     $verifyData['alertType']  = 'danger';
     $verifyData['message']    = 'Ein interner Fehler ist aufgetreten. Bitte später erneut versuchen.';
     $verifyData['buttonText'] = 'Zur Startseite';

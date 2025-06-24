@@ -71,7 +71,6 @@ try {
                            '<p>Viele Grüße,<br>StudyHub-Team</p>';
                 sendMail($user['email'], $user['username'], $subject, $html);
             } catch (Throwable $mailEx) {
-                error_log('Passwort-Change-E-Mail fehlgeschlagen: ' . $mailEx->getMessage());
             }
 
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Passwort erfolgreich geändert.'];

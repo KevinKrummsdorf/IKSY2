@@ -1,25 +1,16 @@
 <?php
 
 declare(strict_types=1);
-    require_once __DIR__ . '/../includes/logger.inc.php';
 
 class DbFunctions
 {
     private static ?PDO $pdo = null;
-    private static ?ILogger $log = null;
     private static array $courseSynonyms = [
         'mathe' => 'mathematik',
         'info'  => 'informatik',
         'iksy2' => 'iksy 2'
     ];
 
-    private static function getLogger(): ILogger
-    {
-        if (self::$log === null) {
-            self::$log = LoggerFactory::get('db');
-        }
-        return self::$log;
-    }
 
     // Gibt die Gruppe zurück, in der der Nutzer Mitglied ist
     public static function fetchGroupByUser(int $userId): ?array
@@ -82,7 +73,6 @@ class DbFunctions
             return $groupId;
         } catch (Exception $e) {
             $pdo->rollBack();
-            self::getLogger()->error('createGroup failed', ['error' => $e->getMessage()]);
             return null;
         }
     }
@@ -239,7 +229,6 @@ class DbFunctions
             return true;
         } catch (Exception $e) {
             $pdo->rollBack();
-            self::getLogger()->error('deleteGroup failed', ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -315,7 +304,6 @@ class DbFunctions
             empty($db['user']) ||
             empty($db['pass'])
         ) {
-            self::getLogger()->error('Fehlende DB-Konfiguration', [
                 'config' => $db,
             ]);
             throw new RuntimeException('Fehlende Datenbank-Konfiguration in $config[\'db\'].');
@@ -338,7 +326,6 @@ class DbFunctions
             self::$pdo = new PDO($dsn, $db['user'], $db['pass'], $options);
             return self::$pdo;
         } catch (PDOException $e) {
-            self::getLogger()->error('DB-Verbindungsfehler', [
                 'dsn' => $dsn,
                 'user' => $db['user'],
                 'error' => $e->getMessage(),
@@ -564,7 +551,6 @@ public static function execute(string $query, array $params = [], bool $expectRe
     $stmt = $pdo->prepare($query);
 
     if (!$stmt->execute($params)) {
-        self::getLogger()->error('Fehler beim Ausführen des Statements', [
             'query'     => $query,
             'params'    => $params,
             'errorInfo' => $stmt->errorInfo(),
@@ -573,7 +559,6 @@ public static function execute(string $query, array $params = [], bool $expectRe
     }
 
     $rowCount = $stmt->rowCount();
-    self::getLogger()->info('Statement erfolgreich', [
         'query'    => $query,
         'params'   => $params,
         'affected' => $rowCount,
@@ -630,7 +615,6 @@ public static function execute(string $query, array $params = [], bool $expectRe
             VALUES
                (:stored_name, :title, :description, :course)
         ';
-        self::getLogger()->info('INSERT Upload', [
             'stored_name' => $storedName,
             'title'       => $title,
             'description' => $description,
@@ -669,7 +653,6 @@ public static function fetchVerificationUser(string $token): ?array
         WHERE vt.verification_token = :token
         LIMIT 1
     ';
-    self::getLogger()->info('Fetch Verification User', [
         'token' => $token,
     ]);
     return self::fetchOne($sql, [':token' => $token]);
@@ -682,7 +665,6 @@ public static function fetchVerificationUser(string $token): ?array
 public static function verifyUser(int $userId): int
 {
     $sql = 'UPDATE user_verification SET is_verified = TRUE WHERE user_id = :id';
-    self::getLogger()->info('Verify User', ['user_id' => $userId]);
     return self::execute($sql, [':id' => $userId], false);
 }
 
@@ -692,7 +674,6 @@ public static function verifyUser(int $userId): int
 public static function unverifyUser(int $userId): int
 {
     $sql = 'UPDATE user_verification SET is_verified = FALSE WHERE user_id = :id';
-    self::getLogger()->info('Unverify User', ['user_id' => $userId]);
     return self::execute($sql, [':id' => $userId], false);
 }
 
@@ -702,7 +683,6 @@ public static function unverifyUser(int $userId): int
     public static function deleteVerificationToken(int $userId): int
     {
         $sql = 'DELETE FROM verification_tokens WHERE user_id = :id';
-        self::getLogger()->info('Delete Verification Token', [
             'user_id' => $userId,
         ]);
         return self::execute($sql, [':id' => $userId], false);
@@ -751,7 +731,6 @@ public static function insertUser(string $username, string $email, string $passw
         INSERT INTO users (username, email, password_hash)
         VALUES (:u, :e, :p)
     ';
-    self::getLogger()->info('INSERT User', [
         'username' => $username,
         'email'    => $email,
         'password' => $passwordHash,
@@ -779,7 +758,6 @@ public static function insertUser(string $username, string $email, string $passw
             INSERT INTO user_roles (user_id, role_id)
             VALUES (:uid, :rid)
         ';
-        self::getLogger()->info('Assign Role', [
             'user_id' => $userId,
             'role_id' => $roleId,
         ]);
@@ -807,10 +785,8 @@ public static function fetchUserByIdentifier(string $input): ?array
         WHERE u.username = :identUser OR u.email = :identEmail
         LIMIT 1
     ';
-    self::getLogger()->info('Fetch User by Identifier', [
         'input' => $input,
     ]);
-    self::getLogger()->info('SQL for fetchUserByIdentifier', ['sql' => $sql]);
 
     return self::fetchOne($sql, [
         ':identUser'  => $input,
@@ -822,7 +798,6 @@ public static function fetchUserByIdentifier(string $input): ?array
     public static function updateLastLogin(int $userId): int
     {
         $sql = 'UPDATE users SET last_login = NOW() WHERE id = :id';
-        self::getLogger()->info('Update Last Login', [
             'user_id' => $userId,
         ]);
         return self::execute($sql, [':id' => $userId], false);
@@ -835,7 +810,6 @@ public static function fetchUserByIdentifier(string $input): ?array
             INSERT INTO login_logs (user_id, ip_address, success, reason)
             VALUES (:uid, :ip, :succ, :reason)
         ';
-        self::getLogger()->info('INSERT Login Log', [
             'user_id' => $userId,
             'ip_address' => $ipAddress,
             'success' => $success,
@@ -860,7 +834,6 @@ public static function storeTwoFASecret(string $username, string $encryptedSecre
         SET twofa_secret = :secret, is_twofa_enabled = 1
         WHERE user_id = :id
     ';
-    self::getLogger()->info('Store 2FA Secret', ['username' => $username]);        
     self::execute($sql, [
         ':secret' => $encryptedSecret,
         ':id'     => $userId,
@@ -878,7 +851,6 @@ public static function getTwoFASecret(string $username): ?string
         JOIN user_2fa u2fa ON u.id = u2fa.user_id
         WHERE u.username = :username AND u2fa.is_twofa_enabled = 1
     ';
-    self::getLogger()->info('Fetch 2FA Secret', ['username' => $username]);
     return self::fetchValue($sql, [':username' => $username]);
 }
 
@@ -893,7 +865,6 @@ public static function isTwoFAEnabled(string $username): bool
         JOIN user_2fa u2fa ON u.id = u2fa.user_id
         WHERE u.username = :username
     ';
-    self::getLogger()->info('Check 2FA Enabled', ['username' => $username]);
     return (bool) self::fetchValue($sql, [':username' => $username]);
 }
 
@@ -908,7 +879,6 @@ public static function disableTwoFA(string $username): void
         SET twofa_secret = NULL, is_twofa_enabled = 0
         WHERE user_id = :id
     ';
-    self::getLogger()->info('Disable 2FA', ['username' => $username]);
     self::execute($sql, [':id' => $userId]);
 }
 
@@ -922,7 +892,6 @@ public static function updateFailedAttempts(int $userId, int $incrementBy = 1): 
         SET failed_attempts = failed_attempts + :inc
         WHERE user_id = :id
     ';
-    self::getLogger()->info('Update Failed Attempts', [
         'user_id' => $userId,
         'increment' => $incrementBy,
     ]);
@@ -943,7 +912,6 @@ public static function lockAccount(int $userId, int $lockMinutes = 15): int
         SET account_locked = 1
         WHERE user_id = :id
     ';
-    self::getLogger()->info('Lock Account', [
         'user_id' => $userId,
         'minutes' => $lockMinutes,
     ]);
@@ -963,7 +931,6 @@ public static function resetFailedAttempts(int $userId): int
         SET failed_attempts = 0, account_locked = 0
         WHERE user_id = :id
     ';
-    self::getLogger()->info('Reset Failed Attempts', [
         'user_id' => $userId,
     ]);
     return self::execute($sql, [':id' => $userId], false);
@@ -993,7 +960,6 @@ public static function unlockAccount(int $userId): int
         SET account_locked = 0, failed_attempts = 0
         WHERE user_id = :user_id
     ';
-    self::getLogger()->info('Unlock Account SQL', [
         'sql' => $sql,
         'params' => ['user_id' => $userId],
     ]);
@@ -1746,7 +1712,6 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
             return $name;
         } catch (Exception $e) {
             $pdo->rollBack();
-            self::getLogger()->error('deleteUpload failed', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
@@ -1804,7 +1769,6 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
             $pdo->commit();
         } catch (Exception $e) {
             $pdo->rollBack();
-            self::getLogger()->error('purgeOldRejectedUploads failed', ['error' => $e->getMessage()]);
             throw $e;
         }
 
@@ -1848,7 +1812,6 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
             return $name;
         } catch (Exception $e) {
             $pdo->rollBack();
-            self::getLogger()->error('deleteGroupUpload failed', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
@@ -2549,7 +2512,6 @@ public static function getFilteredLockedUsers(array $filters = []): array
                 reset_token = VALUES(reset_token),
                 expires_at = VALUES(expires_at)
         ';
-        self::getLogger()->info('Store Password Reset Token', ['user_id' => $userId]);
         self::execute($sql, [
             ':uid'  => $userId,
             ':token'=> $token,
@@ -2569,7 +2531,6 @@ public static function getFilteredLockedUsers(array $filters = []): array
             WHERE pr.reset_token = :token AND pr.expires_at > NOW()
             LIMIT 1
         ';
-        self::getLogger()->info('Fetch Password Reset User', ['token' => $token]);
         return self::fetchOne($sql, [':token' => $token]);
     }
 
@@ -2579,7 +2540,6 @@ public static function getFilteredLockedUsers(array $filters = []): array
     public static function deletePasswordResetToken(int $userId): int
     {
         $sql = 'DELETE FROM password_reset_tokens WHERE user_id = :id';
-        self::getLogger()->info('Delete Password Reset Token', ['user_id' => $userId]);
         return self::execute($sql, [':id' => $userId], false);
     }
 
@@ -2589,7 +2549,6 @@ public static function getFilteredLockedUsers(array $filters = []): array
     public static function updatePassword(int $userId, string $passwordHash): int
     {
         $sql = 'UPDATE users SET password_hash = :pw WHERE id = :id';
-        self::getLogger()->info('Update Password', ['user_id' => $userId]);
         return self::execute($sql, [':pw' => $passwordHash, ':id' => $userId], false);
     }
 
@@ -2599,7 +2558,6 @@ public static function getFilteredLockedUsers(array $filters = []): array
     public static function updateEmail(int $userId, string $email): int
     {
         $sql = 'UPDATE users SET email = :email WHERE id = :id';
-        self::getLogger()->info('Update Email', ['user_id' => $userId]);
         return self::execute($sql, [':email' => $email, ':id' => $userId], false);
     }
 
@@ -2656,7 +2614,6 @@ public static function getFilteredLockedUsers(array $filters = []): array
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
         } catch (PDOException $e) {
-            self::getLogger()->error('Profil-Update fehlgeschlagen', [
                 'error' => $e->getMessage(),
                 'sql'   => $sql,
                 'params'=> $params,
@@ -2685,7 +2642,6 @@ public static function getFilteredLockedUsers(array $filters = []): array
         WHERE u.id = :userId
         LIMIT 1
             ';
-        self::getLogger()->info('Fetch User By ID', ['user_id' => $userId]);
         return self::fetchOne($sql, [':userId' => $userId]);
     }
 
@@ -2864,7 +2820,6 @@ public static function getFilteredLockedUsers(array $filters = []): array
             $pdo->commit();
         } catch (PDOException $e) {
             $pdo->rollBack();
-            self::getLogger()->info('Fehler beim Speichern des Stundenplans', [
                 'user_id' => $userId,
                 'error' => $e->getMessage(),
             ]);

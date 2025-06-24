@@ -39,7 +39,6 @@ function assignUserCalendarToSmarty(PDO $pdo, Smarty $smarty): void
             $endDate
         );
     } catch (Throwable $e) {
-        error_log('Calendar DB error: ' . $e->getMessage());
         $rows = [];
     }
 
@@ -135,7 +134,6 @@ function assignTodayTodosToSmarty(PDO $pdo, Smarty $smarty): void
             $today
         );
     } catch (Throwable $e) {
-        error_log('Calendar DB error: ' . $e->getMessage());
         $todos = [];
     }
 

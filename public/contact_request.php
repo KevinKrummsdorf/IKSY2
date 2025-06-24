@@ -32,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply_contact_id'])) 
                 $_SESSION['flash'] = ['type' => 'success', 'message' => 'Antwort erfolgreich versendet.'];
             } catch (Exception $e) {
                 $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Fehler beim Senden der Antwort.'];
-                error_log('Antwortfehler: ' . $e->getMessage());
             }
         }
     } else {

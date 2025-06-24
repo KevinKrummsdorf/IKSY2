@@ -34,7 +34,6 @@ function decryptData(string $cipherText): HiddenString
     try {
         return HaliteCrypto::decrypt($cipherText, getCryptoKey());
     } catch (Throwable $e) {
-        error_log('Halite decryptData() Fehler: ' . $e->getMessage());
         throw new RuntimeException('Entschlüsselung fehlgeschlagen: ' . $e->getMessage(), 0, $e);
     }
 }

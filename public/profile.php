@@ -69,7 +69,6 @@ if ($isOwnProfile && ($_POST['action'] ?? '') === 'change_password') {
     $old     = $_POST['old_password'] ?? '';
     $new     = $_POST['new_password'] ?? '';
     $confirm = $_POST['new_password_confirm'] ?? '';
-    $log = LoggerFactory::get('password_change');
     try {
         if ($old === '' || $new === '' || $confirm === '') {
             throw new RuntimeException('Fehlende Eingaben');
@@ -80,7 +79,6 @@ if ($isOwnProfile && ($_POST['action'] ?? '') === 'change_password') {
         PasswordController::changePassword($userId, $old, $new);
         $pwSuccess = 'Passwort wurde aktualisiert.';
     } catch (Throwable $e) {
-        $log->error('Passwort ändern fehlgeschlagen', ['error' => $e->getMessage()]);
         $pwMessage = defined('DEBUG') ? $e->getMessage() : 'Fehler beim Ändern des Passworts.';
     }
 }
