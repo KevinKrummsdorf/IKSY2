@@ -601,11 +601,6 @@ public static function execute(string $query, array $params = [], bool $expectRe
             VALUES
                (:stored_name, :title, :description, :course)
         ';
-        return self::execute($sql, [
-            ':stored_name' => $storedName,
-            ':title'       => $title,
-            ':description' => $description,
-            ':course'      => $course,
         ], false);
     }
 
@@ -634,8 +629,6 @@ public static function fetchVerificationUser(string $token): ?array
         WHERE vt.verification_token = :token
         LIMIT 1
     ';
-    return self::fetchOne($sql, [':token' => $token]);
-}
 
 
     /**
@@ -662,8 +655,6 @@ public static function unverifyUser(int $userId): int
     public static function deleteVerificationToken(int $userId): int
     {
         $sql = 'DELETE FROM verification_tokens WHERE user_id = :id';
-
-        return self::execute($sql, [':id' => $userId], false);
     }
 
     //startet eine Transaktion
