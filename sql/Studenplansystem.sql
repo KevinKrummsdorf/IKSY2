@@ -1,7 +1,7 @@
 -- Tabelle: courses (Kurse)
 CREATE TABLE courses (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    course_name VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL UNIQUE,
     professor VARCHAR(255)
 );
 
@@ -23,13 +23,12 @@ CREATE TABLE time_slots (
 CREATE TABLE user_schedules (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    course_id INT NOT NULL,
+    course_name VARCHAR(255) NOT NULL,
     weekday_id TINYINT NOT NULL,
     time_slot_id INT NOT NULL,
     room VARCHAR(50),
     notes TEXT,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
     FOREIGN KEY (weekday_id) REFERENCES weekdays(id),
     FOREIGN KEY (time_slot_id) REFERENCES time_slots(id),
     UNIQUE (user_id, weekday_id, time_slot_id)

@@ -1,0 +1,1 @@
+ALTER TABLE courses CHANGE COLUMN course_name name VARCHAR(255) NOT NULL UNIQUE;

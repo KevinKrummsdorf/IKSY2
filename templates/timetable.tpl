@@ -31,7 +31,8 @@
                                    name="timetable[{$day.id}][{$slot.id}][fach]"
                                    value="{$entry.subject|default:''|escape}"
                                    placeholder="Fach"
-                                   class="timetable-input timetable-input--small" /><br>
+                                   class="timetable-input timetable-input--small subject-input"
+                                   list="course-list" autocomplete="off" /><br>
                             <input type="text"
                                    name="timetable[{$day.id}][{$slot.id}][raum]"
                                    value="{$entry.room|default:''|escape}"
@@ -43,6 +44,8 @@
             {/foreach}
         </tbody>
     </table>
+
+    <datalist id="course-list"></datalist>
 
     <button type="submit" class="submit-button">Speichern</button>
 </form>
@@ -60,6 +63,7 @@
     </a>
 </div>
 
+<script src="{$base_url}/js/timetable-autocomplete.js"></script>
 
 {/block}
 
