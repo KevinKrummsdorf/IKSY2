@@ -77,7 +77,7 @@
                 <div class="btn-group" role="group">
                   <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">Freigeben</button>
                   <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm reject-btn">Ablehnen</button>
-                  <a href="{$base_url}/uploads/{$upload.stored_name|escape}" target="_blank" class="btn btn-outline-secondary btn-sm">Ansehen</a>
+                  <a href='{url file="{$upload.stored_name|escape:'url'}"}' target="_blank" class="btn btn-outline-secondary btn-sm">Ansehen</a>
                 </div>
               </td>
             </tr>

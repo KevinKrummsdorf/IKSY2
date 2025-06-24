@@ -11,7 +11,7 @@
     {* PROFILBILD OBEN + LÖSCHBUTTON *}
     <div class="text-center mb-4">
         {if $profile.profile_picture}
-            <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture|escape}" alt="Profilbild"
+            <img src='{url file="profile_pictures/{$profile.profile_picture|escape:'url'}"}' alt="Profilbild"
                  class="rounded-circle shadow mb-2" style="max-width: 150px; display: block; margin: 0 auto;">
             <div>
                 <form method="post" action="{url path='delete_profile_picture'}" class="d-inline-block mt-2">

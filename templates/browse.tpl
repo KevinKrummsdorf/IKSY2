@@ -77,9 +77,9 @@
                                         {assign var="profile" value=$profiles[$upload.uploaded_by]}
                                         <a href="{url path='profile' user=$profile.username}" class="profile-picture-link position-absolute bottom-0 end-0 m-2">
                                             {if $profile.profile_picture}
-                                                <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture|escape}" 
-                                                     alt="{$profile.first_name|escape} {$profile.last_name|escape}" 
-                                                     class="rounded-circle shadow profile-picture" 
+                                                <img src='{url file="profile_pictures/{$profile.profile_picture|escape:'url'}"}'
+                                                     alt="{$profile.first_name|escape} {$profile.last_name|escape}"
+                                                     class="rounded-circle shadow profile-picture"
                                                      style="width: 40px; height: 40px; object-fit: cover;">
                                             {else}
                                                 <img src="{$base_url}/assets/default_person.png" alt="Kein Profilbild"

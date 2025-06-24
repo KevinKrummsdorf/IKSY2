@@ -14,7 +14,8 @@
   <div class="row">
     <div class="col-md-3 text-center mb-4">
       {if $profile.profile_picture}
-        <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture|escape}" alt="Profilbild" class="rounded-circle shadow" style="width:150px;height:150px;object-fit:cover;">
+        {assign var=pfile value=$profile.profile_picture|escape:'url'}
+        <img src='{url file="profile_pictures/$pfile"}' alt="Profilbild" class="rounded-circle shadow" style="width:150px;height:150px;object-fit:cover;">
       {else}
         <img src="{$base_url}/assets/default_person.png" alt="Kein Profilbild" class="rounded-circle shadow" style="width:150px;height:150px;object-fit:cover;">
       {/if}

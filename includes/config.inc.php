@@ -157,8 +157,18 @@ function build_url(string $path, array $params = []): string
             $path = 'gruppe.php';
             $params = ['name' => $name] + $params;
         }
-    } elseif (!$usePretty && $path === 'profile/my') {
+    }
+    elseif (!$usePretty && $path === 'profile/my') {
         $path = 'profile.php';
+    }
+    elseif (strpos($path, 'uploads/') === 0) {
+        $file = substr($path, strlen('uploads/'));
+        if ($usePretty) {
+            $path = 'uploads/' . $file;
+        } else {
+            $path = 'fetch_upload.php';
+            $params = ['file' => $file] + $params;
+        }
     }
 
     if (!$usePretty && substr($path, -4) !== '.php') {
@@ -179,14 +189,29 @@ function build_url(string $path, array $params = []): string
 // Helper to build links with or without Pretty URLs
 $smarty->registerPlugin('function', 'url', function(array $params) use ($config): string {
     $path = trim($params['path'] ?? '', '/');
-    unset($params['path']);
+    $file = $params['file'] ?? null;
+    unset($params['path'], $params['file']);
 
     $base = $config['base_url'] . '/';
-    if ($path === '') {
+    if ($path === '' && $file === null) {
         return $base;
     }
 
     $usePretty = $config['use_pretty_urls'];
+
+    if ($file !== null) {
+        $file = ltrim($file, '/');
+        if ($usePretty) {
+            $url = $base . 'uploads/' . $file;
+        } else {
+            $url = $base . 'fetch_upload.php';
+            $params = ['file' => $file] + $params;
+        }
+        if (!empty($params)) {
+            $url .= '?' . http_build_query($params);
+        }
+        return $url;
+    }
 
     // Profile links with username parameter
     if ($path === 'profile' && isset($params['user'])) {

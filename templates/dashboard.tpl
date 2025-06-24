@@ -31,7 +31,7 @@
                   <div class="pdf-slide">
                   <a href="{url path='view_pdf' file=$u.stored_name}" target="_blank" class="pdf-link">
                       {if $u.type == 'image'}
-                        <img src="{$base_url}/uploads/{$u.stored_name|escape:'url'}" alt="{$u.title|escape}" class="img-fluid mb-2" style="max-height:160px;">
+                        <img src='{url file="{$u.stored_name|escape:'url'}"}' alt="{$u.title|escape}" class="img-fluid mb-2" style="max-height:160px;">
                       {else}
                         <span class="material-symbols-outlined">picture_as_pdf</span>
                       {/if}
