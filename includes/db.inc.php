@@ -304,8 +304,6 @@ class DbFunctions
             empty($db['user']) ||
             empty($db['pass'])
         ) {
-                'config' => $db,
-            ]);
             throw new RuntimeException('Fehlende Datenbank-Konfiguration in $config[\'db\'].');
         }
 
@@ -326,11 +324,6 @@ class DbFunctions
             self::$pdo = new PDO($dsn, $db['user'], $db['pass'], $options);
             return self::$pdo;
         } catch (PDOException $e) {
-                'dsn' => $dsn,
-                'user' => $db['user'],
-                'error' => $e->getMessage(),
-            ]);
-
             http_response_code(500);
             echo json_encode([
                 'success' => false,
