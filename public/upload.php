@@ -6,7 +6,7 @@ require_once __DIR__ . '/../includes/pdf_utils.inc.php';
 
 if (empty($_SESSION['user_id'])) {
     $reason = urlencode("Du musst eingeloggt sein, um Dateien hochladen zu können.");
-    header("Location: /studyhub/error/403?reason={$reason}&action=both");
+    header("Location: {$config['base_url']}/error.php?code=403&reason={$reason}&action=both");
     exit;
 }
 

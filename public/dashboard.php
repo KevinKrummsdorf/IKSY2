@@ -14,7 +14,7 @@ if (
     $_SESSION['2fa_passed'] !== true
 ) {
     $reason = urlencode("Du musst vollständig eingeloggt sein, um das Dashboard zu nutzen.");
-    header("Location: /studyhub/error/403?reason={$reason}&action=both");
+    header("Location: {$config['base_url']}/error.php?code=403&reason={$reason}&action=both");
     exit;
 }
 

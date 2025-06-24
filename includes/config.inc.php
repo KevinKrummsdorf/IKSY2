@@ -67,6 +67,7 @@ $config['uploads'] = [
 $config['app_name']  = $_ENV['APP_NAME'] ?? 'StudyHub';
 $config['base_url'] = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 $config['site_url'] = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $config['base_url'];
+$config['use_pretty_urls'] = file_exists(__DIR__ . '/../config/pretty_urls_enabled');
 
 
 //DB
@@ -114,6 +115,7 @@ $smarty->setConfigDir(__DIR__ . '/../configs/');
 // Globale Smarty-Variablen
 $smarty->assign('base_url',   $config['base_url']);
 $smarty->assign('app_name',   $config['app_name']);
+$smarty->assign('use_pretty_urls', $config['use_pretty_urls']);
 $smarty->assign('recaptcha_site_key', $config['recaptcha']['site_key']);
 $smarty->assign('isLoggedIn', isset($_SESSION['user_id']));
 $smarty->assign('username',   $_SESSION['username'] ?? null);

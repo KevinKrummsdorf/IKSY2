@@ -6,7 +6,7 @@ $log = LoggerFactory::get('join_group');
 
 if (empty($_SESSION['user_id'])) {
     $reason = urlencode('Du musst eingeloggt sein, um einer Gruppe beizutreten.');
-    header("Location: /studyhub/error/403?reason={$reason}&action=both");
+    header("Location: {$config['base_url']}/error.php?code=403&reason={$reason}&action=both");
     exit;
 }
 

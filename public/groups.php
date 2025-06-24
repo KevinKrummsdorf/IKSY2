@@ -5,7 +5,7 @@ require_once __DIR__ . '/../includes/config.inc.php';
 // Login-Schutz
 if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
     $reason = urlencode("Du musst eingeloggt sein, um deine Gruppen zu sehen.");
-    header("Location: /studyhub/error/403?reason={$reason}&action=both");    exit;
+    header("Location: {$config['base_url']}/error.php?code=403&reason={$reason}&action=both");    exit;
 }
 
 if (empty($_SESSION['csrf_token'])) {
