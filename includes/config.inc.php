@@ -122,6 +122,60 @@ $smarty->assign('username',   $_SESSION['username'] ?? null);
 $smarty->assign('user_role', $_SESSION['role'] ?? 'guest');
 $smarty->assign('isAdmin', ($_SESSION['role'] ?? '') === 'admin');
 
+/**
+ * Build an application URL that respects Pretty URL settings.
+ */
+function build_url(string $path, array $params = []): string
+{
+    global $config;
+
+    $path = trim($path, '/');
+    $base = $config['base_url'] . '/';
+    if ($path === '') {
+        return $base;
+    }
+
+    $usePretty = $config['use_pretty_urls'];
+
+    if ($path === 'profile' && isset($params['user'])) {
+        $user = rawurlencode($params['user']);
+        unset($params['user']);
+
+        if ($usePretty) {
+            $path = "profile/{$user}";
+        } else {
+            $path = 'profile.php';
+            $params = ['user' => $user] + $params;
+        }
+    } elseif ($path === 'groups' && isset($params['name'])) {
+        $name = rawurlencode($params['name']);
+        unset($params['name']);
+
+        if ($usePretty) {
+            $path = "groups/{$name}";
+        } else {
+            $path = 'gruppe.php';
+            $params = ['name' => $name] + $params;
+        }
+    } elseif (!$usePretty && $path === 'profile/my') {
+        $path = 'profile.php';
+    }
+
+    if (!$usePretty && substr($path, -4) !== '.php') {
+        $segments = explode('/', $path, 2);
+        if (substr($segments[0], -4) !== '.php') {
+            $segments[0] .= '.php';
+        }
+        $path = implode('/', $segments);
+    }
+
+    $url = $base . $path;
+    if (!empty($params)) {
+        $url .= '?' . http_build_query($params);
+    }
+    return $url;
+}
+
 // Helper to build links with or without Pretty URLs
 $smarty->registerPlugin('function', 'url', function(array $params) use ($config): string {
     $path = trim($params['path'] ?? '', '/');
