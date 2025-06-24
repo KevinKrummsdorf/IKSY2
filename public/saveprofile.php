@@ -58,7 +58,12 @@ if (!empty($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ==
     // Einige PHP-Konfigurationen melden PNGs als image/x-png
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/x-png'];
     if ($mimeType && !in_array($mimeType, $allowedTypes, true)) {
-        exit('❌ Ungültiger Bildtyp.');
+        $_SESSION['flash'] = [
+            'type'    => 'danger',
+            'message' => 'Ungültiger Bildtyp.'
+        ];
+        header('Location: edit_profile.php');
+        exit;
     }
     
     // Zielverzeichnis und Dateiname
@@ -73,7 +78,12 @@ if (!empty($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ==
     if (!move_uploaded_file($tmpName, $targetPath)) {
         // Fallback falls PHP das Tmpfile nicht als Upload erkennt
         if (!rename($tmpName, $targetPath)) {
-            exit('❌ Fehler beim Hochladen des Bildes.');
+            $_SESSION['flash'] = [
+                'type'    => 'danger',
+                'message' => 'Fehler beim Hochladen des Bildes.'
+            ];
+            header('Location: edit_profile.php');
+            exit;
         }
     }
 

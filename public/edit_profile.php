@@ -35,6 +35,12 @@ $smarty->assign('profile', $profile);
 $smarty->assign('email', $email);
 $smarty->assign('socials', $socials);
 
+// Flash Message anzeigen
+if (isset($_SESSION['flash'])) {
+    $smarty->assign('flash', $_SESSION['flash']);
+    unset($_SESSION['flash']);
+}
+
 // Template anzeigen
 $smarty->display('edit_profile.tpl');
 
