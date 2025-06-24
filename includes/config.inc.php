@@ -9,6 +9,21 @@ use ParagonIE\HiddenString\HiddenString;
 
 // Autoloading und DB-Initialisierung
 require_once __DIR__ . '/../vendor/autoload.php';
+
+// Ensure writable directories exist
+$dirs = [
+    __DIR__ . '/../uploads',
+    __DIR__ . '/../cache',
+    __DIR__ . '/../templates_c',
+    __DIR__ . '/../logs',
+    __DIR__ . '/../stats',
+];
+foreach ($dirs as $d) {
+    if (!is_dir($d)) {
+        mkdir($d, 0775, true);
+    }
+}
+
 require_once __DIR__ . '/../includes/db.inc.php';
 require_once __DIR__ . '/../includes/ip_utils.inc.php';
 require_once __DIR__ . '/../includes/recaptcha.inc.php';
