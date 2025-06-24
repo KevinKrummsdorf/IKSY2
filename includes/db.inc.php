@@ -1784,8 +1784,10 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
         }
 
         return $deleted;
+    }
 
-* Löscht einen Upload einer Lerngruppe durch einen Administrator.
+    /*
+    * Löscht einen Upload einer Lerngruppe durch einen Administrator.
      * Gibt den Dateinamen zurück oder null, wenn nichts gelöscht wurde.
      */
     public static function deleteGroupUpload(int $uploadId, int $groupId, int $adminId): ?string
