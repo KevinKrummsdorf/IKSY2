@@ -18,6 +18,9 @@
       {else}
         <img src="{$base_url}/assets/default_person.png" alt="Kein Profilbild" class="rounded-circle shadow" style="width:150px;height:150px;object-fit:cover;">
       {/if}
+      {if $isOwnProfile}
+        <button class="btn btn-sm btn-outline-primary mt-2" data-bs-toggle="modal" data-bs-target="#pictureModal">Profilbild ändern</button>
+      {/if}
     </div>
     <div class="col-md-9">
       {if $isOwnProfile}
@@ -88,6 +91,27 @@
 </div>
 
 {if $isOwnProfile}
+<!-- Profile Picture Modal -->
+<div class="modal fade" id="pictureModal" tabindex="-1" aria-labelledby="pictureModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="pictureModalLabel">Profilbild ändern</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="update_profile.php" enctype="multipart/form-data">
+          <input type="hidden" name="action" value="update_picture">
+          <div class="mb-3">
+            <label for="profile_picture" class="form-label">Neues Profilbild</label>
+            <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Speichern</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- Username Modal -->
 <div class="modal fade" id="usernameModal" tabindex="-1" aria-labelledby="usernameModalLabel" aria-hidden="true">
   <div class="modal-dialog">
