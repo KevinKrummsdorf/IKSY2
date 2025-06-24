@@ -699,10 +699,6 @@ public static function insertUser(string $username, string $email, string $passw
         INSERT INTO users (username, email, password_hash)
         VALUES (:u, :e, :p)
     ';
-    self::execute($sql, [
-        ':u' => $username,
-        ':e' => $email,
-        ':p' => $passwordHash,
     ], false);
 
     $userId = (int)self::lastInsertId();
@@ -722,9 +718,6 @@ public static function insertUser(string $username, string $email, string $passw
             INSERT INTO user_roles (user_id, role_id)
             VALUES (:uid, :rid)
         ';
-        return self::execute($sql, [
-            ':uid' => $userId,
-            ':rid' => $roleId,
         ], false);
     }
 
@@ -757,8 +750,6 @@ public static function fetchUserByIdentifier(string $input): ?array
     public static function updateLastLogin(int $userId): int
     {
         $sql = 'UPDATE users SET last_login = NOW() WHERE id = :id';
-        return self::execute($sql, [':id' => $userId], false);
-    }
 
     //INSERT für die Login-Logs
     public static function insertLoginLog(?int $userId, string $ipAddress, bool $success, ?string $reason = null): int
@@ -767,11 +758,6 @@ public static function fetchUserByIdentifier(string $input): ?array
             INSERT INTO login_logs (user_id, ip_address, success, reason)
             VALUES (:uid, :ip, :succ, :reason)
         ';
-        return self::execute($sql, [
-            ':uid'    => $userId,
-            ':ip'     => $ipAddress,
-            ':succ'   => $success ? 1 : 0,
-            ':reason' => $reason,
         ], false);
     }
 
@@ -844,9 +830,6 @@ public static function updateFailedAttempts(int $userId, int $incrementBy = 1): 
         SET failed_attempts = failed_attempts + :inc
         WHERE user_id = :id
     ';
-    return self::execute($sql, [
-        ':inc' => $incrementBy,
-        ':id'  => $userId,
     ], false);
 }
 
@@ -861,9 +844,6 @@ public static function lockAccount(int $userId, int $lockMinutes = 15): int
         SET account_locked = 1
         WHERE user_id = :id
     ';
-    return self::execute($sql, [
-        ':mins' => $lockMinutes,
-        ':id'   => $userId,
     ], false);
 }
 
@@ -877,8 +857,6 @@ public static function resetFailedAttempts(int $userId): int
         SET failed_attempts = 0, account_locked = 0
         WHERE user_id = :id
     ';
-
-    return self::execute($sql, [':id' => $userId], false);
 }
 
     /**
@@ -905,9 +883,6 @@ public static function unlockAccount(int $userId): int
         SET account_locked = 0, failed_attempts = 0
         WHERE user_id = :user_id
     ';
-
-
-    return self::execute($sql, [':user_id' => $userId]);
 }
 
 
@@ -2567,10 +2542,6 @@ public static function getFilteredLockedUsers(array $filters = []): array
      */
     public static function fetchUserById(int $userId): ?array
     {
-        $sql = '
-        SELECT
-            u.id,
-            u.username,
             u.email,
             u.password_hash,
             uv.is_verified,
@@ -2772,9 +2743,6 @@ public static function getFilteredLockedUsers(array $filters = []): array
      * @return array[] Liste aus [platform => string, username => string]
      */
     public static function getUserSocialMedia(int $userId): array
-    {
-        $sql = 'SELECT platform, username FROM social_media WHERE user_id = :uid';
-        return self::execute($sql, [':uid' => $userId], true);
     }
 
 
