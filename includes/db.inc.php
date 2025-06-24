@@ -606,12 +606,6 @@ public static function execute(string $query, array $params = [], bool $expectRe
     /**
      * INSERT für Upload-Logs
      */
-public static function insertUploadLog(int $actedBy, int $uploadId): void
-{
-    self::logUploadAction($uploadId, 'upload', $actedBy, 'Neuer Upload eingereicht');
-}
-
-
 
 
 
@@ -739,8 +733,6 @@ public static function fetchUserByIdentifier(string $input): ?array
         WHERE u.username = :identUser OR u.email = :identEmail
         LIMIT 1
     ';
-
-    return self::fetchOne($sql, [
         ':identUser'  => $input,
         ':identEmail' => $input,
     ]);
@@ -751,20 +743,6 @@ public static function fetchUserByIdentifier(string $input): ?array
     {
         $sql = 'UPDATE users SET last_login = NOW() WHERE id = :id';
 
-    //INSERT für die Login-Logs
-    public static function insertLoginLog(?int $userId, string $ipAddress, bool $success, ?string $reason = null): int
-    {
-        $sql = '
-            INSERT INTO login_logs (user_id, ip_address, success, reason)
-            VALUES (:uid, :ip, :succ, :reason)
-        ';
-        ], false);
-    }
-
-        /**
-     * Speichert ein verschlüsseltes 2FA-Secret und aktiviert 2FA für den Benutzer.
-     */
-public static function storeTwoFASecret(string $username, string $encryptedSecret): void
 {
     $userId = self::fetchValue('SELECT id FROM users WHERE username = :u', [':u' => $username]);
     $sql = '
@@ -896,63 +874,6 @@ public static function fetchLoginLogs(bool $isAdmin, int $limit = 50): array
     }
 
     $sql = '
-        SELECT
-            ll.user_id,
-            u.username,
-            ll.ip_address,
-            ll.success,
-            ll.reason,
-            ll.created_at
-        FROM login_logs AS ll
-        LEFT JOIN users AS u ON ll.user_id = u.id
-        ORDER BY ll.created_at DESC
-        LIMIT :limit
-    ';
-
-    $stmt = self::db_connect()->prepare($sql);
-    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-/**
- * Holt die letzten Captcha-Logs (admin-only)
- * Gibt ein Array mit Captcha-Log-Einträgen zurück.
- */
-public static function fetchCaptchaLogs(bool $isAdmin, int $limit = 50): array
-{
-    if (!$isAdmin) {
-        return [];
-    }
-
-    $sql = '
-        SELECT
-            id,
-            token,
-            success,
-            score,
-            action,
-            hostname,
-            error_reason,
-            created_at
-        FROM captcha_log
-        ORDER BY created_at DESC
-        LIMIT :limit
-    ';
-
-    $stmt = self::db_connect()->prepare($sql);
-    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-/**
- * Holt alle gesperrten Benutzer (admin-only)
- * Gibt ein Array mit Benutzerinformationen zurück.
- */
-public static function fetchLockedUsers(bool $isAdmin, int $limit = 50): array
-{
-    if (!$isAdmin) {
-        return [];
-    }
 
     $sql = '
         SELECT u.id, u.username, u.email, us.failed_attempts
@@ -1007,67 +928,6 @@ public static function deleteContactRequest(string $contactId): void
 public static function countLoginLogs(): int
 {
     $stmt = self::db_connect()->prepare('SELECT COUNT(*) FROM login_logs');
-    $stmt->execute();
-    return (int)$stmt->fetchColumn();
-}
-/* * Holt eine Seite von Login-Logs mit Paginierung.
- * @param int $limit Anzahl der Einträge pro Seite
- * @param int $offset Offset für die Paginierung
- * @param bool $isAdmin Ist der Benutzer ein Administrator?
- * @return array Liste der Login-Logs
- */
-public static function getLoginLogsPage(int $limit, int $offset, bool $isAdmin): array
-{
-    if (!$isAdmin) {
-        return [];
-    }
-
-    $stmt = self::db_connect()->prepare('
-        SELECT ll.user_id, u.username, ll.ip_address, ll.success, ll.reason, ll.created_at
-        FROM login_logs AS ll
-        LEFT JOIN users AS u ON ll.user_id = u.id
-        ORDER BY ll.created_at DESC
-        LIMIT :limit OFFSET :offset
-    ');
-    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-    $stmt->execute();
-
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-/* * Zählt die Anzahl der Captcha-Logs.
- * Gibt die Gesamtanzahl der Captcha-Logs zurück.
- */
-public static function countCaptchaLogs(): int
-{
-    $stmt = self::db_connect()->prepare('SELECT COUNT(*) FROM captcha_log');
-    $stmt->execute();
-    return (int)$stmt->fetchColumn();
-}
-/* * Holt eine Seite von Captcha-Logs mit Paginierung.
- * @param int $limit Anzahl der Einträge pro Seite
- * @param int $offset Offset für die Paginierung
- * @return array Liste der Captcha-Logs
- */
-public static function getCaptchaLogsPage(int $limit, int $offset): array
-{
-    $stmt = self::db_connect()->prepare('
-        SELECT id, token, success, score, action, hostname, error_reason, created_at
-        FROM captcha_log
-        ORDER BY created_at DESC
-        LIMIT :limit OFFSET :offset
-    ');
-    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-/* * Zählt die Anzahl der Kontaktanfragen.
- * Gibt die Gesamtanzahl der Kontaktanfragen zurück.
- */
-public static function countContactRequests(): int
-{
-    $stmt = self::db_connect()->prepare('SELECT COUNT(*) FROM contact_requests');
     $stmt->execute();
     return (int)$stmt->fetchColumn();
 }
@@ -1235,91 +1095,6 @@ public static function approveUpload(int $uploadId, int $adminId): bool
     * Protokolliert eine Aktion für einen Upload.
     * $uploadId: ID des Uploads
     * $action: Art der Aktion (z.B. 'approved', 'rejected')
-    * $actedBy: ID des Benutzers, der die Aktion ausgeführt hat
-    * $note: Optionaler Kommentar zur Aktion
-*/
-public static function logUploadAction(int $uploadId, string $action, int $actedBy, ?string $note = null): void
-{
-    $pdo = self::db_connect();
-
-    $stmt = $pdo->prepare("
-        INSERT INTO upload_logs (upload_id, action, acted_by, note)
-        VALUES (?, ?, ?, ?)
-    ");
-    $stmt->execute([$uploadId, $action, $actedBy, $note]);
-}
-
-/**
- * Holt eine Seite von Upload-Logs mit Paginierung.
- * @param int $limit Anzahl der Einträge pro Seite
- * @param int $offset Offset für die Paginierung
- * @param bool $isAdmin Ist der Benutzer ein Administrator?
- * @param bool $isMod Ist der Benutzer ein Moderator?
- * @return array Liste der Upload-Logs
- */
-public static function getUploadLogsPage(int $limit, int $offset, bool $isAdmin, bool $isMod): array
-{
-    $pdo = self::db_connect();
-
-    $stmt = $pdo->prepare("
-        SELECT ul.id AS log_id, ul.upload_id, ul.action, ul.action_time, ul.note,
-               u.stored_name, m.title, c.name AS course_name,
-               us.username AS acted_by_user
-        FROM upload_logs ul
-        JOIN uploads u ON ul.upload_id = u.id
-        JOIN materials m ON u.material_id = m.id
-        JOIN courses c ON m.course_id = c.id
-        LEFT JOIN users us ON ul.acted_by = us.id
-        ORDER BY ul.action_time DESC
-        LIMIT ? OFFSET ?
-    ");
-    $stmt->execute([$limit, $offset]);
-
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-/**
- * Zählt die Gesamtanzahl der Upload-Logs.
- * @return int Anzahl der Upload-Logs
- */
-public static function countUploadLogs(): int
-{
-    $pdo = self::db_connect();
-    return (int)$pdo->query("SELECT COUNT(*) FROM upload_logs")->fetchColumn();
-}
-/*
- * Lehnt einen Upload ab und protokolliert die Aktion.
- * Gibt true zurück, wenn erfolgreich.
- */
-public static function rejectUpload(int $uploadId, int $modId, ?string $note = null): bool
-{
-    if ($note === null || trim($note) === '') {
-        throw new InvalidArgumentException('Ablehnungsgrund erforderlich');
-    }
-
-    $pdo = self::db_connect();
-
-    // Upload als abgelehnt markieren
-    $stmt = $pdo->prepare("UPDATE uploads SET is_rejected = 1 WHERE id = ?");
-    $stmt->execute([$uploadId]);
-
-    // Logeintrag
-    self::logUploadAction($uploadId, 'rejected', $modId, $note ?? 'Upload abgelehnt');
-
-    return true;
-}
-
-
-/**
- * Holt alle ausstehenden Uploads, die noch nicht genehmigt oder abgelehnt wurden.
- * @return array Liste der ausstehenden Uploads
- */
-public static function getPendingUploads(): array
-{
-    $pdo = self::db_connect();
-
-    $stmt = $pdo->query("
-        SELECT u.*, us.username, m.title, m.description, c.name AS course_name
         FROM uploads u
         LEFT JOIN users us ON u.uploaded_by = us.id
         LEFT JOIN materials m ON u.material_id = m.id
@@ -1422,46 +1197,6 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
 
     if (!empty($filters['user_id'])) {
         $sql .= " AND user_id = ?";
-        $params[] = (int)$filters['user_id'];
-    }
-
-    if (!empty($filters['filename'])) {
-        $sql .= " AND stored_name LIKE ?";
-        $params[] = '%' . $filters['filename'] . '%';
-    }
-
-    if (!empty($filters['from_date'])) {
-        $sql .= " AND created_at >= ?";
-        $params[] = $filters['from_date'] . ' 00:00:00';
-    }
-
-    if (!empty($filters['to_date'])) {
-        $sql .= " AND created_at <= ?";
-        $params[] = $filters['to_date'] . ' 23:59:59';
-    }
-
-    $sql .= " ORDER BY created_at DESC";
-
-    if ($limit !== null && $offset !== null) {
-        $sql .= " LIMIT ? OFFSET ?";
-        $params[] = $limit;
-        $params[] = $offset;
-    }
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-
-    return $stmt->fetchAll();
-}
-
-    /**
-     * Holt alle genehmigten Uploads eines Benutzers.
-     *
-     * @param int $userId ID des Benutzers
-     * @return array Liste der Uploads mit Material- und Kursinformationen
-     */
-    public static function getApprovedUploadsByUser(int $userId): array
-    {
         $pdo = self::db_connect();
 
         $stmt = $pdo->prepare(
@@ -1623,7 +1358,6 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
             $check = $pdo->prepare('SELECT COUNT(*) FROM uploads WHERE material_id = ?');
             $check->execute([$materialId]);
             if ((int)$check->fetchColumn() === 0) {
-                $pdo->prepare('DELETE FROM materials WHERE id = ?')->execute([$materialId]);
             }
 
             $pdo->commit();
@@ -1676,7 +1410,6 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
                 }
 
                 $check = $pdo->prepare('SELECT COUNT(*) FROM uploads WHERE material_id = ?');
-                $check->execute([$materialId]);
                 if ((int)$check->fetchColumn() === 0) {
                     $pdo->prepare('DELETE FROM materials WHERE id = ?')->execute([$materialId]);
                 }
@@ -1714,9 +1447,6 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
 
             $name = $row['stored_name'];
             $materialId = (int)$row['material_id'];
-
-            self::logUploadAction($uploadId, 'deleted', $adminId, 'Upload gelöscht (admin)');
-
             $del = $pdo->prepare('DELETE FROM uploads WHERE id = ? AND group_id = ?');
             $del->execute([$uploadId, $groupId]);
 
@@ -1733,43 +1463,6 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
             throw $e;
         }
     }
-/**
- * Zählt die Anzahl der Upload-Logs mit erweiterten Filtermöglichkeiten.
- * @param array $filters Filterkriterien
- * @return int Anzahl der gefilterten Upload-Logs
- */
-public static function countFilteredUploadLogs(array $filters): int
-{
-    $pdo = self::db_connect();
-
-    $sql = "SELECT COUNT(*) FROM upload_logs WHERE 1=1";
-    $params = [];
-
-    if (!empty($filters['user_id'])) {
-        $sql .= " AND user_id = ?";
-        $params[] = (int)$filters['user_id'];
-    }
-
-    if (!empty($filters['filename'])) {
-        $sql .= " AND stored_name LIKE ?";
-        $params[] = '%' . $filters['filename'] . '%';
-    }
-
-    if (!empty($filters['from_date'])) {
-        $sql .= " AND created_at >= ?";
-        $params[] = $filters['from_date'] . ' 00:00:00';
-    }
-
-    if (!empty($filters['to_date'])) {
-        $sql .= " AND created_at <= ?";
-        $params[] = $filters['to_date'] . ' 23:59:59';
-    }
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-
-    return (int)$stmt->fetchColumn();
-}
 /* * Holt die ID eines Kurses anhand seines Namens.
  * Gibt die Kurs-ID zurück oder wirft eine Ausnahme, wenn der Kurs nicht gefunden wird.
  */
@@ -1863,318 +1556,7 @@ public static function countExtendedUploadLogs(array $filters = []): int
         SELECT COUNT(*)
         FROM upload_logs ul
         LEFT JOIN uploads up ON ul.upload_id = up.id
-        LEFT JOIN materials m ON up.material_id = m.id
-        LEFT JOIN courses c ON m.course_id = c.id
-        WHERE 1=1
-    ";
-
-    $params = [];
-
-    if (!empty($filters['user_id'])) {
-        $sql .= " AND ul.acted_by = ?";
-        $params[] = (int)$filters['user_id'];
-    }
-
-    if (!empty($filters['filename'])) {
-        $sql .= " AND up.stored_name LIKE ?";
-        $params[] = '%' . $filters['filename'] . '%';
-    }
-
-    if (!empty($filters['from_date'])) {
-        $sql .= " AND ul.action_time >= ?";
-        $params[] = $filters['from_date'] . ' 00:00:00';
-    }
-
-    if (!empty($filters['to_date'])) {
-        $sql .= " AND ul.action_time <= ?";
-        $params[] = $filters['to_date'] . ' 23:59:59';
-    }
-
-    if (!empty($filters['course_name'])) {
-        $sql .= " AND c.name LIKE ?";
-        $params[] = '%' . $filters['course_name'] . '%';
-    }
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-
-    return (int)$stmt->fetchColumn();
-}
-
-/**
- * Holt die erweiterten Upload-Logs mit Filter- und Paginierungsoptionen.
- * @param array $filters Filterkriterien
- * @param int|null $limit Anzahl der Einträge pro Seite
- * @param int|null $offset Offset für die Paginierung
- * @return array Liste der erweiterten Upload-Logs
  */
-public static function getExtendedUploadLogs(array $filters = [], ?int $limit = null, ?int $offset = null): array
-{
-    $pdo = self::db_connect();
-
-$sql = "
-    SELECT 
-        ul.id AS log_id,
-        ul.upload_id,
-        ul.action,
-        ul.acted_by,
-        ul.note,
-        ul.action_time,
-        up.stored_name,
-        u.username,
-        c.name AS course_name
-    FROM upload_logs ul
-    LEFT JOIN uploads up ON ul.upload_id = up.id
-    LEFT JOIN users u ON ul.acted_by = u.id
-    LEFT JOIN materials m ON up.material_id = m.id
-    LEFT JOIN courses c ON m.course_id = c.id
-    WHERE 1=1
-";
-
-    $params = [];
-
-    if (!empty($filters['user_id'])) {
-        $sql .= " AND ul.acted_by = ?";
-        $params[] = (int)$filters['user_id'];
-    }
-
-    if (!empty($filters['filename'])) {
-        $sql .= " AND up.stored_name LIKE ?";
-        $params[] = '%' . $filters['filename'] . '%';
-    }
-
-    if (!empty($filters['from_date'])) {
-        $sql .= " AND ul.action_time >= ?";
-        $params[] = $filters['from_date'] . ' 00:00:00';
-    }
-
-    if (!empty($filters['to_date'])) {
-        $sql .= " AND ul.action_time <= ?";
-        $params[] = $filters['to_date'] . ' 23:59:59';
-    }
-
-    if (!empty($filters['course_name'])) {
-        $sql .= " AND c.name LIKE ?";
-        $params[] = '%' . $filters['course_name'] . '%';
-    }
-
-    $sql .= " ORDER BY ul.action_time DESC";
-
-    if ($limit !== null && $offset !== null) {
-        $sql .= " LIMIT ? OFFSET ?";
-        $params[] = $limit;
-        $params[] = $offset;
-    }
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-
-    return $stmt->fetchAll();
-}
-
-/**
- * Zählt die Login-Logs basierend auf den angegebenen Filtern.
- * @param array $filters Filterkriterien
- * @return int Anzahl der Login-Logs
- */
-public static function countFilteredLoginLogs(array $filters = []): int
-{
-    $pdo = self::db_connect();
-
-    $sql = "SELECT COUNT(*) FROM login_logs ll WHERE 1=1";
-    $params = [];
-
-    if (!empty($filters['user_id'])) {
-        $sql .= " AND ll.user_id = ?";
-        $params[] = (int)$filters['user_id'];
-    }
-
-    if (!empty($filters['ip_address'])) {
-        $sql .= " AND ll.ip_address LIKE ?";
-        $params[] = '%' . $filters['ip_address'] . '%';
-    }
-
-    if (!empty($filters['from_date'])) {
-        $sql .= " AND ll.created_at >= ?";
-        $params[] = $filters['from_date'] . ' 00:00:00';
-    }
-
-    if (!empty($filters['to_date'])) {
-        $sql .= " AND ll.created_at <= ?";
-        $params[] = $filters['to_date'] . ' 23:59:59';
-    }
-
-    if (isset($filters['success']) && $filters['success'] !== '') {
-        $sql .= " AND ll.success = ?";
-        $params[] = (int)$filters['success'];
-    }
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-
-    return (int)$stmt->fetchColumn();
-}
-/**
- * Holt die Login-Logs basierend auf den angegebenen Filtern und Paginierung.
- * @param array $filters Filterkriterien
- * @param int|null $limit Anzahl der Einträge pro Seite
- * @param int|null $offset Offset für die Paginierung
- * @return array Liste der Login-Logs
- */
-public static function getFilteredLoginLogs(array $filters = [], ?int $limit = null, ?int $offset = null): array
-{
-    $pdo = self::db_connect();
-
-    $sql = "
-        SELECT ll.*, u.username
-        FROM login_logs ll
-        LEFT JOIN users u ON ll.user_id = u.id
-        WHERE 1=1
-    ";
-
-    $params = [];
-
-    if (!empty($filters['user_id'])) {
-        $sql .= " AND ll.user_id = ?";
-        $params[] = (int)$filters['user_id'];
-    }
-
-    if (!empty($filters['ip_address'])) {
-        $sql .= " AND ll.ip_address LIKE ?";
-        $params[] = '%' . $filters['ip_address'] . '%';
-    }
-
-    if (!empty($filters['from_date'])) {
-        $sql .= " AND ll.created_at >= ?";
-        $params[] = $filters['from_date'] . ' 00:00:00';
-    }
-
-    if (!empty($filters['to_date'])) {
-        $sql .= " AND ll.created_at <= ?";
-        $params[] = $filters['to_date'] . ' 23:59:59';
-    }
-
-    if (isset($filters['success']) && $filters['success'] !== '') {
-        $sql .= " AND ll.success = ?";
-        $params[] = (int)$filters['success'];
-    }
-
-    $sql .= " ORDER BY ll.created_at DESC";
-
-    if ($limit !== null && $offset !== null) {
-        $sql .= " LIMIT ? OFFSET ?";
-        $params[] = $limit;
-        $params[] = $offset;
-    }
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-
-    return $stmt->fetchAll();
-}
-/**
- * Zählt die Anzahl der Captcha-Logs basierend auf den angegebenen Filtern.
- * @param array $filters Filterkriterien
- * @return int Anzahl der Captcha-Logs
- */
-public static function countFilteredCaptchaLogs(array $filters = []): int
-{
-    $pdo = self::db_connect();
-    $sql = "SELECT COUNT(*) FROM captcha_log WHERE 1=1";
-    $params = [];
-
-    if ($filters['success'] !== '') {
-        $sql .= " AND success = ?";
-        $params[] = (int)$filters['success'];
-    }
-    if ($filters['action'] !== '') {
-        $sql .= " AND action LIKE ?";
-        $params[] = '%' . $filters['action'] . '%';
-    }
-    if ($filters['hostname'] !== '') {
-        $sql .= " AND hostname LIKE ?";
-        $params[] = '%' . $filters['hostname'] . '%';
-    }
-    if ($filters['score_min'] !== '') {
-        $sql .= " AND score >= ?";
-        $params[] = (float)$filters['score_min'];
-    }
-    if ($filters['score_max'] !== '') {
-        $sql .= " AND score <= ?";
-        $params[] = (float)$filters['score_max'];
-    }
-    if ($filters['from_date'] !== '') {
-        $sql .= " AND created_at >= ?";
-        $params[] = $filters['from_date'] . ' 00:00:00';
-    }
-    if ($filters['to_date'] !== '') {
-        $sql .= " AND created_at <= ?";
-        $params[] = $filters['to_date'] . ' 23:59:59';
-    }
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-    return (int)$stmt->fetchColumn();
-}
-/**
- * Holt die Captcha-Logs basierend auf den angegebenen Filtern und Paginierung.
- * @param array $filters Filterkriterien
- * @param int|null $limit Anzahl der Einträge pro Seite
- * @param int|null $offset Offset für die Paginierung
- * @param bool $includeToken Soll das Token-Feld einbezogen werden?
- * @return array Liste der Captcha-Logs
- */
-public static function getFilteredCaptchaLogs(array $filters = [], ?int $limit = null, ?int $offset = null, bool $includeToken = false): array
-{
-    $pdo = self::db_connect();
-
-    $columns = $includeToken
-        ? "token, success, score, action, hostname, error_reason, created_at"
-        : "success, score, action, hostname, error_reason, created_at";
-
-    $sql = "SELECT {$columns} FROM captcha_log WHERE 1=1";
-    $params = [];
-
-    if ($filters['success'] !== '') {
-        $sql .= " AND success = ?";
-        $params[] = (int)$filters['success'];
-    }
-    if ($filters['action'] !== '') {
-        $sql .= " AND action LIKE ?";
-        $params[] = '%' . $filters['action'] . '%';
-    }
-    if ($filters['hostname'] !== '') {
-        $sql .= " AND hostname LIKE ?";
-        $params[] = '%' . $filters['hostname'] . '%';
-    }
-    if ($filters['score_min'] !== '') {
-        $sql .= " AND score >= ?";
-        $params[] = (float)$filters['score_min'];
-    }
-    if ($filters['score_max'] !== '') {
-        $sql .= " AND score <= ?";
-        $params[] = (float)$filters['score_max'];
-    }
-    if ($filters['from_date'] !== '') {
-        $sql .= " AND created_at >= ?";
-        $params[] = $filters['from_date'] . ' 00:00:00';
-    }
-    if ($filters['to_date'] !== '') {
-        $sql .= " AND created_at <= ?";
-        $params[] = $filters['to_date'] . ' 23:59:59';
-    }
-
-    $sql .= " ORDER BY created_at DESC";
-
-    if ($limit !== null && $offset !== null) {
-        $sql .= " LIMIT ? OFFSET ?";
-        $params[] = $limit;
-        $params[] = $offset;
-    }
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-    return $stmt->fetchAll();
 }
 /*
  * Holt die Kontaktanfragen basierend auf den angegebenen Filtern.

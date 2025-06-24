@@ -171,7 +171,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     $success  = 'Datei erfolgreich hochgeladen und wartet auf Freigabe.';
                                 }
 
-                                DbFunctions::insertUploadLog((int)$_SESSION['user_id'], $uploadId);
 
                                                             }
 

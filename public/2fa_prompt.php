@@ -56,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             unset($_SESSION['2fa_user'], $_SESSION['user_id_pending'], $_SESSION['role_pending']);
 
-            DbFunctions::insertLoginLog((int)$userId, $maskedIp, true);
 
             $_SESSION['flash'] = [
                 'type'    => 'success',
@@ -67,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: dashboard');
             exit;
         } else {
-            DbFunctions::insertLoginLog((int)$userId, $maskedIp, false, 'wrong_2fa_code');
 
             $smarty->assign('message', 'Falscher Code. Bitte erneut eingeben.');
         }
