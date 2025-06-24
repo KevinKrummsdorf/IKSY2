@@ -661,3 +661,161 @@ body {
   color: #aaa;
 }
 
+/* Stundenplan (Timetable) */
+
+.timetable-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.timetable-table th,
+.timetable-table td {
+    padding: 12px 10px;
+    text-align: center;
+    vertical-align: top;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: background 0.3s ease;
+}
+
+.timetable-table th {
+    background: rgba(240, 240, 240, 0.8);
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.timetable-table td:first-child,
+.timetable-table th:first-child {
+    background-color: rgba(240, 240, 240, 0.1);
+    font-weight: bold;
+    color: var(--text-color);
+    border-right: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+.timetable-table td:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.timetable-table tr td:last-child,
+.timetable-table tr th:last-child {
+    border-right: none;
+}
+
+.timetable-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Darkmode Farben für Tabellen */
+[data-bs-theme="dark"] .timetable-table {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-bs-theme="dark"] .timetable-table th {
+    background: rgba(40, 40, 40, 0.8);
+    color: var(--text-color);
+}
+
+[data-bs-theme="dark"] .timetable-table td:first-child,
+[data-bs-theme="dark"] .timetable-table th:first-child {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-bs-theme="dark"] .timetable-table td:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Eingabefelder */
+.timetable-input {
+    width: 100%;
+    font-size: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    text-align: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
+}
+
+.timetable-input--small {
+    font-size: 14px;
+    padding: 6px 8px;
+    margin-bottom: 4px;
+}
+
+/* Platzhalterfarbe für hellen Modus */
+input.timetable-input::placeholder,
+input.timetable-input::-webkit-input-placeholder,
+input.timetable-input::-moz-placeholder,
+input.timetable-input:-ms-input-placeholder {
+  color: #1a1a1a !important;
+  font-style: italic;
+}
+
+/* Dark Mode Anpassungen */
+@media (prefers-color-scheme: dark) {
+  input.timetable-input {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    color: #fff !important;
+  }
+  input.timetable-input::placeholder,
+  input.timetable-input::-webkit-input-placeholder,
+  input.timetable-input::-moz-placeholder,
+  input.timetable-input:-ms-input-placeholder {
+    color: #fff !important;
+  }
+}
+
+.timetable-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.25);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+}
+
+/* Speichern-Button */
+.submit-button {
+    margin-top: 20px;
+    display: block;
+    width: 200px;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    background: var(--primary-color);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    margin-left: auto;
+    margin-right: auto;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.submit-button:hover {
+    background: var(--primary-hover-color);
+    box-shadow: 0 6px 14px rgba(0, 86, 179, 0.4);
+}
+
+/* Erfolgsnachricht */
+.timetable-success-message {
+    text-align: center;
+    color: var(--valid-color);
+    font-weight: bold;
+}
+
+/* Überschrift */
+.timetable-heading {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
