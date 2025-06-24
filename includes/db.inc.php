@@ -1568,6 +1568,119 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
     }
 
     /**
+     * Holt alle Uploads eines Benutzers mit optionalen Filtern und Paginierung.
+     * Gibt auch den Freigabestatus zurück.
+     */
+    public static function getFilteredUploadsByUser(int $userId, array $filters = [], ?int $limit = null, ?int $offset = null): array
+    {
+        $pdo = self::db_connect();
+
+        $sql = "
+            SELECT u.id, u.stored_name, u.uploaded_at,
+                   u.is_approved, u.is_rejected,
+                   m.title, c.name AS course_name,
+                   (
+                     SELECT ul.note
+                     FROM upload_logs ul
+                     WHERE ul.upload_id = u.id
+                       AND ul.action = 'rejected'
+                     ORDER BY ul.action_time DESC
+                     LIMIT 1
+                   ) AS rejection_note
+            FROM uploads u
+            JOIN materials m ON u.material_id = m.id
+            JOIN courses c ON m.course_id = c.id
+            WHERE u.uploaded_by = ?";
+
+        $params = [$userId];
+
+        if (!empty($filters['title'])) {
+            $sql .= " AND m.title LIKE ?";
+            $params[] = '%' . $filters['title'] . '%';
+        }
+
+        if (!empty($filters['filename'])) {
+            $sql .= " AND u.stored_name LIKE ?";
+            $params[] = '%' . $filters['filename'] . '%';
+        }
+
+        if (!empty($filters['course_name'])) {
+            $sql .= " AND c.name LIKE ?";
+            $params[] = '%' . $filters['course_name'] . '%';
+        }
+
+        if (!empty($filters['from_date'])) {
+            $sql .= " AND u.uploaded_at >= ?";
+            $params[] = $filters['from_date'] . ' 00:00:00';
+        }
+
+        if (!empty($filters['to_date'])) {
+            $sql .= " AND u.uploaded_at <= ?";
+            $params[] = $filters['to_date'] . ' 23:59:59';
+        }
+
+        $sql .= " ORDER BY u.uploaded_at ASC";
+
+        if ($limit !== null && $offset !== null) {
+            $sql .= " LIMIT ? OFFSET ?";
+            $params[] = $limit;
+            $params[] = $offset;
+        }
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Zählt alle Uploads eines Benutzers unter Berücksichtigung optionaler Filter.
+     */
+    public static function countFilteredUploadsByUser(int $userId, array $filters = []): int
+    {
+        $pdo = self::db_connect();
+
+        $sql = "
+            SELECT COUNT(*)
+            FROM uploads u
+            JOIN materials m ON u.material_id = m.id
+            JOIN courses c ON m.course_id = c.id
+            WHERE u.uploaded_by = ?";
+
+        $params = [$userId];
+
+        if (!empty($filters['title'])) {
+            $sql .= " AND m.title LIKE ?";
+            $params[] = '%' . $filters['title'] . '%';
+        }
+
+        if (!empty($filters['filename'])) {
+            $sql .= " AND u.stored_name LIKE ?";
+            $params[] = '%' . $filters['filename'] . '%';
+        }
+
+        if (!empty($filters['course_name'])) {
+            $sql .= " AND c.name LIKE ?";
+            $params[] = '%' . $filters['course_name'] . '%';
+        }
+
+        if (!empty($filters['from_date'])) {
+            $sql .= " AND u.uploaded_at >= ?";
+            $params[] = $filters['from_date'] . ' 00:00:00';
+        }
+
+        if (!empty($filters['to_date'])) {
+            $sql .= " AND u.uploaded_at <= ?";
+            $params[] = $filters['to_date'] . ' 23:59:59';
+        }
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    /**
      * Löscht einen Upload des angegebenen Nutzers und gibt den Dateinamen
      * zurück. Gibt null zurück, wenn der Upload nicht gefunden wurde.
      */
@@ -1609,6 +1722,66 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
             self::getLogger()->error('deleteUpload failed', ['error' => $e->getMessage()]);
             throw $e;
         }
+    }
+
+    /**
+     * Entfernt abgelehnte Uploads, deren Ablehnung älter ist als die angegebene Anzahl Tage.
+     * Gibt die Anzahl der gelöschten Uploads zurück.
+     */
+    public static function purgeOldRejectedUploads(int $days = 30): int
+    {
+        $pdo = self::db_connect();
+
+        $sql = "
+            SELECT u.id, u.stored_name, u.material_id
+            FROM uploads u
+            JOIN (
+                SELECT upload_id, MAX(action_time) AS reject_time
+                FROM upload_logs
+                WHERE action = 'rejected'
+                GROUP BY upload_id
+            ) r ON u.id = r.upload_id
+            WHERE u.is_rejected = 1
+              AND r.reject_time < DATE_SUB(NOW(), INTERVAL ? DAY)";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$days]);
+        $oldUploads = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $deleted = 0;
+
+        $pdo->beginTransaction();
+        try {
+            foreach ($oldUploads as $row) {
+                $uploadId   = (int)$row['id'];
+                $materialId = (int)$row['material_id'];
+                $name       = $row['stored_name'];
+
+                self::logUploadAction($uploadId, 'deleted', 0, 'Automatisch entfernt');
+                $pdo->prepare('DELETE FROM uploads WHERE id = ?')->execute([$uploadId]);
+
+                $file = __DIR__ . '/../uploads/' . $name;
+                if (is_file($file)) {
+                    @unlink($file);
+                }
+
+                $check = $pdo->prepare('SELECT COUNT(*) FROM uploads WHERE material_id = ?');
+                $check->execute([$materialId]);
+                if ((int)$check->fetchColumn() === 0) {
+                    $pdo->prepare('DELETE FROM materials WHERE id = ?')->execute([$materialId]);
+                }
+
+                $deleted++;
+            }
+
+            $pdo->commit();
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            self::getLogger()->error('purgeOldRejectedUploads failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
+
+        return $deleted;
     }
 /**
  * Zählt die Anzahl der Upload-Logs mit erweiterten Filtermöglichkeiten.
@@ -2544,5 +2717,38 @@ public static function getFilteredLockedUsers(array $filters = []): array
             $insert = $pdo->prepare('INSERT INTO social_media (user_id, platform, username) VALUES (:uid, :platform, :uname)');
             $insert->execute([':uid' => $userId, ':platform' => $platform, ':uname' => $username]);
         }
+    }
+
+    /**
+     * Liefert Vorschläge für die Suchfelder auf der Seite "Meine Uploads".
+     *
+     * @param int $userId Die ID des Nutzers
+     * @return array{titles: string[], filenames: string[], course_names: string[]}
+     */
+    public static function getUserUploadSuggestions(int $userId): array
+    {
+        $pdo = self::db_connect();
+
+        $titleStmt = $pdo->prepare(
+            'SELECT DISTINCT m.title FROM uploads u JOIN materials m ON u.material_id = m.id WHERE u.uploaded_by = ?'
+        );
+        $titleStmt->execute([$userId]);
+        $titles = $titleStmt->fetchAll(PDO::FETCH_COLUMN);
+
+        $fileStmt = $pdo->prepare('SELECT DISTINCT stored_name FROM uploads WHERE uploaded_by = ?');
+        $fileStmt->execute([$userId]);
+        $filenames = $fileStmt->fetchAll(PDO::FETCH_COLUMN);
+
+        $courseStmt = $pdo->prepare(
+            'SELECT DISTINCT c.name FROM uploads u JOIN materials m ON u.material_id = m.id JOIN courses c ON m.course_id = c.id WHERE u.uploaded_by = ?'
+        );
+        $courseStmt->execute([$userId]);
+        $courses = $courseStmt->fetchAll(PDO::FETCH_COLUMN);
+
+        return [
+            'titles'       => $titles,
+            'filenames'    => $filenames,
+            'course_names' => $courses,
+        ];
     }
 }

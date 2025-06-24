@@ -54,6 +54,11 @@ $config['log'] = [
     'log_days' => 30
 ];
 
+// Aufbewahrungsdauer für abgelehnte Uploads in Tagen
+$config['uploads'] = [
+    'rejected_retention_days' => 30
+];
+
 $config['app_name']  = $_ENV['APP_NAME'] ?? 'StudyHub';
 $config['base_url'] = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 $config['site_url'] = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $config['base_url'];
