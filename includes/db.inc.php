@@ -5,7 +5,13 @@ declare(strict_types=1);
 
 class DbFunctions
 {
-    private static ?PDO $pdo = null;    private static ?ILogger $log = null;
+    private static ?PDO $pdo = null;
+    private static ?ILogger $log = null;
+    private static array $courseSynonyms = [
+        'mathe' => 'mathematik',
+        'info'  => 'informatik',
+        'iksy2' => 'iksy 2'
+    ];
 
     private static function getLogger(): ILogger
     {
@@ -1907,6 +1913,45 @@ public static function submitCourseSuggestion(string $courseName, int $userId): 
     $stmt = $pdo->prepare("INSERT INTO pending_course_suggestions (course_name, user_id) VALUES (?, ?)");
     $stmt->execute([$courseName, $userId]);
 }
+
+    /**
+     * Normalisiert einen Kursnamen für Vergleichszwecke.
+     */
+    private static function canonicalCourseName(string $name): string
+    {
+        $norm = strtolower(preg_replace('/\s+/', '', $name));
+        if (isset(self::$courseSynonyms[$norm])) {
+            $norm = strtolower(preg_replace('/\s+/', '', self::$courseSynonyms[$norm]));
+        }
+        return $norm;
+    }
+
+    /**
+     * Prüft, ob ein ähnlicher Kurs bereits existiert.
+     * Gibt den gefundenen Kursnamen zurück oder null.
+     */
+    public static function findSimilarCourse(string $courseName): ?string
+    {
+        $pdo = self::db_connect();
+        $stmt = $pdo->query('SELECT name FROM courses');
+        $courses = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $target = self::canonicalCourseName($courseName);
+
+        foreach ($courses as $c) {
+            $norm = self::canonicalCourseName($c);
+            if ($target === $norm) {
+                return $c;
+            }
+            if (levenshtein($target, $norm) <= 2) {
+                return $c;
+            }
+            if (soundex($target) === soundex($norm)) {
+                return $c;
+            }
+        }
+
+        return null;
+    }
 /* * Zählt die Anzahl der Einträge in der Tabelle upload_logs
  * mit erweiterten Filtermöglichkeiten.
  */
