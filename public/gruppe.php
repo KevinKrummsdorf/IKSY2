@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-    // Upload l\xC3\xB6schen (nur Admin)
+    // Upload löschen (nur Admin)
     elseif (isset($_POST['delete_upload']) && $myRole === 'admin') {
         $uId = (int)($_POST['upload_id'] ?? 0);
         if ($uId > 0) {
@@ -113,12 +113,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if (is_file($file)) {
                         unlink($file);
                     }
-                    $success = 'Upload gel\xC3\xB6scht.';
+                    $success = 'Upload gelöscht.';
                 } else {
                     $error = 'Upload nicht gefunden.';
                 }
             } catch (Exception $e) {
-                $error = 'Fehler beim L\xC3\xB6schen des Uploads.';
+                $error = 'Fehler beim Löschen des Uploads.';
             }
         }
     }

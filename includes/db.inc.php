@@ -249,7 +249,7 @@ class DbFunctions
     }
 
     /**
-     * Erstellt eine neue Einladung f\xC3\xBCr eine Lerngruppe.
+     * Erstellt eine neue Einladung für eine Lerngruppe.
      */
     public static function createGroupInvite(int $groupId, int $userId, string $token, int $expiresHours = 48): bool
     {
@@ -1612,8 +1612,8 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
     }
 
     /**
-     * L\xC3\xB6scht einen Upload einer Lerngruppe durch einen Administrator.
-     * Gibt den Dateinamen zur\xC3\xBCck oder null, wenn nichts gel\xC3\xB6scht wurde.
+     * Löscht einen Upload einer Lerngruppe durch einen Administrator.
+     * Gibt den Dateinamen zurück oder null, wenn nichts gelöscht wurde.
      */
     public static function deleteGroupUpload(int $uploadId, int $groupId, int $adminId): ?string
     {
@@ -1633,7 +1633,7 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
             $name = $row['stored_name'];
             $materialId = (int)$row['material_id'];
 
-            self::logUploadAction($uploadId, 'deleted', $adminId, 'Upload gel\xC3\xB6scht (admin)');
+            self::logUploadAction($uploadId, 'deleted', $adminId, 'Upload gelöscht (admin)');
 
             $del = $pdo->prepare('DELETE FROM uploads WHERE id = ? AND group_id = ?');
             $del->execute([$uploadId, $groupId]);
