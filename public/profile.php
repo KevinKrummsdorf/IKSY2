@@ -22,6 +22,11 @@ $profileUserId = $userId;
 // Fremdprofil über GET laden
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $profileUserId = (int) $_GET['id'];
+} elseif (isset($_GET['user'])) {
+    $other = DbFunctions::fetchUserByIdentifier($_GET['user']);
+    if ($other) {
+        $profileUserId = (int)$other['id'];
+    }
 }
 
 // Profil abrufen

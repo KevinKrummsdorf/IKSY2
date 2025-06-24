@@ -75,7 +75,7 @@
                                     {* Profilbild anzeigen *}
                                     {if isset($profiles[$upload.uploaded_by])}
                                         {assign var="profile" value=$profiles[$upload.uploaded_by]}
-                                        <a href="profile?id={$profile.user_id|escape}" class="profile-picture-link position-absolute bottom-0 end-0 m-2">
+                                        <a href="profile/{$profile.username|escape:'url'}" class="profile-picture-link position-absolute bottom-0 end-0 m-2">
                                             {if $profile.profile_picture}
                                                 <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture|escape}" 
                                                      alt="{$profile.first_name|escape} {$profile.last_name|escape}" 

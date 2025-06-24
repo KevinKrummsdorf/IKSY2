@@ -15,7 +15,7 @@
         <ul class="list-group">
             {foreach from=$results item=foundUser}
   <li class="list-group-item">
-    <a href="profile?id={$foundUser.id|escape:'html'}">
+    <a href="profile/{$foundUser.result_username|escape:'url'}">
       {$foundUser.result_username|escape:'html'}
     </a>
   </li>

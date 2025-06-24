@@ -14,6 +14,11 @@ RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
+# Spezialregeln für Profile und Gruppen
+RewriteRule ^profile/my$ profile.php [QSA,L]
+RewriteRule ^profile/([^/]+)/?$ profile.php?user=$1 [QSA,L]
+RewriteRule ^groups/([^/]+)/?$ gruppe.php?name=$1 [QSA,L]
+
 # PHP-Dateien ohne Endung
 RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^(.+)$ $1.php [QSA,L]

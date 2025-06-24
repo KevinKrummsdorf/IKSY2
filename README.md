@@ -92,6 +92,12 @@ chmod +x studyhub-manager.sh
 4. Aktualisiert die Apache-Konfiguration (z. B. virtuelle Hosts)
 5. Startet den Apache-Webserver neu
 
+Nach der Installation sind wichtige Bereiche unter diesen Pfaden erreichbar:
+- Eigenes Profil: `/profile/my`
+- Profil eines anderen Nutzers: `/profile/<username>`
+- Gruppen: `/groups/<gruppenname>`
+- Dashboard: `/dashboard`
+
 **Nach der Ausführung ist der Webserver korrekt für die Nutzung benutzerdefinierter Fehlerseiten konfiguriert.**
 
 ## Funktion testen

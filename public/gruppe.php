@@ -13,7 +13,15 @@ if (empty($_SESSION['csrf_token'])) {
 }
 
 $userId  = (int)$_SESSION['user_id'];
-$groupId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$groupId = 0;
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $groupId = (int)$_GET['id'];
+} elseif (isset($_GET['name'])) {
+    $grp = DbFunctions::fetchGroupByName($_GET['name']);
+    if ($grp) {
+        $groupId = (int)$grp['id'];
+    }
+}
 $error   = '';
 $success = '';
 
@@ -55,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Löschen (nur Admin)
     elseif (isset($_POST['delete_group']) && $myRole === 'admin') {
         if (DbFunctions::deleteGroup($groupId)) {
-            header('Location: lerngruppen.php?deleted=1');
+            header('Location: lerngruppen?deleted=1');
             exit;
         }
         $error = 'Konnte Gruppe nicht löschen.';

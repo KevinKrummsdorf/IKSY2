@@ -19,7 +19,7 @@
     {foreach $groups as $g}
       <li class="list-group-item d-flex justify-content-between align-items-center">
         {$g.name|escape}
-        <a href="{$base_url}/gruppe?id={$g.id}" class="btn btn-sm btn-outline-primary">Ansehen</a>
+        <a href="{$base_url}/groups/{$g.name|escape:'url'}" class="btn btn-sm btn-outline-primary">Ansehen</a>
       </li>
     {/foreach}
   </ul>

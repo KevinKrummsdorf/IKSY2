@@ -60,7 +60,7 @@
 
 <div class="menu d-none d-md-block">
   <ul class="menu-content mt-4">
-    <li><a href="{$base_url}/profile"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
+    <li><a href="{$base_url}/profile/my"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
     <li><a href="{$base_url}/search_profile"><span class="material-symbols-outlined">person_search</span><span>Andere Mitglieder finden</span></a></li>
     <li><a href="{$base_url}/lerngruppen"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
     <li><a href="{$base_url}/groups"><span class="material-symbols-outlined">groups</span><span>Alle Lerngruppen</span></a></li>
@@ -82,7 +82,7 @@
   </div>
   <div class="offcanvas-body">
     <ul class="menu-content">
-      <li><a href="{$base_url}/profile"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
+      <li><a href="{$base_url}/profile/my"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
       <li><a href="{$base_url}/search_profile"><span class="material-symbols-outlined">person_search</span><span>Andere Mitglieder finden</span></a></li>
       <li><a href="{$base_url}/lerngruppen"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
       <li><a href="{$base_url}/groups"><span class="material-symbols-outlined">groups</span><span>Alle Lerngruppen</span></a></li>

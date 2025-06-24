@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
 
             session_write_close();
-            header('Location: dashboard.php');
+            header('Location: dashboard');
             exit;
         } else {
             DbFunctions::insertLoginLog((int)$userId, $maskedIp, false, 'wrong_2fa_code');
