@@ -25,6 +25,13 @@ Abhängigkeiten aktualisieren
 ```
 composer update
 ```  
+## Datenbank aktualisieren
+Nach dem Update müssen ggf. neue SQL-Skripte eingespielt werden.
+Führen Sie insbesondere folgende Befehle aus:
+```
+mysql studyhub < sql/alter_courses_rename_name.sql
+mysql studyhub < sql/alter_user_schedules_custom_course.sql
+```
 ## Access Key erzeugen
 1. Bei github einloggen
 2. Rechts oben auf das Profilbild klicken und dann Settings
