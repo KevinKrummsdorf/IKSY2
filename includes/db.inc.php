@@ -128,7 +128,9 @@ class DbFunctions
             LEFT JOIN group_roles gr
                 ON gr.group_id = gm.group_id AND gr.user_id = gm.user_id
             WHERE gm.group_id = :gid
-            ORDER BY u.username ASC
+            ORDER BY
+                CASE WHEN gr.role = "admin" THEN 0 ELSE 1 END,
+                u.username ASC
         ';
         return self::execute($sql, [':gid' => $groupId], true);
     }
@@ -249,7 +251,7 @@ class DbFunctions
     }
 
     /**
-     * Erstellt eine neue Einladung f\xC3\xBCr eine Lerngruppe.
+     * Erstellt eine neue Einladung für eine Lerngruppe.
      */
     public static function createGroupInvite(int $groupId, int $userId, string $token, int $expiresHours = 48): bool
     {
@@ -1725,7 +1727,7 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
     }
 
     /**
-     * Entfernt abgelehnte Uploads, deren Ablehnung älter ist als die angegebene Anzahl Tage.
+* Entfernt abgelehnte Uploads, deren Ablehnung älter ist als die angegebene Anzahl Tage.
      * Gibt die Anzahl der gelöschten Uploads zurück.
      */
     public static function purgeOldRejectedUploads(int $days = 30): int
@@ -1782,6 +1784,46 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
         }
 
         return $deleted;
+
+* Löscht einen Upload einer Lerngruppe durch einen Administrator.
+     * Gibt den Dateinamen zurück oder null, wenn nichts gelöscht wurde.
+     */
+    public static function deleteGroupUpload(int $uploadId, int $groupId, int $adminId): ?string
+    {
+        $pdo = self::db_connect();
+
+        $pdo->beginTransaction();
+        try {
+            $stmt = $pdo->prepare('SELECT stored_name, material_id FROM uploads WHERE id = ? AND group_id = ?');
+            $stmt->execute([$uploadId, $groupId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                $pdo->rollBack();
+                return null;
+            }
+
+            $name = $row['stored_name'];
+            $materialId = (int)$row['material_id'];
+
+            self::logUploadAction($uploadId, 'deleted', $adminId, 'Upload gelöscht (admin)');
+
+            $del = $pdo->prepare('DELETE FROM uploads WHERE id = ? AND group_id = ?');
+            $del->execute([$uploadId, $groupId]);
+
+            $check = $pdo->prepare('SELECT COUNT(*) FROM uploads WHERE material_id = ?');
+            $check->execute([$materialId]);
+            if ((int)$check->fetchColumn() === 0) {
+                $pdo->prepare('DELETE FROM materials WHERE id = ?')->execute([$materialId]);
+            }
+
+            $pdo->commit();
+            return $name;
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            self::getLogger()->error('deleteGroupUpload failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
     }
 /**
  * Zählt die Anzahl der Upload-Logs mit erweiterten Filtermöglichkeiten.
@@ -2679,6 +2721,115 @@ public static function getFilteredLockedUsers(array $filters = []): array
     }
 
     /**
+     * Wochentage aus der Datenbank laden.
+     */
+    public static function fetchAllWeekdays(): array
+    {
+        $pdo = self::db_connect();
+        return $pdo->query('SELECT id, day_name FROM weekdays ORDER BY id')
+            ->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Zeitfenster aus der Datenbank laden.
+     */
+    public static function fetchAllTimeSlots(): array
+    {
+        $pdo = self::db_connect();
+        return $pdo->query('SELECT id, start_time, end_time FROM time_slots ORDER BY id')
+            ->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Stundenplan eines Benutzers auslesen.
+     */
+    public static function fetchUserSchedule(int $userId): array
+    {
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare(
+            'SELECT us.weekday_id, us.time_slot_id, c.name AS subject, us.room
+             FROM user_schedules us
+             JOIN courses c ON us.course_id = c.id
+             WHERE us.user_id = ?'
+        );
+        $stmt->execute([$userId]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $timetable = [];
+        foreach ($rows as $row) {
+            $timetable[$row["weekday_id"]][$row["time_slot_id"]] = [
+                'subject' => $row['subject'],
+                'room' => $row['room'],
+            ];
+        }
+
+        return $timetable;
+    }
+
+    /**
+     * Stundenplan speichern: vorher leeren, dann neu eintragen.
+     */
+    public static function saveUserSchedule(int $userId, array $schedule): void
+    {
+        $pdo = self::db_connect();
+
+        try {
+            $pdo->beginTransaction();
+
+            // Vorherige Einträge löschen
+            $pdo->prepare('DELETE FROM user_schedules WHERE user_id = ?')->execute([$userId]);
+
+            $stmt = $pdo->prepare('INSERT INTO user_schedules
+                (user_id, course_id, weekday_id, time_slot_id, room)
+                VALUES (?, ?, ?, ?, ?)');
+
+            foreach ($schedule as $weekdayId => $slots) {
+                foreach ($slots as $slotId => $entry) {
+                    $subject = trim($entry['fach'] ?? '');
+                    $room    = trim($entry['raum'] ?? '');
+
+                    if ($subject === '') {
+                        continue; // kein Fach angegeben
+                    }
+
+                    $courseId = self::getOrCreateCourseId($subject);
+                    $stmt->execute([$userId, $courseId, $weekdayId, $slotId, $room]);
+                }
+            }
+
+            $pdo->commit();
+        } catch (PDOException $e) {
+            $pdo->rollBack();
+            self::getLogger()->info('Fehler beim Speichern des Stundenplans', [
+                'user_id' => $userId,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Fügt Kurs (Fach) ein oder gibt die ID zurück.
+     */
+    private static function getOrCreateCourseId(string $courseName): int
+    {
+        $pdo = self::db_connect();
+
+        // Achtung: korrekte Spalte ist "name", nicht "course_name"
+        $stmt = $pdo->prepare('SELECT id FROM courses WHERE name = ?');
+        $stmt->execute([$courseName]);
+        $id = $stmt->fetchColumn();
+
+        if ($id) {
+            return (int) $id;
+        }
+
+        $stmt = $pdo->prepare('INSERT INTO courses (name) VALUES (?)');
+        $stmt->execute([$courseName]);
+        return (int) $pdo->lastInsertId();
+    }
+
+        /*
      * Gibt alle Social-Media-Einträge eines Nutzers zurück.
      *
      * @param int $userId Die ID des Nutzers
@@ -2689,6 +2840,8 @@ public static function getFilteredLockedUsers(array $filters = []): array
         $sql = 'SELECT platform, username FROM social_media WHERE user_id = :uid';
         return self::execute($sql, [':uid' => $userId], true);
     }
+
+
 
     /**
      * Speichert einen Social-Media-Eintrag. Existiert bereits einer mit gleicher

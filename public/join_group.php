@@ -31,7 +31,7 @@ try {
     }
 
     if ((int)$invite['invited_user_id'] !== (int)$_SESSION['user_id']) {
-        throw new RuntimeException('Diese Einladung ist nicht f\xC3\xBCr deinen Account.');
+        throw new RuntimeException('Diese Einladung ist nicht für deinen Account.');
     }
 
     $group = DbFunctions::fetchGroupById((int)$invite['group_id']);

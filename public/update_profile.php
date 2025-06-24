@@ -78,13 +78,31 @@ try {
             break;
 
         case 'update_personal':
-            $birthRaw = trim($_POST['birthdate'] ?? '');
+            $birthRaw   = trim($_POST['birthdate'] ?? '');
+            $birthdate  = null;
+
+            if ($birthRaw !== '') {
+                try {
+                    $birthObj = new DateTime($birthRaw);
+                    $minDate  = new DateTime('-16 years');
+
+                    if ($birthObj > $minDate) {
+                        throw new RuntimeException('Du musst mindestens 16 Jahre alt sein.');
+                    }
+
+                    $birthdate = $birthObj->format('Y-m-d');
+                } catch (Throwable $e) {
+                    throw new RuntimeException('Ungültiges Geburtsdatum.');
+                }
+            }
+
             $fields = [
                 'first_name' => trim($_POST['first_name'] ?? ''),
                 'last_name'  => trim($_POST['last_name'] ?? ''),
                 'about_me'   => trim($_POST['about_me'] ?? ''),
-                'birthdate'  => $birthRaw === '' ? null : $birthRaw,
+                'birthdate'  => $birthdate,
             ];
+
             DbFunctions::updateUserProfile($userId, $fields);
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Persönliche Daten aktualisiert.'];
             break;
@@ -96,6 +114,46 @@ try {
                 DbFunctions::saveUserSocialMedia($userId, $platform, $handle);
             }
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Social-Media-Daten aktualisiert.'];
+            break;
+
+        case 'update_picture':
+            if (empty($_FILES['profile_picture']) || $_FILES['profile_picture']['error'] !== UPLOAD_ERR_OK) {
+                throw new RuntimeException('Kein Bild hochgeladen.');
+            }
+
+            $tmpName  = $_FILES['profile_picture']['tmp_name'];
+            $ext      = strtolower(pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION));
+
+            $mimeType = '';
+            if (function_exists('finfo_open')) {
+                $finfo    = finfo_open(FILEINFO_MIME_TYPE);
+                $mimeType = finfo_file($finfo, $tmpName) ?: '';
+                finfo_close($finfo);
+            } elseif (function_exists('mime_content_type')) {
+                $mimeType = mime_content_type($tmpName);
+            }
+
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/x-png'];
+            if ($mimeType && !in_array($mimeType, $allowedTypes, true)) {
+                throw new RuntimeException('Ungültiger Bildtyp.');
+            }
+
+            $uploadDir = __DIR__ . '/../uploads/profile_pictures/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0775, true);
+            }
+
+            $fileName   = uniqid('profile_', true) . '.' . $ext;
+            $targetPath = $uploadDir . $fileName;
+
+            if (!move_uploaded_file($tmpName, $targetPath)) {
+                if (!rename($tmpName, $targetPath)) {
+                    throw new RuntimeException('Fehler beim Hochladen des Bildes.');
+                }
+            }
+
+            DbFunctions::updateUserProfile($userId, ['profile_picture' => $fileName]);
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Profilbild aktualisiert.'];
             break;
 
         default:

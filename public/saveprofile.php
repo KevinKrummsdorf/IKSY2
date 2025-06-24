@@ -18,11 +18,26 @@ $keys = ['first_name', 'last_name', 'birthdate', 'location', 'about_me'];
 
 foreach ($keys as $key) {
     $value = $_POST[$key] ?? null;
-    
+
     if ($key === 'birthdate' && trim($value) === '') {
         $data[$key] = null;
     } else {
         $data[$key] = trim($value);
+    }
+}
+
+if (!empty($data['birthdate'])) {
+    try {
+        $birthObj = new DateTime($data['birthdate']);
+        $minDate  = new DateTime('-16 years');
+
+        if ($birthObj > $minDate) {
+            exit('Du musst mindestens 16 Jahre alt sein.');
+        }
+
+        $data['birthdate'] = $birthObj->format('Y-m-d');
+    } catch (Throwable $e) {
+        exit('Ungültiges Geburtsdatum.');
     }
 }
 
@@ -58,7 +73,12 @@ if (!empty($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ==
     // Einige PHP-Konfigurationen melden PNGs als image/x-png
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/x-png'];
     if ($mimeType && !in_array($mimeType, $allowedTypes, true)) {
-        exit('❌ Ungültiger Bildtyp.');
+        $_SESSION['flash'] = [
+            'type'    => 'danger',
+            'message' => 'Ungültiger Bildtyp.'
+        ];
+        header('Location: edit_profile.php');
+        exit;
     }
     
     // Zielverzeichnis und Dateiname
@@ -73,7 +93,12 @@ if (!empty($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ==
     if (!move_uploaded_file($tmpName, $targetPath)) {
         // Fallback falls PHP das Tmpfile nicht als Upload erkennt
         if (!rename($tmpName, $targetPath)) {
-            exit('❌ Fehler beim Hochladen des Bildes.');
+            $_SESSION['flash'] = [
+                'type'    => 'danger',
+                'message' => 'Fehler beim Hochladen des Bildes.'
+            ];
+            header('Location: edit_profile.php');
+            exit;
         }
     }
 
