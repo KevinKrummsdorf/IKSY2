@@ -19,7 +19,7 @@
         <img src="{$base_url}/assets/default_person.png" alt="Kein Profilbild" class="rounded-circle shadow" style="width:150px;height:150px;object-fit:cover;">
       {/if}
       {if $isOwnProfile}
-        <button class="btn btn-sm btn-outline-primary mt-2" data-bs-toggle="modal" data-bs-target="#pictureModal">Profilbild ändern</button>
+        <button class="btn btn-sm btn-outline-primary d-block mx-auto mt-2" data-bs-toggle="modal" data-bs-target="#pictureModal">Profilbild ändern</button>
       {/if}
     </div>
     <div class="col-md-9">
