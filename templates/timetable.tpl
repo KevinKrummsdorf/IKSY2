@@ -47,6 +47,19 @@
     <button type="submit" class="submit-button">Speichern</button>
 </form>
 
+<div class="mt-3 text-center">
+    <a href="{$base_url}/timetable.php?export=csv" class="download-link me-2">
+        <span class="material-symbols-outlined">download</span>
+        <span>CSV</span>
+        <small>Stundenplan</small>
+    </a>
+    <a href="{$base_url}/timetable.php?export=pdf" class="download-link">
+        <span class="material-symbols-outlined">picture_as_pdf</span>
+        <span>PDF</span>
+        <small>Stundenplan</small>
+    </a>
+</div>
+
 
 {/block}
 
