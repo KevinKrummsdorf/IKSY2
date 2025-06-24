@@ -78,13 +78,31 @@ try {
             break;
 
         case 'update_personal':
-            $birthRaw = trim($_POST['birthdate'] ?? '');
+            $birthRaw   = trim($_POST['birthdate'] ?? '');
+            $birthdate  = null;
+
+            if ($birthRaw !== '') {
+                try {
+                    $birthObj = new DateTime($birthRaw);
+                    $minDate  = new DateTime('-16 years');
+
+                    if ($birthObj > $minDate) {
+                        throw new RuntimeException('Du musst mindestens 16 Jahre alt sein.');
+                    }
+
+                    $birthdate = $birthObj->format('Y-m-d');
+                } catch (Throwable $e) {
+                    throw new RuntimeException('Ungültiges Geburtsdatum.');
+                }
+            }
+
             $fields = [
                 'first_name' => trim($_POST['first_name'] ?? ''),
                 'last_name'  => trim($_POST['last_name'] ?? ''),
                 'about_me'   => trim($_POST['about_me'] ?? ''),
-                'birthdate'  => $birthRaw === '' ? null : $birthRaw,
+                'birthdate'  => $birthdate,
             ];
+
             DbFunctions::updateUserProfile($userId, $fields);
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Persönliche Daten aktualisiert.'];
             break;

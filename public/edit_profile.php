@@ -34,6 +34,7 @@ $smarty->assign('username', $username);
 $smarty->assign('profile', $profile);
 $smarty->assign('email', $email);
 $smarty->assign('socials', $socials);
+$smarty->assign('max_birthdate', (new DateTime('-16 years'))->format('Y-m-d'));
 
 // Template anzeigen
 $smarty->display('edit_profile.tpl');

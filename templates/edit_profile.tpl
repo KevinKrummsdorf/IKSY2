@@ -57,7 +57,7 @@
 
         <div class="mb-3">
             <label for="birthdate" class="form-label">Geburtsdatum</label>
-            <input type="date" class="form-control" name="birthdate" value="{$profile.birthdate|escape}">
+            <input type="date" class="form-control" name="birthdate" value="{$profile.birthdate|escape}" max="{$max_birthdate}">
         </div>
 
         <div class="mb-3">
