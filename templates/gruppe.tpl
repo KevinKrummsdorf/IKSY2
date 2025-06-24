@@ -7,9 +7,26 @@
   {if $success}<div class="alert alert-success">{$success}</div>{/if}
 
   <h1 class="mb-4">{$group.name|escape}</h1>
+  {if $group.join_type === 'invite'}
+    <p class="text-muted">Beitritt nur per Einladung.</p>
+  {elseif $group.join_type === 'code'}
+    <p class="text-muted">Beitritt per Einladungscode oder Einladung.</p>
+    {if $myRole === 'admin'}
+      <div class="alert alert-info">Einladungscode: <code>{$group.invite_code|escape}</code></div>
+    {/if}
+  {/if}
 
   {if $myRole === 'none'}
-    <form method="post"><button name="join_group" class="btn btn-primary">Beitreten</button></form>
+    {if $group.join_type === 'open'}
+      <form method="post"><button name="join_group" class="btn btn-primary">Beitreten</button></form>
+    {elseif $group.join_type === 'code'}
+      <form method="post" class="mb-3">
+        <div class="mb-2"><input type="text" name="invite_code" class="form-control" placeholder="Einladungscode" required></div>
+        <button name="join_group" class="btn btn-primary">Beitreten</button>
+      </form>
+    {else}
+      
+    {/if}
   {else}
     <form method="post" class="d-inline"><button name="leave_group" class="btn btn-outline-warning">Verlassen</button></form>
     {if $myRole === 'admin'}
@@ -24,8 +41,13 @@
   <h3>Mitglieder</h3>
   <ul class="list-group mb-4">
     {foreach $members as $m}
-      <li class="list-group-item d-flex justify-content-between">
-        {$m.username|escape}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>
+          {$m.username|escape}
+          {if $m.role}
+            <span class="badge bg-secondary ms-1">{$m.role|escape}</span>
+          {/if}
+        </span>
         {if $myRole === 'admin' && $m.user_id != $smarty.session.user_id}
           <form method="post" style="margin:0">
             <input type="hidden" name="user_id" value="{$m.user_id}">
@@ -35,6 +57,16 @@
       </li>
     {/foreach}
   </ul>
+
+  {if $myRole === 'admin'}
+    <h4>Benutzer einladen</h4>
+    <form method="post" class="mb-4">
+      <div class="mb-3">
+        <input type="text" name="invite_username" class="form-control" placeholder="Benutzername" required>
+      </div>
+      <button name="invite_user" class="btn btn-primary">Einladen</button>
+    </form>
+  {/if}
 
   <h3>Materialien</h3>
   {if $uploads|@count}

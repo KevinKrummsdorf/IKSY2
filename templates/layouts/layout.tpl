@@ -29,7 +29,7 @@
   </div>
   <nav class="header-auth-links">
     {if $isLoggedIn}
-      <span class="me-3">Willkommen, {$username}!</span>
+      <span class="me-3">Willkommen, {$username|escape}!</span>
       <a href="{$base_url}/logout.php" class="btn btn-sm btn-outline-secondary">Logout</a>
     {else}
       <a href="#" class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
@@ -61,6 +61,7 @@
 <div class="menu d-none d-md-block">
   <ul class="menu-content mt-4">
     <li><a href="{$base_url}/profile.php"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
+    <li><a href="{$base_url}/search_profile.php"><span class="material-symbols-outlined">person_search</span><span>Andere Mitglieder finden</span></a></li>
     <li><a href="{$base_url}/lerngruppen.php"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
     <li><a href="{$base_url}/groups.php"><span class="material-symbols-outlined">groups</span><span>Alle Lerngruppen</span></a></li>
     <li><a href="{$base_url}/todos.php"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
@@ -81,6 +82,7 @@
   <div class="offcanvas-body">
     <ul class="menu-content">
       <li><a href="{$base_url}/profile.php"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
+      <li><a href="{$base_url}/search_profile.php"><span class="material-symbols-outlined">person_search</span><span>Andere Mitglieder finden</span></a></li>
       <li><a href="{$base_url}/lerngruppen.php"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
       <li><a href="{$base_url}/groups.php"><span class="material-symbols-outlined">groups</span><span>Alle Lerngruppen</span></a></li>
       <li><a href="{$base_url}/todos.php"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>

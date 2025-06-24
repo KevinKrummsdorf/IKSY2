@@ -31,6 +31,14 @@
         <div class="mb-3">
           <input type="text" name="group_name" class="form-control" placeholder="Gruppenname" required>
         </div>
+        <div class="mb-3">
+          <label class="form-label">Beitrittsart</label>
+          <select name="join_type" class="form-select">
+            <option value="open">Offen</option>
+            <option value="invite">Nur per Einladung</option>
+            <option value="code">Nur per Einladungscode</option>
+          </select>
+        </div>
         <button name="create_group" class="btn btn-primary">Erstellen</button>
       </form>
     </div>

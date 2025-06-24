@@ -18,14 +18,25 @@ $success = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['create_group'])) {
         $groupName = trim($_POST['group_name'] ?? '');
+        $joinType  = $_POST['join_type'] ?? 'open';
+        $allowed   = ['open','invite','code'];
         if ($groupName === '') {
             $error = 'Bitte gib einen Gruppennamen ein.';
         } elseif (DbFunctions::fetchGroupByName($groupName)) {
             $error = 'Dieser Gruppenname ist bereits vergeben.';
+        } elseif (!in_array($joinType, $allowed, true)) {
+            $error = 'Ungültige Beitrittsart.';
         } else {
-            $newGroupId = DbFunctions::createGroup($groupName, $userId);
+            $inviteCode = null;
+            if ($joinType === 'code') {
+                $inviteCode = bin2hex(random_bytes(5));
+            }
+            $newGroupId = DbFunctions::createGroup($groupName, $userId, $joinType, $inviteCode);
             if ($newGroupId) {
                 $success = 'Die Gruppe wurde erfolgreich erstellt.';
+                if ($inviteCode) {
+                    $success .= ' Einladungscode: ' . htmlspecialchars($inviteCode, ENT_QUOTES);
+                }
             } else {
                 $error = 'Fehler: Gruppe konnte nicht erstellt werden.';
             }
@@ -40,7 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Keine Gruppe mit diesem Namen gefunden.';
             } else {
                 $groupId = (int)$group['id'];
-                if (DbFunctions::addUserToGroup($groupId, $userId)) {
+                if ($group['join_type'] !== 'open') {
+                    $error = 'Dieser Gruppe kann man nicht direkt beitreten.';
+                } elseif (DbFunctions::addUserToGroup($groupId, $userId)) {
+                    DbFunctions::setUserRoleInGroup($groupId, $userId, 'member');
                     $success = 'Du bist der Gruppe beigetreten.';
                 } else {
                     $error = 'Fehler: dem Gruppenbeitritt ist fehlgeschlagen.';
@@ -48,6 +62,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+}
+
+// Erfolgreiches Löschen anzeigen
+if (isset($_GET['deleted']) && $_GET['deleted'] === '1') {
+    $success = 'Die Gruppe wurde erfolgreich gelöscht.';
 }
 
 // Alle Gruppen des Nutzers abrufen

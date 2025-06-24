@@ -9,26 +9,7 @@
   {if $error}<div class="alert alert-danger">{$error}</div>{/if}
   {if $success}<div class="alert alert-success">{$success}</div>{/if}
 
-  <div class="row mb-5">
-    <div class="col-md-6">
-      <h3>Neue Gruppe erstellen</h3>
-      <form method="post">
-        <div class="mb-3">
-          <input type="text" name="group_name" class="form-control" placeholder="Gruppenname" required>
-        </div>
-        <button name="create_group" class="btn btn-primary">Erstellen</button>
-      </form>
-    </div>
-    <div class="col-md-6">
-      <h3>Bestehender Gruppe beitreten</h3>
-      <form method="post">
-        <div class="mb-3">
-          <input type="text" name="group_name" class="form-control" placeholder="Gruppenname" required>
-        </div>
-        <button name="join_group" class="btn btn-primary">Beitreten</button>
-      </form>
-    </div>
-  </div>
+ 
 
   <div class="mb-3">
     <input type="text" id="group-search" class="form-control" placeholder="Gruppe suchen…">

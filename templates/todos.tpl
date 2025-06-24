@@ -10,11 +10,18 @@
         Optional kann ein Fälligkeitsdatum mitgegeben werden.*}
     <form method="post" class="mb-4">
         <div class="row g-2">
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <input type="text" name="new_todo" class="form-control" placeholder="Neues ToDo..." required>
             </div>
             <div class="col-md-3">
                 <input type="date" name="due_date" class="form-control" placeholder="Fälligkeitsdatum">
+            </div>
+            <div class="col-md-2">
+                <select name="priority" class="form-select">
+                    <option value="high">Hoch</option>
+                    <option value="medium" selected>Mittel</option>
+                    <option value="low">Niedrig</option>
+                </select>
             </div>
             <div class="col-md-1">
                 <button type="submit" class="btn btn-primary w-100">+</button>
@@ -37,6 +44,19 @@
                                 Fällig: {$todo.due_date|date_format:"%d.%m.%Y"}
                             </div>
                         {/if}
+                        <span class="badge ms-2 {if $todo.priority=='high'}bg-danger{elseif $todo.priority=='medium'}bg-warning text-dark{else}bg-success{/if}">
+                            {if $todo.priority=='high'}Hoch{elseif $todo.priority=='medium'}Mittel{else}Niedrig{/if}
+                        </span>
+                        <form method="post" class="d-inline ms-2">
+                            <input type="hidden" name="update_priority" value="1">
+                            <input type="hidden" name="todo_id" value="{$todo.id}">
+                            <select name="priority" class="form-select form-select-sm d-inline-block w-auto me-1">
+                                <option value="high" {if $todo.priority=='high'}selected{/if}>Hoch</option>
+                                <option value="medium" {if $todo.priority=='medium'}selected{/if}>Mittel</option>
+                                <option value="low" {if $todo.priority=='low'}selected{/if}>Niedrig</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Speichern</button>
+                        </form>
                     </div>
 
                     {* Link zum Togglen des Status (erledigt) *}
@@ -65,6 +85,15 @@
         </button>
     </form>
 
+    {if $showDone && $todos_finished|@count > 0}
+        <form method="get" class="mb-3">
+            <input type="hidden" name="delete_completed" value="1">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Alle erledigten ToDos wirklich löschen?');">
+                Alle erledigten löschen
+            </button>
+        </form>
+    {/if}
+
     {if $showDone}
         {if $todos_finished|@count > 0}
             <ul class="list-group">
@@ -78,12 +107,20 @@
                                     Fällig: {$todo.due_date|date_format:"%d.%m.%Y"}
                                 </div>
                             {/if}
+                            <span class="badge ms-2 {if $todo.priority=='high'}bg-danger{elseif $todo.priority=='medium'}bg-warning text-dark{else}bg-success{/if}">
+                                {if $todo.priority=='high'}Hoch{elseif $todo.priority=='medium'}Mittel{else}Niedrig{/if}
+                            </span>
                         </div>
 
                         {* Rückgängig-Link (erneutes Togglen auf "nicht erledigt") *}
-                        <a href="?toggle={$todo.id}&show_done=1" class="btn btn-sm btn-outline-danger">
-                            Rückgängig
-                        </a>
+                        <div class="d-flex gap-2">
+                            <a href="?toggle={$todo.id}&show_done=1" class="btn btn-sm btn-outline-danger">
+                                Rückgängig
+                            </a>
+                            <a href="?delete={$todo.id}&show_done=1" class="btn btn-sm btn-outline-secondary" onclick="return confirm('ToDo wirklich löschen?');">
+                                Löschen
+                            </a>
+                        </div>
                     </li>
                 {/foreach}
             </ul>

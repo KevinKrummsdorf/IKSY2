@@ -3,203 +3,245 @@
 {block name="title"}Profil{/block}
 
 {block name="content"}
-<h1 class="text-center">
-    {if $isOwnProfile}
-        Mein Profil
-    {else}
-        Profil von {$profile.username}
-    {/if}
-</h1>
-
 <div class="container my-5">
-    <div class="profile-box">
-
-        {* PROFILBILD OBEN *}
-        <div class="text-center mb-4">
-            {if $profile.profile_picture}
-                <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture}" alt="Profilbild"
-                     class="rounded-circle shadow mb-2" style="max-width: 150px;">
-            {else}
-                <img src="{$base_url}/assets/default_person.png" alt="Kein Profilbild"
-                     class="rounded-circle shadow mb-2" style="max-width: 150px;">
-            {/if}
-        </div>
-
-        {* PERSÖNLICHE INFOS *}
-        <div class="card mb-4">
-            <div class="card-body">
-                <strong>Benutzername:</strong>
-                <p class="text-muted">{$profile.username}</p>
-
-                <strong>Vorname:</strong>
-                <p class="text-muted">{$profile.first_name}</p>
-
-                <strong>Nachname:</strong>
-                <p class="text-muted">{$profile.last_name}</p>
-
-                <strong>Geburtsdatum:</strong>
-                <p class="text-muted">
-                    {if $profile.birthdate}{$profile.birthdate|date_format:"%d.%m.%Y"}{else}-{/if}
-                </p>
-
-                <strong>Wohnort:</strong>
-                <p class="text-muted">{$profile.location}</p>
-
-                <strong>Über mich:</strong>
-                <p class="text-muted">{$profile.about_me|default:"Noch nichts eingetragen."}</p>
-
-                {if $profile.instagram || $profile.tiktok || $profile.discord || $profile.ms_teams}
-                    <strong>Andere Netzwerke:</strong>
-                    <ul class="text-muted list-unstyled">
-                        {if $profile.instagram}<li>📸 Instagram: {$profile.instagram}</li>{/if}
-                        {if $profile.tiktok}<li>🎵 TikTok: {$profile.tiktok}</li>{/if}
-                        {if $profile.discord}<li>💬 Discord: {$profile.discord}</li>{/if}
-                        {if $profile.ms_teams}<li>🧑‍💼 MS Teams: {$profile.ms_teams}</li>{/if}
-                    </ul>
-                {/if}
-            </div>
-        </div>
-
-        {if $isOwnProfile}
-            <section class="text-center">
-                <a href="edit_profile.php" class="btn btn-primary btn-lg mt-30">Profil bearbeiten</a>
-            </section>
-
-            <hr class="my-5">
-
-            <h3 class="mb-3">Zwei-Faktor-Authentifizierung</h3>
-
-            {if $success}
-                <div class="alert alert-success">{$success}</div>
-            {/if}
-
-            {if $message}
-                <div class="alert alert-danger">{$message}</div>
-            {/if}
-
-            {if $twofa_enabled}
-                <p>2FA ist <strong>aktiviert</strong>.</p>
-                <!-- Modal-Button -->
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDisable2FAModal">
-                    2FA deaktivieren
-                </button>
-
-                <!-- Bootstrap Modal -->
-                <div class="modal fade" id="confirmDisable2FAModal" tabindex="-1" aria-labelledby="confirmDisable2FALabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <form method="post">
-                                <input type="hidden" name="action" value="disable_2fa">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="confirmDisable2FALabel">2FA deaktivieren</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Möchtest du die Zwei-Faktor-Authentifizierung wirklich deaktivieren?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                                    <button type="submit" class="btn btn-danger">Ja, deaktivieren</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            {elseif $show_2fa_form}
-                <p>Scanne diesen QR-Code mit deiner Authenticator-App und gib den Bestätigungscode ein:</p>
-                <img src="{$qrCodeUrl}" alt="QR Code" class="img-fluid mb-3" style="max-width: 200px;">
-
-                <form method="post" class="mb-3 needs-validation" novalidate>
-                    <input type="hidden" name="action" value="confirm_2fa">
-                    <div class="mb-2">
-                        <label for="code" class="form-label">Bestätigungscode:</label>
-                        <input type="text"
-                               name="code"
-                               id="code"
-                               class="form-control"
-                               required
-                               inputmode="numeric"
-                               maxlength="6"
-                               autocomplete="one-time-code"
-                               placeholder="6-stelliger Code"
-                               title="Bitte genau 6 Ziffern eingeben">
-                        <div class="invalid-feedback">Bitte genau 6 Ziffern eingeben.</div>
-                    </div>
-                    <button type="submit" class="btn btn-success">2FA aktivieren</button>
-                </form>
-
-                <script>
-                    (() => {
-                        'use strict';
-                        const forms = document.querySelectorAll('.needs-validation');
-                        Array.from(forms).forEach(form => {
-                            form.addEventListener('submit', event => {
-                                if (!form.checkValidity()) {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                }
-                                form.classList.add('was-validated');
-                            }, false);
-                        });
-
-                        const codeInput = document.getElementById('code');
-                        codeInput?.addEventListener('input', e => {
-                            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 6);
-                        });
-                    })();
-                </script>
-            {else}
-                <p>2FA ist <strong>nicht aktiviert</strong>.</p>
-                <form method="post">
-                    <input type="hidden" name="action" value="start_2fa">
-                    <button type="submit" class="btn btn-primary">2FA einrichten</button>
-                </form>
-            {/if}
-
-            <hr class="my-5">
-            <h3 class="mb-3">Passwort ändern</h3>
-            {if isset($pw_success)}
-                <div class="alert alert-success">{$pw_success}</div>
-            {/if}
-            {if isset($pw_message)}
-                <div class="alert alert-danger">{$pw_message}</div>
-            {/if}
-            <div id="pwFormAlert" class="alert alert-danger d-none">Bitte alle Felder ausfüllen.</div>
-            <form id="pwChangeForm" method="post" class="needs-validation" novalidate>
-                <input type="hidden" name="action" value="change_password">
-                <div class="mb-3">
-                    <label for="old_password" class="form-label">Aktuelles Passwort</label>
-                    <input type="password" class="form-control" id="old_password" name="old_password" required>
-                </div>
-                <div class="mb-3">
-                    <label for="new_password" class="form-label">Neues Passwort</label>
-                    <input type="password" class="form-control" id="new_password" name="new_password" required>
-                </div>
-                <div class="mb-3">
-                    <label for="new_password_confirm" class="form-label">Passwort bestätigen</label>
-                    <input type="password" class="form-control" id="new_password_confirm" name="new_password_confirm" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Passwort speichern</button>
-            </form>
-
-            <script>
-                (() => {
-                    'use strict';
-                    const form = document.getElementById('pwChangeForm');
-                    const alertBox = document.getElementById('pwFormAlert');
-                    form?.addEventListener('submit', e => {
-                        if (!form.checkValidity()) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            alertBox.classList.remove('d-none');
-                        } else {
-                            alertBox.classList.add('d-none');
-                        }
-                        form.classList.add('was-validated');
-                    });
-                })();
-            </script>
-        {/if}
+  <h1 class="text-center mb-4">
+    {if $isOwnProfile}
+      Mein Profil
+    {else}
+      Profil von {$profile.username|escape}
+    {/if}
+  </h1>
+  <div class="row">
+    <div class="col-md-3 text-center mb-4">
+      {if $profile.profile_picture}
+        <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture|escape}" alt="Profilbild" class="rounded-circle shadow" style="width:150px;height:150px;object-fit:cover;">
+      {else}
+        <img src="{$base_url}/assets/default_person.png" alt="Kein Profilbild" class="rounded-circle shadow" style="width:150px;height:150px;object-fit:cover;">
+      {/if}
     </div>
+    <div class="col-md-9">
+      {if $isOwnProfile}
+        <h2 class="h4">Login-Daten</h2>
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+          <span>Benutzername: {$profile.username|escape}</span>
+          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#usernameModal">Ändern</button>
+        </div>
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+          <span>E-Mail-Adresse: {$profile.email|escape}</span>
+          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#emailModal">Ändern</button>
+        </div>
+        <div class="mb-4 d-flex justify-content-between align-items-center">
+          <span>Passwort: ********</span>
+          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#passwordModal">Ändern</button>
+        </div>
+      {/if}
+
+      <h2 class="h4">Persönliche Angaben</h2>
+      <p class="mb-1">Vorname: {$profile.first_name|escape}</p>
+      <p class="mb-1">Nachname: {$profile.last_name|escape}</p>
+      <p class="mb-3">
+        Geburtsdatum:
+        {if $profile.birthdate}
+          {$profile.birthdate|escape}
+          {if $profile.age}({$profile.age} Jahre){/if}
+        {else}
+          -
+        {/if}
+      </p>
+      <div class="mb-4">
+        <label class="form-label">About Me</label>
+        <textarea class="form-control" rows="4" readonly>{$profile.about_me|escape}</textarea>
+      </div>
+      {if $isOwnProfile}
+        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#personalModal">Ändern</button>
+      {/if}
+
+      <h2 class="h4">Social Media</h2>
+      <ul class="list-unstyled mb-3">
+          {if $socials.instagram}
+            <li><i class="bi bi-instagram"></i> Instagram: <a href="https://instagram.com/{$socials.instagram|escape:'url'}" target="_blank">{$socials.instagram|escape:'html'}</a></li>
+          {/if}
+          {if $socials.tiktok}
+            <li><i class="bi bi-tiktok"></i> TikTok: <a href="https://www.tiktok.com/@{$socials.tiktok|escape:'url'}" target="_blank">{$socials.tiktok|escape:'html'}</a></li>
+          {/if}
+          {if $socials.discord}
+            <li><i class="bi bi-discord"></i> Discord: {$socials.discord|escape:'html'}</li>
+          {/if}
+          {if $socials.ms_teams}
+            <li><i class="bi bi-microsoft"></i> MS Teams: {$socials.ms_teams|escape:'html'}</li>
+          {/if}
+          {if $socials.twitter}
+            <li><i class="bi bi-twitter"></i> Twitter: <a href="https://twitter.com/{$socials.twitter|escape:'url'}" target="_blank">{$socials.twitter|escape:'html'}</a></li>
+          {/if}
+          {if $socials.linkedin}
+            <li><i class="bi bi-linkedin"></i> LinkedIn: <a href="https://www.linkedin.com/in/{$socials.linkedin|escape:'url'}" target="_blank">{$socials.linkedin|escape:'html'}</a></li>
+          {/if}
+          {if $socials.github}
+            <li><i class="bi bi-github"></i> GitHub: <a href="https://github.com/{$socials.github|escape:'url'}" target="_blank">{$socials.github|escape:'html'}</a></li>
+          {/if}
+      </ul>
+      {if $isOwnProfile}
+        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#socialModal">Ändern</button>
+      {/if}
+    </div>
+  </div>
 </div>
+
+{if $isOwnProfile}
+<!-- Username Modal -->
+<div class="modal fade" id="usernameModal" tabindex="-1" aria-labelledby="usernameModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="usernameModalLabel">Benutzername ändern</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="update_profile.php">
+          <input type="hidden" name="action" value="update_username">
+          <div class="mb-3">
+            <label for="new_username" class="form-label">Neuer Benutzername</label>
+            <input type="text" class="form-control" id="new_username" name="username" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Speichern</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Email Modal -->
+<div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="emailModalLabel">E-Mail-Adresse ändern</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="update_profile.php">
+          <input type="hidden" name="action" value="update_email">
+          <div class="mb-3">
+            <label for="new_email" class="form-label">Neue E-Mail-Adresse</label>
+            <input type="email" class="form-control" id="new_email" name="email" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Speichern</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Password Modal -->
+<div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="passwordModalLabel">Passwort ändern</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="update_profile.php">
+          <input type="hidden" name="action" value="update_password">
+          <div class="mb-3">
+            <label for="current_password" class="form-label">Aktuelles Passwort</label>
+            <input type="password" class="form-control" id="current_password" name="old_password" required>
+          </div>
+          <div class="mb-3">
+            <label for="new_password" class="form-label">Neues Passwort</label>
+            <input type="password" class="form-control" id="new_password" name="new_password" required>
+          </div>
+          <div class="mb-3">
+            <label for="new_password_confirm" class="form-label">Passwort bestätigen</label>
+            <input type="password" class="form-control" id="new_password_confirm" name="new_password_confirm" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Speichern</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Personal Data Modal -->
+<div class="modal fade" id="personalModal" tabindex="-1" aria-labelledby="personalModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="personalModalLabel">Persönliche Angaben bearbeiten</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="update_profile.php">
+          <input type="hidden" name="action" value="update_personal">
+          <div class="mb-3">
+            <label for="first_name" class="form-label">Vorname</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{$profile.first_name|escape}">
+          </div>
+          <div class="mb-3">
+            <label for="last_name" class="form-label">Nachname</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" value="{$profile.last_name|escape}">
+          </div>
+          <div class="mb-3">
+            <label for="birthdate" class="form-label">Geburtsdatum</label>
+            <input type="date" class="form-control" id="birthdate" name="birthdate" value="{$profile.birthdate|escape}">
+          </div>
+          <div class="mb-3">
+            <label for="about_me_edit" class="form-label">About Me</label>
+            <textarea class="form-control" id="about_me_edit" name="about_me" rows="4">{$profile.about_me|escape}</textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Speichern</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Social Media Modal -->
+<div class="modal fade" id="socialModal" tabindex="-1" aria-labelledby="socialModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="socialModalLabel">Social Media bearbeiten</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="update_profile.php">
+          <input type="hidden" name="action" value="update_socials">
+          <div class="mb-3">
+            <label for="instagram" class="form-label">Instagram</label>
+            <input type="text" class="form-control" id="instagram" name="instagram" value="{$socials.instagram|default:''|escape}">
+          </div>
+          <div class="mb-3">
+            <label for="tiktok" class="form-label">TikTok</label>
+            <input type="text" class="form-control" id="tiktok" name="tiktok" value="{$socials.tiktok|default:''|escape}">
+          </div>
+          <div class="mb-3">
+            <label for="discord" class="form-label">Discord</label>
+            <input type="text" class="form-control" id="discord" name="discord" value="{$socials.discord|default:''|escape}">
+          </div>
+          <div class="mb-3">
+            <label for="ms_teams" class="form-label">MS Teams</label>
+            <input type="text" class="form-control" id="ms_teams" name="ms_teams" value="{$socials.ms_teams|default:''|escape}">
+          </div>
+          <div class="mb-3">
+            <label for="twitter" class="form-label">Twitter (X)</label>
+            <input type="text" class="form-control" id="twitter" name="twitter" value="{$socials.twitter|default:''|escape}">
+          </div>
+          <div class="mb-3">
+            <label for="linkedin" class="form-label">LinkedIn</label>
+            <input type="text" class="form-control" id="linkedin" name="linkedin" value="{$socials.linkedin|default:''|escape}">
+          </div>
+          <div class="mb-3">
+            <label for="github" class="form-label">GitHub</label>
+            <input type="text" class="form-control" id="github" name="github" value="{$socials.github|default:''|escape}">
+          </div>
+          <button type="submit" class="btn btn-primary">Speichern</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{/if}
+
 {/block}

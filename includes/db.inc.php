@@ -44,17 +44,33 @@ class DbFunctions
     }
 
     // Legt eine neue Gruppe an und trägt den Nutzer als Mitglied ein
-    public static function createGroup(string $groupName, int $userId): ?int
+    public static function createGroup(
+        string $groupName,
+        int $userId,
+        string $joinType = 'open',
+        ?string $inviteCode = null
+    ): ?int
     {
         $pdo = self::db_connect();
         $pdo->beginTransaction();
         try {
-            $stmt = $pdo->prepare('INSERT INTO groups (name) VALUES (:name)');
-            $stmt->execute([':name' => $groupName]);
+            $stmt = $pdo->prepare(
+                'INSERT INTO groups (name, join_type, invite_code) VALUES (:name, :jtype, :icode)'
+            );
+            $stmt->execute([
+                ':name'  => $groupName,
+                ':jtype' => $joinType,
+                ':icode' => $inviteCode,
+            ]);
             $groupId = (int)$pdo->lastInsertId();
 
             $stmt = $pdo->prepare('INSERT INTO group_members (group_id, user_id) VALUES (:gid, :uid)');
             $stmt->execute([':gid' => $groupId, ':uid' => $userId]);
+
+            $stmt = $pdo->prepare(
+                'INSERT INTO group_roles (group_id, user_id, role) VALUES (:gid, :uid, :role)'
+            );
+            $stmt->execute([':gid' => $groupId, ':uid' => $userId, ':role' => 'admin']);
 
             $pdo->commit();
             return $groupId;
@@ -68,7 +84,7 @@ class DbFunctions
     // Holt eine Gruppe anhand ihres Namens
     public static function fetchGroupByName(string $name): ?array
     {
-        $sql = 'SELECT * FROM groups WHERE name = :name LIMIT 1';
+        $sql = 'SELECT id, name, join_type, invite_code FROM groups WHERE name = :name LIMIT 1';
         return self::fetchOne($sql, [':name' => $name]);
     }
 
@@ -85,6 +101,12 @@ class DbFunctions
     // Entfernt einen Benutzer aus einer Gruppe
     public static function removeUserFromGroup(int $groupId, int $userId): bool
     {
+        // Rolle entfernen
+        self::execute(
+            'DELETE FROM group_roles WHERE group_id = :gid AND user_id = :uid',
+            [':gid' => $groupId, ':uid' => $userId]
+        );
+
         $sql = '
         DELETE FROM group_members
         WHERE group_id = :gid AND user_id = :uid
@@ -92,16 +114,22 @@ class DbFunctions
         return self::execute($sql, [':gid' => $groupId, ':uid' => $userId]) > 0;
     }
 
-    // Gibt alle Mitglieder einer Gruppe zurück (Username + E-Mail)
+    // Gibt alle Mitglieder einer Gruppe zurück (id, Username, E-Mail, Rolle)
     public static function getGroupMembers(int $groupId): array
     {
         $sql = '
-        SELECT u.username, u.email
-        FROM group_members gm
-        JOIN users u ON gm.user_id = u.id
-        WHERE gm.group_id = :gid
-        ORDER BY u.username ASC
-    ';
+            SELECT
+                u.id   AS user_id,
+                u.username,
+                u.email,
+                gr.role
+            FROM group_members gm
+            JOIN users u ON gm.user_id = u.id
+            LEFT JOIN group_roles gr
+                ON gr.group_id = gm.group_id AND gr.user_id = gm.user_id
+            WHERE gm.group_id = :gid
+            ORDER BY u.username ASC
+        ';
         return self::execute($sql, [':gid' => $groupId], true);
     }
 
@@ -132,8 +160,17 @@ class DbFunctions
      */
     public static function fetchGroupById(int $groupId): ?array
     {
-        $sql = 'SELECT id, name FROM `groups` WHERE id = :gid LIMIT 1';
+        $sql = 'SELECT id, name, join_type, invite_code FROM `groups` WHERE id = :gid LIMIT 1';
         return self::fetchOne($sql, [':gid' => $groupId]);
+    }
+
+    /**
+     * Holt eine Gruppe anhand ihres Einladungscodes.
+     */
+    public static function fetchGroupByInviteCode(string $code): ?array
+    {
+        $sql = 'SELECT id, name, join_type, invite_code FROM `groups` WHERE invite_code = :code LIMIT 1';
+        return self::fetchOne($sql, [':code' => $code]);
     }
 
     /**
@@ -173,8 +210,81 @@ class DbFunctions
      */
     public static function deleteGroup(int $groupId): bool
     {
-        $sql = 'DELETE FROM `groups` WHERE id = :gid';
-        return self::execute($sql, [':gid' => $groupId]) > 0;
+        $pdo = self::db_connect();
+
+        $pdo->beginTransaction();
+        try {
+            // Abhängigkeiten entfernen
+            $pdo->prepare('DELETE FROM group_roles WHERE group_id = ?')
+                ->execute([$groupId]);
+            $pdo->prepare('DELETE FROM group_members WHERE group_id = ?')
+                ->execute([$groupId]);
+
+            // Uploads der Gruppe lösen
+            $pdo->prepare('UPDATE uploads SET group_id = NULL WHERE group_id = ?')
+                ->execute([$groupId]);
+
+            $pdo->prepare('DELETE FROM `groups` WHERE id = ?')
+                ->execute([$groupId]);
+
+            $pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            self::getLogger()->error('deleteGroup failed', ['error' => $e->getMessage()]);
+            return false;
+        }
+    }
+
+    /**
+     * Prüft, ob eine aktive Einladung für Benutzer und Gruppe existiert.
+     */
+    public static function fetchActiveGroupInvite(int $groupId, int $userId): ?array
+    {
+        $sql = 'SELECT * FROM group_invites
+                WHERE group_id = :gid AND invited_user_id = :uid
+                  AND used_at IS NULL AND expires_at > NOW()
+                LIMIT 1';
+        return self::fetchOne($sql, [':gid' => $groupId, ':uid' => $userId]);
+    }
+
+    /**
+     * Erstellt eine neue Einladung f\xC3\xBCr eine Lerngruppe.
+     */
+    public static function createGroupInvite(int $groupId, int $userId, string $token, int $expiresHours = 48): bool
+    {
+        if (self::fetchActiveGroupInvite($groupId, $userId)) {
+            return false;
+        }
+
+        $sql = 'INSERT INTO group_invites (group_id, invited_user_id, token, created_at, expires_at)
+                VALUES (:gid, :uid, :token, NOW(), DATE_ADD(NOW(), INTERVAL :exp HOUR))';
+
+        return self::execute($sql, [
+            ':gid'  => $groupId,
+            ':uid'  => $userId,
+            ':token'=> $token,
+            ':exp'  => $expiresHours,
+        ]) > 0;
+    }
+
+    /**
+     * Holt eine Einladung anhand ihres Tokens.
+     */
+    public static function fetchGroupInviteByToken(string $token): ?array
+    {
+        $sql = 'SELECT * FROM group_invites
+                WHERE token = :token AND used_at IS NULL AND expires_at > NOW()
+                LIMIT 1';
+        return self::fetchOne($sql, [':token' => $token]);
+    }
+
+    /**
+     * Markiert eine Einladung als benutzt.
+     */
+    public static function markGroupInviteUsed(int $inviteId): void
+    {
+        self::execute('UPDATE group_invites SET used_at = NOW() WHERE id = :id', [':id' => $inviteId]);
     }
 
     
@@ -255,13 +365,13 @@ class DbFunctions
     /**
      * Legt ein neues ToDo an.
      */
-    public static function insertTodo(int $userId, string $text, ?string $dueDate): void
+    public static function insertTodo(int $userId, string $text, ?string $dueDate, string $priority = 'medium'): void
     {
         $query = '
-        INSERT INTO todos (user_id, text, due_date)
-        VALUES (?, ?, ?)
+        INSERT INTO todos (user_id, text, due_date, priority)
+        VALUES (?, ?, ?, ?)
     ';
-        self::execute($query, [$userId, $text, $dueDate]);
+        self::execute($query, [$userId, $text, $dueDate, $priority]);
     }
 
     /**
@@ -289,6 +399,83 @@ class DbFunctions
         self::execute($query, [$newStatus, $todoId, $userId]);
     }
 
+    /**
+    /* -----------------------------------------------------------------
+     * ToDo-Funktionen (Datum / Status / Priorität)
+     * ----------------------------------------------------------------- */
+
+    /**
+     * Liefert alle ToDos eines Benutzers innerhalb eines Datumsbereichs.
+     */
+    public static function getTodosForDateRange(
+        int $userId,
+        string $startDate,
+        string $endDate
+    ): array {
+        $query = '
+            SELECT id, title, due_date, priority
+            FROM todos
+            WHERE user_id = :uid
+              AND due_date BETWEEN :start AND :end
+            ORDER BY due_date
+        ';
+        return self::execute($query, [
+            ':uid'   => $userId,
+            ':start' => $startDate,
+            ':end'   => $endDate,
+        ], true);
+    }
+
+    /**
+     * Liefert alle ToDos eines Benutzers an einem bestimmten Datum.
+     */
+    public static function getTodosForDate(int $userId, string $date): array
+    {
+        return self::getTodosForDateRange($userId, $date, $date);
+    }
+
+    /**
+     * Aktualisiert die Priorität eines ToDos.
+     */
+    public static function updateTodoPriority(
+        int $todoId,
+        int $userId,
+        string $priority
+    ): void {
+        $query = '
+            UPDATE todos
+            SET priority = ?
+            WHERE id = ? AND user_id = ? AND is_done = 0
+        ';
+        self::execute($query, [$priority, $todoId, $userId]);
+    }
+
+    /**
+     * Löscht ein erledigtes ToDo.
+     */
+    public static function deleteTodo(int $todoId, int $userId): void
+    {
+        $query = '
+            DELETE FROM todos
+            WHERE id = ? AND user_id = ? AND is_done = 1
+        ';
+        self::execute($query, [$todoId, $userId]);
+    }
+
+    /**
+     * Löscht alle erledigten ToDos eines Benutzers.
+     */
+    public static function deleteCompletedTodos(int $userId): void
+    {
+        $query = '
+            DELETE FROM todos
+            WHERE user_id = ? AND is_done = 1
+        ';
+        self::execute($query, [$userId]);
+    }
+
+    
+
     /**Alle bestätigten Materialien abrufen**/
 
     public static function getApprovedUploads(): array
@@ -296,7 +483,7 @@ class DbFunctions
         $query = '
         SELECT id, stored_name, material_id, uploaded_by
         FROM uploads
-        WHERE is_approved = 1
+        WHERE is_approved = 1 AND group_id IS NULL
     ';
         return self::execute($query, [], true); // true = fetchAll()
     }
@@ -309,7 +496,7 @@ class DbFunctions
         FROM materials m
         JOIN uploads u ON u.material_id = m.id
         JOIN courses c ON m.course_id = c.id
-        WHERE u.is_approved = 1
+        WHERE u.is_approved = 1 AND u.group_id IS NULL
     ';
     return self::execute($query, [], true);
 }
@@ -322,7 +509,7 @@ public static function getMaterialsByTitle(string $searchTerm): array
         FROM materials m
         JOIN uploads u ON u.material_id = m.id
         JOIN courses c ON m.course_id = c.id
-        WHERE u.is_approved = 1 AND m.title LIKE :search
+        WHERE u.is_approved = 1 AND u.group_id IS NULL AND m.title LIKE :search
     ');
     $stmt->execute(['search' => '%' . $searchTerm . '%']);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -1208,6 +1395,10 @@ public static function countUploadLogs(): int
  */
 public static function rejectUpload(int $uploadId, int $modId, ?string $note = null): bool
 {
+    if ($note === null || trim($note) === '') {
+        throw new InvalidArgumentException('Ablehnungsgrund erforderlich');
+    }
+
     $pdo = self::db_connect();
 
     // Upload als abgelehnt markieren
@@ -1374,6 +1565,50 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
         $stmt->execute([$userId]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Löscht einen Upload des angegebenen Nutzers und gibt den Dateinamen
+     * zurück. Gibt null zurück, wenn der Upload nicht gefunden wurde.
+     */
+    public static function deleteUpload(int $uploadId, int $userId): ?string
+    {
+        $pdo = self::db_connect();
+
+        $pdo->beginTransaction();
+        try {
+            $stmt = $pdo->prepare('SELECT stored_name, material_id FROM uploads WHERE id = ? AND uploaded_by = ?');
+            $stmt->execute([$uploadId, $userId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                $pdo->rollBack();
+                return null;
+            }
+
+            $name = $row['stored_name'];
+            $materialId = (int)$row['material_id'];
+
+            // Erst loggen, dann löschen, damit Foreign Keys nicht scheitern
+            self::logUploadAction($uploadId, 'deleted', $userId, 'Upload gelöscht');
+
+            $del = $pdo->prepare('DELETE FROM uploads WHERE id = ? AND uploaded_by = ?');
+            $del->execute([$uploadId, $userId]);
+
+            // Material entfernen, wenn keine Uploads mehr darauf verweisen
+            $check = $pdo->prepare('SELECT COUNT(*) FROM uploads WHERE material_id = ?');
+            $check->execute([$materialId]);
+            if ((int)$check->fetchColumn() === 0) {
+                $pdo->prepare('DELETE FROM materials WHERE id = ?')->execute([$materialId]);
+            }
+
+            $pdo->commit();
+            return $name;
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            self::getLogger()->error('deleteUpload failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
     }
 /**
  * Zählt die Anzahl der Upload-Logs mit erweiterten Filtermöglichkeiten.
@@ -2377,5 +2612,44 @@ public static function getFilteredLockedUsers(array $filters = []): array
         $stmt = $pdo->prepare('INSERT INTO courses (name) VALUES (?)');
         $stmt->execute([$courseName]);
         return (int) $pdo->lastInsertId();
+
+     * Gibt alle Social-Media-Einträge eines Nutzers zurück.
+     *
+     * @param int $userId Die ID des Nutzers
+     * @return array[] Liste aus [platform => string, username => string]
+     */
+    public static function getUserSocialMedia(int $userId): array
+    {
+        $sql = 'SELECT platform, username FROM social_media WHERE user_id = :uid';
+        return self::execute($sql, [':uid' => $userId], true);
+    }
+
+    /**
+     * Speichert einen Social-Media-Eintrag. Existiert bereits einer mit gleicher
+     * Plattform für den Nutzer, wird dieser aktualisiert.
+     *
+     * @param int    $userId   Die ID des Nutzers
+     * @param string $platform Die Plattform
+     * @param string $username Der Benutzername
+     */
+    public static function saveUserSocialMedia(int $userId, string $platform, string $username): void
+    {
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare('SELECT id FROM social_media WHERE user_id = :uid AND platform = :platform');
+        $stmt->execute([':uid' => $userId, ':platform' => $platform]);
+        $existingId = $stmt->fetchColumn();
+
+        if ($existingId) {
+            if ($username === '') {
+                $del = $pdo->prepare('DELETE FROM social_media WHERE id = :id');
+                $del->execute([':id' => $existingId]);
+            } else {
+                $update = $pdo->prepare('UPDATE social_media SET username = :uname WHERE id = :id');
+                $update->execute([':uname' => $username, ':id' => $existingId]);
+            }
+        } elseif ($username !== '') {
+            $insert = $pdo->prepare('INSERT INTO social_media (user_id, platform, username) VALUES (:uid, :platform, :uname)');
+            $insert->execute([':uid' => $userId, ':platform' => $platform, ':uname' => $username]);
+        }
     }
 }
