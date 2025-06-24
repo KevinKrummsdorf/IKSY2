@@ -36,6 +36,12 @@ $smarty->assign('email', $email);
 $smarty->assign('socials', $socials);
 $smarty->assign('max_birthdate', (new DateTime('-16 years'))->format('Y-m-d'));
 
+// Flash Message anzeigen
+if (isset($_SESSION['flash'])) {
+    $smarty->assign('flash', $_SESSION['flash']);
+    unset($_SESSION['flash']);
+}
+
 // Template anzeigen
 $smarty->display('edit_profile.tpl');
 

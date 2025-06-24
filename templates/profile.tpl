@@ -18,21 +18,24 @@
       {else}
         <img src="{$base_url}/assets/default_person.png" alt="Kein Profilbild" class="rounded-circle shadow" style="width:150px;height:150px;object-fit:cover;">
       {/if}
+      {if $isOwnProfile}
+        <button class="btn btn-sm btn-outline-primary d-block mx-auto mt-2 mb-3" data-bs-toggle="modal" data-bs-target="#pictureModal">Profilbild ändern</button>
+      {/if}
     </div>
     <div class="col-md-9">
       {if $isOwnProfile}
         <h2 class="h4">Login-Daten</h2>
         <div class="mb-3 d-flex justify-content-between align-items-center">
           <span>Benutzername: {$profile.username|escape}</span>
-          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#usernameModal">Ändern</button>
+          <button class="btn btn-sm btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#usernameModal">Ändern</button>
         </div>
         <div class="mb-3 d-flex justify-content-between align-items-center">
           <span>E-Mail-Adresse: {$profile.email|escape}</span>
-          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#emailModal">Ändern</button>
+          <button class="btn btn-sm btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#emailModal">Ändern</button>
         </div>
         <div class="mb-4 d-flex justify-content-between align-items-center">
           <span>Passwort: ********</span>
-          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#passwordModal">Ändern</button>
+          <button class="btn btn-sm btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#passwordModal">Ändern</button>
         </div>
       {/if}
 
@@ -53,10 +56,10 @@
         <textarea class="form-control" rows="4" readonly>{$profile.about_me|escape}</textarea>
       </div>
       {if $isOwnProfile}
-        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#personalModal">Ändern</button>
+        <button class="btn btn-sm btn-outline-primary mb-3" data-bs-toggle="modal" data-bs-target="#personalModal">Ändern</button>
       {/if}
 
-      <h2 class="h4">Social Media</h2>
+      <h2 class="h4 mt-2">Social Media</h2>
       <ul class="list-unstyled mb-3">
           {if $socials.instagram}
             <li><i class="bi bi-instagram"></i> Instagram: <a href="https://instagram.com/{$socials.instagram|escape:'url'}" target="_blank">{$socials.instagram|escape:'html'}</a></li>
@@ -81,13 +84,34 @@
           {/if}
       </ul>
       {if $isOwnProfile}
-        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#socialModal">Ändern</button>
+        <button class="btn btn-sm btn-outline-primary mb-3" data-bs-toggle="modal" data-bs-target="#socialModal">Ändern</button>
       {/if}
     </div>
   </div>
 </div>
 
 {if $isOwnProfile}
+<!-- Profile Picture Modal -->
+<div class="modal fade" id="pictureModal" tabindex="-1" aria-labelledby="pictureModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="pictureModalLabel">Profilbild ändern</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="update_profile.php" enctype="multipart/form-data">
+          <input type="hidden" name="action" value="update_picture">
+          <div class="mb-3">
+            <label for="profile_picture" class="form-label">Neues Profilbild</label>
+            <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Speichern</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- Username Modal -->
 <div class="modal fade" id="usernameModal" tabindex="-1" aria-labelledby="usernameModalLabel" aria-hidden="true">
   <div class="modal-dialog">
