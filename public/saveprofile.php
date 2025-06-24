@@ -14,7 +14,7 @@ $currentEmail = $currentUser['email'] ?? '';
 
 // POST-Daten holen und vorbereiten
 $data = [];
-$keys = ['first_name', 'last_name', 'birthdate', 'location', 'about_me', 'instagram', 'tiktok', 'discord', 'ms_teams'];
+$keys = ['first_name', 'last_name', 'birthdate', 'location', 'about_me'];
 
 foreach ($keys as $key) {
     $value = $_POST[$key] ?? null;
@@ -82,6 +82,13 @@ if (!empty($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ==
 
 // Speichern in DB
 DbFunctions::updateUserProfile($userId, $data);
+
+// Social-Media-Handles speichern
+$platforms = ['instagram', 'tiktok', 'discord', 'ms_teams', 'twitter', 'linkedin', 'github'];
+foreach ($platforms as $platform) {
+    $handle = htmlspecialchars(trim($_POST[$platform] ?? ''), ENT_QUOTES, 'UTF-8');
+    DbFunctions::saveUserSocialMedia($userId, $platform, $handle);
+}
 
 // Weiterleitung
 header('Location: profile.php?success=1');

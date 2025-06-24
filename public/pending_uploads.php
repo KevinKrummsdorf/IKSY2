@@ -17,35 +17,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action   = $_POST['action'] ?? '';
     $note     = trim($_POST['note'] ?? '');
 
+    $actionSuccess = false;
+
     try {
         if ($action === 'approve') {
             DbFunctions::approveUpload($uploadId, (int)$_SESSION['user_id']);
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Upload wurde freigegeben.'];
+            $actionSuccess = true;
         } elseif ($action === 'reject') {
-            DbFunctions::rejectUpload($uploadId, (int)$_SESSION['user_id'], $note);
-            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Upload wurde abgelehnt.'];
+            if ($note === '') {
+                $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Bitte einen Ablehnungsgrund angeben.'];
+            } else {
+                DbFunctions::rejectUpload($uploadId, (int)$_SESSION['user_id'], $note);
+                $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Upload wurde abgelehnt.'];
+                $actionSuccess = true;
+            }
         }
 
-        // Mail an den Nutzer senden
-        $uploadData = DbFunctions::getUploadDetails($uploadId);
+        // Mail an den Nutzer senden, falls Aktion erfolgreich war
+        if ($actionSuccess) {
+            $uploadData = DbFunctions::getUploadDetails($uploadId);
 
-        if ($uploadData && !empty($uploadData['email']) && !empty($uploadData['username'])) {
-            $subject = ($action === 'approve')
-                ? 'Dein Upload auf StudyHub wurde freigegeben'
-                : 'Dein Upload auf StudyHub wurde abgelehnt';
+            if ($uploadData && !empty($uploadData['email']) && !empty($uploadData['username'])) {
+                $subject = ($action === 'approve')
+                    ? 'Dein Upload auf StudyHub wurde freigegeben'
+                    : 'Dein Upload auf StudyHub wurde abgelehnt';
 
-            $body = ($action === 'approve')
-                ? "<p>Hallo {$uploadData['username']},</p>
-                   <p>dein Upload <strong>{$uploadData['title']}</strong> im Kurs <strong>{$uploadData['course_name']}</strong> wurde von einem Moderator freigegeben.</p>
-                   <p>Vielen Dank für deinen Beitrag!</p>
-                   <p>Viele Grüße,<br>Dein StudyHub-Team</p>"
-                : "<p>Hallo {$uploadData['username']},</p>
-                   <p>dein Upload <strong>{$uploadData['title']}</strong> im Kurs <strong>{$uploadData['course_name']}</strong> wurde leider abgelehnt.</p>
-                   <p><strong>Grund:</strong> {$note}</p>
-                   <p>Bitte überprüfe deinen Upload oder kontaktiere das Support-Team.</p>
-                   <p>Viele Grüße,<br>Dein StudyHub-Team</p>";
+                $body = ($action === 'approve')
+                    ? "<p>Hallo {$uploadData['username']},</p>
+                       <p>dein Upload <strong>{$uploadData['title']}</strong> im Kurs <strong>{$uploadData['course_name']}</strong> wurde von einem Moderator freigegeben.</p>
+                       <p>Vielen Dank für deinen Beitrag!</p>
+                       <p>Viele Grüße,<br>Dein StudyHub-Team</p>"
+                    : "<p>Hallo {$uploadData['username']},</p>
+                       <p>dein Upload <strong>{$uploadData['title']}</strong> im Kurs <strong>{$uploadData['course_name']}</strong> wurde leider abgelehnt.</p>
+                       <p><strong>Grund:</strong> {$note}</p>
+                       <p>Bitte überprüfe deinen Upload oder kontaktiere das Support-Team.</p>
+                       <p>Viele Grüße,<br>Dein StudyHub-Team</p>";
 
-            sendMail($uploadData['email'], $uploadData['username'], $subject, $body);
+                sendMail($uploadData['email'], $uploadData['username'], $subject, $body);
+            }
         }
     } catch (Exception $e) {
         error_log("Fehler in pending_uploads.php: " . $e->getMessage());

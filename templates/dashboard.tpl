@@ -5,7 +5,7 @@
 {block name="content"}
 <div class="container mt-5">
   <h1>
-    Hallo, {$username}!<br>
+    Hallo, {$username|escape}!<br>
     <small class="text-muted">
         Rolle:
         {if $isAdmin}
@@ -17,6 +17,86 @@
         {/if}
     </small>
   </h1>
+
+  {if !$isAdmin}
+    {* Eigene Uploads *}
+    <section class="my-4">
+      <h2 class="mb-2">Deine Uploads</h2>
+      <div>
+        {if $user_uploads|@count > 0}
+          <div id="myUploadsCarousel" class="carousel slide" data-bs-interval="false">
+            <div class="carousel-inner">
+              {foreach $user_uploads as $index => $u}
+                <div class="carousel-item {if $index == 0}active{/if}">
+                  <div class="pdf-slide">
+                    <a href="{$base_url}/view_pdf.php?file={$u.stored_name|escape:'url'}" target="_blank" class="pdf-link">
+                      {if $u.type == 'image'}
+                        <img src="{$base_url}/uploads/{$u.stored_name|escape:'url'}" alt="{$u.title|escape}" class="img-fluid mb-2" style="max-height:160px;">
+                      {else}
+                        <span class="material-symbols-outlined">picture_as_pdf</span>
+                      {/if}
+                      <h5>{$u.title|escape:'html'}</h5>
+                      <p>{$u.course_name|escape:'html'} – {$u.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</p>
+                    </a>
+                    <a href="{$base_url}/download.php?id={$u.id}"
+                       class="download-link mt-3"
+                       title="{$u.original_name|escape} herunterladen"
+                       download>
+                      <span class="material-symbols-outlined">download</span>
+                      <span>Herunterladen</span>
+                      <small class="text-muted d-block mt-1"></small>
+                    </a>
+                    <form method="post" action="{$base_url}/delete_upload.php" class="mt-2" onsubmit="return confirm('Upload wirklich löschen?');">
+                      <input type="hidden" name="csrf_token" value="{$csrf_token}">
+                      <input type="hidden" name="upload_id" value="{$u.id}">
+                      <button type="submit" class="btn btn-sm btn-danger">Löschen</button>
+                    </form>
+                  </div>
+                </div>
+              {/foreach}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#myUploadsCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Zurück</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#myUploadsCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Weiter</span>
+            </button>
+          </div>
+        {else}
+          <div class="alert alert-info">Du hast noch keine Materialien hochgeladen.</div>
+        {/if}
+      </div>
+    </section>
+
+  <div class="row row-cols-1 row-cols-md-2 g-4 my-4">
+  <div class="col">
+    <section class="h-100 p-3 border rounded" id="learn-timer-section">
+      <h2 class="h4 mb-3 text-center">Lerntimer</h2>
+      <div class="row g-2 align-items-center">
+        <div class="col-auto">
+          <label for="timerDuration" class="col-form-label">Dauer (Minuten)</label>
+        </div>
+        <div class="col-auto">
+          <input type="number" class="form-control" id="timerDuration" min="1" value="30">
+        </div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-primary" id="startTimerBtn">Start</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="col">
+    <section class="h-100 p-3 border rounded">
+      <h2 class="h4 mb-3 text-center">Kalender</h2>
+      {include file='partials/today_tasks.tpl'}
+      {include file='partials/calendar_month.tpl'}
+    </section>
+  </div>
+  </div>
+  {/if}
 
   {if $isAdmin}
     {* Abschnitt 1 : locked User *}
@@ -269,71 +349,28 @@
     </section>
   {/if}
 
-  {if !$isAdmin && !$isMod}
-  {* Nutzer-Uploads *}
-  <section class="my-5">
-    <h2 class="mb-2">Deine Uploads</h2>
-    <div>
-      {if $user_uploads|@count > 0}
+</div>
 
-        <div id="myUploadsCarousel" class="carousel slide" data-bs-interval="false">
-        <div class="carousel-inner">
-          {foreach $user_uploads as $index => $u}
-          <div class="carousel-item {if $index == 0}active{/if}">
-            <div class="pdf-slide">
-              <a href="{$base_url}/view_pdf.php?file={$u.stored_name|escape:'url'}" target="_blank" class="pdf-link">
-                <span class="material-symbols-outlined">picture_as_pdf</span>
-                <h5>{$u.title|escape}</h5>
-                <p>{$u.course_name|escape} – {$u.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</p>
-              </a>
-
-              <a href="{$base_url}/download.php?id={$u.id}" 
-                 class="download-link mt-3" 
-                 title="{$u.original_name|escape} herunterladen"
-                 download>
-                <span class="material-symbols-outlined">download</span>
-                <span>Herunterladen</span>
-                <small class="text-muted d-block mt-1"></small>
-              </a>
-            </div>
-          </div>
-          {/foreach}
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#myUploadsCarousel" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Zurück</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#myUploadsCarousel" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Weiter</span>
-        </button>
+<!-- Lerntimer Modal -->
+<div class="modal fade" id="timerModal" tabindex="-1" aria-labelledby="timerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header">
+        <h5 class="modal-title" id="timerModalLabel">Lerntimer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
-      {else}
-        <div class="alert alert-info">Du hast noch keine Materialien hochgeladen.</div>
-      {/if}
+      <div class="modal-body">
+        <div id="timerDisplay" class="display-1 fw-bold">00:00</div>
+        <p id="timerMessage" class="h4 mt-3"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary d-none" id="closeTimerBtn" data-bs-dismiss="modal">Beenden</button>
+      </div>
     </div>
-  </section>
-  {/if}
+  </div>
 </div>
 {/block}
 
 {block name="scripts"}
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.toggle-collapse-icon').forEach(btn => {
-      const icon = btn.querySelector('.collapse-icon');
-      const target = document.querySelector(btn.dataset.bsTarget);
-      if (!target || !icon) return;
-
-      const updateIcon = (expanded) => {
-        icon.textContent = expanded ? 'expand_less' : 'expand_more';
-      };
-
-      updateIcon(target.classList.contains('show'));
-
-      target.addEventListener('show.bs.collapse', () => updateIcon(true));
-      target.addEventListener('hide.bs.collapse', () => updateIcon(false));
-    });
-  });
-</script>
+<script src="{$base_url}/js/dashboard.js"></script>
 {/block}

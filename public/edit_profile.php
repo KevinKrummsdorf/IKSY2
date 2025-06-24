@@ -14,6 +14,11 @@ $username = $_SESSION['username'];
 $profile = DbFunctions::getOrCreateUserProfile($userId);
 $userData = DbFunctions::fetchUserById($userId);
 $email    = $userData['email'] ?? '';
+$socialEntries = DbFunctions::getUserSocialMedia($userId);
+$socials = [];
+foreach ($socialEntries as $entry) {
+    $socials[$entry['platform']] = $entry['username'];
+}
 
 // CSRF-Token erzeugen
 if (!isset($_SESSION['csrf_token'])) {
@@ -28,6 +33,7 @@ $smarty->assign('isLoggedIn', true);
 $smarty->assign('username', $username);
 $smarty->assign('profile', $profile);
 $smarty->assign('email', $email);
+$smarty->assign('socials', $socials);
 
 // Template anzeigen
 $smarty->display('edit_profile.tpl');

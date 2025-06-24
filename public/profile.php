@@ -14,6 +14,7 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
 
 $userId   = $_SESSION['user_id'];
 $username = $_SESSION['username'];
+$isAdmin = ($_SESSION['role'] ?? '') === 'admin';
 
 // Standardmäßig eigenes Profil laden
 $profileUserId = $userId;
@@ -26,8 +27,34 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 // Profil abrufen
 $profile = DbFunctions::getOrCreateUserProfile($profileUserId);
 
+// Alter berechnen, falls Geburtsdatum vorhanden ist
+if (!empty($profile['birthdate'])) {
+    try {
+        $birth = new DateTime($profile['birthdate']);
+        $profile['age'] = $birth->diff(new DateTime('today'))->y;
+    } catch (Throwable $e) {
+        $profile['age'] = null;
+    }
+}
+
+// Username des Profilbesitzers abrufen
+$profileOwner = DbFunctions::fetchUserById($profileUserId);
+if ($profileOwner) {
+    if (isset($profileOwner['username'])) {
+        $profile['username'] = $profileOwner['username'];
+    }
+    if (isset($profileOwner['email'])) {
+        $profile['email'] = $profileOwner['email'];
+    }
+}
+
 // Prüfen, ob es das eigene Profil ist
 $isOwnProfile = ($profileUserId === $userId);
+$entries = DbFunctions::getUserSocialMedia($profileUserId);
+$socialEntries = [];
+foreach ($entries as $s) {
+    $socialEntries[$s['platform']] = $s['username'];
+}
 
 $pwSuccess = null;
 $pwMessage = null;
@@ -71,9 +98,17 @@ $smarty->assign('app_name', $config['app_name']);
 $smarty->assign('isLoggedIn', true);
 $smarty->assign('username', $username);
 $smarty->assign('profile', $profile);
+$smarty->assign('socials', $socialEntries);
 $smarty->assign('isOwnProfile', $isOwnProfile);
+$smarty->assign('isAdmin', $isAdmin);
 $smarty->assign('pw_success', $pwSuccess);
 $smarty->assign('pw_message', $pwMessage);
+
+// Flash Message anzeigen
+if (isset($_SESSION['flash'])) {
+    $smarty->assign('flash', $_SESSION['flash']);
+    unset($_SESSION['flash']);
+}
 
 // Seite anzeigen
 $smarty->display('profile.tpl');
