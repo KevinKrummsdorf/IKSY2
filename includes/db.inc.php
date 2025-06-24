@@ -2506,6 +2506,115 @@ public static function getFilteredLockedUsers(array $filters = []): array
     }
 
     /**
+     * Wochentage aus der Datenbank laden.
+     */
+    public static function fetchAllWeekdays(): array
+    {
+        $pdo = self::db_connect();
+        return $pdo->query('SELECT id, day_name FROM weekdays ORDER BY id')
+            ->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Zeitfenster aus der Datenbank laden.
+     */
+    public static function fetchAllTimeSlots(): array
+    {
+        $pdo = self::db_connect();
+        return $pdo->query('SELECT id, start_time, end_time FROM time_slots ORDER BY id')
+            ->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Stundenplan eines Benutzers auslesen.
+     */
+    public static function fetchUserSchedule(int $userId): array
+    {
+        $pdo = self::db_connect();
+        $stmt = $pdo->prepare(
+            'SELECT us.weekday_id, us.time_slot_id, c.name AS subject, us.room
+             FROM user_schedules us
+             JOIN courses c ON us.course_id = c.id
+             WHERE us.user_id = ?'
+        );
+        $stmt->execute([$userId]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $timetable = [];
+        foreach ($rows as $row) {
+            $timetable[$row["weekday_id"]][$row["time_slot_id"]] = [
+                'subject' => $row['subject'],
+                'room' => $row['room'],
+            ];
+        }
+
+        return $timetable;
+    }
+
+    /**
+     * Stundenplan speichern: vorher leeren, dann neu eintragen.
+     */
+    public static function saveUserSchedule(int $userId, array $schedule): void
+    {
+        $pdo = self::db_connect();
+
+        try {
+            $pdo->beginTransaction();
+
+            // Vorherige Einträge löschen
+            $pdo->prepare('DELETE FROM user_schedules WHERE user_id = ?')->execute([$userId]);
+
+            $stmt = $pdo->prepare('INSERT INTO user_schedules
+                (user_id, course_id, weekday_id, time_slot_id, room)
+                VALUES (?, ?, ?, ?, ?)');
+
+            foreach ($schedule as $weekdayId => $slots) {
+                foreach ($slots as $slotId => $entry) {
+                    $subject = trim($entry['fach'] ?? '');
+                    $room    = trim($entry['raum'] ?? '');
+
+                    if ($subject === '') {
+                        continue; // kein Fach angegeben
+                    }
+
+                    $courseId = self::getOrCreateCourseId($subject);
+                    $stmt->execute([$userId, $courseId, $weekdayId, $slotId, $room]);
+                }
+            }
+
+            $pdo->commit();
+        } catch (PDOException $e) {
+            $pdo->rollBack();
+            self::getLogger()->info('Fehler beim Speichern des Stundenplans', [
+                'user_id' => $userId,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Fügt Kurs (Fach) ein oder gibt die ID zurück.
+     */
+    private static function getOrCreateCourseId(string $courseName): int
+    {
+        $pdo = self::db_connect();
+
+        // Achtung: korrekte Spalte ist "name", nicht "course_name"
+        $stmt = $pdo->prepare('SELECT id FROM courses WHERE name = ?');
+        $stmt->execute([$courseName]);
+        $id = $stmt->fetchColumn();
+
+        if ($id) {
+            return (int) $id;
+        }
+
+        $stmt = $pdo->prepare('INSERT INTO courses (name) VALUES (?)');
+        $stmt->execute([$courseName]);
+        return (int) $pdo->lastInsertId();
+    }
+
+        /*
      * Gibt alle Social-Media-Einträge eines Nutzers zurück.
      *
      * @param int $userId Die ID des Nutzers
@@ -2516,6 +2625,8 @@ public static function getFilteredLockedUsers(array $filters = []): array
         $sql = 'SELECT platform, username FROM social_media WHERE user_id = :uid';
         return self::execute($sql, [':uid' => $userId], true);
     }
+
+
 
     /**
      * Speichert einen Social-Media-Eintrag. Existiert bereits einer mit gleicher

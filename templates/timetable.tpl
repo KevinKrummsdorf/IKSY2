@@ -5,100 +5,38 @@
 {block name="content"}
 
 {if $success}
-    <p style="text-align:center; color:green; font-weight:bold;">✔ Stundenplan gespeichert!</p>
+    <p class="timetable-success-message">✔ Stundenplan gespeichert!</p>
 {/if}
 
-<h2 style="text-align: center; margin-bottom: 20px;">Stundenplan</h2>
-
-<style>
-    .timetable-table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
-        font-family: Arial, sans-serif;
-        background-color: rgba(255, 255, 255, 0.03);
-        border: 2px solid #444;
-    }
-
-    .timetable-table th,
-    .timetable-table td {
-        border: 1px solid #444;
-        padding: 8px;
-        vertical-align: top;
-        text-align: center;
-    }
-
-    .timetable-table th {
-        background-color: rgba(240, 240, 240, 0.6);
-    }
-
-    .timetable-table tr:nth-child(even) {
-        background-color: rgba(255, 255, 255, 0.02);
-    }
-
-    .timetable-table input[type="text"] {
-        width: 100%;
-        padding: 6px;
-        box-sizing: border-box;
-        font-size: 14px;
-        border: none;
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-        color: #000;
-        text-align: center;
-    }
-
-    .timetable-table input[type="text"]:focus {
-        background-color: rgba(255, 255, 255, 0.2);
-        outline: none;
-    }
-
-    .submit-button {
-        margin-top: 20px;
-        display: block;
-        width: 200px;
-        padding: 10px;
-        font-size: 16px;
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .submit-button:hover {
-        background-color: #0056b3;
-    }
-</style>
+<h2 class="timetable-heading">Stundenplan</h2>
 
 <form method="post" action="timetable.php">
     <table class="timetable-table">
         <thead>
             <tr>
                 <th>Zeit</th>
-                {foreach $days as $day}
-                    <th>{$day|capitalize}</th>
+                {foreach $weekdays as $day}
+                    <th>{$day.day_name|capitalize|escape}</th>
                 {/foreach}
             </tr>
         </thead>
         <tbody>
-            {foreach $timeSlots as $idx => $slotRange}
+            {foreach $timeSlots as $slot}
                 <tr>
-                    <td>{$slotRange}</td>
-                    {foreach $days as $day}
-                        {assign var="entry" value=$timetable[$day][$idx]|default:null}
+                    <td>{$slot.start_time|date_format:"%H:%M"} - {$slot.end_time|date_format:"%H:%M"}</td>
+                    {foreach $weekdays as $day}
+                        {assign var="entry" value=$timetable[$day.id][$slot.id]|default:null}
                         <td>
                             <input type="text"
-                                   name="timetable[{$day}][{$idx}][fach]"
-                                   value="{$entry.subject|default:''|escape:'html'}"
-                                   placeholder="Subject" /><br>
+                                   name="timetable[{$day.id}][{$slot.id}][fach]"
+                                   value="{$entry.subject|default:''|escape}"
+                                   placeholder="Fach"
+                                   class="timetable-input timetable-input--small" /><br>
                             <input type="text"
-                                   name="timetable[{$day}][{$idx}][raum]"
-                                   value="{$entry.room|default:''|escape:'html'}"
-                                   placeholder="Room" />
+                                   name="timetable[{$day.id}][{$slot.id}][raum]"
+                                   value="{$entry.room|default:''|escape}"
+                                   placeholder="Raum"
+                                   class="timetable-input timetable-input--small" />
                         </td>
                     {/foreach}
                 </tr>
@@ -109,4 +47,19 @@
     <button type="submit" class="submit-button">Speichern</button>
 </form>
 
+<div class="mt-3 text-center">
+    <a href="{$base_url}/timetable.php?export=csv" class="download-link me-2">
+        <span class="material-symbols-outlined">download</span>
+        <span>CSV</span>
+        <small>Stundenplan</small>
+    </a>
+    <a href="{$base_url}/timetable.php?export=pdf" class="download-link">
+        <span class="material-symbols-outlined">picture_as_pdf</span>
+        <span>PDF</span>
+        <small>Stundenplan</small>
+    </a>
+</div>
+
+
 {/block}
+
