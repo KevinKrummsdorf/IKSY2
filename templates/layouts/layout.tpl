@@ -62,7 +62,7 @@
   <ul class="menu-content mt-4">
     <li><a href="{$base_url}/profile/my"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
     <li><a href="{$base_url}/search_profile"><span class="material-symbols-outlined">person_search</span><span>Andere Mitglieder finden</span></a></li>
-    <li><a href="{$base_url}/lerngruppen"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
+    <li><a href="{$base_url}/my_groups"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
     <li><a href="{$base_url}/groups"><span class="material-symbols-outlined">groups</span><span>Alle Lerngruppen</span></a></li>
     <li><a href="{$base_url}/todos"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
     <li><a href="{$base_url}/browse"><span class="material-symbols-outlined">search</span><span>Material finden</span></a></li>

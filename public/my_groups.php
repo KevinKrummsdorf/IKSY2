@@ -84,5 +84,5 @@ if ($success !== '') {
 }
 
 // Seite anzeigen
-$smarty->display('lerngruppen.tpl');
+$smarty->display('my_groups.tpl');
 
