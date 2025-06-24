@@ -73,7 +73,7 @@
     <ul class="list-group mb-3">
       {foreach $uploads as $u}
         <li class="list-group-item d-flex justify-content-between">
-          {$u.title|escape}
+          <a href="{$base_url}/view_pdf.php?file={$u.stored_name|escape:'url'}" target="_blank">{$u.title|escape}</a>
           <a href="{$base_url}/download.php?id={$u.id}" download class="btn btn-sm btn-outline-primary">Herunterladen</a>
         </li>
       {/foreach}
