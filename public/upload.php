@@ -127,11 +127,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $prefix = strtolower(preg_replace('/[^a-z0-9]/i', '_', $prefix));
                     $prefix = trim(preg_replace('/_+/', '_', $prefix), '_');
 
-                    $baseName      = $prefix . '_' . uniqid();
-                    $storedName    = $baseName . '.' . $ext;
-                    $destination   = $uploadDir . $storedName;
+                    $baseName       = $prefix . '_' . uniqid();
+                    $tmpName        = $baseName . '.' . $ext;
+                    $tmpPath        = $uploadDir . $tmpName;
+                    $pdfName        = $baseName . '.pdf';
+                    $pdfPath        = $uploadDir . $pdfName;
 
-                    if (move_uploaded_file($file['tmp_name'], $destination)) {
+                    if (move_uploaded_file($file['tmp_name'], $tmpPath)) {
+                        $storedName = $tmpName;
+                        if (strtolower($ext) === 'pdf') {
+                            if (rename($tmpPath, $pdfPath)) {
+                                $storedName = $pdfName;
+                            } else {
+                                $log->error('PDF konnte nicht verschoben werden', ['user_id' => $_SESSION['user_id']]);
+                            }
+                        } else {
+                            try {
+                                $converted = convert_file_to_pdf($tmpPath, $pdfPath);
+                                if ($converted && file_exists($pdfPath)) {
+                                    unlink($tmpPath);
+                                    $storedName = $pdfName;
+                                } else {
+                                    $log->error('PDF-Konvertierung fehlgeschlagen', ['user_id' => $_SESSION['user_id']]);
+                                }
+                            } catch (Exception $e) {
+                                $log->error('PDF-Konvertierung fehlgeschlagen', ['msg' => $e->getMessage()]);
+                            }
+                        }
                         try {
                             if ($course === '__custom__') {
                                 DbFunctions::submitCourseSuggestion($customCourse, (int)$_SESSION['user_id']);

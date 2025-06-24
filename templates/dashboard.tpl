@@ -46,11 +46,6 @@
                       <span>Herunterladen</span>
                       <small class="text-muted d-block mt-1"></small>
                     </a>
-                    <form method="post" action="{$base_url}/delete_upload.php" class="mt-2" onsubmit="return confirm('Upload wirklich löschen?');">
-                      <input type="hidden" name="csrf_token" value="{$csrf_token}">
-                      <input type="hidden" name="upload_id" value="{$u.id}">
-                      <button type="submit" class="btn btn-sm btn-danger">Löschen</button>
-                    </form>
                   </div>
                 </div>
               {/foreach}
@@ -67,6 +62,9 @@
         {else}
           <div class="alert alert-info">Du hast noch keine Materialien hochgeladen.</div>
         {/if}
+      </div>
+      <div class="mt-3 text-end">
+        <a href="{$base_url}/my_uploads.php" class="btn btn-primary">Alle Uploads ansehen</a>
       </div>
     </section>
 
