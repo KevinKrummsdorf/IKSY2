@@ -16,10 +16,6 @@ require_once __DIR__ . '/../includes/mailing.inc.php';
 require_once __DIR__ . '/../includes/group_invites.inc.php';
 require_once __DIR__ . '/../includes/central_logs.inc.php';
 require_once __DIR__ . '/../includes/crypto.inc.php';
-require_once __DIR__ . '/../includes/logger.inc.php';
-require_once __DIR__ . '/../src/ILogger.php';
-require_once __DIR__ . '/../src/MonologLoggerAdapter.php';
-require_once __DIR__ . '/../src/LoggerFactory.php';
 
 // .env laden
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
@@ -47,12 +43,6 @@ try {
     http_response_code(500);
     exit('Fehlerhafte Schlüsselkonfiguration');
 }
-
-//Logger
-$config['log'] = [
-    'debug'    => true,
-    'log_days' => 30
-];
 
 // Aufbewahrungsdauer für abgelehnte Uploads in Tagen
 $config['uploads'] = [

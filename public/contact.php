@@ -11,7 +11,6 @@ $success   = false;
 $input     = ['name' => '', 'email' => '', 'subject' => '', 'message' => ''];
 $contactId = null;
 
-$log = LoggerFactory::get('contact');
 $ip      = getClientIp();
 $maskedIp= maskIp($ip);
 
@@ -22,10 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // reCAPTCHA prüfen
     $token = $_POST['recaptcha_token'] ?? '';
     if (!recaptcha_verify_auto($pdo, $token)) {
-        $log->warning('reCAPTCHA-Validierung fehlgeschlagen', [
-            'token' => $token,
-            'ip'    => $maskedIp,
-        ]);
+
         $errors[] = 'reCAPTCHA-Validierung fehlgeschlagen. Bitte erneut versuchen.';
     }
 
@@ -50,10 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Wenn keine Fehler, speichern & versenden
     if (empty($errors)) {
         $contactId = 'CF' . strtoupper(bin2hex(random_bytes(4)));
-        $log->info('Kontaktanfrage gespeichert', [
-            'contact_id' => $contactId,
-            'ip'         => $maskedIp,
-        ]);
 
         // In DB speichern
         $stmt = $pdo->prepare('INSERT INTO contact_requests 
@@ -70,10 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':ip'         => $_SERVER['REMOTE_ADDR'] ?? null,
             ':ua'         => $_SERVER['HTTP_USER_AGENT'] ?? null,
         ]);
-        $log->info('Kontaktanfrage in DB gespeichert', [
-            'contact_id' => $contactId,
-            'ip'         => $maskedIp,
-        ]);
 
         // Mail an Team
         try {
@@ -83,9 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         '<p><strong>E-Mail:</strong> ' . htmlspecialchars($input['email'], ENT_QUOTES) . '</p>' .
                         '<p><strong>Nachricht:</strong><br>' . nl2br(htmlspecialchars($input['message'], ENT_QUOTES)) . '</p>';
             sendMail($config['mail']['contact_email'], $config['app_name'], $subjectTeam, $htmlTeam);
-            $log->info('E-Mail an Team gesendet', ['contact_id' => $contactId, 'ip' => $maskedIp]);
         } catch (\Throwable $e) {
-            $log->error('Fehler beim Senden der Team-Mail: ' . $e->getMessage(), ['contact_id' => $contactId]);
             $errors[] = 'Leider konnte die Benachrichtigung an unser Team nicht versendet werden.';
         }
 
@@ -97,9 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         '<p>Servicezeiten: Mo–Fr, 9 – 17 Uhr.</p>' .
                         '<p>Herzliche Grüße,<br>' . $config['app_name'] . '-Team</p>';
             sendMail($input['email'], $input['name'], $subjectUser, $htmlUser);
-            $log->info('Auto-Reply gesendet', ['contact_id' => $contactId, 'ip' => $maskedIp]);
         } catch (\Throwable $e) {
-            $log->error('Fehler beim Senden der Auto-Reply: ' . $e->getMessage(), ['contact_id' => $contactId]);
             $errors[] = 'Deine Bestätigungs-E-Mail konnte nicht gesendet werden.';
         }
 

@@ -53,7 +53,6 @@
         <thead class="table-dark text-center">
           <tr>
             <th>#</th>
-            <th>Dateiname</th>
             <th>Titel</th>
             <th>Kurs</th>
             <th>Hochgeladen am</th>
@@ -65,7 +64,6 @@
         {foreach $uploads as $index => $u}
           <tr>
             <td>{$index + 1 + ($currentPage - 1) * 25}</td>
-            <td>{$u.stored_name|escape}</td>
             <td>{$u.title|escape}</td>
             <td>{$u.course_name|escape}</td>
             <td>{$u.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</td>
