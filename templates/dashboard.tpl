@@ -228,7 +228,7 @@
               <tbody>
                 {foreach $upload_logs as $i => $log}
                   <tr>
-                    <td>{$index + 1}</td>
+                    <td>{$i+1}</td>
                     <td>{$log.acted_by_user|default:'–'|escape}</td>
                     <td>{$log.stored_name|escape}</td>
                     <td>{$log.action|capitalize}</td>
