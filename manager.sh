@@ -10,6 +10,7 @@ function apply_simple() {
     cp "$HTACCESS_SIMPLE" "$PUBLIC_DIR/.htaccess"
     rm -f "$MARKER"
     echo "Simple configuration applied."
+    restart_apache
 }
 
 function apply_full() {
@@ -17,23 +18,31 @@ function apply_full() {
     touch "$MARKER"
     echo "Full configuration applied."
     if command -v a2enmod >/dev/null; then
-        a2enmod rewrite
+        sudo a2enmod rewrite
     fi
-    if command -v systemctl >/dev/null; then
-        systemctl restart apache2
-    fi
+    restart_apache
 }
 
 function uninstall_conf() {
     cp "$HTACCESS_SIMPLE" "$PUBLIC_DIR/.htaccess"
     rm -f "$MARKER"
     if command -v a2dismod >/dev/null; then
-        a2dismod rewrite
+        sudo a2dismod rewrite
     fi
-    if command -v systemctl >/dev/null; then
-        systemctl restart apache2
-    fi
+    restart_apache
     echo "Configuration reverted."
+}
+
+function restart_apache() {
+    if command -v systemctl >/dev/null; then
+        echo "Restarting Apache via systemctl..."
+        sudo systemctl restart apache2
+    elif command -v service >/dev/null; then
+        echo "Restarting Apache via service..."
+        sudo service apache2 restart
+    else
+        echo "Could not restart Apache automatically."
+    fi
 }
 
 if [[ "$1" == "--uninstall" ]]; then

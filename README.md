@@ -103,7 +103,7 @@ chmod +x manager.sh
 2. Kopiert bei Root-Rechten die erweiterte `.htaccess` und aktiviert `mod_rewrite`
 3. Legt eine Datei `config/pretty_urls_enabled` an, um Pretty URLs zu markieren
 4. Nutzt ohne Root-Rechte eine einfache `.htaccess` ohne Rewrite-Regeln und entfernt die Datei
-5. Startet bei Bedarf den Apache-Webserver neu
+5. Startet den Apache-Webserver automatisch per `sudo` neu
 
 Nach der Installation sind wichtige Bereiche unter diesen Pfaden erreichbar:
 - Eigenes Profil: `/profile/my`
@@ -146,8 +146,7 @@ chmod +x manager.sh
 ## Das Skript macht folgende Änderungen rückgängig:
 
 1. Stellt die einfache `.htaccess` wieder her
-2. Entfernt die Datei `config/pretty_urls_enabled` und deaktiviert `mod_rewrite` (falls aktiviert). Anschließend wird Apache neu gestartet
-
+2. Entfernt die Datei `config/pretty_urls_enabled` und deaktiviert `mod_rewrite` (falls aktiviert). Anschließend wird Apache automatisch per `sudo` neu gestartet
 **Stellen Sie sicher, dass keine anderen Webanwendungen auf den Symlink oder die Apache-Konfiguration angewiesen sind, bevor du die Deinstallation durchführt wird.**
 
 # Support bei Fehlern erhalten (Issues erstellen)
