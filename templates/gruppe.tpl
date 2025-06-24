@@ -12,7 +12,10 @@
   {elseif $group.join_type === 'code'}
     <p class="text-muted">Beitritt per Einladungscode oder Einladung.</p>
     {if $myRole === 'admin'}
-      <div class="alert alert-info">Einladungscode: <code>{$group.invite_code|escape}</code></div>
+      <div class="alert alert-info d-flex align-items-center">
+        <span>Einladungscode: <code id="inviteCode">{$group.invite_code|escape}</code></span>
+        <button type="button" class="btn btn-outline-secondary btn-sm ms-2" id="copyInviteCode" data-code="{$group.invite_code|escape}">Kopieren</button>
+      </div>
     {/if}
   {/if}
 
@@ -97,4 +100,16 @@
     <form method="post"><button name="upload_group" class="btn btn-success">Für Lerngruppe hochladen</button></form>
   {/if}
 </div>
+{/block}
+
+{block name="scripts"}
+<script>
+  document.getElementById('copyInviteCode')?.addEventListener('click', function() {
+    const code = this.dataset.code;
+    navigator.clipboard.writeText(code).then(() => {
+      this.textContent = 'Kopiert!';
+      setTimeout(() => { this.textContent = 'Kopieren'; }, 2000);
+    });
+  });
+</script>
 {/block}
