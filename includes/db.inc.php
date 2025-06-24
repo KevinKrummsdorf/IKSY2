@@ -601,7 +601,6 @@ public static function execute(string $query, array $params = [], bool $expectRe
             VALUES
                (:stored_name, :title, :description, :course)
         ';
-        ], false);
     }
 
     /**
@@ -629,7 +628,7 @@ public static function fetchVerificationUser(string $token): ?array
         WHERE vt.verification_token = :token
         LIMIT 1
     ';
-
+}
 
     /**
      * Update user to verified
