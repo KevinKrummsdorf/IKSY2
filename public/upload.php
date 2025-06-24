@@ -3,6 +3,10 @@ declare(strict_types=1);
 session_start();
 require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../includes/pdf_utils.inc.php';
+require_once __DIR__ . '/../src/Models/Database.php';
+require_once __DIR__ . '/../src/Models/UploadModel.php';
+require_once __DIR__ . '/../src/Models/CourseModel.php';
+require_once __DIR__ . '/../src/Controllers/UploadController.php';
 
 if (empty($_SESSION['user_id'])) {
     $reason = urlencode("Du musst eingeloggt sein, um Dateien hochladen zu können.");
@@ -22,7 +26,8 @@ $warning = '';
 $action = $_POST['action'] ?? ($_GET['action'] ?? 'upload');
 $action = $action === 'suggest' ? 'suggest' : 'upload';
 
-$courses = DbFunctions::getAllCourses();
+$uploadController = new UploadController();
+$courses = $uploadController->getCourses();
 $userGroups = DbFunctions::fetchGroupsByUser((int)$_SESSION['user_id']);
 $groupUpload = false;
 $selectedGroupId = 0;
@@ -161,48 +166,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 $log->error('PDF-Konvertierung fehlgeschlagen', ['msg' => $e->getMessage()]);
                             }
                         }
-                        try {
-                            if ($course === '__custom__') {
-                                DbFunctions::submitCourseSuggestion($customCourse, (int)$_SESSION['user_id']);
-                                $log->info('Kursvorschlag eingereicht', [
-                                    'user_id'         => $_SESSION['user_id'],
-                                    'course_suggested'=> $customCourse,
-                                    'stored_name'     => $storedName,
-                                ]);
-                                $success = 'Kursvorschlag wurde eingereicht. Datei wird erst nach Freigabe akzeptiert.';
-                            } else {
-                                $courseId   = DbFunctions::getCourseIdByName($course);
-                                $materialId = DbFunctions::getOrCreateMaterial($courseId, $title, $description);
-
-                                if ($groupUpload) {
-                                    $uploadId = DbFunctions::uploadFile(
-                                        $storedName,
-                                        $materialId,
-                                        (int)$_SESSION['user_id'],
-                                        $selectedGroupId,
-                                        true
-                                    );
-                                    $success = 'Datei erfolgreich für die Lerngruppe hochgeladen.';
-                                } else {
-                                    $uploadId = DbFunctions::uploadFile($storedName, $materialId, (int)$_SESSION['user_id']);
-                                    $success  = 'Datei erfolgreich hochgeladen und wartet auf Freigabe.';
-                                }
-
-                                DbFunctions::insertUploadLog((int)$_SESSION['user_id'], $uploadId);
-
-                                $log->info('Upload erfolgreich', [
-                                    'user_id'     => $_SESSION['user_id'],
-                                    'upload_id'   => $uploadId,
-                                    'stored_name' => $storedName,
-                                    'material_id' => $materialId,
-                                    'group_id'    => $groupUpload ? $selectedGroupId : null
-                                ]);
-                            }
-
+                        $result = $uploadController->processUpload(
+                            $_FILES['file'],
+                            (int)$_SESSION['user_id'],
+                            $title,
+                            $description,
+                            $course,
+                            $customCourse,
+                            $groupUpload ? $selectedGroupId : null
+                        );
+                        if ($result['success']) {
+                            $success = $groupUpload
+                                ? 'Datei erfolgreich für die Lerngruppe hochgeladen.'
+                                : 'Datei erfolgreich hochgeladen und wartet auf Freigabe.';
                             $_POST = [];
-                        } catch (Exception $e) {
-                            $error = 'Fehler beim Speichern des Uploads.';
-                            $log->error('Upload-Fehler', ['msg' => $e->getMessage()]);
+                        } else {
+                            $error = $result['message'];
                         }
                     } else {
                         $error = 'Konnte Datei nicht speichern.';

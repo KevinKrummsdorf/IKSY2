@@ -5,6 +5,9 @@ session_start();
 header('Content-Type: text/html; charset=utf-8');
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Models/Database.php';
+require_once __DIR__ . '/../src/Models/UserModel.php';
+require_once __DIR__ . '/../src/Controllers/AuthController.php';
 
 $log = LoggerFactory::get('login');
 
@@ -18,80 +21,27 @@ try {
         throw new DomainException('Felder leer');
     }
 
-    // 1) User holen
-    $user = DbFunctions::fetchUserByIdentifier($identifier);
+    $controller = new AuthController();
+    $result = $controller->login($identifier, $password);
 
-    if (!$user) {
-        $log->warning('Login attempt with non-existing user', [
+    if (!$result['success']) {
+        $log->warning('Login failed', [
             'ip'         => $maskedIp,
             'identifier' => $identifier,
         ]);
         $_SESSION['flash'] = [
             'type'    => 'danger',
-            'message' => 'Benutzer nicht gefunden. Bitte überprüfe Benutzername oder E-Mail.',
+            'message' => $result['message'],
         ];
         header('Location: index.php');
         exit;
     }
 
+    $user   = $result['user'];
     $userId = (int)$user['id'];
 
-    // 2) Konto gesperrt?
-    if (DbFunctions::isAccountLocked($userId)) {
-        $log->warning('Login attempt on locked account', [
-            'ip'   => $maskedIp,
-            'user' => $user['username'],
-        ]);
-        $_SESSION['flash'] = [
-            'type'    => 'danger',
-            'message' => 'Dein Account ist vorübergehend gesperrt. Bitte versuche es später erneut.',
-        ];
-        header('Location: index.php');
-        exit;
-    }
-
-    // 3) Verifiziert?
-    if ((int)$user['is_verified'] !== 1) {
-        $log->warning('Login attempt with unverified account', [
-            'ip'         => $maskedIp,
-            'identifier' => $identifier,
-        ]);
-        $_SESSION['flash'] = [
-            'type'    => 'warning',
-            'message' => 'Dein Account ist noch nicht verifiziert. Bitte prüfe deine E-Mails.',
-        ];
-        header('Location: index.php');
-        exit;
-    }
-
-    // 4) Passwort prüfen
-    if (!verifyPassword($password, $user['password_hash'])) {
-        DbFunctions::updateFailedAttempts($userId);
-
-        $log->warning('Login attempt with wrong password', [
-            'ip'         => $maskedIp,
-            'identifier' => $identifier,
-        ]);
-
-        // Optional: direkt sperren ab X Fehlversuchen (z. B. 5)
-        $attempts = DbFunctions::fetchValue('SELECT failed_attempts FROM user_security WHERE user_id = :id', [':id' => $userId]);
-        if ($attempts >= 5) {
-            DbFunctions::lockAccount($userId, 15); // z. B. 15 Minuten Sperre
-        }
-
-        $_SESSION['flash'] = [
-            'type'    => 'danger',
-            'message' => 'Falsches Passwort. Bitte versuche es erneut.',
-        ];
-        header('Location: index.php');
-        exit;
-    }
-
-    // 5) Login erfolgreich – Fehlversuche zurücksetzen
-    DbFunctions::resetFailedAttempts($userId);
-
     // 6) Wenn 2FA aktiviert, weiterleiten
-    if (DbFunctions::isTwoFAEnabled($user['username'])) {
+    if (UserModel::isTwoFAEnabled($user['username'])) {
         require_once __DIR__ . '/../includes/2fa.inc.php';
         $_SESSION['2fa_user']        = $user['username'];
         $_SESSION['user_id_pending'] = $userId;
@@ -107,7 +57,7 @@ try {
     }
 
     // 7) Login erfolgreich: Zeit und Logs
-    DbFunctions::updateLastLogin($userId);
+    UserModel::updateLastLogin($userId);
     $log->info('User logged in successfully', [
         'ip'         => $maskedIp,
         'identifier' => $identifier,

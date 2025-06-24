@@ -4,6 +4,9 @@ declare(strict_types=1);
 session_start();
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Models/Database.php';
+require_once __DIR__ . '/../src/Models/ContactModel.php';
+require_once __DIR__ . '/../src/Controllers/ContactController.php';
 
 // Initialisierung
 $errors    = [];
@@ -16,7 +19,7 @@ $ip      = getClientIp();
 $maskedIp= maskIp($ip);
 
 // DB-Verbindung
-$pdo = DbFunctions::db_connect();
+$pdo = Database::getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // reCAPTCHA prüfen
@@ -29,51 +32,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'reCAPTCHA-Validierung fehlgeschlagen. Bitte erneut versuchen.';
     }
 
-    // Eingaben prüfen
     foreach (array_keys($input) as $f) {
         $input[$f] = trim((string)($_POST[$f] ?? ''));
     }
 
-    if ($input['name'] === '') {
-        $errors[] = 'Bitte geben Sie Ihren Namen an.';
-    }
-    if (!filter_var($input['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors[] = 'Bitte geben Sie eine gültige E-Mail-Adresse an.';
-    }
-    if ($input['subject'] === '') {
-        $errors[] = 'Bitte geben Sie einen Betreff an.';
-    }
-    if ($input['message'] === '') {
-        $errors[] = 'Bitte geben Sie eine Nachricht ein.';
-    }
-
-    // Wenn keine Fehler, speichern & versenden
     if (empty($errors)) {
-        $contactId = 'CF' . strtoupper(bin2hex(random_bytes(4)));
-        $log->info('Kontaktanfrage gespeichert', [
-            'contact_id' => $contactId,
-            'ip'         => $maskedIp,
-        ]);
-
-        // In DB speichern
-        $stmt = $pdo->prepare('INSERT INTO contact_requests 
-                (contact_id, name, email, subject, message, ip_address, user_agent)
-            VALUES 
-                (:contact_id, :name, :email, :subject, :message, :ip, :ua)'
-        );
-        $stmt->execute([
-            ':contact_id' => $contactId,
-            ':name'       => $input['name'],
-            ':email'      => $input['email'],
-            ':subject'    => $input['subject'],
-            ':message'    => $input['message'],
-            ':ip'         => $_SERVER['REMOTE_ADDR'] ?? null,
-            ':ua'         => $_SERVER['HTTP_USER_AGENT'] ?? null,
-        ]);
-        $log->info('Kontaktanfrage in DB gespeichert', [
-            'contact_id' => $contactId,
-            'ip'         => $maskedIp,
-        ]);
+        $controller = new ContactController();
+        $result = $controller->submit($input, $maskedIp, $_SERVER['HTTP_USER_AGENT'] ?? null);
+        if (!$result['success']) {
+            $errors = $result['errors'];
+        } else {
+            $contactId = $result['contactId'];
+            $log->info('Kontaktanfrage gespeichert', [
+                'contact_id' => $contactId,
+                'ip'         => $maskedIp,
+            ]);
 
         // Mail an Team
         try {
@@ -105,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $success = true;
         $input   = ['name' => '', 'email' => '', 'subject' => '', 'message' => ''];
+        }
     }
 }
 
