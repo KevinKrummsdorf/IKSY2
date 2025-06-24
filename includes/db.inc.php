@@ -2612,7 +2612,9 @@ public static function getFilteredLockedUsers(array $filters = []): array
         $stmt = $pdo->prepare('INSERT INTO courses (name) VALUES (?)');
         $stmt->execute([$courseName]);
         return (int) $pdo->lastInsertId();
+    }
 
+        /*
      * Gibt alle Social-Media-Einträge eines Nutzers zurück.
      *
      * @param int $userId Die ID des Nutzers
@@ -2623,6 +2625,8 @@ public static function getFilteredLockedUsers(array $filters = []): array
         $sql = 'SELECT platform, username FROM social_media WHERE user_id = :uid';
         return self::execute($sql, [':uid' => $userId], true);
     }
+
+
 
     /**
      * Speichert einen Social-Media-Eintrag. Existiert bereits einer mit gleicher
