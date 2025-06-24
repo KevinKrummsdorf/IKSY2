@@ -63,7 +63,7 @@
     </a>
 </div>
 
-{block name="scripts" append}
+{block name="scripts" append=true}
 <script src="{$base_url}/js/timetable-autocomplete.js"></script>
 {/block}
 
