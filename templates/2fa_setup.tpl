@@ -14,7 +14,7 @@
         <img src="{$qrCodeUrl}" alt="QR-Code" class="img-fluid" style="max-width: 200px;">
     </div>
 
-    <form method="post" action="verify_2fa.php" class="needs-validation" novalidate>
+    <form method="post" action="verify_2fa" class="needs-validation" novalidate>
         <div class="mb-3">
             <label for="code" class="form-label">Einmal-Code aus der App eingeben:</label>
             <input type="text" name="code" id="code" class="form-control" required pattern="^\d{6}$" autocomplete="off">

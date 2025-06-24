@@ -10,7 +10,7 @@
 
 <h2 class="timetable-heading">Stundenplan</h2>
 
-<form method="post" action="timetable.php">
+<form method="post" action="timetable">
     <table class="timetable-table">
         <thead>
             <tr>
@@ -48,12 +48,12 @@
 </form>
 
 <div class="mt-3 text-center">
-    <a href="{$base_url}/timetable.php?export=csv" class="download-link me-2">
+    <a href="{$base_url}/timetable?export=csv" class="download-link me-2">
         <span class="material-symbols-outlined">download</span>
         <span>CSV</span>
         <small>Stundenplan</small>
     </a>
-    <a href="{$base_url}/timetable.php?export=pdf" class="download-link">
+    <a href="{$base_url}/timetable?export=pdf" class="download-link">
         <span class="material-symbols-outlined">picture_as_pdf</span>
         <span>PDF</span>
         <small>Stundenplan</small>

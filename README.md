@@ -88,8 +88,15 @@ chmod +x studyhub-manager.sh
 
 1. Erstellt einen symbolischen Link nach `/var/www/html/studyhub`
 2. Setzt die `RewriteBase` in `public/.htaccess` auf `/studyhub/`
-3. Aktualisiert die Apache-Konfiguration (z. B. virtuelle Hosts)
-4. Startet den Apache-Webserver neu
+3. Aktiviert Pretty URLs für PHP-Dateien
+4. Aktualisiert die Apache-Konfiguration (z. B. virtuelle Hosts)
+5. Startet den Apache-Webserver neu
+
+Nach der Installation sind wichtige Bereiche unter diesen Pfaden erreichbar:
+- Eigenes Profil: `/profile/my`
+- Profil eines anderen Nutzers: `/profile/<username>`
+- Gruppen: `/groups/<gruppenname>`
+- Dashboard: `/dashboard`
 
 **Nach der Ausführung ist der Webserver korrekt für die Nutzung benutzerdefinierter Fehlerseiten konfiguriert.**
 
@@ -141,14 +148,14 @@ Beim Erstellen eines neuen Issues ist das folgende Template zu verwenden. **Alle
 ## 1. Kurze Beschreibung
 Eine knappe Beschreibung des Problems oder der gewünschten Funktion.
 
-> **Beispiel Fehler:** „Die Anwendung stürzt ab, wenn `/public/index.php` aufgerufen wird.“  
+> **Beispiel Fehler:** „Die Anwendung stürzt ab, wenn die Startseite aufgerufen wird.“
 > **Beispiel Feature:** „Eine Dark-Mode-Option in den Einstellungen wäre hilfreich.“
 
 ## 2. Reproduktionsschritte (nur bei Fehlern)
 Schritt-für-Schritt-Anleitung, wie das Problem reproduziert werden kann:
 
 1. Repository klonen und `composer install` ausführen  
-2. Im Browser `http://127.0.0.1/studyhub/index.php` aufrufen  
+2. Im Browser `http://127.0.0.1/studyhub/` aufrufen
 3. …
 
 ## 3. Erwartetes Verhalten

@@ -544,7 +544,13 @@ public static function getMaterialsByTitle(string $searchTerm): array
 
         $pdo = self::db_connect();
         $placeholders = implode(',', array_fill(0, count($userIds), '?'));
-        $stmt = $pdo->prepare("SELECT user_id, first_name, last_name, profile_picture FROM profile WHERE user_id IN ($placeholders)");
+        $sql = "
+            SELECT p.user_id, u.username, p.first_name, p.last_name, p.profile_picture
+            FROM profile p
+            JOIN users u ON p.user_id = u.id
+            WHERE p.user_id IN ($placeholders)
+        ";
+        $stmt = $pdo->prepare($sql);
         $stmt->execute(array_values($userIds));
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

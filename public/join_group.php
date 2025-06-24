@@ -46,7 +46,7 @@ try {
     $data['alertType']  = 'success';
     $data['message']    = 'Du bist der Gruppe ' . htmlspecialchars($group['name'], ENT_QUOTES) . ' beigetreten.';
     $data['buttonText'] = 'Zur Gruppe';
-    $data['buttonLink'] = 'gruppe.php?id=' . (int)$invite['group_id'];
+    $data['buttonLink'] = 'groups/' . rawurlencode($group['name']);
 } catch (Throwable $e) {
     $log->error('join_group failed', ['error' => $e->getMessage()]);
 }

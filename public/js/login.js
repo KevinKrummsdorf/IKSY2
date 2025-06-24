@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Nach 2 Sekunden Weiterleitung
         setTimeout(function() {
-            window.location.href = baseUrl + '/dashboard.php';
+            window.location.href = baseUrl + '/dashboard';
         }, 2000);
     }
   

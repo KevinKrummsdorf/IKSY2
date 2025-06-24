@@ -160,11 +160,11 @@ try {
             throw new RuntimeException('Ungültige Aktion.');
     }
 
-    header('Location: profile.php');
+    header('Location: profile/my');
     exit;
 } catch (Throwable $e) {
     $_SESSION['flash'] = ['type' => 'danger', 'message' => $e->getMessage()];
-    header('Location: profile.php');
+    header('Location: profile/my');
     exit;
 }
 
