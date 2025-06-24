@@ -17,6 +17,7 @@ if (empty($_SESSION['csrf_token'])) {
 $log     = LoggerFactory::get('upload');
 $error   = '';
 $success = '';
+$warning = '';
 
 $action = $_POST['action'] ?? ($_GET['action'] ?? 'upload');
 $action = $action === 'suggest' ? 'suggest' : 'upload';
@@ -45,22 +46,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $log->error('CSRF-Token ungültig', ['user_id' => $_SESSION['user_id']]);
     } elseif ($action === 'suggest') {
         $courseSuggestion = trim($_POST['course_suggestion'] ?? '');
+        $confirmSimilar   = isset($_POST['confirm_similar']);
         $smarty->assign('courseSuggestion', $courseSuggestion);
 
         if ($courseSuggestion === '') {
             $error = 'Bitte gib einen Kursnamen an.';
         } else {
-            try {
-                DbFunctions::submitCourseSuggestion($courseSuggestion, (int)$_SESSION['user_id']);
-                $log->info('Kursvorschlag eingereicht', [
-                    'user_id'         => $_SESSION['user_id'],
-                    'course_suggested'=> $courseSuggestion,
-                ]);
-                $success = 'Kursvorschlag wurde eingereicht.';
-                $_POST = [];
-            } catch (Exception $e) {
-                $error = 'Fehler beim Speichern des Kursvorschlags.';
-                $log->error('Kursvorschlag-Fehler', ['msg' => $e->getMessage()]);
+            $similar = DbFunctions::findSimilarCourse($courseSuggestion);
+            if ($similar !== null && !$confirmSimilar) {
+                $warning = "Ein ähnlicher Kurs existiert bereits: '{$similar}'. Meintest du diesen? Klicke erneut auf 'Vorschlagen', um trotzdem einzureichen.";
+            } else {
+                try {
+                    DbFunctions::submitCourseSuggestion($courseSuggestion, (int)$_SESSION['user_id']);
+                    $log->info('Kursvorschlag eingereicht', [
+                        'user_id'         => $_SESSION['user_id'],
+                        'course_suggested'=> $courseSuggestion,
+                    ]);
+                    $success = 'Kursvorschlag wurde eingereicht.';
+                    $_POST = [];
+                } catch (Exception $e) {
+                    $error = 'Fehler beim Speichern des Kursvorschlags.';
+                    $log->error('Kursvorschlag-Fehler', ['msg' => $e->getMessage()]);
+                }
             }
         }
     } else {
@@ -204,6 +211,9 @@ $smarty->assign([
 
 if ($error) {
     $smarty->assign('error', $error);
+}
+if ($warning) {
+    $smarty->assign('warning', $warning);
 }
 if ($success) {
     $smarty->assign('success', $success);

@@ -8,6 +8,9 @@
     {if isset($error)}
     <div class="alert alert-danger">{$error}</div>
     {/if}
+    {if isset($warning)}
+    <div class="alert alert-warning">{$warning}</div>
+    {/if}
     {if isset($success)}
     <div class="alert alert-success">{$success}</div>
     {/if}
@@ -79,6 +82,9 @@
     <form id="suggest-form" action="{$base_url}/upload.php" method="post" style="display:none;">
         <input type="hidden" name="csrf_token" value="{$csrf_token}">
         <input type="hidden" name="action" value="suggest">
+        {if isset($warning)}
+        <input type="hidden" name="confirm_similar" value="1">
+        {/if}
 
         <div class="mb-3">
             <label for="course_suggestion" class="form-label">Kursname</label>
