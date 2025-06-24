@@ -56,10 +56,10 @@
         <textarea class="form-control" rows="4" readonly>{$profile.about_me|escape}</textarea>
       </div>
       {if $isOwnProfile}
-        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#personalModal">Ändern</button>
+        <button class="btn btn-sm btn-outline-primary mb-3" data-bs-toggle="modal" data-bs-target="#personalModal">Ändern</button>
       {/if}
 
-      <h2 class="h4">Social Media</h2>
+      <h2 class="h4 mt-2">Social Media</h2>
       <ul class="list-unstyled mb-3">
           {if $socials.instagram}
             <li><i class="bi bi-instagram"></i> Instagram: <a href="https://instagram.com/{$socials.instagram|escape:'url'}" target="_blank">{$socials.instagram|escape:'html'}</a></li>
