@@ -31,6 +31,7 @@ Führen Sie insbesondere folgende Befehle aus:
 ```
 mysql studyhub < sql/alter_courses_rename_name.sql
 mysql studyhub < sql/alter_user_schedules_custom_course.sql
+mysql studyhub < sql/alter_user_schedules_store_name.sql
 ```
 ## Access Key erzeugen
 1. Bei github einloggen

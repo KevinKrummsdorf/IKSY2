@@ -2807,12 +2807,9 @@ public static function getFilteredLockedUsers(array $filters = []): array
     {
         $pdo = self::db_connect();
         $stmt = $pdo->prepare(
-            'SELECT us.weekday_id, us.time_slot_id,
-                    COALESCE(c.name, us.custom_course_name) AS subject,
-                    us.room
-             FROM user_schedules us
-             LEFT JOIN courses c ON us.course_id = c.id
-             WHERE us.user_id = ?'
+            'SELECT weekday_id, time_slot_id, course_name AS subject, room
+             FROM user_schedules
+             WHERE user_id = ?'
         );
         $stmt->execute([$userId]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -2842,8 +2839,8 @@ public static function getFilteredLockedUsers(array $filters = []): array
             $pdo->prepare('DELETE FROM user_schedules WHERE user_id = ?')->execute([$userId]);
 
             $stmt = $pdo->prepare('INSERT INTO user_schedules
-                (user_id, course_id, custom_course_name, weekday_id, time_slot_id, room)
-                VALUES (?, ?, ?, ?, ?, ?)');
+                (user_id, course_name, weekday_id, time_slot_id, room)
+                VALUES (?, ?, ?, ?, ?)');
 
             foreach ($schedule as $weekdayId => $slots) {
                 foreach ($slots as $slotId => $entry) {
@@ -2854,12 +2851,7 @@ public static function getFilteredLockedUsers(array $filters = []): array
                         continue; // kein Fach angegeben
                     }
 
-                    $courseId = self::lookupCourseId($subject);
-                    $custom   = null;
-                    if ($courseId === null) {
-                        $custom = $subject;
-                    }
-                    $stmt->execute([$userId, $courseId, $custom, $weekdayId, $slotId, $room]);
+                    $stmt->execute([$userId, $subject, $weekdayId, $slotId, $room]);
                 }
             }
 
@@ -2874,40 +2866,8 @@ public static function getFilteredLockedUsers(array $filters = []): array
         }
     }
 
-    /**
-     * Fügt Kurs (Fach) ein oder gibt die ID zurück.
-     */
-    private static function getOrCreateCourseId(string $courseName): int
-    {
-        $pdo = self::db_connect();
-
-        // Achtung: korrekte Spalte ist "name", nicht "course_name"
-        $stmt = $pdo->prepare('SELECT id FROM courses WHERE name = ?');
-        $stmt->execute([$courseName]);
-        $id = $stmt->fetchColumn();
-
-        if ($id) {
-            return (int) $id;
-        }
-
-        $stmt = $pdo->prepare('INSERT INTO courses (name) VALUES (?)');
-        $stmt->execute([$courseName]);
-        return (int) $pdo->lastInsertId();
-    }
 
     /**
-     * Gibt die Kurs-ID zurück oder null, falls nicht vorhanden.
-     */
-    private static function lookupCourseId(string $courseName): ?int
-    {
-        $pdo = self::db_connect();
-        $stmt = $pdo->prepare('SELECT id FROM courses WHERE name = ?');
-        $stmt->execute([$courseName]);
-        $id = $stmt->fetchColumn();
-        return $id ? (int)$id : null;
-    }
-
-        /*
      * Gibt alle Social-Media-Einträge eines Nutzers zurück.
      *
      * @param int $userId Die ID des Nutzers
