@@ -16,7 +16,12 @@
     </div>
     <div class="col-md-3">
       <label class="form-label" for="course_name">Kurs</label>
-      <input type="text" class="form-control" id="course_name" name="course_name" list="course_suggestions" value="{$filters.course_name|escape}">
+      <select class="form-select" id="course_name" name="course_name">
+        <option value="">Alle Kurse</option>
+        {foreach $suggestions.course_names as $c}
+          <option value="{$c|escape}" {if $filters.course_name == $c}selected{/if}>{$c|escape}</option>
+        {/foreach}
+      </select>
     </div>
     <div class="col-md-3">
       <label class="form-label" for="from_date">Von</label>
@@ -39,11 +44,6 @@
   <datalist id="filename_suggestions">
     {foreach $suggestions.filenames as $f}
       <option value="{$f|escape}"></option>
-    {/foreach}
-  </datalist>
-  <datalist id="course_suggestions">
-    {foreach $suggestions.course_names as $c}
-      <option value="{$c|escape}"></option>
     {/foreach}
   </datalist>
 
