@@ -692,7 +692,7 @@ body {
 
 .timetable-table td:first-child,
 .timetable-table th:first-child {
-    background-color: rgba(240, 240, 240, 0.1);
+    background: rgba(240, 240, 240, 0.8);
     font-weight: bold;
     color: var(--text-color);
     border-right: 2px solid rgba(255, 255, 255, 0.25);
@@ -724,7 +724,7 @@ body {
 
 [data-bs-theme="dark"] .timetable-table td:first-child,
 [data-bs-theme="dark"] .timetable-table th:first-child {
-    background-color: rgba(255, 255, 255, 0.05);
+    background: rgba(40, 40, 40, 0.8);
 }
 
 [data-bs-theme="dark"] .timetable-table td:hover {
