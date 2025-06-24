@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
       grecaptcha.execute(siteKey, { action: 'register' }).then(async token => {
         tokenField.value = token;
         try {
-          const response = await fetch('register.php', {
+          const response = await fetch('register', {
             method: 'POST',
             body: new FormData(registerForm)
           });

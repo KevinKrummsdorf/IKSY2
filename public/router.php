@@ -14,9 +14,53 @@ $validPages = [
     'about'       => ['type' => 'php', 'file' => 'about.php'],
 ];
 
-$page = $_GET['page'] ?? 'start';
+$page = trim($_GET['page'] ?? '', '/');
+$page = $page === '' ? 'index' : $page;
 
-if (!isset($validPages[$page])) {
+$type = null;
+$file = null;
+
+// Dynamische Routen
+if ($page === 'dashboard') {
+    $type = 'php';
+    $file = 'dashboard.php';
+} elseif ($page === 'profile/my') {
+    $type = 'php';
+    $file = 'profile.php';
+} elseif (preg_match('#^profile/([^/]+)$#', $page, $m)) {
+    $user = DbFunctions::fetchUserByIdentifier($m[1]);
+    if ($user) {
+        $_GET['id'] = $user['id'];
+        $type = 'php';
+        $file = 'profile.php';
+    }
+} elseif ($page === 'groups') {
+    $type = 'php';
+    $file = 'groups.php';
+} elseif (preg_match('#^groups/([^/]+)$#', $page, $m)) {
+    $name = urldecode($m[1]);
+    $group = DbFunctions::fetchGroupByName($name);
+    if ($group) {
+        $_GET['id'] = $group['id'];
+        $type = 'php';
+        $file = 'gruppe.php';
+    }
+}
+
+// Statische Seiten aus der Whitelist
+
+if ($type === null && isset($validPages[$page])) {
+    $type = $validPages[$page]['type'];
+    $file = $validPages[$page]['file'];
+}
+
+// Fallback: existierende PHP-Datei ohne Endung
+if ($type === null && file_exists(__DIR__ . "/{$page}.php")) {
+    $type = 'php';
+    $file = "{$page}.php";
+}
+
+if ($type === null || $file === null) {
     $reason = urlencode("Die Seite '$page' existiert nicht.");
     header("Location: /studyhub/error/404?reason={$reason}");
     exit;
@@ -31,9 +75,6 @@ $smarty->assign([
 ]);
 
 // Typ prüfen: Smarty oder PHP
-$type = $validPages[$page]['type'];
-$file = $validPages[$page]['file'];
-
 if ($type === 'tpl') {
     $smarty->display($file);
 } elseif ($type === 'php') {

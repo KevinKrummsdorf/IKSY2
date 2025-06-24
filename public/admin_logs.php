@@ -5,7 +5,7 @@ session_start();
 
 // Admin-Login-Schutz
 if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
-    header('Location: index.php');
+    header('Location: index');
     exit;
 }
 

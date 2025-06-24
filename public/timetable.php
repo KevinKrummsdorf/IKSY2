@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    header('Location: timetable.php?success=1');
+    header('Location: timetable?success=1');
     exit;
 }
 

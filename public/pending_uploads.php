@@ -58,11 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     } catch (Exception $e) {
-        error_log("Fehler in pending_uploads.php: " . $e->getMessage());
+        error_log("Fehler in pending_uploads: " . $e->getMessage());
         $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Ein Fehler ist aufgetreten.'];
     }
 
-    header('Location: pending_uploads.php');
+    header('Location: pending_uploads');
     exit;
 }
 

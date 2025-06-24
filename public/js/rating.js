@@ -1,5 +1,5 @@
 function submitRating(materialId, rating) {
-    fetch('rate_material.php', {
+    fetch('rate_material', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: `material_id=${materialId}&rating=${rating}`

@@ -7,7 +7,7 @@
 
 {if $success}
     <div class="alert alert-success">Passwort wurde geändert.</div>
-    <a href="{$base_url}/index.php" class="btn btn-primary">Zur Startseite</a>
+    <a href="{$base_url}/index" class="btn btn-primary">Zur Startseite</a>
 {/if}
 
 {if $message}

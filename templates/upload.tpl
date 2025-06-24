@@ -20,7 +20,7 @@
         </select>
     </div>
 
-    <form id="upload-form" action="{$base_url}/upload.php" method="post" enctype="multipart/form-data">
+    <form id="upload-form" action="{$base_url}/upload" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{$csrf_token}">
         <input type="hidden" name="action" value="upload">
 
@@ -76,7 +76,7 @@
         <button type="submit" class="btn btn-primary">Hochladen</button>
     </form>
 
-    <form id="suggest-form" action="{$base_url}/upload.php" method="post" style="display:none;">
+    <form id="suggest-form" action="{$base_url}/upload" method="post" style="display:none;">
         <input type="hidden" name="csrf_token" value="{$csrf_token}">
         <input type="hidden" name="action" value="suggest">
 

@@ -38,5 +38,5 @@ try {
     $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Fehler beim Löschen des Uploads.'];
 }
 
-header('Location: dashboard.php');
+header('Location: dashboard');
 exit;

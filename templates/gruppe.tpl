@@ -74,7 +74,7 @@
       {foreach $uploads as $u}
         <li class="list-group-item d-flex justify-content-between">
           {$u.title|escape}
-          <a href="{$base_url}/download.php?id={$u.id}" download class="btn btn-sm btn-outline-primary">Herunterladen</a>
+          <a href="{$base_url}/download?id={$u.id}" download class="btn btn-sm btn-outline-primary">Herunterladen</a>
         </li>
       {/foreach}
     </ul>

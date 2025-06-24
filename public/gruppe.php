@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Löschen (nur Admin)
     elseif (isset($_POST['delete_group']) && $myRole === 'admin') {
         if (DbFunctions::deleteGroup($groupId)) {
-            header('Location: lerngruppen.php?deleted=1');
+            header('Location: lerngruppen?deleted=1');
             exit;
         }
         $error = 'Konnte Gruppe nicht löschen.';
@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     // Upload-Link
     elseif (isset($_POST['upload_group']) && $myRole !== 'none') {
-        header("Location: upload.php?group_id={$groupId}");
+        header("Location: upload?group_id={$groupId}");
         exit;
     }
 }

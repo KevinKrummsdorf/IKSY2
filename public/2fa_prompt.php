@@ -23,7 +23,7 @@ $log->info('2FA start', [
 ]);
 
 if (!$username || !$userId) {
-    header('Location: index.php');
+    header('Location: index');
     $log->warning('2FA access without session', [
         'ip'       => $maskedIp,
         'username' => $username,
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
 
             session_write_close();
-            header('Location: dashboard.php');
+            header('Location: dashboard');
             exit;
         } else {
             DbFunctions::insertLoginLog((int)$userId, $maskedIp, false, 'wrong_2fa_code');

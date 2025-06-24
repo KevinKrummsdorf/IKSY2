@@ -12,7 +12,7 @@ $verifyData = [
     'message'     => 'Ungültiger Verifizierungslink.',
     'showButton'  => true,
     'buttonText'  => 'Zur Startseite',
-    'buttonLink'  => 'index.php',
+    'buttonLink'  => 'index',
 ];
 
 try {
@@ -34,7 +34,7 @@ try {
         $verifyData['alertType']  = 'info';
         $verifyData['message']    = 'Deine E-Mail-Adresse wurde bereits bestätigt.';
         $verifyData['buttonText'] = 'Jetzt einloggen';
-        $verifyData['buttonLink'] = 'index.php#loginModal';
+        $verifyData['buttonLink'] = 'index#loginModal';
     } else {
         // 3) Verifizieren
         DbFunctions::verifyUser((int)$user['id']);
@@ -47,7 +47,7 @@ try {
         $verifyData['alertType']  = 'success';
         $verifyData['message']    = 'Deine E-Mail wurde erfolgreich verifiziert!';
         $verifyData['buttonText'] = 'Jetzt einloggen';
-        $verifyData['buttonLink'] = 'index.php#show=login';
+        $verifyData['buttonLink'] = 'index#show=login';
     }
 
 } catch (Throwable $e) {
@@ -59,7 +59,7 @@ try {
     $verifyData['alertType']  = 'danger';
     $verifyData['message']    = 'Ein interner Fehler ist aufgetreten. Bitte später erneut versuchen.';
     $verifyData['buttonText'] = 'Zur Startseite';
-    $verifyData['buttonLink'] = 'index.php';
+    $verifyData['buttonLink'] = 'index';
 }
 
 // Übergabe an Template

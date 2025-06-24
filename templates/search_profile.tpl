@@ -6,7 +6,7 @@
 <h1 class="text-center">Benutzer suchen</h1>
 
 <div class="container my-5">
-    <form method="get" action="search_profile.php" class="mb-4">
+    <form method="get" action="search_profile" class="mb-4">
         <input type="text" name="q" class="form-control" placeholder="Benutzername oder E-Mail..." value="{$searchTerm|escape:'html'}">
         <button type="submit" class="btn btn-primary mt-2">Suchen</button>
     </form>
@@ -15,7 +15,7 @@
         <ul class="list-group">
             {foreach from=$results item=foundUser}
   <li class="list-group-item">
-    <a href="profile.php?id={$foundUser.id|escape:'html'}">
+    <a href="{$base_url}/profile/{$foundUser.result_username|escape:'url'}">
       {$foundUser.result_username|escape:'html'}
     </a>
   </li>

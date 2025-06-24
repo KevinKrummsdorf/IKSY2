@@ -74,7 +74,7 @@
     }
 </style>
 
-<form method="post" action="timetable.php">
+<form method="post" action="timetable">
     <table class="timetable-table">
         <thead>
             <tr>

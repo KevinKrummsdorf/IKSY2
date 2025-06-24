@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'], $_POST[
         $stmt->execute([$userId]);
         
         // Zurück zur Bearbeitungsseite mit Erfolgsmeldung
-        header("Location: edit_profile.php?img_deleted=1");
+        header("Location: edit_profile?img_deleted=1");
         exit;
         
     } catch (Throwable $e) {

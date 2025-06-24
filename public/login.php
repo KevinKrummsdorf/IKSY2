@@ -30,7 +30,7 @@ try {
             'type'    => 'danger',
             'message' => 'Benutzer nicht gefunden. Bitte überprüfe Benutzername oder E-Mail.',
         ];
-        header('Location: index.php');
+        header('Location: index');
         exit;
     }
 
@@ -46,7 +46,7 @@ try {
             'type'    => 'danger',
             'message' => 'Dein Account ist vorübergehend gesperrt. Bitte versuche es später erneut.',
         ];
-        header('Location: index.php');
+        header('Location: index');
         exit;
     }
 
@@ -60,7 +60,7 @@ try {
             'type'    => 'warning',
             'message' => 'Dein Account ist noch nicht verifiziert. Bitte prüfe deine E-Mails.',
         ];
-        header('Location: index.php');
+        header('Location: index');
         exit;
     }
 
@@ -83,7 +83,7 @@ try {
             'type'    => 'danger',
             'message' => 'Falsches Passwort. Bitte versuche es erneut.',
         ];
-        header('Location: index.php');
+        header('Location: index');
         exit;
     }
 
@@ -102,7 +102,7 @@ try {
             'message' => 'Bitte gib deinen 2FA-Code ein.',
             'context' => '2fa_prompt'
         ];
-        header('Location: 2fa_prompt.php');
+        header('Location: 2fa_prompt');
         exit;
     }
 
@@ -125,7 +125,7 @@ try {
         'message' => 'Login erfolgreich! Du wirst weitergeleitet.',
         'context' => 'login',
     ];
-    header('Location: index.php');
+    header('Location: index');
     exit;
 
 } catch (DomainException $e) {
@@ -133,7 +133,7 @@ try {
         'type'    => 'danger',
         'message' => 'Bitte fülle alle Felder aus.',
     ];
-    header('Location: index.php');
+    header('Location: index');
     exit;
 
 } catch (Throwable $e) {
@@ -142,6 +142,6 @@ try {
         'type'    => 'danger',
         'message' => 'Interner Serverfehler. Bitte versuche es später erneut.',
     ];
-    header('Location: index.php');
+    header('Location: index');
     exit;
 }

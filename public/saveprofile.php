@@ -91,5 +91,5 @@ foreach ($platforms as $platform) {
 }
 
 // Weiterleitung
-header('Location: profile.php?success=1');
+header('Location: profile/my?success=1');
 exit;

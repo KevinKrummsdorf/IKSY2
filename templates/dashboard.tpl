@@ -29,7 +29,7 @@
               {foreach $user_uploads as $index => $u}
                 <div class="carousel-item {if $index == 0}active{/if}">
                   <div class="pdf-slide">
-                    <a href="{$base_url}/view_pdf.php?file={$u.stored_name|escape:'url'}" target="_blank" class="pdf-link">
+                    <a href="{$base_url}/view_pdf?file={$u.stored_name|escape:'url'}" target="_blank" class="pdf-link">
                       {if $u.type == 'image'}
                         <img src="{$base_url}/uploads/{$u.stored_name|escape:'url'}" alt="{$u.title|escape}" class="img-fluid mb-2" style="max-height:160px;">
                       {else}
@@ -38,7 +38,7 @@
                       <h5>{$u.title|escape:'html'}</h5>
                       <p>{$u.course_name|escape:'html'} – {$u.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</p>
                     </a>
-                    <a href="{$base_url}/download.php?id={$u.id}"
+                    <a href="{$base_url}/download?id={$u.id}"
                        class="download-link mt-3"
                        title="{$u.original_name|escape} herunterladen"
                        download>
@@ -46,7 +46,7 @@
                       <span>Herunterladen</span>
                       <small class="text-muted d-block mt-1"></small>
                     </a>
-                    <form method="post" action="{$base_url}/delete_upload.php" class="mt-2" onsubmit="return confirm('Upload wirklich löschen?');">
+                    <form method="post" action="{$base_url}/delete_upload" class="mt-2" onsubmit="return confirm('Upload wirklich löschen?');">
                       <input type="hidden" name="csrf_token" value="{$csrf_token}">
                       <input type="hidden" name="upload_id" value="{$u.id}">
                       <button type="submit" class="btn btn-sm btn-danger">Löschen</button>
@@ -139,7 +139,7 @@
               </tbody>
             </table>
             <div class="mt-3 text-end">
-              <a href="locked_users.php" class="btn btn-sm btn-primary">Zur Benutzerverwaltung</a>
+              <a href="locked_users" class="btn btn-sm btn-primary">Zur Benutzerverwaltung</a>
             </div>
           </div>
         {else}
@@ -190,7 +190,7 @@
               </tbody>
             </table>
             <div class="mt-3 text-end">
-              <a href="contact_request.php" class="btn btn-sm btn-primary">Alle Kontaktanfragen anzeigen</a>
+              <a href="contact_request" class="btn btn-sm btn-primary">Alle Kontaktanfragen anzeigen</a>
             </div>
           </div>
         {else}
@@ -241,7 +241,7 @@
               </tbody>
             </table>
             <div class="mt-3 text-end">
-              <a href="upload_logs.php" class="btn btn-sm btn-primary">Alle Upload-Logs anzeigen</a>
+              <a href="upload_logs" class="btn btn-sm btn-primary">Alle Upload-Logs anzeigen</a>
             </div>
           </div>
         {else}
@@ -293,7 +293,7 @@
             </table>
           </div>
           <div class="mt-3 text-end">
-            <a href="{$base_url}/pending_uploads.php" class="btn btn-sm btn-primary">Alle ungeprüften Uploads anzeigen</a>
+            <a href="{$base_url}/pending_uploads" class="btn btn-sm btn-primary">Alle ungeprüften Uploads anzeigen</a>
           </div>
         {else}
           <div class="alert alert-info">Keine neuen Uploads vorhanden.</div>
@@ -340,7 +340,7 @@
             </table>
           </div>
           <div class="mt-3 text-end">
-            <a href="{$base_url}/pending_courses.php" class="btn btn-sm btn-primary">Alle offenen Kursvorschläge anzeigen</a>
+            <a href="{$base_url}/pending_courses" class="btn btn-sm btn-primary">Alle offenen Kursvorschläge anzeigen</a>
           </div>
         {else}
           <div class="alert alert-info">Keine offenen Kursvorschläge vorhanden.</div>
