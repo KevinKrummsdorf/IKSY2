@@ -32,14 +32,6 @@ Abhängigkeiten aktualisieren
 ```
 composer update
 ```  
-## Datenbank aktualisieren
-Nach dem Update müssen ggf. neue SQL-Skripte eingespielt werden.
-Führen Sie insbesondere folgende Befehle aus:
-```
-mysql studyhub < sql/alter_courses_rename_name.sql
-mysql studyhub < sql/alter_user_schedules_custom_course.sql
-mysql studyhub < sql/alter_user_schedules_store_name.sql
-```
 ## Access Key erzeugen
 1. Bei github einloggen
 2. Rechts oben auf das Profilbild klicken und dann Settings
@@ -96,7 +88,7 @@ chmod +x manager.sh
 #### Skript ausführen
 
 ```bash
-./manager.sh
+sudo ./manager.sh
 ```
 
 ##  Das Skript erledigt automatisch:
@@ -133,16 +125,10 @@ Falls Sie die benutzerdefinierte Fehlerseitenkonfiguration wieder entfernen möc
 
 Im Root-Verzeichnis dieses Repositories befindet sich das Skript [`manager.sh`](./manager.sh), das **auch eine Rücknahme der Konfiguration unterstützt**, wenn es im Deinstallationsmodus ausgeführt wird.
 
-### Skript ausführbar machen
-
-```bash
-chmod +x manager.sh
-```
-
 ### Skript mit Deinstallations-Flag ausführen
 
 ```bash
-./manager.sh --uninstall
+sudo ./manager.sh --uninstall
 ```
 
 ## Das Skript macht folgende Änderungen rückgängig:
