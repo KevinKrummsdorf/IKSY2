@@ -128,7 +128,9 @@ class DbFunctions
             LEFT JOIN group_roles gr
                 ON gr.group_id = gm.group_id AND gr.user_id = gm.user_id
             WHERE gm.group_id = :gid
-            ORDER BY u.username ASC
+            ORDER BY
+                CASE WHEN gr.role = 'admin' THEN 0 ELSE 1 END,
+                u.username ASC
         ';
         return self::execute($sql, [':gid' => $groupId], true);
     }
