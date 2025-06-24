@@ -38,14 +38,6 @@
                       <h5>{$u.title|escape:'html'}</h5>
                       <p>{$u.course_name|escape:'html'} – {$u.uploaded_at|date_format:"%d.%m.%Y %H:%M"}</p>
                     </a>
-                    <a href="{$base_url}/download?id={$u.id}"
-                       class="download-link mt-3"
-                       title="{$u.original_name|escape} herunterladen"
-                       download>
-                      <span class="material-symbols-outlined">download</span>
-                      <span>Herunterladen</span>
-                      <small class="text-muted d-block mt-1"></small>
-                    </a>
                   </div>
                 </div>
               {/foreach}
