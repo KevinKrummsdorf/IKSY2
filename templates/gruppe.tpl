@@ -77,10 +77,10 @@
       {foreach $uploads as $u}
         <li class="list-group-item d-flex justify-content-between">
           <span>
-            <a href="{$base_url}/view_pdf?file={$u.stored_name|escape:'url'}" target="_blank">{$u.title|escape}</a>
+            <a href="{url path='view_pdf' file=$u.stored_name}" target="_blank">{$u.title|escape}</a>
           </span>
           <span>
-            <a href="{$base_url}/download?id={$u.id}" download class="btn btn-sm btn-outline-primary{if $myRole === 'admin'} me-2{/if}">Herunterladen</a>
+            <a href="{url path='download' id=$u.id}" download class="btn btn-sm btn-outline-primary{if $myRole === 'admin'} me-2{/if}">Herunterladen</a>
             {if $myRole === 'admin'}
               <form method="post" class="d-inline" onsubmit="return confirm('Upload wirklich löschen?');">
                 <input type="hidden" name="csrf_token" value="{$csrf_token}">

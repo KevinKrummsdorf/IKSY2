@@ -10,7 +10,7 @@
 
 <h2 class="timetable-heading">Stundenplan</h2>
 
-<form method="post" action="timetable">
+<form method="post" action="{url path='timetable'}">
     <table class="timetable-table">
         <thead>
             <tr>

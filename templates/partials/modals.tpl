@@ -34,7 +34,7 @@
             Login
           </button>
           <div class="mt-2 text-end">
-            <a href="request_password_reset">Passwort vergessen?</a>
+            <a href="{url path='request_password_reset'}">Passwort vergessen?</a>
           </div>
         </form>
       </div>

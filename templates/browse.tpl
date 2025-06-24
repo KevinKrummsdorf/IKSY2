@@ -6,7 +6,7 @@
     <br>
 
     {* Suchformular *}
-    <form method="get" action="browse" class="mb-4">
+    <form method="get" action="{url path='browse'}" class="mb-4">
         <div class="input-group">
             <input 
                 type="text" 
@@ -40,8 +40,8 @@
                             {foreach $uploads as $upload}
                                 {if $upload.material_id == $material.id}
                                     {if $isLoggedIn}
-                                        <a href="download?id={$upload.id}" class="btn btn-sm btn-outline-primary me-2" target="_blank" download>Download</a>
-                                        <a href="view_pdf?file={$upload.stored_name|escape:'url'}" class="btn btn-sm btn-outline-secondary" target="_blank">Dokument anzeigen</a>
+                                        <a href="{url path='download' id=$upload.id}" class="btn btn-sm btn-outline-primary me-2" target="_blank" download>Download</a>
+                                        <a href="{url path='view_pdf' file=$upload.stored_name}" class="btn btn-sm btn-outline-secondary" target="_blank">Dokument anzeigen</a>
                                     {/if}
 
                                     {* Durchschnittsbewertung anzeigen *}
@@ -75,7 +75,7 @@
                                     {* Profilbild anzeigen *}
                                     {if isset($profiles[$upload.uploaded_by])}
                                         {assign var="profile" value=$profiles[$upload.uploaded_by]}
-                                        <a href="profile/{$profile.username|escape:'url'}" class="profile-picture-link position-absolute bottom-0 end-0 m-2">
+                                        <a href="{url path='profile' user=$profile.username}" class="profile-picture-link position-absolute bottom-0 end-0 m-2">
                                             {if $profile.profile_picture}
                                                 <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture|escape}" 
                                                      alt="{$profile.first_name|escape} {$profile.last_name|escape}" 

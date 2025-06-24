@@ -5,7 +5,7 @@
 <div class="container mt-5">
   <h1>Meine Uploads</h1>
 
-  <form class="row g-3 mt-3 mb-4" method="get" action="{$base_url}/my_uploads">
+  <form class="row g-3 mt-3 mb-4" method="get" action="{url path='my_uploads'}">
     <div class="col-md-3">
       <label class="form-label" for="title">Titel</label>
       <input type="text" class="form-control" id="title" name="title" list="title_suggestions" value="{$filters.title|escape}">
@@ -33,7 +33,7 @@
     </div>
     <div class="col-12 d-flex justify-content-end">
       <button type="submit" class="btn btn-primary me-2">Filtern</button>
-      <a href="{$base_url}/my_uploads" class="btn btn-outline-secondary">Zurücksetzen</a>
+      <a href="{url path='my_uploads'}" class="btn btn-outline-secondary">Zurücksetzen</a>
     </div>
   </form>
   <datalist id="title_suggestions">
@@ -80,9 +80,9 @@
                 {/if}
               </td>
               <td class="text-center">
-                <a href="{$base_url}/download?id={$u.id}" class="btn btn-sm btn-primary me-1">Download</a>
-                <a href="{$base_url}/view_pdf?file={$u.stored_name|escape:'url'}" target="_blank" class="btn btn-sm btn-secondary me-1">Ansehen</a>
-                <form method="post" action="{$base_url}/delete_upload" class="d-inline" onsubmit="return confirm('Upload wirklich löschen?');">
+                <a href="{url path='download' id=$u.id}" class="btn btn-sm btn-primary me-1">Download</a>
+                <a href="{url path='view_pdf' file=$u.stored_name}" target="_blank" class="btn btn-sm btn-secondary me-1">Ansehen</a>
+                <form method="post" action="{url path='delete_upload'}" class="d-inline" onsubmit="return confirm('Upload wirklich löschen?');">
                   <input type="hidden" name="csrf_token" value="{$csrf_token}">
                   <input type="hidden" name="upload_id" value="{$u.id}">
                   <button type="submit" class="btn btn-sm btn-danger">Löschen</button>
