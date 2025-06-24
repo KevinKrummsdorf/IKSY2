@@ -9,6 +9,7 @@
   <script>
     window.recaptchaSiteKey = '{$recaptcha_site_key}';
     const baseUrl = '{$base_url}';
+    const usePrettyUrls = {$use_pretty_urls|json_encode};
   </script>
   <script src="https://www.google.com/recaptcha/api.js?render={$recaptcha_site_key}" async defer></script>
 
