@@ -121,5 +121,23 @@ $smarty->assign('isLoggedIn', isset($_SESSION['user_id']));
 $smarty->assign('username',   $_SESSION['username'] ?? null);
 $smarty->assign('user_role', $_SESSION['role'] ?? 'guest');
 $smarty->assign('isAdmin', ($_SESSION['role'] ?? '') === 'admin');
+
+// Helper to build links with or without pretty URLs
+$smarty->registerPlugin('function', 'url', function(array $params) use ($config): string {
+    $path = trim($params['path'] ?? '', '/');
+    if ($path === '') {
+        return $config['base_url'] . '/';
+    }
+
+    if (!$config['use_pretty_urls']) {
+        $parts = explode('/', $path, 2);
+        if (substr($parts[0], -4) !== '.php') {
+            $parts[0] .= '.php';
+        }
+        $path = implode('/', $parts);
+    }
+
+    return $config['base_url'] . '/' . $path;
+});
 return $config;
 

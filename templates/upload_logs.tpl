@@ -92,7 +92,7 @@
     <div class="alert alert-info mt-4">Keine Upload-Logs gefunden.</div>
   {/if}
   <div class="mt-4">
-    <a href="dashboard" class="btn btn-sm btn-primary">Zurück zum Dashboard</a>
+    <a href="{url path='dashboard'}" class="btn btn-sm btn-primary">Zurück zum Dashboard</a>
   </div>
 </div>
 {/block}
