@@ -8,7 +8,7 @@ if (
     isset($_SESSION['user_id']) &&
     ($_SESSION['2fa_passed'] ?? false) === true
 ) {
-    header('Location: dashboard');
+    header('Location: ' . url_for('dashboard'));
     exit;
 }
 

@@ -11,9 +11,8 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 // Prüfen, ob Nutzer eingeloggt ist
 if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
-    $reason = urlencode("Du musst eingeloggt sein, um dein Stundenplan zu sehen.");
-    header("Location: /studyhub/error/403?reason={$reason}&action=both");
-    exit;
+    http_response_code(403);
+    exit('Zugriff verweigert');
 }
 
 $userId = (int) $_SESSION['user_id'];
@@ -105,7 +104,7 @@ if ($export === 'csv' || $export === 'pdf') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         DbFunctions::saveUserSchedule($userId, $_POST['timetable'] ?? []);
-        header('Location: timetable.php?success=1');
+        header('Location: ' . url_for('timetable') . '?success=1');
         exit;
     } catch (Throwable $e) {
         echo "<pre>Fehler beim Speichern:\n" . $e->getMessage() . "\n\n" . $e->getTraceAsString() . "</pre>";

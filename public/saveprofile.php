@@ -77,7 +77,7 @@ if (!empty($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ==
             'type'    => 'danger',
             'message' => 'Ungültiger Bildtyp.'
         ];
-        header('Location: edit_profile');
+        header('Location: ' . url_for('edit_profile'));
         exit;
     }
     
@@ -97,7 +97,7 @@ if (!empty($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ==
                 'type'    => 'danger',
                 'message' => 'Fehler beim Hochladen des Bildes.'
             ];
-            header('Location: edit_profile');
+            header('Location: ' . url_for('edit_profile'));
             exit;
         }
     }
@@ -116,5 +116,5 @@ foreach ($platforms as $platform) {
 }
 
 // Weiterleitung
-header('Location: profile/my?success=1');
+header('Location: ' . url_for('profile/my') . '?success=1');
 exit;

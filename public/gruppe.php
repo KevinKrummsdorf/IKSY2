@@ -3,9 +3,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.inc.php';
 
 if (empty($_SESSION['user_id'])) {
-    $reason = urlencode("Du musst eingeloggt sein, um Dateien hochladen zu können.");
-    header("Location: /studyhub/error/403?reason={$reason}&action=both");
-    exit;
+    http_response_code(403);
+    exit('Zugriff verweigert');
 }
 
 if (empty($_SESSION['csrf_token'])) {
@@ -63,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Löschen (nur Admin)
     elseif (isset($_POST['delete_group']) && $myRole === 'admin') {
         if (DbFunctions::deleteGroup($groupId)) {
-            header('Location: lerngruppen?deleted=1');
+            header('Location: ' . url_for('my_groups') . '?deleted=1');
             exit;
         }
         $error = 'Konnte Gruppe nicht löschen.';

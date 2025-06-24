@@ -7,9 +7,8 @@ require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../src/PasswordController.php';
 
 if (empty($_SESSION['user_id'])) {
-    $reason = urlencode('Du musst eingeloggt sein, um dein Passwort zu ändern.');
-    header("Location: /studyhub/error/403?reason={$reason}&action=both");
-    exit;
+    http_response_code(403);
+    exit('Zugriff verweigert');
 }
 
 $success = false;

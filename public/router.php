@@ -17,9 +17,8 @@ $validPages = [
 $page = $_GET['page'] ?? 'start';
 
 if (!isset($validPages[$page])) {
-    $reason = urlencode("Die Seite '$page' existiert nicht.");
-    header("Location: /studyhub/error/404?reason={$reason}");
-    exit;
+    http_response_code(404);
+    exit('Seite nicht gefunden');
 }
 
 // Allgemeine Smarty-Variablen setzen
@@ -41,12 +40,10 @@ if ($type === 'tpl') {
     if (file_exists($phpPath)) {
         require $phpPath;
     } else {
-        $reason = urlencode("Die Datei '$file' existiert nicht.");
-        header("Location: /studyhub/error/500?reason={$reason}");
-        exit;
+        http_response_code(500);
+        exit('Interner Fehler');
     }
 } else {
-    $reason = urlencode("Ungültiger Seitentyp: '$type'");
-    header("Location: /studyhub/error/500?reason={$reason}");
-    exit;
+    http_response_code(500);
+    exit('Ungültiger Seitentyp');
 }

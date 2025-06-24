@@ -5,9 +5,8 @@ require_once __DIR__ . '/../includes/config.inc.php';
 
 // Zugriffsschutz
 if (empty($_SESSION['user_id'])) {
-    $reason = urlencode("Du musst eingeloggt sein, um deine Uploads zu sehen.");
-    header("Location: /studyhub/error/403?reason={$reason}&action=both");
-    exit;
+    http_response_code(403);
+    exit('Zugriff verweigert');
 }
 
 $userId = (int)$_SESSION['user_id'];

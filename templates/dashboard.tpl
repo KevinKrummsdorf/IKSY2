@@ -56,7 +56,7 @@
         {/if}
       </div>
       <div class="mt-3 text-end">
-        <a href="{$base_url}/my_uploads" class="btn btn-primary">Alle Uploads ansehen</a>
+        <a href="{$base_url}/my_uploads{$url_suffix}" class="btn btn-primary">Alle Uploads ansehen</a>
       </div>
     </section>
 
@@ -283,7 +283,7 @@
             </table>
           </div>
           <div class="mt-3 text-end">
-            <a href="{$base_url}/pending_uploads" class="btn btn-sm btn-primary">Alle ungeprüften Uploads anzeigen</a>
+            <a href="{$base_url}/pending_uploads{$url_suffix}" class="btn btn-sm btn-primary">Alle ungeprüften Uploads anzeigen</a>
           </div>
         {else}
           <div class="alert alert-info">Keine neuen Uploads vorhanden.</div>
@@ -330,7 +330,7 @@
             </table>
           </div>
           <div class="mt-3 text-end">
-            <a href="{$base_url}/pending_courses" class="btn btn-sm btn-primary">Alle offenen Kursvorschläge anzeigen</a>
+            <a href="{$base_url}/pending_courses{$url_suffix}" class="btn btn-sm btn-primary">Alle offenen Kursvorschläge anzeigen</a>
           </div>
         {else}
           <div class="alert alert-info">Keine offenen Kursvorschläge vorhanden.</div>

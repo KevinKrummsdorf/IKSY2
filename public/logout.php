@@ -31,5 +31,5 @@ $_SESSION['flash'] = [
 ];
 
 // Weiterleiten
-header('Location: index.php');
+header('Location: ' . url_for('index'));
 exit;

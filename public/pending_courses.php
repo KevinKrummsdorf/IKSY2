@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    header('Location: pending_courses.php');
+    header('Location: ' . url_for('pending_courses'));
     exit;
 }
 

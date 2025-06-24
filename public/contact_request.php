@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply_contact_id'])) 
         $_SESSION['flash'] = ['type' => 'warning', 'message' => 'Antworttext darf nicht leer sein.'];
     }
 
-    header('Location: contact_request.php');
+    header('Location: ' . url_for('contact_request'));
     exit;
 }
 
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status_contact_id'], 
         $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Ungültiger Statuswert.'];
     }
 
-    header('Location: contact_request.php');
+    header('Location: ' . url_for('contact_request'));
     exit;
 }
 

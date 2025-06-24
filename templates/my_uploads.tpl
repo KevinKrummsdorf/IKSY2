@@ -5,7 +5,7 @@
 <div class="container mt-5">
   <h1>Meine Uploads</h1>
 
-  <form class="row g-3 mt-3 mb-4" method="get" action="{$base_url}/my_uploads">
+  <form class="row g-3 mt-3 mb-4" method="get" action="{$base_url}/my_uploads{$url_suffix}">
     <div class="col-md-3">
       <label class="form-label" for="title">Titel</label>
       <input type="text" class="form-control" id="title" name="title" list="title_suggestions" value="{$filters.title|escape}">
@@ -33,7 +33,7 @@
     </div>
     <div class="col-12 d-flex justify-content-end">
       <button type="submit" class="btn btn-primary me-2">Filtern</button>
-      <a href="{$base_url}/my_uploads" class="btn btn-outline-secondary">Zurücksetzen</a>
+      <a href="{$base_url}/my_uploads{$url_suffix}" class="btn btn-outline-secondary">Zurücksetzen</a>
     </div>
   </form>
   <datalist id="title_suggestions">

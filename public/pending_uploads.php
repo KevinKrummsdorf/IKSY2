@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Ein Fehler ist aufgetreten.'];
     }
 
-    header('Location: pending_uploads.php');
+    header('Location: ' . url_for('pending_uploads'));
     exit;
 }
 

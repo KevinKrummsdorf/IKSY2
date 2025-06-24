@@ -12,7 +12,7 @@
 <div class="container mt-5">
   <h1>Ungeprüfte Uploads</h1>
 
-  <form class="row g-3 mt-3 mb-4" method="get" action="{$base_url}/pending_uploads">
+  <form class="row g-3 mt-3 mb-4" method="get" action="{$base_url}/pending_uploads{$url_suffix}">
     <div class="col-md-3">
       <label class="form-label" for="title">Titel</label>
       <input type="text" class="form-control" id="title" name="title" value="{$filters.title|escape}">
@@ -39,13 +39,13 @@
     </div>
     <div class="col-12 d-flex justify-content-end">
       <button type="submit" class="btn btn-primary me-2">Filtern</button>
-      <a href="{$base_url}/pending_uploads" class="btn btn-outline-secondary me-2">Zurücksetzen</a>
+      <a href="{$base_url}/pending_uploads{$url_suffix}" class="btn btn-outline-secondary me-2">Zurücksetzen</a>
       <button type="submit" name="export" value="csv" class="btn btn-success">Exportieren als CSV</button>
     </div>
   </form>
 
   {if $pending_uploads|@count > 0}
-    <form method="post" action="{$base_url}/pending_uploads">
+    <form method="post" action="{$base_url}/pending_uploads{$url_suffix}">
       <div class="table-responsive card shadow-sm">
         <table class="table table-striped table-bordered align-middle mb-0">
           <thead class="table-dark text-center">

@@ -26,6 +26,22 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
+// Benötigte Verzeichnisse sicherstellen
+$writableDirs = [
+    __DIR__ . '/../logs',
+    __DIR__ . '/../cache',
+    __DIR__ . '/../templates_c',
+    __DIR__ . '/../uploads',
+    __DIR__ . '/../uploads/groups',
+    __DIR__ . '/../uploads/profile_pictures',
+];
+
+foreach ($writableDirs as $dir) {
+    if (!is_dir($dir)) {
+        mkdir($dir, 0777, true);
+    }
+}
+
 // Konfigurationen
 
 // Halite Key
@@ -51,7 +67,14 @@ $config['uploads'] = [
 
 $config['app_name']  = $_ENV['APP_NAME'] ?? 'StudyHub';
 $config['base_url'] = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+$config['pretty_urls'] = file_exists(__DIR__ . '/../public/.pretty_urls_enabled');
+$config['url_suffix'] = $config['pretty_urls'] ? '' : '.php';
 $config['site_url'] = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $config['base_url'];
+
+function url_for(string $path): string {
+    global $config;
+    return rtrim($config['base_url'], '/') . '/' . trim($path, '/') . $config['url_suffix'];
+}
 
 
 //DB
@@ -98,6 +121,7 @@ $smarty->setConfigDir(__DIR__ . '/../configs/');
 
 // Globale Smarty-Variablen
 $smarty->assign('base_url',   $config['base_url']);
+$smarty->assign('url_suffix', $config['url_suffix']);
 $smarty->assign('app_name',   $config['app_name']);
 $smarty->assign('recaptcha_site_key', $config['recaptcha']['site_key']);
 $smarty->assign('isLoggedIn', isset($_SESSION['user_id']));

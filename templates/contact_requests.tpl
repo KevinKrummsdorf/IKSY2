@@ -13,7 +13,7 @@
   {/if}
 
   <!-- Filterformular -->
-  <form class="row g-3 mt-3 mb-4" method="get" action="{$base_url}/contact_request">
+  <form class="row g-3 mt-3 mb-4" method="get" action="{$base_url}/contact_request{$url_suffix}">
     <div class="col-md-3">
       <label for="name" class="form-label">Name</label>
       <input type="text" class="form-control" id="name" name="name" value="{$filters.name|escape}">
@@ -36,7 +36,7 @@
     </div>
     <div class="col-12 d-flex justify-content-end">
       <button type="submit" class="btn btn-primary me-2">Filtern</button>
-      <a href="{$base_url}/contact_request" class="btn btn-outline-secondary me-2">Zurücksetzen</a>
+      <a href="{$base_url}/contact_request{$url_suffix}" class="btn btn-outline-secondary me-2">Zurücksetzen</a>
       <button type="submit" name="export" value="csv" class="btn btn-success">Exportieren als CSV</button>
     </div>
   </form>
@@ -70,7 +70,7 @@
 
                 <!-- Status-Wechsel -->
                 <td>
-                  <form method="post" action="{$base_url}/contact_request" class="d-flex">
+                  <form method="post" action="{$base_url}/contact_request{$url_suffix}" class="d-flex">
                     <input type="hidden" name="status_contact_id" value="{$r.contact_id}">
                     <select name="new_status" class="form-select form-select-sm me-2">
                       <option value="offen" {if $r.status == 'offen'}selected{/if}>Offen</option>
@@ -83,7 +83,7 @@
 
                 <!-- Antwortformular -->
                 <td>
-                  <form method="post" action="{$base_url}/contact_request">
+                  <form method="post" action="{$base_url}/contact_request{$url_suffix}">
                     <input type="hidden" name="reply_contact_id" value="{$r.contact_id}">
                     <textarea name="reply_text" rows="2" class="form-control mb-2" placeholder="Antwort eingeben..." required></textarea>
                     <button type="submit" class="btn btn-sm btn-outline-success w-100">Antwort senden</button>

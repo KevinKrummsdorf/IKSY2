@@ -1,86 +1,41 @@
 #!/bin/bash
 
-TARGET_DIR="/var/www/html/iksy05/StudyHub/public"
-SYMLINK="/var/www/html/studyhub"
-HTACCESS="$TARGET_DIR/.htaccess"
-APACHE_CONF="/etc/apache2/sites-available/000-default.conf"
-BACKUP_CONF="${APACHE_CONF}.bak"
+HTACCESS_DIR="public"
+BASIC_HTACCESS="$HTACCESS_DIR/.htaccess"
+FULL_HTACCESS="$HTACCESS_DIR/.htaccess.full"
+MARKER="$HTACCESS_DIR/.pretty_urls_enabled"
 
 function setup() {
-    echo "Starte Setup für StudyHub unter $SYMLINK ..."
-
-    # 1. Symlink erstellen
-    if [ ! -L "$SYMLINK" ]; then
-        sudo ln -s "$TARGET_DIR" "$SYMLINK"
-        echo "Symlink erstellt: $SYMLINK → $TARGET_DIR"
-    else
-        echo "Symlink existiert bereits: $SYMLINK"
+    if [ "$EUID" -ne 0 ]; then
+        echo "Keine Root-Rechte: Basiskonfiguration wird verwendet." 
+        cp "$BASIC_HTACCESS" "$HTACCESS_DIR/.htaccess"
+        rm -f "$MARKER"
+        exit 0
     fi
 
-    # 2. .htaccess RewriteBase setzen
-    if [ -f "$HTACCESS" ]; then
-        sudo sed -i 's|^RewriteBase .*|RewriteBase /studyhub/|' "$HTACCESS"
-        echo "RewriteBase in .htaccess auf /studyhub/ gesetzt"
-    else
-        echo ".htaccess nicht gefunden unter $HTACCESS"
-    fi
-
-    # 3. Apache-Konfiguration anpassen
-    if ! grep -q "/var/www/html/studyhub" "$APACHE_CONF"; then
-        echo "Füge <Directory> Block zu Apache-Konfiguration hinzu"
-        sudo cp "$APACHE_CONF" "$BACKUP_CONF"
-        echo "<Directory /var/www/html/studyhub>
-    AllowOverride All
-    Require all granted
-</Directory>" | sudo tee -a "$APACHE_CONF" > /dev/null
-    else
-        echo "Apache-Konfiguration enthält bereits den Block für /studyhub"
-    fi
-
-    # 4. Apache neu starten
-    echo "Starte Apache neu ..."
-    sudo systemctl restart apache2
-    echo "Setup abgeschlossen. → http://127.0.0.1/studyhub/"
+    echo "Aktiviere mod_rewrite und installiere erweiterte .htaccess ..."
+    a2enmod rewrite
+    cp "$FULL_HTACCESS" "$HTACCESS_DIR/.htaccess"
+    touch "$MARKER"
+    systemctl restart apache2
+    echo "Setup abgeschlossen."
 }
 
 function uninstall() {
-    echo "Starte Deinstallation von StudyHub-Symlink-Setup ..."
-
-    # 1. Symlink entfernen
-    if [ -L "$SYMLINK" ]; then
-        sudo rm "$SYMLINK"
-        echo "Symlink $SYMLINK entfernt."
-    else
-        echo "Kein Symlink $SYMLINK vorhanden."
+    if [ "$EUID" -ne 0 ]; then
+        echo "Deinstallation erfordert Root-Rechte"
+        exit 1
     fi
 
-    # 2. Apache-Konfiguration bereinigen
-    if [ -f "$APACHE_CONF" ]; then
-        sudo cp "$APACHE_CONF" "$BACKUP_CONF"
-        echo "Entferne <Directory /var/www/html/studyhub> Block ..."
-        sudo sed -i '/<Directory \/var\/www\/html\/studyhub>/,/<\/Directory>/d' "$APACHE_CONF"
-    else
-        echo "Apache-Konfig $APACHE_CONF nicht gefunden."
-    fi
-
-    # 3. .htaccess RewriteBase zurücksetzen
-    if [ -f "$HTACCESS" ]; then
-        sudo sed -i 's|^RewriteBase .*|RewriteBase /iksy05/StudyHub/public/|' "$HTACCESS"
-        echo "RewriteBase in .htaccess zurückgesetzt"
-    else
-        echo ".htaccess nicht gefunden: $HTACCESS"
-    fi
-
-    # 4. Apache neu starten
-    echo "Starte Apache neu ..."
-    sudo systemctl restart apache2
-
-    echo "Deinstallation abgeschlossen. Die App ist wieder unter dem alten Pfad erreichbar."
+    echo "Deaktiviere mod_rewrite und stelle Basiskonfiguration wieder her ..."
+    a2dismod rewrite
+    cp "$BASIC_HTACCESS" "$HTACCESS_DIR/.htaccess"
+    rm -f "$MARKER"
+    systemctl restart apache2
+    echo "Konfiguration entfernt."
 }
 
-# Hauptlogik
-if [[ "$1" == "--uninstall" ]]; then
-    uninstall
-else
-    setup
-fi
+case "$1" in
+    --uninstall) uninstall ;;
+    *) setup ;;
+esac

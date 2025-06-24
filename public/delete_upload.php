@@ -38,5 +38,5 @@ try {
     $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Fehler beim Löschen des Uploads.'];
 }
 
-header('Location: my_uploads.php');
+header('Location: ' . url_for('my_uploads'));
 exit;

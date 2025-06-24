@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unlock_user_id'])) {
     }
 
     $_SESSION['flash'] = ['type' => 'success', 'message' => "Benutzer #{$unlockId} wurde entsperrt und benachrichtigt."];
-    header('Location: locked_users.php');
+    header('Location: ' . url_for('locked_users'));
     exit;
 }
 

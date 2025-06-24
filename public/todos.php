@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_priority'])) {
     $todoId  = (int)$_POST['todo_id'];
     $priority = $_POST['priority'] ?? 'medium';
     DbFunctions::updateTodoPriority($todoId, $userId, $priority);
-    header('Location: todos.php');
+    header('Location: ' . url_for('todos'));
     exit;
 }
 
@@ -67,14 +67,14 @@ if (isset($_GET['toggle'])) {
 if (isset($_GET['delete'])) {
     $todoId = (int)$_GET['delete'];
     DbFunctions::deleteTodo($todoId, $userId);
-    header('Location: todos.php?show_done=1');
+    header('Location: ' . url_for('todos') . '?show_done=1');
     exit;
 }
 
 // Alle erledigten ToDos löschen
 if (isset($_GET['delete_completed'])) {
     DbFunctions::deleteCompletedTodos($userId);
-    header('Location: todos.php?show_done=1');
+    header('Location: ' . url_for('todos') . '?show_done=1');
     exit;
 }
 
