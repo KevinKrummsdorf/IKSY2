@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!registerForm || !registerSubmitBtn || !passwordInput || !passwordConfirmInput
       || !requirementList || !alertContainer || !tokenField || !spinner) {
-    console.error('Einige Elemente fehlen im Formular!');
+    // Elemente fehlen im Formular
     return;
   }
 
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showAlert(msgs, 'danger');
           }
         } catch (err) {
-          console.error(err);
+          // Fehler in Anfrage
           showAlert('Verbindungsfehler. Bitte später erneut versuchen.', 'danger');
         } finally {
           registerSubmitBtn.disabled = false;

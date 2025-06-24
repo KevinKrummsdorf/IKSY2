@@ -544,18 +544,11 @@ public static function execute(string $query, array $params = [], bool $expectRe
     $stmt = $pdo->prepare($query);
 
     if (!$stmt->execute($params)) {
-            'query'     => $query,
-            'params'    => $params,
-            'errorInfo' => $stmt->errorInfo(),
-        ]);
-        throw new RuntimeException('Fehler beim Ausführen des Statements.');
+        $errorInfo = $stmt->errorInfo();
+        throw new RuntimeException('Fehler beim Ausführen des Statements: ' . ($errorInfo[2] ?? ''));        
     }
 
     $rowCount = $stmt->rowCount();
-        'query'    => $query,
-        'params'   => $params,
-        'affected' => $rowCount,
-    ]);
 
     return $expectResult ? $stmt->fetchAll() : $rowCount;
 }

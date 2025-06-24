@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const html = document.documentElement;
 
   if (!toggle || !icon || !label) {
-    console.error("Theme-Switch-Elemente fehlen im DOM");
     return;
   }
 

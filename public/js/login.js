@@ -45,13 +45,12 @@ document.addEventListener("DOMContentLoaded", () => {
         grecaptcha.ready(() => {
           grecaptcha.execute(siteKey, { action: "login" })
             .then(token => {
-              console.log("Login reCAPTCHA Token:", token);
               tokenEl.value = token;
               // Submit the form normally
               form.submit();
             })
             .catch(err => {
-              console.error("reCAPTCHA error:", err);
+              // reCAPTCHA error handling
               // Allow retry
               btn.disabled = false;
               spinner.classList.add("d-none");
