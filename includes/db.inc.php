@@ -1610,6 +1610,48 @@ public static function getFilteredUploadLogs(array $filters, ?int $limit = null,
             throw $e;
         }
     }
+
+    /**
+     * L\xC3\xB6scht einen Upload einer Lerngruppe durch einen Administrator.
+     * Gibt den Dateinamen zur\xC3\xBCck oder null, wenn nichts gel\xC3\xB6scht wurde.
+     */
+    public static function deleteGroupUpload(int $uploadId, int $groupId, int $adminId): ?string
+    {
+        $pdo = self::db_connect();
+
+        $pdo->beginTransaction();
+        try {
+            $stmt = $pdo->prepare('SELECT stored_name, material_id FROM uploads WHERE id = ? AND group_id = ?');
+            $stmt->execute([$uploadId, $groupId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                $pdo->rollBack();
+                return null;
+            }
+
+            $name = $row['stored_name'];
+            $materialId = (int)$row['material_id'];
+
+            self::logUploadAction($uploadId, 'deleted', $adminId, 'Upload gel\xC3\xB6scht (admin)');
+
+            $del = $pdo->prepare('DELETE FROM uploads WHERE id = ? AND group_id = ?');
+            $del->execute([$uploadId, $groupId]);
+
+            $check = $pdo->prepare('SELECT COUNT(*) FROM uploads WHERE material_id = ?');
+            $check->execute([$materialId]);
+            if ((int)$check->fetchColumn() === 0) {
+                $pdo->prepare('DELETE FROM materials WHERE id = ?')->execute([$materialId]);
+            }
+
+            $pdo->commit();
+            return $name;
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            self::getLogger()->error('deleteGroupUpload failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
+    }
 /**
  * Zählt die Anzahl der Upload-Logs mit erweiterten Filtermöglichkeiten.
  * @param array $filters Filterkriterien

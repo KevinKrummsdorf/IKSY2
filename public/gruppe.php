@@ -102,6 +102,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+    // Upload l\xC3\xB6schen (nur Admin)
+    elseif (isset($_POST['delete_upload']) && $myRole === 'admin') {
+        $uId = (int)($_POST['upload_id'] ?? 0);
+        if ($uId > 0) {
+            try {
+                $stored = DbFunctions::deleteGroupUpload($uId, $groupId, $userId);
+                if ($stored !== null) {
+                    $file = __DIR__ . '/../uploads/' . $stored;
+                    if (is_file($file)) {
+                        unlink($file);
+                    }
+                    $success = 'Upload gel\xC3\xB6scht.';
+                } else {
+                    $error = 'Upload nicht gefunden.';
+                }
+            } catch (Exception $e) {
+                $error = 'Fehler beim L\xC3\xB6schen des Uploads.';
+            }
+        }
+    }
     // Upload-Link
     elseif (isset($_POST['upload_group']) && $myRole !== 'none') {
         header("Location: upload.php?group_id={$groupId}");
@@ -121,4 +141,5 @@ if ($success) {
 }
 
 $smarty->assign(compact('group','members','uploads','myRole','error','success'));
+$smarty->assign('csrf_token', $_SESSION['csrf_token']);
 $smarty->display('gruppe.tpl');
