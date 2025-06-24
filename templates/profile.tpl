@@ -100,7 +100,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="update_profile.php" enctype="multipart/form-data">
+        <form method="post" action="update_profile" enctype="multipart/form-data">
           <input type="hidden" name="action" value="update_picture">
           <div class="mb-3">
             <label for="profile_picture" class="form-label">Neues Profilbild</label>
@@ -121,7 +121,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="update_profile.php">
+        <form method="post" action="update_profile">
           <input type="hidden" name="action" value="update_username">
           <div class="mb-3">
             <label for="new_username" class="form-label">Neuer Benutzername</label>
@@ -143,7 +143,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="update_profile.php">
+        <form method="post" action="update_profile">
           <input type="hidden" name="action" value="update_email">
           <div class="mb-3">
             <label for="new_email" class="form-label">Neue E-Mail-Adresse</label>
@@ -165,7 +165,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="update_profile.php">
+        <form method="post" action="update_profile">
           <input type="hidden" name="action" value="update_password">
           <div class="mb-3">
             <label for="current_password" class="form-label">Aktuelles Passwort</label>
@@ -195,7 +195,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="update_profile.php">
+        <form method="post" action="update_profile">
           <input type="hidden" name="action" value="update_personal">
           <div class="mb-3">
             <label for="first_name" class="form-label">Vorname</label>
@@ -229,7 +229,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="update_profile.php">
+        <form method="post" action="update_profile">
           <input type="hidden" name="action" value="update_socials">
           <div class="mb-3">
             <label for="instagram" class="form-label">Instagram</label>

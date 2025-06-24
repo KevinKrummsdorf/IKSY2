@@ -14,6 +14,10 @@ RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
+# PHP-Dateien ohne Endung
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+)$ $1.php [QSA,L]
+
 # Alles andere an router.php übergeben
 RewriteRule ^(.*)$ router.php?page=$1 [QSA,L]
 

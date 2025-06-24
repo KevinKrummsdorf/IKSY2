@@ -9,7 +9,7 @@
     <div class="alert alert-{$flash.type}">{$flash.message|escape}</div>
   {/if}
 
-  <form class="row g-3 mb-4" method="get" action="{$base_url}/pending_courses.php">
+  <form class="row g-3 mb-4" method="get" action="{$base_url}/pending_courses">
     <div class="col-md-3">
       <label for="username" class="form-label">Benutzername</label>
       <input type="text" class="form-control" id="username" name="username" value="{$filters.username|escape}">
@@ -28,7 +28,7 @@
     </div>
     <div class="col-12 d-flex justify-content-end">
       <button type="submit" class="btn btn-primary me-2">Filtern</button>
-      <a href="{$base_url}/pending_courses.php" class="btn btn-outline-secondary me-2">Zurücksetzen</a>
+      <a href="{$base_url}/pending_courses" class="btn btn-outline-secondary me-2">Zurücksetzen</a>
       <button type="submit" name="export" value="csv" class="btn btn-success">Exportieren als CSV</button>
     </div>
   </form>
@@ -57,7 +57,7 @@
                 <td>{$c.email|escape}</td>
                 <td>{$c.suggested_at|date_format:"%d.%m.%Y %H:%M"}</td>
                 <td>
-                  <form method="post" action="{$base_url}/pending_courses.php" class="d-flex flex-column align-items-start">
+                  <form method="post" action="{$base_url}/pending_courses" class="d-flex flex-column align-items-start">
                     <input type="hidden" name="suggestion_id" value="{$c.id}">
                     
                     <div class="mb-2 w-100">

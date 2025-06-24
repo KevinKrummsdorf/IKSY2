@@ -30,7 +30,7 @@
 
     <a href="mailto:{$request.email|escape}?subject=Re: {$request.subject|escape}" 
        class="btn btn-primary">Antworten</a>
-    <a href="admin_contact_requests.php" class="btn btn-secondary ms-2">Zurück zur Übersicht</a>
+    <a href="admin_contact_requests" class="btn btn-secondary ms-2">Zurück zur Übersicht</a>
   {/if}
 </div>
 {/block}

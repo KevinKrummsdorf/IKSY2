@@ -28,7 +28,7 @@
   </section>
 
   <div class="text-center">
-    <a href="{$base_url}/browse.php" class="btn btn-primary btn-lg" rel="noopener">Jetzt Mitschriften durchsuchen</a>
+    <a href="{$base_url}/browse" class="btn btn-primary btn-lg" rel="noopener">Jetzt Mitschriften durchsuchen</a>
   </div>
 </div>
 {if isset($show_modal)}

@@ -9,7 +9,7 @@
       <div class="modal-body">
         <div id="loginAlert" class="alert alert-danger d-none" role="alert" aria-live="assertive"></div>
 
-        <form id="login-form" method="POST" action="{$base_url}/login.php" novalidate>
+        <form id="login-form" method="POST" action="{$base_url}/login" novalidate>
           <div class="mb-3">
             <label for="username_or_email" class="form-label">Benutzername oder E-Mail</label>
             <input type="text" class="form-control" id="username_or_email" name="username_or_email"
@@ -34,7 +34,7 @@
             Login
           </button>
           <div class="mt-2 text-end">
-            <a href="request_password_reset.php">Passwort vergessen?</a>
+            <a href="request_password_reset">Passwort vergessen?</a>
           </div>
         </form>
       </div>
@@ -51,7 +51,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form id="registerForm" method="POST" action="{$base_url}/register.php" novalidate>
+        <form id="registerForm" method="POST" action="{$base_url}/register" novalidate>
           <div class="mb-3">
             <label for="username" class="form-label">Benutzername</label>
             <input type="text" class="form-control" id="username" name="username" required>

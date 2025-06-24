@@ -7,7 +7,7 @@
   <h1>Upload-Logs</h1>
 
   <!-- Filterformular -->
-  <form class="row g-3 mt-3 mb-4" method="get" action="{$base_url}/upload_logs.php">
+  <form class="row g-3 mt-3 mb-4" method="get" action="{$base_url}/upload_logs">
     <div class="col-md-2">
       <label for="user_id" class="form-label">User-ID</label>
       <input type="number" class="form-control" id="user_id" name="user_id" value="{$filters.user_id|escape}">
@@ -30,7 +30,7 @@
     </div>
     <div class="col-12 d-flex justify-content-end">
       <button type="submit" class="btn btn-primary me-2">Filtern</button>
-      <a href="{$base_url}/upload_logs.php" class="btn btn-outline-secondary me-2">Zurücksetzen</a>
+      <a href="{$base_url}/upload_logs" class="btn btn-outline-secondary me-2">Zurücksetzen</a>
       <button type="submit" name="export" value="csv" class="btn btn-success">Exportieren als CSV</button>
     </div>
   </form>
@@ -92,7 +92,7 @@
     <div class="alert alert-info mt-4">Keine Upload-Logs gefunden.</div>
   {/if}
   <div class="mt-4">
-    <a href="dashboard.php" class="btn btn-sm btn-primary">Zurück zum Dashboard</a>
+    <a href="dashboard" class="btn btn-sm btn-primary">Zurück zum Dashboard</a>
   </div>
 </div>
 {/block}
