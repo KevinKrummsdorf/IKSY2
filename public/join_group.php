@@ -5,9 +5,8 @@ require_once __DIR__ . '/../includes/config.inc.php';
 $log = LoggerFactory::get('join_group');
 
 if (empty($_SESSION['user_id'])) {
-    $reason = urlencode('Du musst eingeloggt sein, um einer Gruppe beizutreten.');
-    header("Location: {$config['base_url']}/error.php?code=403&reason={$reason}&action=both");
-    exit;
+    $reason = 'Du musst eingeloggt sein, um einer Gruppe beizutreten.';
+    handle_error(403, $reason, 'both');
 }
 
 $token = trim((string)($_GET['token'] ?? ''));

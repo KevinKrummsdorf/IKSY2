@@ -3,9 +3,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.inc.php';
 
 if (empty($_SESSION['user_id'])) {
-    $reason = urlencode("Du musst eingeloggt sein, um Dateien hochladen zu können.");
-    header("Location: {$config['base_url']}/error.php?code=403&reason={$reason}&action=both");
-    exit;
+    $reason = "Du musst eingeloggt sein, um Dateien hochladen zu können.";
+    handle_error(403, $reason, 'both');
 }
 
 if (empty($_SESSION['csrf_token'])) {

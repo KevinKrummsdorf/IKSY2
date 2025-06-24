@@ -7,9 +7,8 @@ require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../src/PasswordController.php';
 
 if (empty($_SESSION['user_id'])) {
-    $reason = urlencode('Du musst eingeloggt sein, um dein Passwort zu ändern.');
-    header("Location: {$config['base_url']}/error.php?code=403&reason={$reason}&action=both");
-    exit;
+    $reason = 'Du musst eingeloggt sein, um dein Passwort zu ändern.';
+    handle_error(403, $reason, 'both');
 }
 
 $success = false;

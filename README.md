@@ -15,7 +15,9 @@ composer install
 Nach dem Klonen funktioniert die Anwendung sofort mit einer einfachen
 `.htaccess`-Datei. Diese deaktiviert Pretty URLs und eigene Fehlerseiten,
 damit der Webserver auch ohne besondere Rechte korrekt arbeitet.
-Erweiterte Funktionen können später mit `manager.sh` aktiviert werden.
+Ohne Setup-Skript liefern geschützte Bereiche lediglich den passenden
+HTTP-Statuscode, sodass Apache seine Standardfehlerseiten anzeigt. Erweiterte
+Funktionen können später mit `manager.sh` aktiviert werden.
 ## Repo aktualisieren
   
 Verzeichnis öffnen  

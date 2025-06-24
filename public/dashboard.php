@@ -13,9 +13,8 @@ if (
     empty($_SESSION['2fa_passed']) ||
     $_SESSION['2fa_passed'] !== true
 ) {
-    $reason = urlencode("Du musst vollständig eingeloggt sein, um das Dashboard zu nutzen.");
-    header("Location: {$config['base_url']}/error.php?code=403&reason={$reason}&action=both");
-    exit;
+    $reason = "Du musst vollständig eingeloggt sein, um das Dashboard zu nutzen.";
+    handle_error(403, $reason, 'both');
 }
 
 // Rollen prüfen

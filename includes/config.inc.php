@@ -123,6 +123,37 @@ $smarty->assign('user_role', $_SESSION['role'] ?? 'guest');
 $smarty->assign('isAdmin', ($_SESSION['role'] ?? '') === 'admin');
 
 /**
+ * Handle HTTP errors. If Pretty URLs and custom error pages are enabled the
+ * user is redirected to the error script. Otherwise a plain HTTP status code is
+ * emitted so the web server shows its default page.
+ */
+function handle_error(int $code, string $reason = '', string $action = ''): void
+{
+    global $config;
+
+    if ($config['use_pretty_urls']) {
+        $params = [];
+        if ($reason !== '') {
+            $params['reason'] = $reason;
+        }
+        if ($action !== '') {
+            $params['action'] = $action;
+        }
+        $url = build_url("error/{$code}");
+        if (!empty($params)) {
+            $url .= '?' . http_build_query($params);
+        }
+        header("Location: $url");
+    } else {
+        http_response_code($code);
+        if ($reason !== '') {
+            echo htmlspecialchars($reason, ENT_QUOTES, 'UTF-8');
+        }
+    }
+    exit;
+}
+
+/**
  * Build an application URL that respects Pretty URL settings.
  */
 function build_url(string $path, array $params = []): string
