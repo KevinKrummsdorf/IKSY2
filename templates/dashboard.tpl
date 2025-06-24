@@ -29,9 +29,9 @@
               {foreach $user_uploads as $index => $u}
                 <div class="carousel-item {if $index == 0}active{/if}">
                   <div class="pdf-slide">
-                    <a href="{$base_url}/view_pdf?file={$u.stored_name|escape:'url'}" target="_blank" class="pdf-link">
+                  <a href="{url path='view_pdf' file=$u.stored_name}" target="_blank" class="pdf-link">
                       {if $u.type == 'image'}
-                        <img src="{$base_url}/uploads/{$u.stored_name|escape:'url'}" alt="{$u.title|escape}" class="img-fluid mb-2" style="max-height:160px;">
+                        <img src='{url file="{$u.stored_name|escape:'url'}"}' alt="{$u.title|escape}" class="img-fluid mb-2" style="max-height:160px;">
                       {else}
                         <span class="material-symbols-outlined">picture_as_pdf</span>
                       {/if}
@@ -56,7 +56,7 @@
         {/if}
       </div>
       <div class="mt-3 text-end">
-        <a href="{$base_url}/my_uploads" class="btn btn-primary">Alle Uploads ansehen</a>
+        <a href="{url path='my_uploads'}" class="btn btn-primary">Alle Uploads ansehen</a>
       </div>
     </section>
 
@@ -129,7 +129,7 @@
               </tbody>
             </table>
             <div class="mt-3 text-end">
-              <a href="locked_users" class="btn btn-sm btn-primary">Zur Benutzerverwaltung</a>
+              <a href="{url path='locked_users'}" class="btn btn-sm btn-primary">Zur Benutzerverwaltung</a>
             </div>
           </div>
         {else}
@@ -180,7 +180,7 @@
               </tbody>
             </table>
             <div class="mt-3 text-end">
-              <a href="contact_request" class="btn btn-sm btn-primary">Alle Kontaktanfragen anzeigen</a>
+              <a href="{url path='contact_request'}" class="btn btn-sm btn-primary">Alle Kontaktanfragen anzeigen</a>
             </div>
           </div>
         {else}
@@ -231,7 +231,7 @@
               </tbody>
             </table>
             <div class="mt-3 text-end">
-              <a href="upload_logs" class="btn btn-sm btn-primary">Alle Upload-Logs anzeigen</a>
+              <a href="{url path='upload_logs'}" class="btn btn-sm btn-primary">Alle Upload-Logs anzeigen</a>
             </div>
           </div>
         {else}
@@ -283,7 +283,7 @@
             </table>
           </div>
           <div class="mt-3 text-end">
-            <a href="{$base_url}/pending_uploads" class="btn btn-sm btn-primary">Alle ungeprüften Uploads anzeigen</a>
+            <a href="{url path='pending_uploads'}" class="btn btn-sm btn-primary">Alle ungeprüften Uploads anzeigen</a>
           </div>
         {else}
           <div class="alert alert-info">Keine neuen Uploads vorhanden.</div>
@@ -330,7 +330,7 @@
             </table>
           </div>
           <div class="mt-3 text-end">
-            <a href="{$base_url}/pending_courses" class="btn btn-sm btn-primary">Alle offenen Kursvorschläge anzeigen</a>
+            <a href="{url path='pending_courses'}" class="btn btn-sm btn-primary">Alle offenen Kursvorschläge anzeigen</a>
           </div>
         {else}
           <div class="alert alert-info">Keine offenen Kursvorschläge vorhanden.</div>

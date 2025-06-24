@@ -11,6 +11,13 @@ git clone https://github.com/KevinKrummsdorf/IKSY2 /var/www/html/iksy05/StudyHub
 cd /var/www/html/iksy05/StudyHub
 composer install
 ```
+
+Nach dem Klonen funktioniert die Anwendung sofort mit einer einfachen
+`.htaccess`-Datei. Diese deaktiviert Pretty URLs und eigene Fehlerseiten,
+damit der Webserver auch ohne besondere Rechte korrekt arbeitet.
+Ohne Setup-Skript liefern geschützte Bereiche lediglich den passenden
+HTTP-Statuscode, sodass Apache seine Standardfehlerseiten anzeigt. Erweiterte
+Funktionen können später mit `manager.sh` aktiviert werden.
 ## Repo aktualisieren
   
 Verzeichnis öffnen  
@@ -78,27 +85,27 @@ Um das System für die Verwendung eigener Fehlerseiten (z. B. `404.tpl`, `403.
 
 ## Setup ausführen
 
-Im Root-Verzeichnis dieses Repositories befindet sich das Skript [`studyhub-manager.sh`](./studyhub-manager.sh), das die notwendigen Konfigurationsschritte automatisch durchführt.
+Im Root-Verzeichnis dieses Repositories befindet sich das Skript [`manager.sh`](./manager.sh), das die notwendigen Konfigurationsschritte automatisch durchführt.
 
 #### Skript ausführbar machen
 
 ```bash
-chmod +x studyhub-manager.sh
+chmod +x manager.sh
 ```
 
 #### Skript ausführen
 
 ```bash
-./studyhub-manager.sh
+./manager.sh
 ```
 
 ##  Das Skript erledigt automatisch:
 
-1. Erstellt einen symbolischen Link nach `/var/www/html/studyhub`
-2. Setzt die `RewriteBase` in `public/.htaccess` auf `/studyhub/`
-3. Aktiviert Pretty URLs für PHP-Dateien
-4. Aktualisiert die Apache-Konfiguration (z. B. virtuelle Hosts)
-5. Startet den Apache-Webserver neu
+1. Prüft, ob es mit Root-Rechten ausgeführt wird
+2. Kopiert bei Root-Rechten die erweiterte `.htaccess` und aktiviert `mod_rewrite`
+3. Legt eine Datei `config/pretty_urls_enabled` an, um Pretty URLs zu markieren
+4. Nutzt ohne Root-Rechte eine einfache `.htaccess` ohne Rewrite-Regeln und entfernt die Datei
+5. Startet den Apache-Webserver automatisch per `sudo` neu
 
 Nach der Installation sind wichtige Bereiche unter diesen Pfaden erreichbar:
 - Eigenes Profil: `/profile/my`
@@ -124,27 +131,24 @@ Falls Sie die benutzerdefinierte Fehlerseitenkonfiguration wieder entfernen möc
 
 ## Deinstallation ausführen
 
-Im Root-Verzeichnis dieses Repositories befindet sich das Skript [`studyhub-manager.sh`](./studyhub-manager.sh), das **auch eine Rücknahme der Konfiguration unterstützt**, wenn es im Deinstallationsmodus ausgeführt wird.
+Im Root-Verzeichnis dieses Repositories befindet sich das Skript [`manager.sh`](./manager.sh), das **auch eine Rücknahme der Konfiguration unterstützt**, wenn es im Deinstallationsmodus ausgeführt wird.
 
 ### Skript ausführbar machen
 
 ```bash
-chmod +x studyhub-manager.sh
+chmod +x manager.sh
 ```
 
 ### Skript mit Deinstallations-Flag ausführen
 
 ```bash
-./studyhub-manager.sh --uninstall
+./manager.sh --uninstall
 ```
 
 ## Das Skript macht folgende Änderungen rückgängig:
 
-1. Entfernt den symbolischen Link `/var/www/html/studyhub`
-2. Setzt die `RewriteBase` in `public/.htaccess` zurück (z. B. auf `/` oder entfernt sie)
-3. Stellt die ursprüngliche Apache-Konfiguration wieder her (sofern gesichert)
-4. Startet den Apache-Webserver neu
-
+1. Stellt die einfache `.htaccess` wieder her
+2. Entfernt die Datei `config/pretty_urls_enabled` und deaktiviert `mod_rewrite` (falls aktiviert). Anschließend wird Apache automatisch per `sudo` neu gestartet
 **Stellen Sie sicher, dass keine anderen Webanwendungen auf den Symlink oder die Apache-Konfiguration angewiesen sind, bevor du die Deinstallation durchführt wird.**
 
 # Support bei Fehlern erhalten (Issues erstellen)

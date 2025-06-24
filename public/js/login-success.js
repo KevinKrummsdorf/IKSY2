@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Nach 2 Sekunden Weiterleitung
         setTimeout(function() {
-            window.location.href = baseUrl + '/dashboard';
+            const target = usePrettyUrls ? '/dashboard' : '/dashboard.php';
+            window.location.href = baseUrl + target;
         }, 2000);
     }
 });

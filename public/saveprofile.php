@@ -116,5 +116,5 @@ foreach ($platforms as $platform) {
 }
 
 // Weiterleitung
-header('Location: profile/my?success=1');
+header('Location: ' . build_url('profile/my', ['success' => 1]));
 exit;

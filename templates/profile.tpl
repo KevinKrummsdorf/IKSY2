@@ -14,7 +14,8 @@
   <div class="row">
     <div class="col-md-3 text-center mb-4">
       {if $profile.profile_picture}
-        <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture|escape}" alt="Profilbild" class="rounded-circle shadow" style="width:150px;height:150px;object-fit:cover;">
+        {assign var=pfile value=$profile.profile_picture|escape:'url'}
+        <img src='{url file="profile_pictures/$pfile"}' alt="Profilbild" class="rounded-circle shadow" style="width:150px;height:150px;object-fit:cover;">
       {else}
         <img src="{$base_url}/assets/default_person.png" alt="Kein Profilbild" class="rounded-circle shadow" style="width:150px;height:150px;object-fit:cover;">
       {/if}
@@ -100,7 +101,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="update_profile" enctype="multipart/form-data">
+        <form method="post" action="{url path='update_profile'}" enctype="multipart/form-data">
           <input type="hidden" name="action" value="update_picture">
           <div class="mb-3">
             <label for="profile_picture" class="form-label">Neues Profilbild</label>
@@ -121,7 +122,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="update_profile">
+        <form method="post" action="{url path='update_profile'}">
           <input type="hidden" name="action" value="update_username">
           <div class="mb-3">
             <label for="new_username" class="form-label">Neuer Benutzername</label>
@@ -143,7 +144,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="update_profile">
+        <form method="post" action="{url path='update_profile'}">
           <input type="hidden" name="action" value="update_email">
           <div class="mb-3">
             <label for="new_email" class="form-label">Neue E-Mail-Adresse</label>
@@ -165,7 +166,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="update_profile">
+        <form method="post" action="{url path='update_profile'}">
           <input type="hidden" name="action" value="update_password">
           <div class="mb-3">
             <label for="current_password" class="form-label">Aktuelles Passwort</label>
@@ -195,7 +196,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="update_profile">
+        <form method="post" action="{url path='update_profile'}">
           <input type="hidden" name="action" value="update_personal">
           <div class="mb-3">
             <label for="first_name" class="form-label">Vorname</label>
@@ -229,7 +230,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="update_profile">
+        <form method="post" action="{url path='update_profile'}">
           <input type="hidden" name="action" value="update_socials">
           <div class="mb-3">
             <label for="instagram" class="form-label">Instagram</label>

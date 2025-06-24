@@ -11,10 +11,10 @@
     {* PROFILBILD OBEN + LÖSCHBUTTON *}
     <div class="text-center mb-4">
         {if $profile.profile_picture}
-            <img src="{$base_url}/uploads/profile_pictures/{$profile.profile_picture|escape}" alt="Profilbild"
+            <img src='{url file="profile_pictures/{$profile.profile_picture|escape:'url'}"}' alt="Profilbild"
                  class="rounded-circle shadow mb-2" style="max-width: 150px; display: block; margin: 0 auto;">
             <div>
-                <form method="post" action="delete_profile_picture" class="d-inline-block mt-2">
+                <form method="post" action="{url path='delete_profile_picture'}" class="d-inline-block mt-2">
                     <input type="hidden" name="csrf_token" value="{$csrf_token}">
                     <button type="submit" class="btn btn-outline-danger btn-sm"
                             onclick="return confirm('Profilbild wirklich löschen?')">
@@ -33,7 +33,7 @@
     {/if}
 
     {* PROFILBEARBEITUNGSFORMULAR *}
-    <form method="post" action="saveprofile" enctype="multipart/form-data" class="card p-4 mb-4">
+    <form method="post" action="{url path='saveprofile'}" enctype="multipart/form-data" class="card p-4 mb-4">
 
         <div class="mb-3">
             <label for="profile_picture" class="form-label">Neues Profilbild</label>

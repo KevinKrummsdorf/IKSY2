@@ -12,7 +12,7 @@
 <div class="container mt-5">
   <h1>Ungeprüfte Uploads</h1>
 
-  <form class="row g-3 mt-3 mb-4" method="get" action="{$base_url}/pending_uploads">
+  <form class="row g-3 mt-3 mb-4" method="get" action="{url path='pending_uploads'}">
     <div class="col-md-3">
       <label class="form-label" for="title">Titel</label>
       <input type="text" class="form-control" id="title" name="title" value="{$filters.title|escape}">
@@ -39,13 +39,13 @@
     </div>
     <div class="col-12 d-flex justify-content-end">
       <button type="submit" class="btn btn-primary me-2">Filtern</button>
-      <a href="{$base_url}/pending_uploads" class="btn btn-outline-secondary me-2">Zurücksetzen</a>
+      <a href="{url path='pending_uploads'}" class="btn btn-outline-secondary me-2">Zurücksetzen</a>
       <button type="submit" name="export" value="csv" class="btn btn-success">Exportieren als CSV</button>
     </div>
   </form>
 
   {if $pending_uploads|@count > 0}
-    <form method="post" action="{$base_url}/pending_uploads">
+    <form method="post" action="{url path='pending_uploads'}">
       <div class="table-responsive card shadow-sm">
         <table class="table table-striped table-bordered align-middle mb-0">
           <thead class="table-dark text-center">
@@ -77,7 +77,7 @@
                 <div class="btn-group" role="group">
                   <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">Freigeben</button>
                   <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm reject-btn">Ablehnen</button>
-                  <a href="{$base_url}/uploads/{$upload.stored_name|escape}" target="_blank" class="btn btn-outline-secondary btn-sm">Ansehen</a>
+                  <a href='{url file="{$upload.stored_name|escape:'url'}"}' target="_blank" class="btn btn-outline-secondary btn-sm">Ansehen</a>
                 </div>
               </td>
             </tr>

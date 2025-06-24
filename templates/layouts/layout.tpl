@@ -9,6 +9,7 @@
   <script>
     window.recaptchaSiteKey = '{$recaptcha_site_key}';
     const baseUrl = '{$base_url}';
+    const usePrettyUrls = {$use_pretty_urls|json_encode};
   </script>
   <script src="https://www.google.com/recaptcha/api.js?render={$recaptcha_site_key}" async defer></script>
 
@@ -30,7 +31,7 @@
   <nav class="header-auth-links">
     {if $isLoggedIn}
       <span class="me-3">Willkommen, {$username|escape}!</span>
-      <a href="{$base_url}/logout" class="btn btn-sm btn-outline-secondary">Logout</a>
+      <a href="{url path='logout'}" class="btn btn-sm btn-outline-secondary">Logout</a>
     {else}
       <a href="#" class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
       <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">Registrierung</a>
@@ -50,7 +51,7 @@
   </div>
   {if isset($flash.context) && $flash.context == 'login'}
     <script>
-      setTimeout(() => window.location.href = 'dashboard', 3000);
+      setTimeout(() => window.location.href = '{url path="dashboard"}', 3000);
     </script>
   {/if}
 {/if}
@@ -60,15 +61,15 @@
 
 <div class="menu d-none d-md-block">
   <ul class="menu-content mt-4">
-    <li><a href="{$base_url}/profile/my"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
-    <li><a href="{$base_url}/search_profile"><span class="material-symbols-outlined">person_search</span><span>Andere Mitglieder finden</span></a></li>
-    <li><a href="{$base_url}/my_groups"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
-    <li><a href="{$base_url}/groups"><span class="material-symbols-outlined">groups</span><span>Alle Lerngruppen</span></a></li>
-    <li><a href="{$base_url}/todos"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
-    <li><a href="{$base_url}/browse"><span class="material-symbols-outlined">search</span><span>Material finden</span></a></li>
-    <li><a href="{$base_url}/upload"><span class="material-symbols-outlined">arrow_circle_up</span><span>Material hochladen</span></a></li>
-    <li><a href="{$base_url}/my_uploads"><span class="material-symbols-outlined">folder</span><span>Meine Uploads</span></a></li>
-    <li><a href="{$base_url}/timetable"><span class="material-symbols-outlined">calendar_month</span><span>Stundenplan</span></a></li>
+    <li><a href="{url path='profile/my'}"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
+    <li><a href="{url path='search_profile'}"><span class="material-symbols-outlined">person_search</span><span>Andere Mitglieder finden</span></a></li>
+    <li><a href="{url path='my_groups'}"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
+    <li><a href="{url path='groups'}"><span class="material-symbols-outlined">groups</span><span>Alle Lerngruppen</span></a></li>
+    <li><a href="{url path='todos'}"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
+    <li><a href="{url path='browse'}"><span class="material-symbols-outlined">search</span><span>Material finden</span></a></li>
+    <li><a href="{url path='upload'}"><span class="material-symbols-outlined">arrow_circle_up</span><span>Material hochladen</span></a></li>
+    <li><a href="{url path='my_uploads'}"><span class="material-symbols-outlined">folder</span><span>Meine Uploads</span></a></li>
+    <li><a href="{url path='timetable'}"><span class="material-symbols-outlined">calendar_month</span><span>Stundenplan</span></a></li>
     <li><a href="#" id="theme-toggle"><span id="theme-icon" class="material-symbols-outlined">dark_mode</span><span id="theme-label">Darkmode</span></a></li>
 
   </ul>
@@ -82,15 +83,15 @@
   </div>
   <div class="offcanvas-body">
     <ul class="menu-content">
-      <li><a href="{$base_url}/profile/my"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
-      <li><a href="{$base_url}/search_profile"><span class="material-symbols-outlined">person_search</span><span>Andere Mitglieder finden</span></a></li>
-      <li><a href="{$base_url}/lerngruppen"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
-      <li><a href="{$base_url}/groups"><span class="material-symbols-outlined">groups</span><span>Alle Lerngruppen</span></a></li>
-      <li><a href="{$base_url}/todos"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
-      <li><a href="{$base_url}/browse"><span class="material-symbols-outlined">search</span><span>Material finden</span></a></li>
-      <li><a href="{$base_url}/upload"><span class="material-symbols-outlined">arrow_circle_up</span><span>Material hochladen</span></a></li>
-      <li><a href="{$base_url}/my_uploads"><span class="material-symbols-outlined">folder</span><span>Meine Uploads</span></a></li>
-    <li><a href="{$base_url}/timetable"><span class="material-symbols-outlined">calendar_month</span><span>Stundenplan</span></a></li>
+      <li><a href="{url path='profile/my'}"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
+      <li><a href="{url path='search_profile'}"><span class="material-symbols-outlined">person_search</span><span>Andere Mitglieder finden</span></a></li>
+      <li><a href="{url path='lerngruppen'}"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
+      <li><a href="{url path='groups'}"><span class="material-symbols-outlined">groups</span><span>Alle Lerngruppen</span></a></li>
+      <li><a href="{url path='todos'}"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
+      <li><a href="{url path='browse'}"><span class="material-symbols-outlined">search</span><span>Material finden</span></a></li>
+      <li><a href="{url path='upload'}"><span class="material-symbols-outlined">arrow_circle_up</span><span>Material hochladen</span></a></li>
+      <li><a href="{url path='my_uploads'}"><span class="material-symbols-outlined">folder</span><span>Meine Uploads</span></a></li>
+    <li><a href="{url path='timetable'}"><span class="material-symbols-outlined">calendar_month</span><span>Stundenplan</span></a></li>
       <li><a href="#" id="theme-toggle"><span id="theme-icon" class="material-symbols-outlined">dark_mode</span><span id="theme-label">Darkmode</span></a></li>
     </ul>
   </div>
@@ -104,11 +105,11 @@
 
 <footer class="text-center mt-4 py-3">
   <div class="container-fluid">
-    <a href="{$base_url}/about" class="mx-2">Über uns</a> |
-    <a href="{$base_url}/privacy" class="mx-2">Datenschutz</a> |
-    <a href="{$base_url}/terms" class="mx-2">AGB</a> |
-    <a href="{$base_url}/contact" class="mx-2">Kontakt</a> |
-    <a href="{$base_url}/impressum" class="mx-2">Impressum</a>
+    <a href="{url path='about'}" class="mx-2">Über uns</a> |
+    <a href="{url path='privacy'}" class="mx-2">Datenschutz</a> |
+    <a href="{url path='terms'}" class="mx-2">AGB</a> |
+    <a href="{url path='contact'}" class="mx-2">Kontakt</a> |
+    <a href="{url path='impressum'}" class="mx-2">Impressum</a>
     <p class="mt-2 text-center">&copy; {$smarty.now|date_format:"%Y"} {$app_name}. Alle Rechte vorbehalten.</p>
   </div>
 </footer>

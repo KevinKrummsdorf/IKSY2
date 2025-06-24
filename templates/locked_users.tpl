@@ -13,7 +13,7 @@
   {/if}
 
   <!-- Filterformular -->
-  <form class="row g-3 mt-3 mb-4" method="get" action="{$base_url}/locked_users">
+  <form class="row g-3 mt-3 mb-4" method="get" action="{url path='locked_users'}">
     <div class="col-md-3">
       <label for="username" class="form-label">Benutzername</label>
       <input type="text" class="form-control" id="username" name="username" value="{$filters.username|escape}">
@@ -29,7 +29,7 @@
 
     <div class="col-12 d-flex justify-content-end">
       <button type="submit" class="btn btn-primary me-2">Filtern</button>
-      <a href="{$base_url}/locked_users" class="btn btn-outline-secondary me-2">Zurücksetzen</a>
+      <a href="{url path='locked_users'}" class="btn btn-outline-secondary me-2">Zurücksetzen</a>
       <button type="submit" name="export" value="csv" class="btn btn-success">Exportieren als CSV</button>
     </div>
   </form>
@@ -59,7 +59,7 @@
                 <td>{$user.email|escape}</td>
                 <td>{$user.failed_attempts}</td>
                 <td class="text-center">
-                  <form method="post" action="{$base_url}/locked_users" onsubmit="return confirm('Benutzer wirklich entsperren?');">
+                  <form method="post" action="{url path='locked_users'}" onsubmit="return confirm('Benutzer wirklich entsperren?');">
                     <input type="hidden" name="unlock_user_id" value="{$user.id}">
                     <button type="submit" class="btn btn-sm btn-outline-success">Entsperren</button>
                   </form>
@@ -75,7 +75,7 @@
     <div class="alert alert-info mt-4">Keine gesperrten Benutzer gefunden.</div>
   {/if}
   <div class="mt-4">
-    <a href="dashboard" class="btn btn-sm btn-primary">Zurück zum Dashboard</a>
+    <a href="{url path='dashboard'}" class="btn btn-sm btn-primary">Zurück zum Dashboard</a>
   </div>
 </div>
 {/block}

@@ -44,7 +44,7 @@
 
   <section class="mb-5">
     <h2>7. Datenschutz</h2>
-    <p>Details zur Verarbeitung Ihrer personenbezogenen Daten entnehmen Sie bitte unserer <a href="privacy">Datenschutzerklärung</a>.</p>
+    <p>Details zur Verarbeitung Ihrer personenbezogenen Daten entnehmen Sie bitte unserer <a href="{url path='privacy'}">Datenschutzerklärung</a>.</p>
   </section>
 
   <section class="mb-5">

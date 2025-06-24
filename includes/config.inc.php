@@ -9,6 +9,21 @@ use ParagonIE\HiddenString\HiddenString;
 
 // Autoloading und DB-Initialisierung
 require_once __DIR__ . '/../vendor/autoload.php';
+
+// Ensure writable directories exist
+$dirs = [
+    __DIR__ . '/../uploads',
+    __DIR__ . '/../cache',
+    __DIR__ . '/../templates_c',
+    __DIR__ . '/../logs',
+    __DIR__ . '/../stats',
+];
+foreach ($dirs as $d) {
+    if (!is_dir($d)) {
+        mkdir($d, 0775, true);
+    }
+}
+
 require_once __DIR__ . '/../includes/db.inc.php';
 require_once __DIR__ . '/../includes/ip_utils.inc.php';
 require_once __DIR__ . '/../includes/recaptcha.inc.php';
@@ -52,6 +67,7 @@ $config['uploads'] = [
 $config['app_name']  = $_ENV['APP_NAME'] ?? 'StudyHub';
 $config['base_url'] = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 $config['site_url'] = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $config['base_url'];
+$config['use_pretty_urls'] = file_exists(__DIR__ . '/../config/pretty_urls_enabled');
 
 
 //DB
@@ -99,10 +115,174 @@ $smarty->setConfigDir(__DIR__ . '/../configs/');
 // Globale Smarty-Variablen
 $smarty->assign('base_url',   $config['base_url']);
 $smarty->assign('app_name',   $config['app_name']);
+$smarty->assign('use_pretty_urls', $config['use_pretty_urls']);
 $smarty->assign('recaptcha_site_key', $config['recaptcha']['site_key']);
 $smarty->assign('isLoggedIn', isset($_SESSION['user_id']));
 $smarty->assign('username',   $_SESSION['username'] ?? null);
 $smarty->assign('user_role', $_SESSION['role'] ?? 'guest');
 $smarty->assign('isAdmin', ($_SESSION['role'] ?? '') === 'admin');
+
+/**
+ * Handle HTTP errors. If Pretty URLs and custom error pages are enabled the
+ * user is redirected to the error script. Otherwise a plain HTTP status code is
+ * emitted so the web server shows its default page.
+ */
+function handle_error(int $code, string $reason = '', string $action = ''): void
+{
+    global $config;
+
+    if ($config['use_pretty_urls']) {
+        $params = [];
+        if ($reason !== '') {
+            $params['reason'] = $reason;
+        }
+        if ($action !== '') {
+            $params['action'] = $action;
+        }
+        $url = build_url("error/{$code}");
+        if (!empty($params)) {
+            $url .= '?' . http_build_query($params);
+        }
+        header("Location: $url");
+    } else {
+        http_response_code($code);
+    }
+    exit;
+}
+
+/**
+ * Build an application URL that respects Pretty URL settings.
+ */
+function build_url(string $path, array $params = []): string
+{
+    global $config;
+
+    $path = trim($path, '/');
+    $base = $config['base_url'] . '/';
+    if ($path === '') {
+        return $base;
+    }
+
+    $usePretty = $config['use_pretty_urls'];
+
+    if ($path === 'profile' && isset($params['user'])) {
+        $user = rawurlencode($params['user']);
+        unset($params['user']);
+
+        if ($usePretty) {
+            $path = "profile/{$user}";
+        } else {
+            $path = 'profile.php';
+            $params = ['user' => $user] + $params;
+        }
+    } elseif ($path === 'groups' && isset($params['name'])) {
+        $name = rawurlencode($params['name']);
+        unset($params['name']);
+
+        if ($usePretty) {
+            $path = "groups/{$name}";
+        } else {
+            $path = 'gruppe.php';
+            $params = ['name' => $name] + $params;
+        }
+    }
+    elseif (!$usePretty && $path === 'profile/my') {
+        $path = 'profile.php';
+    }
+    elseif (strpos($path, 'uploads/') === 0) {
+        $file = substr($path, strlen('uploads/'));
+        if ($usePretty) {
+            $path = 'uploads/' . $file;
+        } else {
+            $path = 'fetch_upload.php';
+            $params = ['file' => $file] + $params;
+        }
+    }
+
+    if (!$usePretty && substr($path, -4) !== '.php') {
+        $segments = explode('/', $path, 2);
+        if (substr($segments[0], -4) !== '.php') {
+            $segments[0] .= '.php';
+        }
+        $path = implode('/', $segments);
+    }
+
+    $url = $base . $path;
+    if (!empty($params)) {
+        $url .= '?' . http_build_query($params);
+    }
+    return $url;
+}
+
+// Helper to build links with or without Pretty URLs
+$smarty->registerPlugin('function', 'url', function(array $params) use ($config): string {
+    $path = trim($params['path'] ?? '', '/');
+    $file = $params['file'] ?? null;
+    unset($params['path'], $params['file']);
+
+    $base = $config['base_url'] . '/';
+    if ($path === '' && $file === null) {
+        return $base;
+    }
+
+    $usePretty = $config['use_pretty_urls'];
+
+    if ($file !== null) {
+        $file = ltrim($file, '/');
+        if ($usePretty) {
+            $url = $base . 'uploads/' . $file;
+        } else {
+            $url = $base . 'fetch_upload.php';
+            $params = ['file' => $file] + $params;
+        }
+        if (!empty($params)) {
+            $url .= '?' . http_build_query($params);
+        }
+        return $url;
+    }
+
+    // Profile links with username parameter
+    if ($path === 'profile' && isset($params['user'])) {
+        $user = rawurlencode($params['user']);
+        unset($params['user']);
+
+        if ($usePretty) {
+            $path = "profile/{$user}";
+        } else {
+            $path = 'profile.php';
+            $params = ['user' => $user] + $params;
+        }
+    }
+    // Group detail links with name parameter
+    elseif ($path === 'groups' && isset($params['name'])) {
+        $name = rawurlencode($params['name']);
+        unset($params['name']);
+
+        if ($usePretty) {
+            $path = "groups/{$name}";
+        } else {
+            $path = 'gruppe.php';
+            $params = ['name' => $name] + $params;
+        }
+    }
+    // Own profile shortcut
+    elseif (!$usePretty && $path === 'profile/my') {
+        $path = 'profile.php';
+    }
+
+    if (!$usePretty && substr($path, -4) !== '.php') {
+        $segments = explode('/', $path, 2);
+        if (substr($segments[0], -4) !== '.php') {
+            $segments[0] .= '.php';
+        }
+        $path = implode('/', $segments);
+    }
+
+    $url = $base . $path;
+    if (!empty($params)) {
+        $url .= '?' . http_build_query($params);
+    }
+    return $url;
+});
 return $config;
 

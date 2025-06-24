@@ -5,9 +5,8 @@ require_once __DIR__ . '/../includes/config.inc.php';
 
 // Zugriffsschutz: Nur für eingeloggte Nutzer
 if (empty($_SESSION['user_id'])) {
-    $reason = urlencode("Du musst eingeloggt sein, um Lerngruppen nutzen zu können.");
-    header("Location: /studyhub/error/403?reason={$reason}&action=both");
-    exit;
+    $reason = "Du musst eingeloggt sein, um Lerngruppen nutzen zu können.";
+    handle_error(403, $reason, 'both');
 }
 
 $userId  = (int)$_SESSION['user_id'];
