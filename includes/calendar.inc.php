@@ -172,6 +172,7 @@ function assignTodayTodosToSmarty(PDO $pdo, Smarty $smarty): void
         $todos[] = [
             'title' => $event['title'],
             'is_group_event' => true,
+            'event_time' => $event['event_time'] ?? null,
         ];
     }
 
