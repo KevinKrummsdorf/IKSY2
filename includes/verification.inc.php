@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 use ParagonIE\Halite\KeyFactory;
-use Monolog\Logger;
 
 /**
  * Sendet eine E-Mail zur Verifizierung der Adresse und speichert den Token.
