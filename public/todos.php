@@ -11,7 +11,7 @@ if (!isset($_SESSION['just_completed'])) {
 // Sicherstellen, dass der Benutzer eingeloggt ist
 if (empty($_SESSION['user_id'])) {
     $reason = "Du musst eingeloggt sein, um ToDos zu erstellen.";
-    handle_error(403, $reason, 'both');
+    handle_error(401, $reason, 'both');
 }
 
 $userId   = (int)$_SESSION['user_id'];

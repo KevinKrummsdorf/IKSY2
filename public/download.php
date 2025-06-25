@@ -6,31 +6,31 @@ session_start();
 
 // Optional: nur für eingeloggte Benutzer
 if (empty($_SESSION['user_id'])) {
-    http_response_code(403);
-    exit('Zugriff verweigert – bitte einloggen.');
+    $reason = 'Zugriff verweigert – bitte einloggen.';
+    handle_error(401, $reason, 'both');
 }
 
 // Parameter prüfen
 $uploadId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if ($uploadId <= 0) {
-    http_response_code(400);
-    exit('Ungültige ID.');
+    $reason = 'Ungültige ID.';
+    handle_error(400, $reason);
 }
 
 // Upload-Daten abrufen
 $upload = DbFunctions::getApprovedUploadById($uploadId);
 
 if (!$upload) {
-    http_response_code(404);
-    exit('Upload nicht gefunden oder nicht freigegeben.');
+    $reason = 'Upload nicht gefunden oder nicht freigegeben.';
+    handle_error(404, $reason);
 }
 
 $basePath = realpath(__DIR__ . '/../uploads/');
 $filePath = $basePath . DIRECTORY_SEPARATOR . $upload['stored_name'];
 
 if (!is_file($filePath)) {
-    http_response_code(404);
-    exit('Datei nicht gefunden.');
+    $reason = 'Datei nicht gefunden.';
+    handle_error(404, $reason);
 }
 
 // Content-Type und Download-Header setzen

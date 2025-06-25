@@ -6,7 +6,7 @@ require_once __DIR__ . '/../includes/pdf_utils.inc.php';
 
 if (empty($_SESSION['user_id'])) {
     $reason = "Du musst eingeloggt sein, um Dateien hochladen zu können.";
-    handle_error(403, $reason, 'both');
+    handle_error(401, $reason, 'both');
 }
 
 if (empty($_SESSION['csrf_token'])) {

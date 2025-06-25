@@ -4,19 +4,19 @@ require_once __DIR__ . '/../includes/config.inc.php';
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_SESSION['user_id'])) {
-    http_response_code(403);
-    exit('Zugriff verweigert.');
+    $reason = 'Zugriff verweigert.';
+    handle_error(401, $reason, 'both');
 }
 
 if (empty($_POST['csrf_token']) || !isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])) {
-    http_response_code(403);
-    exit('Ungültiger CSRF-Token.');
+    $reason = 'Ungültiger CSRF-Token.';
+    handle_error(403, $reason, 'both');
 }
 
 $uploadId = (int)($_POST['upload_id'] ?? 0);
 if ($uploadId <= 0) {
-    http_response_code(400);
-    exit('Ungültige ID.');
+    $reason = 'Ungültige ID.';
+    handle_error(400, $reason);
 }
 
 $userId = (int)$_SESSION['user_id'];
@@ -24,8 +24,8 @@ $userId = (int)$_SESSION['user_id'];
 try {
     $storedName = DbFunctions::deleteUpload($uploadId, $userId);
     if ($storedName === null) {
-        http_response_code(403);
-        exit('Upload nicht gefunden oder keine Berechtigung.');
+        $reason = 'Upload nicht gefunden oder keine Berechtigung.';
+        handle_error(403, $reason, 'both');
     }
 
     $file = __DIR__ . '/../uploads/' . $storedName;

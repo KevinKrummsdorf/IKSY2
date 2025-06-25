@@ -73,7 +73,8 @@ Passwort = Acces Key
 
 # Custom Fehlerseiten konfigurieren
 
-Um das System für die Verwendung eigener Fehlerseiten (z. B. `404.tpl`, `403.tpl` etc.) korrekt einzurichten, kann das mitgelieferte Setup-Skript verwendet werden.
+Um das System für die Verwendung eigener Fehlerseiten (z. B. `401.tpl`, `403.tpl`, `404.tpl` etc.) korrekt einzurichten, kann das mitgelieferte Setup-Skript verwendet werden.
+Nicht eingeloggte Nutzer sehen dabei einen 401-Fehler. Meldet sich ein normaler Benutzer an und ruft einen nur für Admins oder Moderatoren vorgesehenen Bereich auf, erscheint stattdessen ein 403-Fehler. Die 403-Seite weist nun ausdrücklich darauf hin, dass für die angeforderte Ressource die erforderlichen Rechte fehlen und bietet lediglich einen Button zurück zur Startseite an.
 
 ## Setup ausführen
 

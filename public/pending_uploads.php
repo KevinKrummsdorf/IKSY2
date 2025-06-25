@@ -4,12 +4,17 @@ declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.inc.php';
 session_start();
 
+if (empty($_SESSION['user_id'])) {
+    $reason = 'Nicht eingeloggt.';
+    handle_error(401, $reason, 'both');
+}
+
 $isAdmin = ($_SESSION['role'] ?? '') === 'admin';
 $isMod   = ($_SESSION['role'] ?? '') === 'mod';
 
 if (!$isAdmin && !$isMod) {
-    http_response_code(403);
-    exit('Zugriff verweigert.');
+    $reason = 'Du hast nicht die nötigen Rechte, um auf diese Ressource zuzugreifen.';
+    handle_error(403, $reason, 'both');
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

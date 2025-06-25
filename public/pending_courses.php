@@ -5,9 +5,13 @@ session_start();
 require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../includes/mailing.inc.php';
 
-if (empty($_SESSION['user_id']) || !in_array($_SESSION['role'] ?? '', ['admin', 'mod'], true)) {
-    http_response_code(403);
-    exit('Zugriff verweigert.');
+if (empty($_SESSION['user_id'])) {
+    $reason = 'Nicht eingeloggt.';
+    handle_error(401, $reason, 'both');
+}
+if (!in_array($_SESSION['role'] ?? '', ['admin', 'mod'], true)) {
+    $reason = 'Du hast nicht die nötigen Rechte, um auf diese Ressource zuzugreifen.';
+    handle_error(403, $reason, 'both');
 }
 
 $filters = [

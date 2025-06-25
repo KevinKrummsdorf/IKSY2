@@ -6,7 +6,7 @@ require_once __DIR__ . '/../includes/config.inc.php';
 // Zugriffsschutz
 if (empty($_SESSION['user_id'])) {
     $reason = "Du musst eingeloggt sein, um deine Uploads zu sehen.";
-    handle_error(403, $reason, 'both');
+    handle_error(401, $reason, 'both');
 }
 
 $userId = (int)$_SESSION['user_id'];

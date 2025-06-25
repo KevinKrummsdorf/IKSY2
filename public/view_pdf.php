@@ -5,8 +5,8 @@ $filename = basename($_GET['file'] ?? '');
 $path = __DIR__ . '/../uploads/' . $filename;
 
 if (!preg_match('/\.pdf$/i', $filename) || !file_exists($path)) {
-    http_response_code(404);
-    exit('Datei nicht gefunden.');
+    $reason = 'Datei nicht gefunden.';
+    handle_error(404, $reason);
 }
 
 header('Content-Type: application/pdf');

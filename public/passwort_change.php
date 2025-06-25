@@ -8,7 +8,7 @@ require_once __DIR__ . '/../src/PasswordController.php';
 
 if (empty($_SESSION['user_id'])) {
     $reason = 'Du musst eingeloggt sein, um dein Passwort zu ändern.';
-    handle_error(403, $reason, 'both');
+    handle_error(401, $reason, 'both');
 }
 
 $success = false;
