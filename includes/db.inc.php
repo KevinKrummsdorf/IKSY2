@@ -300,6 +300,18 @@ class DbFunctions
     }
 
     /**
+     * Löscht einen Gruppentermin.
+     */
+    public static function deleteGroupEvent(int $eventId, int $groupId): bool
+    {
+        $sql = 'DELETE FROM group_events WHERE id = :eid AND group_id = :gid';
+        return self::execute($sql, [
+            ':eid' => $eventId,
+            ':gid' => $groupId,
+        ]) > 0;
+    }
+
+    /**
      * Liefert alle Termine einer Gruppe.
      */
     public static function getGroupEventsByGroup(int $groupId): array

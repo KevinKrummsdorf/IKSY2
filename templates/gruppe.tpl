@@ -29,10 +29,16 @@
             <div class="text-muted small">
               {$ev.event_date|date_format:"%d.%m.%Y"}
               {if $ev.repeat_interval !== 'none'}
-                &middot; {$ev.repeat_interval|escape}
+                &middot; {$ev.repeat_label|escape}
               {/if}
             </div>
           </span>
+          {if $myRole === 'admin'}
+            <form method="post" class="ms-2" onsubmit="return confirm('Termin wirklich löschen?');">
+              <input type="hidden" name="event_id" value="{$ev.id}">
+              <button type="submit" name="delete_event" class="btn btn-sm btn-outline-danger">Löschen</button>
+            </form>
+          {/if}
         </li>
       {/foreach}
     </ul>
@@ -40,7 +46,7 @@
     <p class="text-muted">Keine Termine vorhanden.</p>
   {/if}
 
-  {if $myRole !== 'none'}
+  {if $myRole === 'admin'}
     <h4>Neuen Termin erstellen</h4>
     <form method="post" class="mb-4">
       <div class="row g-2">

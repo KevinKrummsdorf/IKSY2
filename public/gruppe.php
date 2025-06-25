@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     // neuen Gruppentermin erstellen
-    elseif (isset($_POST['create_event']) && $myRole !== 'none') {
+    elseif (isset($_POST['create_event']) && $myRole === 'admin') {
         $title  = trim($_POST['event_title'] ?? '');
         $date   = $_POST['event_date'] ?? '';
         $repeat = $_POST['event_repeat'] ?? 'none';
@@ -145,12 +145,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Termin konnte nicht erstellt werden.';
         }
     }
+    // Gruppentermin löschen
+    elseif (isset($_POST['delete_event']) && $myRole === 'admin') {
+        $eventId = (int)($_POST['event_id'] ?? 0);
+        if ($eventId > 0 && DbFunctions::deleteGroupEvent($eventId, $groupId)) {
+            $success = 'Termin gelöscht.';
+        } else {
+            $error = 'Termin konnte nicht gelöscht werden.';
+        }
+    }
 }
 
 // Mitglieder + Uploads holen
 $members = DbFunctions::getGroupMembers($groupId);
 $uploads = DbFunctions::getUploadsByGroup($groupId);
 $events  = DbFunctions::getGroupEventsByGroup($groupId);
+foreach ($events as &$ev) {
+    $ev['repeat_label'] = match ($ev['repeat_interval']) {
+        'weekly'   => 'Wöchentlich',
+        'biweekly' => 'Alle 2 Wochen',
+        'monthly'  => 'Monatlich',
+        default    => ''
+    };
+}
+unset($ev);
 
 if ($error) {
     $smarty->assign('error', $error);
