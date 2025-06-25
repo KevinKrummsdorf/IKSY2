@@ -70,7 +70,7 @@
     <li><a href="{url path='upload'}"><span class="material-symbols-outlined">arrow_circle_up</span><span>Material hochladen</span></a></li>
     <li><a href="{url path='my_uploads'}"><span class="material-symbols-outlined">folder</span><span>Meine Uploads</span></a></li>
     <li><a href="{url path='timetable'}"><span class="material-symbols-outlined">calendar_month</span><span>Stundenplan</span></a></li>
-    <li><a href="#" id="theme-toggle"><span id="theme-icon" class="material-symbols-outlined">dark_mode</span><span id="theme-label">Darkmode</span></a></li>
+    <li><a href="#" class="theme-toggle"><span class="theme-icon material-symbols-outlined">dark_mode</span><span class="theme-label">Darkmode</span></a></li>
 
   </ul>
 </div>
@@ -92,7 +92,7 @@
       <li><a href="{url path='upload'}"><span class="material-symbols-outlined">arrow_circle_up</span><span>Material hochladen</span></a></li>
       <li><a href="{url path='my_uploads'}"><span class="material-symbols-outlined">folder</span><span>Meine Uploads</span></a></li>
       <li><a href="{url path='timetable'}"><span class="material-symbols-outlined">calendar_month</span><span>Stundenplan</span></a></li>
-      <li><a href="#" id="theme-toggle"><span id="theme-icon" class="material-symbols-outlined">dark_mode</span><span id="theme-label">Darkmode</span></a></li>
+      <li><a href="#" class="theme-toggle"><span class="theme-icon material-symbols-outlined">dark_mode</span><span class="theme-label">Darkmode</span></a></li>
 
      </ul>
   </div>
