@@ -43,12 +43,30 @@ function assignUserCalendarToSmarty(PDO $pdo, Smarty $smarty): void
         $rows = [];
     }
 
+    try {
+        $events = DbFunctions::getGroupEventsForUserDateRange(
+            (int)$_SESSION['user_id'],
+            $startDate,
+            $endDate
+        );
+    } catch (Throwable $e) {
+        error_log('Calendar DB error: ' . $e->getMessage());
+        $events = [];
+    }
+
     $tasksByDay = [];
     foreach ($rows as $row) {
         $day = (int)substr($row['due_date'], 8, 2);
         $tasksByDay[$day][] = [
             'title' => $row['title'],
             'priority' => $row['priority'],
+        ];
+    }
+    foreach ($events as $event) {
+        $day = (int)substr($event['event_date'], 8, 2);
+        $tasksByDay[$day][] = [
+            'title' => $event['title'],
+            'is_group_event' => true,
         ];
     }
 
@@ -137,6 +155,24 @@ function assignTodayTodosToSmarty(PDO $pdo, Smarty $smarty): void
     } catch (Throwable $e) {
         error_log('Calendar DB error: ' . $e->getMessage());
         $todos = [];
+    }
+
+    try {
+        $events = DbFunctions::getGroupEventsForUserDateRange(
+            (int)$_SESSION['user_id'],
+            $today,
+            $today
+        );
+    } catch (Throwable $e) {
+        error_log('Calendar DB error: ' . $e->getMessage());
+        $events = [];
+    }
+
+    foreach ($events as $event) {
+        $todos[] = [
+            'title' => $event['title'],
+            'is_group_event' => true,
+        ];
     }
 
     if (class_exists('IntlDateFormatter')) {

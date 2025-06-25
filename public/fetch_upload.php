@@ -1,9 +1,6 @@
 <?php
-/**
- * Liefert Dateien aus dem Upload-Verzeichnis aus.
- * Unterverzeichnisse wie "profile_pictures" werden unterstützt, sofern
- * der Pfad innerhalb von ../uploads/ liegt.
- */
+
+require_once __DIR__ . '/../includes/config.inc.php';
 
 $relativePath = $_GET['file'] ?? '';
 

@@ -284,6 +284,90 @@ class DbFunctions
         self::execute('UPDATE group_invites SET used_at = NOW() WHERE id = :id', [':id' => $inviteId]);
     }
 
+    /**
+     * Legt einen neuen Gruppentermin an.
+     */
+    public static function createGroupEvent(int $groupId, string $title, string $date, string $repeat = 'none'): bool
+    {
+        $sql = 'INSERT INTO group_events (group_id, title, event_date, repeat_interval)
+                VALUES (:gid, :title, :date, :repeat)';
+        return self::execute($sql, [
+            ':gid'    => $groupId,
+            ':title'  => $title,
+            ':date'   => $date,
+            ':repeat' => $repeat,
+        ]) > 0;
+    }
+
+    /**
+     * Liefert alle Termine einer Gruppe.
+     */
+    public static function getGroupEventsByGroup(int $groupId): array
+    {
+        $sql = 'SELECT id, title, event_date, repeat_interval
+                FROM group_events
+                WHERE group_id = :gid
+                ORDER BY event_date';
+        return self::execute($sql, [':gid' => $groupId], true);
+    }
+
+    /**
+     * Liefert alle Gruppentermine eines Nutzers innerhalb eines Datumsbereichs.
+     */
+    public static function getGroupEventsForUserDateRange(int $userId, string $startDate, string $endDate): array
+    {
+        $sql = 'SELECT ge.title, ge.event_date, ge.repeat_interval
+                FROM group_events ge
+                JOIN group_members gm ON ge.group_id = gm.group_id
+                WHERE gm.user_id = :uid
+                  AND ge.event_date <= :end
+                ORDER BY ge.event_date';
+        $rows = self::execute($sql, [
+            ':uid'  => $userId,
+            ':end'  => $endDate,
+        ], true);
+
+        $events = [];
+        foreach ($rows as $row) {
+            $date = new DateTimeImmutable($row['event_date']);
+            $interval = $row['repeat_interval'] ?? 'none';
+
+            // advance to first occurrence within range
+            while ($date->format('Y-m-d') < $startDate) {
+                if ($interval === 'weekly') {
+                    $date = $date->modify('+1 week');
+                } elseif ($interval === 'biweekly') {
+                    $date = $date->modify('+2 weeks');
+                } elseif ($interval === 'monthly') {
+                    $date = $date->modify('+1 month');
+                } else {
+                    // not repeating and before range
+                    continue 2;
+                }
+            }
+
+            while ($date->format('Y-m-d') <= $endDate) {
+                if ($date->format('Y-m-d') >= $startDate) {
+                    $events[] = [
+                        'title'      => $row['title'],
+                        'event_date' => $date->format('Y-m-d'),
+                    ];
+                }
+                if ($interval === 'weekly') {
+                    $date = $date->modify('+1 week');
+                } elseif ($interval === 'biweekly') {
+                    $date = $date->modify('+2 weeks');
+                } elseif ($interval === 'monthly') {
+                    $date = $date->modify('+1 month');
+                } else {
+                    break;
+                }
+            }
+        }
+
+        return $events;
+    }
+
     
  
     /**

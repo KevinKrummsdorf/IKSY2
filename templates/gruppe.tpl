@@ -19,6 +19,48 @@
     {/if}
   {/if}
 
+  <h3>Gruppentermine</h3>
+  {if $events|@count}
+    <ul class="list-group mb-3">
+      {foreach $events as $ev}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>
+            {$ev.title|escape}
+            <div class="text-muted small">
+              {$ev.event_date|date_format:"%d.%m.%Y"}
+              {if $ev.repeat_interval !== 'none'}
+                &middot; {$ev.repeat_interval|escape}
+              {/if}
+            </div>
+          </span>
+        </li>
+      {/foreach}
+    </ul>
+  {else}
+    <p class="text-muted">Keine Termine vorhanden.</p>
+  {/if}
+
+  {if $myRole !== 'none'}
+    <h4>Neuen Termin erstellen</h4>
+    <form method="post" class="mb-4">
+      <div class="row g-2">
+        <div class="col-md-8"><input type="text" name="event_title" class="form-control" placeholder="Titel" required></div>
+        <div class="col-md-4"><input type="date" name="event_date" class="form-control" required></div>
+      </div>
+      <div class="row g-2 mt-2">
+        <div class="col-md-6">
+          <select name="event_repeat" class="form-select">
+            <option value="none">Einmalig</option>
+            <option value="weekly">Wöchentlich</option>
+            <option value="biweekly">Alle 2 Wochen</option>
+            <option value="monthly">Monatlich</option>
+          </select>
+        </div>
+      </div>
+      <button name="create_event" class="btn btn-primary mt-2">Erstellen</button>
+    </form>
+  {/if}
+
   {if $myRole === 'none'}
     {if $group.join_type === 'open'}
       <form method="post"><button name="join_group" class="btn btn-primary">Beitreten</button></form>

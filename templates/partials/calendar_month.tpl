@@ -25,12 +25,19 @@
           <div class="col calendar-cell{if $day.is_today} calendar-today{/if}">
             <span class="calendar-date">{$day.day}</span>
             {foreach $day.tasks as $task}
-              {assign var="bg" value="#d4edda"}
-              {if $task.priority == 'medium'}{assign var="bg" value="#fff3cd"}{/if}
-              {if $task.priority == 'high'}{assign var="bg" value="#f8d7da"}{/if}
-              <div class="calendar-task" style="background-color: {$bg};">
-                {$task.title|escape:'html'}
-              </div>
+              {if $task.is_group_event}
+                <div class="calendar-task calendar-group-event">
+                  <span class="material-symbols-outlined me-1" style="font-size:0.8rem">groups</span>
+                  {$task.title|escape:'html'}
+                </div>
+              {else}
+                {assign var="bg" value="#d4edda"}
+                {if $task.priority == 'medium'}{assign var="bg" value="#fff3cd"}{/if}
+                {if $task.priority == 'high'}{assign var="bg" value="#f8d7da"}{/if}
+                <div class="calendar-task" style="background-color: {$bg};">
+                  {$task.title|escape:'html'}
+                </div>
+              {/if}
             {/foreach}
           </div>
         {else}
