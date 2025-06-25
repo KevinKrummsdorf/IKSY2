@@ -401,7 +401,10 @@ class DbFunctions
         string $endDate
     ): array {
         $query = '
-            SELECT id, title, due_date, priority
+            SELECT id,
+                   text AS title,
+                   due_date,
+                   priority
             FROM todos
             WHERE user_id = :uid
               AND due_date BETWEEN :start AND :end
