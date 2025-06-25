@@ -817,6 +817,7 @@ input.timetable-input:-ms-input-placeholder {
 .timetable-heading {
     text-align: center;
     margin-bottom: 20px;
+}
 
 /* Calendar styles */
 .calendar-container {
