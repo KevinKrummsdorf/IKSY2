@@ -4,7 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.inc.php';
 
 $code = (int)($_GET['code'] ?? 500);
-$allowedCodes = [403, 404, 500, 503];
+$allowedCodes = [401, 403, 404, 500, 503];
 if (!in_array($code, $allowedCodes, true)) {
     $code = 500;
 }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.inc.php';
 
 if (empty($_SESSION['user_id'])) {
-    http_response_code(403);
-    exit('Nicht eingeloggt.');
+    $reason = 'Nicht eingeloggt.';
+    handle_error(401, $reason, 'both');
 }
 
 $userId = $_SESSION['user_id'];

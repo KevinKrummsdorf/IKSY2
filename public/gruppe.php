@@ -4,7 +4,7 @@ require_once __DIR__ . '/../includes/config.inc.php';
 
 if (empty($_SESSION['user_id'])) {
     $reason = "Du musst eingeloggt sein, um Dateien hochladen zu können.";
-    handle_error(403, $reason, 'both');
+    handle_error(401, $reason, 'both');
 }
 
 if (empty($_SESSION['csrf_token'])) {
@@ -27,9 +27,8 @@ $success = '';
 // Gruppe laden
 $group = DbFunctions::fetchGroupById($groupId);
 if (!$group) {
-    http_response_code(404);
-    echo 'Gruppe nicht gefunden';
-    exit;
+    $reason = 'Gruppe nicht gefunden';
+    handle_error(404, $reason);
 }
 
 // Rolle des Users (admin/member/none)

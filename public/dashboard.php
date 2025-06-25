@@ -14,7 +14,7 @@ if (
     $_SESSION['2fa_passed'] !== true
 ) {
     $reason = "Du musst vollständig eingeloggt sein, um das Dashboard zu nutzen.";
-    handle_error(403, $reason, 'both');
+    handle_error(401, $reason, 'both');
 }
 
 // Rollen prüfen

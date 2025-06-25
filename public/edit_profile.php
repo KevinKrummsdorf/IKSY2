@@ -5,7 +5,7 @@ require_once __DIR__ . '/../includes/config.inc.php';
 
 if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
     $reason = 'Du musst eingeloggt sein, um dein Profil zu bearbeiten.';
-    handle_error(403, $reason, 'both');
+    handle_error(401, $reason, 'both');
 }
 
 $userId   = $_SESSION['user_id'];

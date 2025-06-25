@@ -16,8 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'], $_POST[
     
     // CSRF-Schutz
     if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $csrfToken)) {
-        http_response_code(403);
-        exit('Ungültiger CSRF-Token');
+        $reason = 'Ungültiger CSRF-Token';
+        handle_error(403, $reason, 'both');
     }
     
     try {
@@ -45,11 +45,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'], $_POST[
         exit;
         
     } catch (Throwable $e) {
-        http_response_code(500);
-        exit('Beim Löschen des Profilbilds ist ein Fehler aufgetreten.');
+        $reason = 'Beim Löschen des Profilbilds ist ein Fehler aufgetreten.';
+        handle_error(500, $reason);
     }
 }
 
 // Ungültiger Zugriff (z. B. direkter Aufruf)
-http_response_code(403);
-exit('Zugriff verweigert');
+$reason = 'Du hast nicht die nötigen Rechte, um auf diese Ressource zuzugreifen.';
+handle_error(403, $reason, 'both');

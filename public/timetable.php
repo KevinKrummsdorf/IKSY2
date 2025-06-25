@@ -12,7 +12,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 // Prüfen, ob Nutzer eingeloggt ist
 if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
     $reason = "Du musst eingeloggt sein, um dein Stundenplan zu sehen.";
-    handle_error(403, $reason, 'both');
+    handle_error(401, $reason, 'both');
 }
 
 $userId = (int) $_SESSION['user_id'];

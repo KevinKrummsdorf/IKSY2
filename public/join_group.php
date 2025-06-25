@@ -6,7 +6,7 @@ $log = LoggerFactory::get('join_group');
 
 if (empty($_SESSION['user_id'])) {
     $reason = 'Du musst eingeloggt sein, um einer Gruppe beizutreten.';
-    handle_error(403, $reason, 'both');
+    handle_error(401, $reason, 'both');
 }
 
 $token = trim((string)($_GET['token'] ?? ''));

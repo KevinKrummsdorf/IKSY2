@@ -10,8 +10,8 @@ $relativePath = $_GET['file'] ?? '';
 // Basisverzeichnis bestimmen
 $basePath = realpath(__DIR__ . '/../uploads');
 if ($basePath === false) {
-    http_response_code(500);
-    exit('Upload-Verzeichnis fehlt.');
+    $reason = 'Upload-Verzeichnis fehlt.';
+    handle_error(500, $reason);
 }
 
 // Zielpfad auflösen und sicherstellen, dass er im Upload-Verzeichnis liegt
@@ -22,8 +22,8 @@ if (
     strpos($targetPath, $basePath) !== 0 ||
     !is_file($targetPath)
 ) {
-    http_response_code(404);
-    exit('Datei nicht gefunden.');
+    $reason = 'Datei nicht gefunden.';
+    handle_error(404, $reason);
 }
 
 // Content-Type anhand von MIME ermitteln
