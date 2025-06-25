@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 // Konfiguration & Session laden
 require_once __DIR__ . '/../includes/config.inc.php';
-session_start();
 
 // Datenbankverbindung holen
 $pdo = DbFunctions::db_connect();
