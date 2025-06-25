@@ -93,7 +93,6 @@ sudo ./manager.sh --uninstall
 
 [PHPMailer](https://github.com/PHPMailer/PHPMailer)
 
-[monolog](https://github.com/Seldaek/monolog)
 
 [phpdotenv](https://github.com/vlucas/phpdotenv)    
 
