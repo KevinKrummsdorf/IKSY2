@@ -10,13 +10,14 @@
 
 <h2 class="timetable-heading">Stundenplan</h2>
 
-<form method="post" action="{url path='timetable'}">
-    <table class="timetable-table">
+<form method="post" action="{url path='timetable'}" class="mt-3">
+    <div class="table-responsive">
+    <table class="table table-bordered align-middle timetable-table">
         <thead>
             <tr>
-                <th>Zeit</th>
+                <th class="text-break">Zeit</th>
                 {foreach $weekdays as $day}
-                    <th>{$day.day_name|capitalize|escape}</th>
+                    <th class="text-break">{$day.day_name|capitalize|escape}</th>
                 {/foreach}
             </tr>
         </thead>
@@ -31,23 +32,26 @@
                                    name="timetable[{$day.id}][{$slot.id}][fach]"
                                    value="{$entry.subject|default:''|escape}"
                                    placeholder="Fach"
-                                   class="timetable-input timetable-input--small subject-input"
+                                   class="form-control form-control-sm timetable-input timetable-input--small subject-input"
                                    list="course-list" autocomplete="off" /><br>
                             <input type="text"
                                    name="timetable[{$day.id}][{$slot.id}][raum]"
                                    value="{$entry.room|default:''|escape}"
                                    placeholder="Raum"
-                                   class="timetable-input timetable-input--small" />
+                                   class="form-control form-control-sm timetable-input timetable-input--small" />
                         </td>
                     {/foreach}
                 </tr>
             {/foreach}
         </tbody>
     </table>
+    </div>
 
     <datalist id="course-list"></datalist>
 
-    <button type="submit" class="submit-button">Speichern</button>
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary submit-button w-100 w-md-auto">Speichern</button>
+    </div>
 </form>
 
 <div class="mt-3 text-center">

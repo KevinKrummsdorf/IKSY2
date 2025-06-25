@@ -681,6 +681,8 @@ body {
     text-align: center;
     vertical-align: top;
     border: 1px solid rgba(255, 255, 255, 0.15);
+    white-space: normal;
+    word-break: break-word;
     transition: background 0.3s ease;
 }
 
@@ -817,6 +819,7 @@ input.timetable-input:-ms-input-placeholder {
 .timetable-heading {
     text-align: center;
     margin-bottom: 20px;
+}
 
 /* Calendar styles */
 .calendar-container {
