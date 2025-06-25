@@ -15,9 +15,9 @@
     <table class="table table-bordered align-middle timetable-table">
         <thead>
             <tr>
-                <th>Zeit</th>
+                <th class="text-break">Zeit</th>
                 {foreach $weekdays as $day}
-                    <th>{$day.day_name|capitalize|escape}</th>
+                    <th class="text-break">{$day.day_name|capitalize|escape}</th>
                 {/foreach}
             </tr>
         </thead>
