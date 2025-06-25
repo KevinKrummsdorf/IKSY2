@@ -4,7 +4,7 @@
 
 {block name="content"}
     <div class="text-center py-5">
-        <img src="{$base_url}/assets/403.png" alt="401 Fehlerroboter" class="mb-4" style="max-width: 320px;">
+        <img src="{$base_url}/assets/401.png" alt="401 Fehlerroboter" class="mb-4" style="max-width: 320px;">
         <h1 class="display-4 text-danger">401 – Anmeldung erforderlich</h1>
         <p class="lead">{$reason|default:"Du musst eingeloggt sein, um diese Seite aufzurufen."}</p>
 
