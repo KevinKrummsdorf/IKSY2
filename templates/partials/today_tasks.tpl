@@ -3,12 +3,19 @@
   {if $todayTodos|@count > 0}
     <ul class="list-group">
       {foreach $todayTodos as $task}
-        {assign var="bg" value="#d4edda"}
-        {if $task.priority == 'medium'}{assign var="bg" value="#fff3cd"}{/if}
-        {if $task.priority == 'high'}{assign var="bg" value="#f8d7da"}{/if}
-        <li class="list-group-item" style="background-color: {$bg};">
-          {$task.title|escape:'html'}
-        </li>
+        {if $task.is_group_event}
+          <li class="list-group-item list-group-item-info d-flex align-items-center">
+            <span class="material-symbols-outlined me-1" style="font-size:1rem">groups</span>
+            {$task.title|escape:'html'}
+          </li>
+        {else}
+          {assign var="bg" value="#d4edda"}
+          {if $task.priority == 'medium'}{assign var="bg" value="#fff3cd"}{/if}
+          {if $task.priority == 'high'}{assign var="bg" value="#f8d7da"}{/if}
+          <li class="list-group-item" style="background-color: {$bg};">
+            {$task.title|escape:'html'}
+          </li>
+        {/if}
       {/foreach}
     </ul>
   {else}

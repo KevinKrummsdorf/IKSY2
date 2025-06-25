@@ -132,11 +132,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: upload.php?group_id={$groupId}");
         exit;
     }
+    // neuen Gruppentermin erstellen
+    elseif (isset($_POST['create_event']) && $myRole !== 'none') {
+        $title = trim($_POST['event_title'] ?? '');
+        $date  = $_POST['event_date'] ?? '';
+        if ($title === '' || $date === '') {
+            $error = 'Titel und Datum erforderlich.';
+        } elseif (DbFunctions::createGroupEvent($groupId, $title, $date)) {
+            $success = 'Termin erstellt.';
+        } else {
+            $error = 'Termin konnte nicht erstellt werden.';
+        }
+    }
 }
 
 // Mitglieder + Uploads holen
 $members = DbFunctions::getGroupMembers($groupId);
 $uploads = DbFunctions::getUploadsByGroup($groupId);
+$events  = DbFunctions::getGroupEventsByGroup($groupId);
 
 if ($error) {
     $smarty->assign('error', $error);
@@ -145,6 +158,6 @@ if ($success) {
     $smarty->assign('success', $success);
 }
 
-$smarty->assign(compact('group','members','uploads','myRole','error','success'));
+$smarty->assign(compact('group','members','uploads','events','myRole','error','success'));
 $smarty->assign('csrf_token', $_SESSION['csrf_token']);
 $smarty->display('gruppe.tpl');

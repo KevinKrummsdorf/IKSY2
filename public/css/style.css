@@ -856,6 +856,13 @@ input.timetable-input:-ms-input-placeholder {
   border-radius: 0.25rem;
   font-size: 0.75rem;
 }
+.calendar-group-event {
+  background-color: #cfe2ff;
+  color: #084298;
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
 
 @media (max-width: 576px) {
   .calendar-cell {
