@@ -287,15 +287,28 @@ class DbFunctions
     /**
      * Legt einen neuen Gruppentermin an.
      */
-    public static function createGroupEvent(int $groupId, string $title, string $date, string $repeat = 'none'): bool
+    public static function createGroupEvent(int $groupId, string $title, string $date, ?string $time, string $repeat = 'none'): bool
     {
-        $sql = 'INSERT INTO group_events (group_id, title, event_date, repeat_interval)
-                VALUES (:gid, :title, :date, :repeat)';
+        $sql = 'INSERT INTO group_events (group_id, title, event_date, event_time, repeat_interval)
+                VALUES (:gid, :title, :date, :time, :repeat)';
         return self::execute($sql, [
             ':gid'    => $groupId,
             ':title'  => $title,
             ':date'   => $date,
+            ':time'   => $time,
             ':repeat' => $repeat,
+        ]) > 0;
+    }
+
+    /**
+     * Löscht einen Gruppentermin.
+     */
+    public static function deleteGroupEvent(int $eventId, int $groupId): bool
+    {
+        $sql = 'DELETE FROM group_events WHERE id = :eid AND group_id = :gid';
+        return self::execute($sql, [
+            ':eid' => $eventId,
+            ':gid' => $groupId,
         ]) > 0;
     }
 
@@ -304,10 +317,10 @@ class DbFunctions
      */
     public static function getGroupEventsByGroup(int $groupId): array
     {
-        $sql = 'SELECT id, title, event_date, repeat_interval
+        $sql = 'SELECT id, title, event_date, event_time, repeat_interval
                 FROM group_events
                 WHERE group_id = :gid
-                ORDER BY event_date';
+                ORDER BY event_date, event_time';
         return self::execute($sql, [':gid' => $groupId], true);
     }
 
@@ -316,12 +329,14 @@ class DbFunctions
      */
     public static function getGroupEventsForUserDateRange(int $userId, string $startDate, string $endDate): array
     {
-        $sql = 'SELECT ge.title, ge.event_date, ge.repeat_interval
+        $sql = 'SELECT ge.title, ge.event_date, ge.event_time, ge.repeat_interval,
+                       g.name AS group_name
                 FROM group_events ge
                 JOIN group_members gm ON ge.group_id = gm.group_id
+                JOIN groups g ON ge.group_id = g.id
                 WHERE gm.user_id = :uid
                   AND ge.event_date <= :end
-                ORDER BY ge.event_date';
+                ORDER BY ge.event_date, ge.event_time';
         $rows = self::execute($sql, [
             ':uid'  => $userId,
             ':end'  => $endDate,
@@ -349,8 +364,10 @@ class DbFunctions
             while ($date->format('Y-m-d') <= $endDate) {
                 if ($date->format('Y-m-d') >= $startDate) {
                     $events[] = [
-                        'title'      => $row['title'],
-                        'event_date' => $date->format('Y-m-d'),
+                        'title'       => $row['title'],
+                        'event_date'  => $date->format('Y-m-d'),
+                        'event_time'  => $row['event_time'],
+                        'group_name'  => $row['group_name'],
                     ];
                 }
                 if ($interval === 'weekly') {

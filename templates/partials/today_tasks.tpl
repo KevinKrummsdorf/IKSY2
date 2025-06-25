@@ -7,6 +7,10 @@
           <li class="list-group-item list-group-item-info d-flex align-items-center">
             <span class="material-symbols-outlined me-1" style="font-size:1rem">groups</span>
             {$task.title|escape:'html'}
+            {if $task.event_time}
+              <span class="ms-2 text-muted small">{$task.event_time|date_format:"%H:%M"} Uhr</span>
+            {/if}
+            <span class="ms-2 text-muted small">{$task.group_name|escape:'html'}</span>
           </li>
         {else}
           {assign var="bg" value="#d4edda"}
