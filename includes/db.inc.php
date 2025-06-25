@@ -329,9 +329,11 @@ class DbFunctions
      */
     public static function getGroupEventsForUserDateRange(int $userId, string $startDate, string $endDate): array
     {
-        $sql = 'SELECT ge.title, ge.event_date, ge.event_time, ge.repeat_interval
+        $sql = 'SELECT ge.title, ge.event_date, ge.event_time, ge.repeat_interval,
+                       g.name AS group_name
                 FROM group_events ge
                 JOIN group_members gm ON ge.group_id = gm.group_id
+                JOIN groups g ON ge.group_id = g.id
                 WHERE gm.user_id = :uid
                   AND ge.event_date <= :end
                 ORDER BY ge.event_date, ge.event_time';
@@ -362,9 +364,10 @@ class DbFunctions
             while ($date->format('Y-m-d') <= $endDate) {
                 if ($date->format('Y-m-d') >= $startDate) {
                     $events[] = [
-                        'title'      => $row['title'],
-                        'event_date' => $date->format('Y-m-d'),
-                        'event_time' => $row['event_time'],
+                        'title'       => $row['title'],
+                        'event_date'  => $date->format('Y-m-d'),
+                        'event_time'  => $row['event_time'],
+                        'group_name'  => $row['group_name'],
                     ];
                 }
                 if ($interval === 'weekly') {

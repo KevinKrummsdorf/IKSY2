@@ -10,6 +10,7 @@
             {if $task.event_time}
               <span class="ms-2 text-muted small">{$task.event_time|date_format:"%H:%M"} Uhr</span>
             {/if}
+            <span class="ms-2 text-muted small">{$task.group_name|escape:'html'}</span>
           </li>
         {else}
           {assign var="bg" value="#d4edda"}
