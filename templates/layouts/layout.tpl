@@ -85,15 +85,16 @@
     <ul class="menu-content">
       <li><a href="{url path='profile/my'}"><span class="material-symbols-outlined">account_circle</span><span>Mein Profil</span></a></li>
       <li><a href="{url path='search_profile'}"><span class="material-symbols-outlined">person_search</span><span>Andere Mitglieder finden</span></a></li>
-      <li><a href="{url path='lerngruppen'}"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
+      <li><a href="{url path='my_groups'}"><span class="material-symbols-outlined">group</span><span>Meine Lerngruppen</span></a></li>
       <li><a href="{url path='groups'}"><span class="material-symbols-outlined">groups</span><span>Alle Lerngruppen</span></a></li>
       <li><a href="{url path='todos'}"><span class="material-symbols-outlined">checklist</span><span>To Do's</span></a></li>
       <li><a href="{url path='browse'}"><span class="material-symbols-outlined">search</span><span>Material finden</span></a></li>
       <li><a href="{url path='upload'}"><span class="material-symbols-outlined">arrow_circle_up</span><span>Material hochladen</span></a></li>
       <li><a href="{url path='my_uploads'}"><span class="material-symbols-outlined">folder</span><span>Meine Uploads</span></a></li>
-    <li><a href="{url path='timetable'}"><span class="material-symbols-outlined">calendar_month</span><span>Stundenplan</span></a></li>
+      <li><a href="{url path='timetable'}"><span class="material-symbols-outlined">calendar_month</span><span>Stundenplan</span></a></li>
       <li><a href="#" id="theme-toggle"><span id="theme-icon" class="material-symbols-outlined">dark_mode</span><span id="theme-label">Darkmode</span></a></li>
-    </ul>
+
+     </ul>
   </div>
 </div>
 
