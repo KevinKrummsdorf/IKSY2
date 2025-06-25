@@ -60,8 +60,8 @@
       </div>
     </section>
 
-  <div class="row row-cols-1 row-cols-md-2 g-4 my-4">
-  <div class="col">
+  <div class="row row-cols-1 g-4 my-4">
+  <div class="col-12 col-md-4">
     <section class="h-100 p-3 border rounded" id="learn-timer-section">
       <h2 class="h4 mb-3 text-center">Lerntimer</h2>
       <div class="row g-2 align-items-center">
@@ -78,7 +78,7 @@
     </section>
   </div>
 
-  <div class="col">
+  <div class="col-12 col-md-8">
     <section class="h-100 p-3 border rounded">
       <h2 class="h4 mb-3 text-center">Kalender</h2>
       {include file='partials/today_tasks.tpl'}
