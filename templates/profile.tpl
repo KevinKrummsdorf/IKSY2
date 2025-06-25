@@ -61,26 +61,26 @@
       {/if}
 
       <h2 class="h4 mt-2">Social Media</h2>
-      <ul class="list-unstyled mb-3">
-          {if $socials.instagram}
-            <li><i class="bi bi-instagram"></i> Instagram: <a href="https://instagram.com/{$socials.instagram|escape:'url'}" target="_blank">{$socials.instagram|escape:'html'}</a></li>
-          {/if}
-          {if $socials.tiktok}
-            <li><i class="bi bi-tiktok"></i> TikTok: <a href="https://www.tiktok.com/@{$socials.tiktok|escape:'url'}" target="_blank">{$socials.tiktok|escape:'html'}</a></li>
-          {/if}
-          {if $socials.discord}
-            <li><i class="bi bi-discord"></i> Discord: {$socials.discord|escape:'html'}</li>
-          {/if}
-          {if $socials.ms_teams}
-            <li><i class="bi bi-microsoft"></i> MS Teams: {$socials.ms_teams|escape:'html'}</li>
-          {/if}
-          {if $socials.twitter}
-            <li><i class="bi bi-twitter"></i> Twitter: <a href="https://twitter.com/{$socials.twitter|escape:'url'}" target="_blank">{$socials.twitter|escape:'html'}</a></li>
-          {/if}
-          {if $socials.linkedin}
-            <li><i class="bi bi-linkedin"></i> LinkedIn: <a href="https://www.linkedin.com/in/{$socials.linkedin|escape:'url'}" target="_blank">{$socials.linkedin|escape:'html'}</a></li>
-          {/if}
-          {if $socials.github}
+        <ul class="list-unstyled mb-3">
+            {if !empty($socials.instagram)}
+              <li><i class="bi bi-instagram"></i> Instagram: <a href="https://instagram.com/{$socials.instagram|escape:'url'}" target="_blank">{$socials.instagram|escape:'html'}</a></li>
+            {/if}
+            {if !empty($socials.tiktok)}
+              <li><i class="bi bi-tiktok"></i> TikTok: <a href="https://www.tiktok.com/@{$socials.tiktok|escape:'url'}" target="_blank">{$socials.tiktok|escape:'html'}</a></li>
+            {/if}
+            {if !empty($socials.discord)}
+              <li><i class="bi bi-discord"></i> Discord: {$socials.discord|escape:'html'}</li>
+            {/if}
+            {if !empty($socials.ms_teams)}
+              <li><i class="bi bi-microsoft"></i> MS Teams: {$socials.ms_teams|escape:'html'}</li>
+            {/if}
+            {if !empty($socials.twitter)}
+              <li><i class="bi bi-twitter"></i> Twitter: <a href="https://twitter.com/{$socials.twitter|escape:'url'}" target="_blank">{$socials.twitter|escape:'html'}</a></li>
+            {/if}
+            {if !empty($socials.linkedin)}
+              <li><i class="bi bi-linkedin"></i> LinkedIn: <a href="https://www.linkedin.com/in/{$socials.linkedin|escape:'url'}" target="_blank">{$socials.linkedin|escape:'html'}</a></li>
+            {/if}
+            {if !empty($socials.github)}
             <li><i class="bi bi-github"></i> GitHub: <a href="https://github.com/{$socials.github|escape:'url'}" target="_blank">{$socials.github|escape:'html'}</a></li>
           {/if}
       </ul>
