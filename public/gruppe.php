@@ -136,10 +136,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     elseif (isset($_POST['create_event']) && $myRole === 'admin') {
         $title  = trim($_POST['event_title'] ?? '');
         $date   = $_POST['event_date'] ?? '';
+        $time   = $_POST['event_time'] ?? null;
+        $time   = $time !== '' ? $time : null;
         $repeat = $_POST['event_repeat'] ?? 'none';
         if ($title === '' || $date === '') {
             $error = 'Titel und Datum erforderlich.';
-        } elseif (DbFunctions::createGroupEvent($groupId, $title, $date, $repeat)) {
+        } elseif (DbFunctions::createGroupEvent($groupId, $title, $date, $time, $repeat)) {
             $success = 'Termin erstellt.';
         } else {
             $error = 'Termin konnte nicht erstellt werden.';
