@@ -134,11 +134,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     // neuen Gruppentermin erstellen
     elseif (isset($_POST['create_event']) && $myRole !== 'none') {
-        $title = trim($_POST['event_title'] ?? '');
-        $date  = $_POST['event_date'] ?? '';
+        $title  = trim($_POST['event_title'] ?? '');
+        $date   = $_POST['event_date'] ?? '';
+        $repeat = $_POST['event_repeat'] ?? 'none';
         if ($title === '' || $date === '') {
             $error = 'Titel und Datum erforderlich.';
-        } elseif (DbFunctions::createGroupEvent($groupId, $title, $date)) {
+        } elseif (DbFunctions::createGroupEvent($groupId, $title, $date, $repeat)) {
             $success = 'Termin erstellt.';
         } else {
             $error = 'Termin konnte nicht erstellt werden.';
