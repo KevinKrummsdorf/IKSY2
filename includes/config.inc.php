@@ -145,9 +145,6 @@ function handle_error(int $code, string $reason = '', string $action = ''): void
     exit;
 }
 
-/**
- * Build an application URL that respects Pretty URL settings.
- */
 function build_url(string $path, array $params = []): string
 {
     global $config;
