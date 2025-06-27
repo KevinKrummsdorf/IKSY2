@@ -122,11 +122,6 @@ $smarty->assign('username',   $_SESSION['username'] ?? null);
 $smarty->assign('user_role', $_SESSION['role'] ?? 'guest');
 $smarty->assign('isAdmin', ($_SESSION['role'] ?? '') === 'admin');
 
-/**
- * Handle HTTP errors. If Pretty URLs and custom error pages are enabled the
- * user is redirected to the error script. Otherwise a plain HTTP status code is
- * emitted so the web server shows its default page.
- */
 function handle_error(int $code, string $reason = '', string $action = ''): void
 {
     global $config;
