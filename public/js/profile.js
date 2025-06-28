@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const alertEl = document.getElementById('twofa-success');
-  if (alertEl) {
-    const bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
+  document.querySelectorAll('.alert').forEach(el => {
+    const bsAlert = bootstrap.Alert.getOrCreateInstance(el);
     setTimeout(() => bsAlert.close(), 10000);
-  }
+  });
 });

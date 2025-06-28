@@ -46,7 +46,7 @@ if (!$twofa_enabled && ($_POST['action'] ?? '') === 'confirm_2fa') {
     $code = preg_replace('/\D/', '', $_POST['code'] ?? '');
 
     if (strlen($code) !== 6) {
-        $smarty->assign('message', 'Bitte gib einen gültigen 6-stelligen Code ein.');
+        $smarty->assign('flash', ['type' => 'danger', 'message' => 'Bitte gib einen gültigen 6-stelligen Code ein.']);
         $show_2fa_form = true;
         if (isset($_SESSION['2fa_secret_temp'])) {
             $qrCodeUrl = $tfa->getQRCodeImageAsDataUri($username, $_SESSION['2fa_secret_temp']);
@@ -62,10 +62,10 @@ if (!$twofa_enabled && ($_POST['action'] ?? '') === 'confirm_2fa') {
 
             unset($_SESSION['2fa_secret_temp']);
             $twofa_enabled = true;
-            $smarty->assign('success', '2FA wurde erfolgreich aktiviert.');
+            $smarty->assign('flash', ['type' => 'success', 'message' => '2FA wurde erfolgreich aktiviert.']);
             $smarty->assign('twofa_enabled', true);
         } else {
-            $smarty->assign('message', 'Falscher Code. Bitte erneut versuchen.');
+            $smarty->assign('flash', ['type' => 'danger', 'message' => 'Falscher Code. Bitte erneut versuchen.']);
             $show_2fa_form = true;
             $qrCodeUrl     = $tfa->getQRCodeImageAsDataUri($username, $secret);
             $smarty->assign('qrCodeUrl', $qrCodeUrl);
@@ -82,7 +82,7 @@ if ($twofa_enabled && ($_POST['action'] ?? '') === 'disable_2fa') {
     $twofa_enabled  = false;
     $show_2fa_form  = false;
     $qrCodeUrl      = '';
-    $smarty->assign('success', '2FA wurde deaktiviert.');
+    $smarty->assign('flash', ['type' => 'success', 'message' => '2FA wurde deaktiviert.']);
     $smarty->assign('twofa_enabled', false);
     $smarty->assign('show_2fa_form', false);
 }

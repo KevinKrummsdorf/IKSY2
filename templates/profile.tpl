@@ -41,8 +41,6 @@
 
         <div class="mb-4">
         <h2 class="h4">Zwei-Faktor-Authentifizierung</h2>
-        {if isset($success)}<div id="twofa-success" class="alert alert-success">{$success}</div>{/if}
-        {if isset($message)}<div class="alert alert-danger">{$message}</div>{/if}
 
         {if $twofa_enabled}
           <p>2FA ist aktiviert.</p>

@@ -105,7 +105,7 @@ $smarty->assign('pw_success', $pwSuccess);
 $smarty->assign('pw_message', $pwMessage);
 
 // Flash Message anzeigen
-if (isset($_SESSION['flash'])) {
+if (!$smarty->getTemplateVars('flash') && isset($_SESSION['flash'])) {
     $smarty->assign('flash', $_SESSION['flash']);
     unset($_SESSION['flash']);
 }
