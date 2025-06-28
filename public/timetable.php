@@ -30,29 +30,25 @@ if ($export === 'csv' || $export === 'pdf') {
         header('Content-Disposition: attachment; filename=timetable.csv');
 
         $out = fopen('php://output', 'w');
-        $header = ['Zeit'];
-        foreach ($weekdays as $day) {
-            $header[] = $day['day_name'];
-        }
-        fputcsv($out, $header);
+        // Benutzerfreundlichere Darstellung: eine Zeile pro Termin
+        fputcsv($out, ['Wochentag', 'Zeit', 'Fach', 'Raum']);
 
-        foreach ($timeSlots as $slot) {
-            $row = [
-                date('H:i', strtotime($slot['start_time'])) . ' - ' .
-                date('H:i', strtotime($slot['end_time']))
-            ];
-            foreach ($weekdays as $day) {
+        foreach ($weekdays as $day) {
+            foreach ($timeSlots as $slot) {
                 $entry = $timetable[$day['id']][$slot['id']] ?? null;
-                $cell = '';
-                if ($entry) {
-                    $cell = $entry['subject'];
-                    if ($entry['room'] !== '') {
-                        $cell .= ' (' . $entry['room'] . ')';
-                    }
-                }
-                $row[] = $cell;
+                $subject = $entry['subject'] ?? '';
+                $room    = $entry['room'] ?? '';
+
+                $timeRange = date('H:i', strtotime($slot['start_time'])) . ' - '
+                    . date('H:i', strtotime($slot['end_time']));
+
+                fputcsv($out, [
+                    $day['day_name'],
+                    $timeRange,
+                    $subject,
+                    $room,
+                ]);
             }
-            fputcsv($out, $row);
         }
 
         fclose($out);
