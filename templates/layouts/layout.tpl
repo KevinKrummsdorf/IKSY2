@@ -24,7 +24,7 @@
 
 <header class="site-header d-flex justify-content-between align-items-center px-4 py-2">
   <div class="header-logo">
-    <a href="{$base_url}/">
+    <a href="{if $isLoggedIn}{url path='dashboard'}{else}{url}{/if}">
       <img src="{$base_url}/assets/logo.svg" alt="StudyHub Logo" width="160">
     </a>
   </div>
