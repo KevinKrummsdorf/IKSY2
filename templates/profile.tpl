@@ -69,11 +69,11 @@
               <button type="submit" class="btn btn-sm btn-outline-primary">Jetzt 2FA einrichten</button>
             </form>
           {/if}
-        </div>
         {/if}
+        </div>
       {/if}
 
-      <h2 class="h4">Persönliche Angaben</h2>
+      <h2 class="h4 mt-4">Persönliche Angaben</h2>
       <p class="mb-1">Vorname: {$profile.first_name|escape}</p>
       <p class="mb-1">Nachname: {$profile.last_name|escape}</p>
       <p class="mb-3">
