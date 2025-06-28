@@ -86,6 +86,23 @@ sudo ./manager.sh --uninstall
      
 **Stellen Sie sicher, dass keine anderen Webanwendungen auf den Symlink oder die Apache-Konfiguration angewiesen sind, bevor du die Deinstallation durchführt wird.**
 
+# Hinweis zur Darstellung von HTTP-Fehler (z.B. 401 - Unauthorized)
+
+Beim Aufruf geschützter Seiten ohne vorherige Anmeldung kann es in bestimmten Browser-Umgebungen zu einer **weißen Seite** kommen, während andere Browser eine Fehlermeldung wie `401 Unauthorize` anzeigen.
+
+**Dies ist kein Fehler im Code**, sondern ein **browserabhängiges Verhalten**:
+
+Der Server liefert in diesem Fall bewusst nur den HTTP-Statuscode `401` ohne weiteren HTML-Inhalt. Einige Browser (z. B. Firefox, Chrome etc.) zeigen bei einer solchen Antwort eine eigene Fehlerseite an, während andere lediglich eine leere (weiße) Seite darstellen, wenn kein Inhalt (Body) geliefert wird.
+
+**Technischer Hintergrund:**  
+Gemäß [RFC 7235](https://datatracker.ietf.org/doc/html/rfc7235#section-3.1) ist es **zulässig**, bei z.B. einem `401 Unauthorized`-Status **keine** Antwortdaten zu senden. Das Verhalten bei der Darstellung liegt dann im Verantwortungsbereich des Browsers. Unterschiede können auch durch Profil-Einstellungen, Themes oder systembedingte UI-Eigenheiten entstehen.
+
+**Hinweis zur Projektkonfiguration:**  
+Über das Skript [`manager.sh`](./scripts/manager.sh) werden benutzerdefinierte Fehlerseiten eingerichtet (z. B. `error/401.php`), die dieses Verhalten umgehen können, indem sie bei Bedarf einen eigenen HTML-Inhalt für solche Fehler bereitstellen.
+
+Für konsistentes Verhalten über alle Systeme hinweg wird empfohlen, die Fehlerseitenkonfiguration aus `manager.sh` zu übernehmen.
+
+
 
 # Verwendete Bibliotheken
 
