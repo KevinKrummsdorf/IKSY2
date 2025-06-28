@@ -661,8 +661,8 @@ public static function execute(string $query, array $params = [], bool $expectRe
      */
     public static function fetchOne(string $query, array $params = []): ?array
     {
-        $pdo = self::db_connect();
-        $stmt = self::db_connect()->prepare($query);
+        $pdo  = self::db_connect();
+        $stmt = $pdo->prepare($query);
         $stmt->execute($params);
         $row = $stmt->fetch();
         return $row ?: null;
@@ -682,8 +682,8 @@ public static function execute(string $query, array $params = [], bool $expectRe
      */
     public static function fetchKeyValue(string $query, array $params = []): ?array
     {
-        $pdo = self::db_connect();
-        $stmt = self::db_connect()->prepare($query);
+        $pdo  = self::db_connect();
+        $stmt = $pdo->prepare($query);
         $stmt->execute($params);
 
         $result = [];

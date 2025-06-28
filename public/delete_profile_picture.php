@@ -1,10 +1,7 @@
 <?php
 declare(strict_types=1);
 
-session_start();
-
-require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../includes/db.inc.php';
+require_once __DIR__ . '/../includes/config.inc.php';
 
 // Zugriff prüfen: POST und gültiger Token
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'], $_POST['csrf_token'])) {

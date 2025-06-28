@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-session_start();
+
 header('Content-Type: text/html; charset=utf-8');
 
 require_once __DIR__ . '/../includes/config.inc.php';
@@ -92,6 +92,8 @@ try {
 
     // 7) Login erfolgreich: Zeit und Logs
     DbFunctions::updateLastLogin($userId);
+
+    session_regenerate_id(true);
 
     // 8) Session setzen
     $_SESSION['user_id']       = $userId;

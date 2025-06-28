@@ -29,14 +29,21 @@ require_once __DIR__ . '/../includes/ip_utils.inc.php';
 require_once __DIR__ . '/../includes/recaptcha.inc.php';
 require_once __DIR__ . '/../includes/mailing.inc.php';
 require_once __DIR__ . '/../includes/group_invites.inc.php';
-require_once __DIR__ . '/../includes/central_logs.inc.php';
 require_once __DIR__ . '/../includes/crypto.inc.php';
 
 // .env laden
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
-// Session starten
+$baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path'     => $baseUrl ?: '/',
+    'secure'   => isset($_SERVER['HTTPS']),
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
+
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
@@ -65,8 +72,8 @@ $config['uploads'] = [
 ];
 
 $config['app_name']  = $_ENV['APP_NAME'] ?? 'StudyHub';
-$config['base_url'] = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
-$config['site_url'] = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $config['base_url'];
+$config['base_url']  = $baseUrl;
+$config['site_url']  = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $config['base_url'];
 $config['use_pretty_urls'] = file_exists(__DIR__ . '/../config/pretty_urls_enabled');
 
 
