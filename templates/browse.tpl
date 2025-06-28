@@ -1,5 +1,7 @@
 {extends file="./layouts/layout.tpl"}
 
+{block name="title"}Materialsuche{/block}
+
 {block name="content"}
 <div class="container my-5">
     <h1 class="mb-4 text-center">Verfügbare Materialien</h1>
