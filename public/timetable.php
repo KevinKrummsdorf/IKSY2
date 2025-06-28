@@ -64,7 +64,8 @@ if ($export === 'csv' || $export === 'pdf') {
         $pdf->SetCreator('StudyHub');
         $pdf->SetAuthor($_SESSION['username'] ?? '');
         $pdf->SetTitle('Stundenplan');
-        $pdf->AddPage();
+        // PDF im Querformat erzeugen
+        $pdf->AddPage('L');
         $pdf->SetFont('helvetica', '', 12);
 
         $html = '<h2>Stundenplan</h2><table border="1" cellpadding="4">';
