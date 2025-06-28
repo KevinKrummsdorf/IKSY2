@@ -85,9 +85,6 @@ if ($isOwnProfile && ($_POST['action'] ?? '') === 'change_password') {
 // 2FA nur für eigenes Profil laden
 if ($isOwnProfile) {
     require_once __DIR__ . '/../includes/2fa.inc.php';
-    $smarty->assign('twofa_enabled', $twofa_enabled ?? false);
-    $smarty->assign('show_2fa_form', $show_2fa_form ?? false);
-    $smarty->assign('qrCodeUrl', $qrCodeUrl ?? '');
 } else {
     $smarty->assign('twofa_enabled', false);
     $smarty->assign('show_2fa_form', false);

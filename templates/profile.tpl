@@ -39,6 +39,7 @@
           <button class="btn btn-sm btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#passwordModal">Ändern</button>
         </div>
 
+        <div class="mb-4">
         <h2 class="h4">Zwei-Faktor-Authentifizierung</h2>
         {if isset($success)}<div class="alert alert-success">{$success}</div>{/if}
         {if isset($message)}<div class="alert alert-danger">{$message}</div>{/if}
@@ -70,6 +71,7 @@
               <button type="submit" class="btn btn-sm btn-outline-primary">Jetzt 2FA einrichten</button>
             </form>
           {/if}
+        </div>
         {/if}
       {/if}
 
