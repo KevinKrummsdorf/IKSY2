@@ -85,9 +85,6 @@ if ($isOwnProfile && ($_POST['action'] ?? '') === 'change_password') {
 // 2FA nur für eigenes Profil laden
 if ($isOwnProfile) {
     require_once __DIR__ . '/../includes/2fa.inc.php';
-    $smarty->assign('twofa_enabled', $twofa_enabled ?? false);
-    $smarty->assign('show_2fa_form', $show_2fa_form ?? false);
-    $smarty->assign('qrCodeUrl', $qrCodeUrl ?? '');
 } else {
     $smarty->assign('twofa_enabled', false);
     $smarty->assign('show_2fa_form', false);
@@ -108,7 +105,7 @@ $smarty->assign('pw_success', $pwSuccess);
 $smarty->assign('pw_message', $pwMessage);
 
 // Flash Message anzeigen
-if (isset($_SESSION['flash'])) {
+if (!$smarty->getTemplateVars('flash') && isset($_SESSION['flash'])) {
     $smarty->assign('flash', $_SESSION['flash']);
     unset($_SESSION['flash']);
 }

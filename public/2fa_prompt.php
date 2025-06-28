@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-session_start();
-
 require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../includes/2fa.inc.php';
 
@@ -49,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($tfa->verifyCode($secret, $code)) {
             // Erfolgreich eingeloggt
+            session_regenerate_id(true);
             $_SESSION['user_id']       = $userId;
             $_SESSION['username']      = $username;
             $_SESSION['role']          = $role;
@@ -56,8 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['last_activity'] = time();
 
             unset($_SESSION['2fa_user'], $_SESSION['user_id_pending'], $_SESSION['role_pending']);
-
-            DbFunctions::insertLoginLog((int)$userId, $maskedIp, true);
 
             $_SESSION['flash'] = [
                 'type'    => 'success',
@@ -68,8 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: ' . build_url('dashboard'));
             exit;
         } else {
-            DbFunctions::insertLoginLog((int)$userId, $maskedIp, false, 'wrong_2fa_code');
-
             $smarty->assign('message', 'Falscher Code. Bitte erneut eingeben.');
         }
     } catch (Throwable $e) {

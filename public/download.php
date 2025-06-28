@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
-session_start();
 
 // Optional: nur für eingeloggte Benutzer
 if (empty($_SESSION['user_id'])) {

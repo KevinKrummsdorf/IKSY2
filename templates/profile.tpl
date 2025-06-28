@@ -38,9 +38,42 @@
           <span>Passwort: ********</span>
           <button class="btn btn-sm btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#passwordModal">Ändern</button>
         </div>
+
+        <div class="mb-4">
+        <h2 class="h4">Zwei-Faktor-Authentifizierung</h2>
+
+        {if $twofa_enabled}
+          <p>2FA ist aktiviert.</p>
+          <form method="post" class="d-inline">
+            <input type="hidden" name="action" value="disable_2fa">
+            <button type="submit" class="btn btn-sm btn-outline-danger">Deaktivieren</button>
+          </form>
+        {else}
+          {if $show_2fa_form}
+            <p>Scanne den QR-Code mit einer Authenticator-App und gib anschließend den 6-stelligen Code ein.</p>
+            <div class="my-3 text-center">
+              <img src="{$qrCodeUrl}" alt="QR-Code" class="img-fluid" style="max-width:200px;">
+            </div>
+            <form method="post" class="needs-validation" novalidate>
+              <input type="hidden" name="action" value="confirm_2fa">
+              <div class="mb-3">
+                <label for="code" class="form-label">Code</label>
+                <input type="text" class="form-control" id="code" name="code" pattern="^\d{6}$" required autocomplete="off">
+                <div class="invalid-feedback">Bitte gültigen 6-stelligen Code eingeben.</div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm">2FA aktivieren</button>
+            </form>
+          {else}
+            <form method="post" class="d-inline">
+              <input type="hidden" name="action" value="start_2fa">
+              <button type="submit" class="btn btn-sm btn-outline-primary">Jetzt 2FA einrichten</button>
+            </form>
+          {/if}
+        {/if}
+        </div>
       {/if}
 
-      <h2 class="h4">Persönliche Angaben</h2>
+      <h2 class="h4 mt-4">Persönliche Angaben</h2>
       <p class="mb-1">Vorname: {$profile.first_name|escape}</p>
       <p class="mb-1">Nachname: {$profile.last_name|escape}</p>
       <p class="mb-3">
@@ -269,4 +302,8 @@
 
 {/if}
 
+{/block}
+
+{block name="scripts"}
+  <script src="{$base_url}/js/profile.js"></script>
 {/block}

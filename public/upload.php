@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-session_start();
 require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../includes/pdf_utils.inc.php';
 

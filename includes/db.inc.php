@@ -661,8 +661,8 @@ public static function execute(string $query, array $params = [], bool $expectRe
      */
     public static function fetchOne(string $query, array $params = []): ?array
     {
-        $pdo = self::db_connect();
-        $stmt = self::db_connect()->prepare($query);
+        $pdo  = self::db_connect();
+        $stmt = $pdo->prepare($query);
         $stmt->execute($params);
         $row = $stmt->fetch();
         return $row ?: null;
@@ -682,8 +682,8 @@ public static function execute(string $query, array $params = [], bool $expectRe
      */
     public static function fetchKeyValue(string $query, array $params = []): ?array
     {
-        $pdo = self::db_connect();
-        $stmt = self::db_connect()->prepare($query);
+        $pdo  = self::db_connect();
+        $stmt = $pdo->prepare($query);
         $stmt->execute($params);
 
         $result = [];
@@ -873,22 +873,7 @@ public static function fetchUserByIdentifier(string $input): ?array
         return self::execute($sql, [':id' => $userId], false);
     }
 
-    //INSERT für die Login-Logs
-    public static function insertLoginLog(?int $userId, string $ipAddress, bool $success, ?string $reason = null): int
-    {
-        $sql = '
-            INSERT INTO login_logs (user_id, ip_address, success, reason)
-            VALUES (:uid, :ip, :succ, :reason)
-        ';
-        return self::execute($sql, [
-            ':uid'    => $userId,
-            ':ip'     => $ipAddress,
-            ':succ'   => $success ? 1 : 0,
-            ':reason' => $reason,
-        ], false);
-    }
-
-        /**
+    /**
      * Speichert ein verschlüsseltes 2FA-Secret und aktiviert 2FA für den Benutzer.
      */
 public static function storeTwoFASecret(string $username, string $encryptedSecret): void
@@ -1028,31 +1013,6 @@ public static function unlockAccount(int $userId): int
     /**
      * holt die letzten Login-Logs (admin-only)
      */
-public static function fetchLoginLogs(bool $isAdmin, int $limit = 50): array
-{
-    if (!$isAdmin) {
-        return [];
-    }
-
-    $sql = '
-        SELECT
-            ll.user_id,
-            u.username,
-            ll.ip_address,
-            ll.success,
-            ll.reason,
-            ll.created_at
-        FROM login_logs AS ll
-        LEFT JOIN users AS u ON ll.user_id = u.id
-        ORDER BY ll.created_at DESC
-        LIMIT :limit
-    ';
-
-    $stmt = self::db_connect()->prepare($sql);
-    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 /**
  * Holt die letzten Captcha-Logs (admin-only)
  * Gibt ein Array mit Captcha-Log-Einträgen zurück.
@@ -1143,37 +1103,6 @@ public static function deleteContactRequest(string $contactId): void
 /* * Zählt die Anzahl der Login-Logs.
  * Gibt die Gesamtanzahl der Login-Logs zurück.
  */
-public static function countLoginLogs(): int
-{
-    $stmt = self::db_connect()->prepare('SELECT COUNT(*) FROM login_logs');
-    $stmt->execute();
-    return (int)$stmt->fetchColumn();
-}
-/* * Holt eine Seite von Login-Logs mit Paginierung.
- * @param int $limit Anzahl der Einträge pro Seite
- * @param int $offset Offset für die Paginierung
- * @param bool $isAdmin Ist der Benutzer ein Administrator?
- * @return array Liste der Login-Logs
- */
-public static function getLoginLogsPage(int $limit, int $offset, bool $isAdmin): array
-{
-    if (!$isAdmin) {
-        return [];
-    }
-
-    $stmt = self::db_connect()->prepare('
-        SELECT ll.user_id, u.username, ll.ip_address, ll.success, ll.reason, ll.created_at
-        FROM login_logs AS ll
-        LEFT JOIN users AS u ON ll.user_id = u.id
-        ORDER BY ll.created_at DESC
-        LIMIT :limit OFFSET :offset
-    ');
-    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-    $stmt->execute();
-
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 /* * Zählt die Anzahl der Captcha-Logs.
  * Gibt die Gesamtanzahl der Captcha-Logs zurück.
  */
@@ -2116,101 +2045,6 @@ $sql = "
  * @param array $filters Filterkriterien
  * @return int Anzahl der Login-Logs
  */
-public static function countFilteredLoginLogs(array $filters = []): int
-{
-    $pdo = self::db_connect();
-
-    $sql = "SELECT COUNT(*) FROM login_logs ll WHERE 1=1";
-    $params = [];
-
-    if (!empty($filters['user_id'])) {
-        $sql .= " AND ll.user_id = ?";
-        $params[] = (int)$filters['user_id'];
-    }
-
-    if (!empty($filters['ip_address'])) {
-        $sql .= " AND ll.ip_address LIKE ?";
-        $params[] = '%' . $filters['ip_address'] . '%';
-    }
-
-    if (!empty($filters['from_date'])) {
-        $sql .= " AND ll.created_at >= ?";
-        $params[] = $filters['from_date'] . ' 00:00:00';
-    }
-
-    if (!empty($filters['to_date'])) {
-        $sql .= " AND ll.created_at <= ?";
-        $params[] = $filters['to_date'] . ' 23:59:59';
-    }
-
-    if (isset($filters['success']) && $filters['success'] !== '') {
-        $sql .= " AND ll.success = ?";
-        $params[] = (int)$filters['success'];
-    }
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-
-    return (int)$stmt->fetchColumn();
-}
-/**
- * Holt die Login-Logs basierend auf den angegebenen Filtern und Paginierung.
- * @param array $filters Filterkriterien
- * @param int|null $limit Anzahl der Einträge pro Seite
- * @param int|null $offset Offset für die Paginierung
- * @return array Liste der Login-Logs
- */
-public static function getFilteredLoginLogs(array $filters = [], ?int $limit = null, ?int $offset = null): array
-{
-    $pdo = self::db_connect();
-
-    $sql = "
-        SELECT ll.*, u.username
-        FROM login_logs ll
-        LEFT JOIN users u ON ll.user_id = u.id
-        WHERE 1=1
-    ";
-
-    $params = [];
-
-    if (!empty($filters['user_id'])) {
-        $sql .= " AND ll.user_id = ?";
-        $params[] = (int)$filters['user_id'];
-    }
-
-    if (!empty($filters['ip_address'])) {
-        $sql .= " AND ll.ip_address LIKE ?";
-        $params[] = '%' . $filters['ip_address'] . '%';
-    }
-
-    if (!empty($filters['from_date'])) {
-        $sql .= " AND ll.created_at >= ?";
-        $params[] = $filters['from_date'] . ' 00:00:00';
-    }
-
-    if (!empty($filters['to_date'])) {
-        $sql .= " AND ll.created_at <= ?";
-        $params[] = $filters['to_date'] . ' 23:59:59';
-    }
-
-    if (isset($filters['success']) && $filters['success'] !== '') {
-        $sql .= " AND ll.success = ?";
-        $params[] = (int)$filters['success'];
-    }
-
-    $sql .= " ORDER BY ll.created_at DESC";
-
-    if ($limit !== null && $offset !== null) {
-        $sql .= " LIMIT ? OFFSET ?";
-        $params[] = $limit;
-        $params[] = $offset;
-    }
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-
-    return $stmt->fetchAll();
-}
 /**
  * Zählt die Anzahl der Captcha-Logs basierend auf den angegebenen Filtern.
  * @param array $filters Filterkriterien
