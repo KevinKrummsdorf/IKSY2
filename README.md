@@ -98,7 +98,7 @@ Der Server liefert in diesem Fall bewusst nur den HTTP-Statuscode `401` ohne wei
 Gemäß [RFC 7235](https://datatracker.ietf.org/doc/html/rfc7235#section-3.1) ist es **zulässig**, bei z.B. einem `401 Unauthorized`-Status **keine** Antwortdaten zu senden. Das Verhalten bei der Darstellung liegt dann im Verantwortungsbereich des Browsers. Unterschiede können auch durch Profil-Einstellungen, Themes oder systembedingte UI-Eigenheiten entstehen.
 
 **Hinweis zur Projektkonfiguration:**  
-Über das Skript [`manager.sh`](./scripts/manager.sh) werden benutzerdefinierte Fehlerseiten eingerichtet (z. B. `error/401.php`), die dieses Verhalten umgehen können, indem sie bei Bedarf einen eigenen HTML-Inhalt für solche Fehler bereitstellen.
+Über das Skript [`manager.sh`](./scripts/manager.sh) werden benutzerdefinierte Fehlerseiten eingerichtet, die dieses Verhalten umgehen können, indem sie bei Bedarf einen eigenen HTML-Inhalt für solche Fehler bereitstellen.
 
 Für konsistentes Verhalten über alle Systeme hinweg wird empfohlen, die Fehlerseitenkonfiguration aus `manager.sh` zu übernehmen.
 
