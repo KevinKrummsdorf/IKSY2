@@ -80,7 +80,7 @@ class DbFunctions
     // Holt eine Gruppe anhand ihres Namens
     public static function fetchGroupByName(string $name): ?array
     {
-        $sql = 'SELECT id, name, join_type, invite_code FROM groups WHERE name = :name LIMIT 1';
+        $sql = 'SELECT id, name, join_type, invite_code, group_picture FROM groups WHERE name = :name LIMIT 1';
         return self::fetchOne($sql, [':name' => $name]);
     }
 
@@ -149,7 +149,7 @@ class DbFunctions
      */
     public static function fetchAllGroups(): array
     {
-        $sql = 'SELECT id, name FROM `groups` ORDER BY name ASC';
+        $sql = 'SELECT id, name, group_picture FROM `groups` ORDER BY name ASC';
         return self::execute($sql, [], true);
     }
 
@@ -158,7 +158,7 @@ class DbFunctions
      */
     public static function fetchGroupById(int $groupId): ?array
     {
-        $sql = 'SELECT id, name, join_type, invite_code FROM `groups` WHERE id = :gid LIMIT 1';
+        $sql = 'SELECT id, name, join_type, invite_code, group_picture FROM `groups` WHERE id = :gid LIMIT 1';
         return self::fetchOne($sql, [':gid' => $groupId]);
     }
 
@@ -167,7 +167,7 @@ class DbFunctions
      */
     public static function fetchGroupByInviteCode(string $code): ?array
     {
-        $sql = 'SELECT id, name, join_type, invite_code FROM `groups` WHERE invite_code = :code LIMIT 1';
+        $sql = 'SELECT id, name, join_type, invite_code, group_picture FROM `groups` WHERE invite_code = :code LIMIT 1';
         return self::fetchOne($sql, [':code' => $code]);
     }
 
@@ -2508,6 +2508,27 @@ public static function getFilteredLockedUsers(array $filters = []): array
 
             throw new RuntimeException('Fehler beim Speichern des Profils: ' . $e->getMessage());
         }
+    }
+
+    public static function updateGroup(int $groupId, array $fields): void
+    {
+        $pdo = self::db_connect();
+
+        $set = [];
+        $params = [':id' => $groupId];
+
+        foreach ($fields as $key => $value) {
+            $set[] = "`$key` = :$key";
+            $params[":$key"] = $value;
+        }
+
+        if (empty($set)) {
+            return;
+        }
+
+        $sql = 'UPDATE `groups` SET ' . implode(', ', $set) . ' WHERE id = :id';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
     }
 
     /**

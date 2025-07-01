@@ -14,7 +14,11 @@
     <ul id="group-list" class="list-group mb-4">
       {foreach $myGroups as $g}
         <li class="list-group-item d-flex justify-content-between align-items-center">
-          {$g.name|escape}
+          <span class="d-flex align-items-center">
+            <img src="{if $g.group_picture}{url file="group_pictures/{$g.group_picture|escape:'url'}"}{else}{$base_url}/assets/default_group.png{/if}"
+                 alt="Gruppenbild" class="rounded-circle me-2" style="width:40px;height:40px;object-fit:cover;">
+            {$g.name|escape}
+          </span>
           <a href="{url path='groups' name=$g.name}" class="btn btn-sm btn-outline-primary">Ansehen</a>
         </li>
       {/foreach}
@@ -27,7 +31,7 @@
   <div class="row">
     <div class="col-md-6">
       <h3>Neue Gruppe erstellen</h3>
-      <form method="post">
+      <form method="post" enctype="multipart/form-data">
         <div class="mb-3">
           <input type="text" name="group_name" class="form-control" placeholder="Gruppenname" required>
         </div>
@@ -38,6 +42,10 @@
             <option value="invite">Nur per Einladung</option>
             <option value="code">Nur per Einladungscode</option>
           </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Gruppenbild</label>
+          <input type="file" name="group_picture" class="form-control" accept="image/*">
         </div>
         <button name="create_group" class="btn btn-primary">Erstellen</button>
       </form>
