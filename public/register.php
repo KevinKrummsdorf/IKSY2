@@ -42,19 +42,42 @@ try {
     }
 
     if ($errors) {
+        if (isset($errors['password'])) {
+            http_response_code(400);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => ['code' => 'PASSWORD_WEAK']]);
+            exit;
+        }
+
         $response['errors'] = $errors;
+        http_response_code(400);
         throw new DomainException('Ungültige Eingaben.');
     }
 
     // Doppelte prüfen
+    $dupErrors = [];
     if (DbFunctions::countWhere('users', 'username', $username) > 0) {
-        $errors['username'] = 'Benutzername vergeben.';
+        $dupErrors['username'] = 'Benutzername vergeben.';
     }
     if (DbFunctions::countWhere('users', 'email', $email) > 0) {
-        $errors['email'] = 'E-Mail vergeben.';
+        $dupErrors['email'] = 'E-Mail vergeben.';
     }
-    if ($errors) {
-        $response['errors'] = $errors;
+    if ($dupErrors) {
+        if (isset($dupErrors['username'])) {
+            http_response_code(409);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => ['code' => 'USERNAME_EXISTS']]);
+            exit;
+        }
+        if (isset($dupErrors['email'])) {
+            http_response_code(409);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => ['code' => 'EMAIL_EXISTS']]);
+            exit;
+        }
+
+        $response['errors'] = $dupErrors;
+        http_response_code(409);
         throw new DomainException('Benutzer existiert bereits.');
     }
 

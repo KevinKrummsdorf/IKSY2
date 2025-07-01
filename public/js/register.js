@@ -7,13 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const passwordConfirmInput = registerForm.querySelector('#password_confirm');
   const eyeIcons             = registerForm.querySelectorAll('.pass-field i.eye-icon');
   const requirementList      = registerForm.querySelector('.requirement-list');
-  const alertContainer       = document.getElementById('AlertContainer');
+  const globalAlertContainer = document.getElementById('AlertContainer');
+  const formAlertContainer   = document.getElementById('registerAlert');
   const tokenField           = document.getElementById('register-recaptcha-token');
   const spinner              = document.getElementById('register-spinner');
   const siteKey              = window.recaptchaSiteKey;
 
   if (!registerForm || !registerSubmitBtn || !passwordInput || !passwordConfirmInput
-      || !requirementList || !alertContainer || !tokenField || !spinner) {
+      || !requirementList || !tokenField || !spinner) {
     console.error('Einige Elemente fehlen im Formular!');
     return;
   }
@@ -61,18 +62,58 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function showAlert(htmlMessage, type = 'danger', autoCloseMs = 5000) {
-    alertContainer.innerHTML = `
-      <div class="container mt-3">
-        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-          ${htmlMessage}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
-        </div>
-      </div>`;
-    const alertEl = alertContainer.querySelector('.alert');
-    const bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
-    if (autoCloseMs > 0) {
-      setTimeout(() => bsAlert.close(), autoCloseMs);
+  function getRegistrationErrorMessage(err) {
+    const code = typeof err.data === 'object' ? err.data?.error?.code : null;
+    if (err.status === 409 && code === 'USERNAME_EXISTS') return 'Username bereits vergeben';
+    if (err.status === 409 && code === 'EMAIL_EXISTS')    return 'E-Mail bereits vergeben';
+    if (err.status === 400 && code === 'PASSWORD_WEAK')   return 'Passwort erfüllt nicht die Bedingungen';
+
+    if (err.status === 409 && typeof err.data === 'string') {
+      if (err.data.includes('username')) return 'Username bereits vergeben';
+      if (err.data.includes('E-Mail'))   return 'E-Mail bereits vergeben';
+    }
+    return 'Verbindungsfehler. Bitte später erneut versuchen.';
+  }
+
+  function showAlert(htmlMessage, type = 'danger', autoCloseMs = 5000, container = formAlertContainer) {
+    if (!container) container = globalAlertContainer;
+    if (!container) {
+      alert(htmlMessage);
+      return;
+    }
+
+    if (container === globalAlertContainer) {
+      container.innerHTML = `
+        <div class="container mt-3">
+          <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${htmlMessage}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
+          </div>
+        </div>`;
+      const alertEl = container.querySelector('.alert');
+      const bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
+      if (autoCloseMs > 0) setTimeout(() => bsAlert.close(), autoCloseMs);
+    } else {
+      container.innerHTML = htmlMessage;
+      container.className = `alert alert-${type}`;
+      container.classList.remove('d-none');
+      if (autoCloseMs > 0) setTimeout(() => container.classList.add('d-none'), autoCloseMs);
+    }
+  }
+
+  async function register(formData) {
+    try {
+      const res = await fetch(registerForm.action, { method: 'POST', body: formData });
+      let data = null;
+      try { data = await res.clone().json(); } catch { data = await res.text(); }
+
+      if (!res.ok) throw { status: res.status, data };
+      return data;
+    } catch (err) {
+      const msg = getRegistrationErrorMessage(err);
+      showAlert(msg, 'danger');
+      console.log('Registration error', err);
+      return null;
     }
   }
 
@@ -113,50 +154,22 @@ document.addEventListener('DOMContentLoaded', () => {
     grecaptcha.ready(() => {
       grecaptcha.execute(siteKey, { action: 'register' }).then(async token => {
         tokenField.value = token;
-        try {
-          const response = await fetch('register.php', {
-            method: 'POST',
-            body: new FormData(registerForm)
-          });
-
-          if (!response.ok) throw new Error(`Server-Error: ${response.status}`);
-          const ct = response.headers.get('content-type') || '';
-          if (!ct.includes('application/json')) {
-            showAlert('Ungültige Server-Antwort.', 'danger');
-            return;
-          }
-
-          const data = await response.json();
-
-          if (data.success) {
-            bootstrap.Modal.getInstance(registerModal)?.hide();
-            setTimeout(() => {
-              resetForm();
-              showAlert(
-                'Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse.',
-                'success',
-                7000
-              );
-            }, 300);
-          } else {
-            let msgs = '';
-            if (data.errors) {
-              Object.values(data.errors).forEach(v => {
-                if (Array.isArray(v)) v.forEach(m => msgs += `<div>${m}</div>`);
-                else msgs += `<div>${v}</div>`;
-              });
-            } else {
-              msgs = data.message || 'Unbekannter Fehler.';
-            }
-            showAlert(msgs, 'danger');
-          }
-        } catch (err) {
-          console.error(err);
-          showAlert('Verbindungsfehler. Bitte später erneut versuchen.', 'danger');
-        } finally {
-          registerSubmitBtn.disabled = false;
-          spinner.classList.add('d-none');
+        const formData = new FormData(registerForm);
+        const data = await register(formData);
+        if (data && data.success) {
+          bootstrap.Modal.getInstance(registerModal)?.hide();
+          setTimeout(() => {
+            resetForm();
+            showAlert(
+              'Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse.',
+              'success',
+              7000,
+              globalAlertContainer
+            );
+          }, 300);
         }
+        registerSubmitBtn.disabled = false;
+        spinner.classList.add('d-none');
       });
     });
   });

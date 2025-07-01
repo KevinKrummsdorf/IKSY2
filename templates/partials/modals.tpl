@@ -51,6 +51,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
+        <div id="registerAlert" class="alert alert-danger d-none" role="alert" aria-live="assertive"></div>
+
         <form id="registerForm" method="POST" action="{url path='register'}" novalidate>
           <div class="mb-3">
             <label for="username" class="form-label">Benutzername</label>
