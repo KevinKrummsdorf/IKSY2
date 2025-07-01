@@ -73,12 +73,12 @@
               </span>
             </div>
             <ul class="requirement-list mb-3">
-              <li data-requirement="minlength">Mindestens 8 Zeichen</li>
-              <li data-requirement="maxlength">Maximal 128 Zeichen</li>
-              <li data-requirement="number">Mindestens eine Zahl</li>
-              <li data-requirement="lowercase">Kleinbuchstabe</li>
-              <li data-requirement="uppercase">Großbuchstabe</li>
-              <li data-requirement="special">Sonderzeichen</li>
+              <li data-requirement="minlength"><i class="material-symbols-outlined">close</i>Mindestens 8 Zeichen</li>
+              <li data-requirement="maxlength"><i class="material-symbols-outlined">close</i>Maximal 128 Zeichen</li>
+              <li data-requirement="number"><i class="material-symbols-outlined">close</i>Mindestens eine Zahl</li>
+              <li data-requirement="lowercase"><i class="material-symbols-outlined">close</i>Kleinbuchstabe</li>
+              <li data-requirement="uppercase"><i class="material-symbols-outlined">close</i>Großbuchstabe</li>
+              <li data-requirement="special"><i class="material-symbols-outlined">close</i>Sonderzeichen</li>
             </ul>
           </div>
 

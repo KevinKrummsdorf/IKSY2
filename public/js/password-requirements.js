@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const ok = requirements[li.dataset.requirement].regex.test(val);
         li.classList.toggle('valid', ok);
         li.classList.toggle('invalid', !ok);
+        const icon = li.querySelector('i');
+        if (icon) icon.textContent = ok ? 'check' : 'close';
       });
     });
 
