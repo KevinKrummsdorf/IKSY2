@@ -7,13 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const passwordConfirmInput = registerForm.querySelector('#password_confirm');
   const eyeIcons             = registerForm.querySelectorAll('.pass-field i.eye-icon');
   const requirementList      = registerForm.querySelector('.requirement-list');
-  const alertContainer       = document.getElementById('AlertContainer');
+  const globalAlertContainer = document.getElementById('AlertContainer');
+  const formAlertContainer   = document.getElementById('registerAlert');
   const tokenField           = document.getElementById('register-recaptcha-token');
   const spinner              = document.getElementById('register-spinner');
   const siteKey              = window.recaptchaSiteKey;
 
   if (!registerForm || !registerSubmitBtn || !passwordInput || !passwordConfirmInput
-      || !requirementList || !alertContainer || !tokenField || !spinner) {
+      || !requirementList || !tokenField || !spinner) {
     console.error('Einige Elemente fehlen im Formular!');
     return;
   }
@@ -61,18 +62,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function showAlert(htmlMessage, type = 'danger', autoCloseMs = 5000) {
-    alertContainer.innerHTML = `
-      <div class="container mt-3">
-        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-          ${htmlMessage}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
-        </div>
-      </div>`;
-    const alertEl = alertContainer.querySelector('.alert');
-    const bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
-    if (autoCloseMs > 0) {
-      setTimeout(() => bsAlert.close(), autoCloseMs);
+  function showAlert(htmlMessage, type = 'danger', autoCloseMs = 5000, container = formAlertContainer) {
+    if (!container) container = globalAlertContainer;
+    if (!container) {
+      alert(htmlMessage);
+      return;
+    }
+
+    if (container === globalAlertContainer) {
+      container.innerHTML = `
+        <div class="container mt-3">
+          <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${htmlMessage}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
+          </div>
+        </div>`;
+      const alertEl = container.querySelector('.alert');
+      const bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
+      if (autoCloseMs > 0) setTimeout(() => bsAlert.close(), autoCloseMs);
+    } else {
+      container.innerHTML = htmlMessage;
+      container.className = `alert alert-${type}`;
+      container.classList.remove('d-none');
+      if (autoCloseMs > 0) setTimeout(() => container.classList.add('d-none'), autoCloseMs);
     }
   }
 
@@ -135,7 +147,8 @@ document.addEventListener('DOMContentLoaded', () => {
               showAlert(
                 'Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse.',
                 'success',
-                7000
+                7000,
+                globalAlertContainer
               );
             }, 300);
           } else {
