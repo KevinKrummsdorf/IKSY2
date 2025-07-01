@@ -11,7 +11,7 @@
 
         <form id="login-form" method="POST" action="{url path='login'}" novalidate>
           <div class="mb-3">
-            <label for="username_or_email" class="form-label">Benutzername oder E-Mail</label>
+            <label for="username_or_email" class="form-label">Username oder E-Mail</label>
             <input type="text" class="form-control" id="username_or_email" name="username_or_email"
                    required autocomplete="username" aria-describedby="login-help">
           </div>
@@ -55,7 +55,7 @@
 
         <form id="registerForm" method="POST" action="{url path='register'}" novalidate>
           <div class="mb-3">
-            <label for="username" class="form-label">Benutzername</label>
+            <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" name="username" required>
           </div>
 
