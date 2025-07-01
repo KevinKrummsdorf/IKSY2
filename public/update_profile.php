@@ -19,7 +19,7 @@ try {
             if ($username === '') {
                 throw new RuntimeException('Ungültiger Benutzername.');
             }
-            if (DbFunctions::countWhere('users', 'username', $username) > 0) {
+            if (DbFunctions::usernameExists($username, $userId)) {
                 throw new RuntimeException('Benutzername bereits vergeben.');
             }
             DbFunctions::execute('UPDATE users SET username = :u WHERE id = :id', [
@@ -35,7 +35,7 @@ try {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 throw new RuntimeException('Ungültige E-Mail-Adresse.');
             }
-            if (DbFunctions::countWhere('users', 'email', $email) > 0) {
+            if (DbFunctions::emailExists($email, $userId)) {
                 throw new RuntimeException('E-Mail-Adresse wird bereits verwendet.');
             }
             DbFunctions::updateEmail($userId, $email);

@@ -47,9 +47,13 @@ if ($newEmail !== '' && $newEmail !== $currentEmail) {
     if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
         exit('Ungültige E-Mail-Adresse.');
     }
-    $count = DbFunctions::countWhere('users', 'email', $newEmail);
-    if ($count > 0) {
-        exit('E-Mail-Adresse wird bereits verwendet.');
+    if (DbFunctions::emailExists($newEmail, (int)$userId)) {
+        $_SESSION['flash'] = [
+            'type'    => 'danger',
+            'message' => 'E-Mail-Adresse wird bereits verwendet.'
+        ];
+        header('Location: edit_profile');
+        exit;
     }
     DbFunctions::updateEmail($userId, $newEmail);
     DbFunctions::unverifyUser($userId);
