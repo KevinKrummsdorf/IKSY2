@@ -25,7 +25,7 @@
           <div class="col calendar-cell{if $day.is_today} calendar-today{/if}">
             <span class="calendar-date">{$day.day}</span>
             {foreach $day.tasks as $task}
-              {if $task.is_group_event}
+              {if $task.is_group_event|default:false}
                 <div class="calendar-task calendar-group-event">
                   <img src="{if $task.group_picture}{url file="group_pictures/{$task.group_picture|escape:'url'}"}{else}{$base_url}/assets/default_group.png{/if}"
                        alt="Gruppenbild" style="width:16px;height:16px;object-fit:cover;border-radius:50%;">
