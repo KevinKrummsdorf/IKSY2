@@ -129,7 +129,7 @@ Gemäß [RFC 7235](https://datatracker.ietf.org/doc/html/rfc7235#section-3.1) is
 **Hinweis zur Projektkonfiguration:**  
 Über das Skript [`manager.sh`](./manager.sh) werden benutzerdefinierte Fehlerseiten eingerichtet, die dieses Verhalten umgehen können, indem sie bei Bedarf einen eigenen HTML-Inhalt für solche Fehler bereitstellen.
 
-Für konsistentes Verhalten über alle Systeme hinweg wird empfohlen, die Fehlerseitenkonfiguration aus `manager.sh` zu übernehmen.
+Für konsistentes Verhalten über alle Systeme hinweg wird empfohlen, die Fehlerseitenkonfiguration aus [`manager.sh`](./manager.sh) zu übernehmen.
 
 
 
