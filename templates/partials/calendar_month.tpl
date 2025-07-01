@@ -27,7 +27,7 @@
             {foreach $day.tasks as $task}
               {if $task.is_group_event}
                 <div class="calendar-task calendar-group-event">
-                  <img src="{if $task.group_picture}{url file=\"group_pictures/{$task.group_picture|escape:'url'}\"}{else}{$base_url}/assets/default_group.png{/if}"
+                  <img src="{if $task.group_picture}{url file="group_pictures/{$task.group_picture|escape:'url'}"}{else}{$base_url}/assets/default_group.png{/if}"
                        alt="Gruppenbild" style="width:16px;height:16px;object-fit:cover;border-radius:50%;">
                   {$task.title|escape:'html'}
                 </div>
