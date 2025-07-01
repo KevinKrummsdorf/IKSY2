@@ -48,7 +48,12 @@ try {
         $insert->execute(['material_id' => $materialId, 'user_id' => $userId, 'rating' => $rating]);
     }
     
-    echo json_encode(['success' => true]);
+    $avg = DbFunctions::getAverageMaterialRating($materialId);
+    echo json_encode([
+        'success' => true,
+        'average_rating' => $avg['average_rating'] ?? 0,
+        'total_ratings' => $avg['total_ratings'] ?? 0,
+    ]);
     exit;
 } catch (Throwable $e) {
     http_response_code(500);

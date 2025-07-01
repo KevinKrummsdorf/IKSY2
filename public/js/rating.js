@@ -33,6 +33,7 @@ function submitRating(materialId, rating) {
     .then(data => {
         if (data.success) {
             updateStars(materialId, rating);
+            updateAverage(materialId, data.average_rating, data.total_ratings);
         } else {
             return Promise.reject(data.error);
         }
@@ -51,5 +52,15 @@ function updateStars(materialId, rating) {
             star.classList.remove('text-warning');
         }
     });
+}
+
+function updateAverage(materialId, average, total) {
+    const info = document.getElementById(`rating-info-${materialId}`);
+    if (!info) return;
+    if (total > 0) {
+        info.textContent = `Durchschnitt: ${Number(average).toFixed(1)} ★ (${total} Bewertungen)`;
+    } else {
+        info.textContent = 'Durchschnitt: Noch keine Bewertung';
+    }
 }
 

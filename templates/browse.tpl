@@ -47,10 +47,10 @@
                                     {/if}
 
                                     {* Durchschnittsbewertung anzeigen *}
-                                    <p class="mt-2">
+                                    <p class="mt-2" id="rating-info-{$material.id}">
                                         Durchschnitt:
                                         {if $averageRatings[$material.id].average_rating > 0}
-                                            {math equation="round(a,1)" a=$averageRatings[$material.id].average_rating} ★ 
+                                            {math equation="round(a,1)" a=$averageRatings[$material.id].average_rating} ★
                                             ({$averageRatings[$material.id].total_ratings} Bewertungen)
                                         {else}
                                             Noch keine Bewertung
