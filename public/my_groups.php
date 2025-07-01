@@ -36,6 +36,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($inviteCode) {
                     $success .= ' Einladungscode: ' . htmlspecialchars($inviteCode, ENT_QUOTES);
                 }
+
+                if (!empty($_FILES['group_picture']) && $_FILES['group_picture']['error'] === UPLOAD_ERR_OK) {
+                    $tmp = $_FILES['group_picture']['tmp_name'];
+                    $ext = strtolower(pathinfo($_FILES['group_picture']['name'], PATHINFO_EXTENSION));
+
+                    $mime = '';
+                    if (function_exists('finfo_open')) {
+                        $f = finfo_open(FILEINFO_MIME_TYPE);
+                        $mime = finfo_file($f, $tmp) ?: '';
+                        finfo_close($f);
+                    } elseif (function_exists('mime_content_type')) {
+                        $mime = mime_content_type($tmp);
+                    }
+                    $allowed = ['image/jpeg','image/png','image/gif','image/x-png'];
+                    if (!$mime || in_array($mime, $allowed, true)) {
+                        $dir = __DIR__ . '/../uploads/group_pictures/';
+                        if (!is_dir($dir)) {
+                            mkdir($dir, 0775, true);
+                        }
+                        $fileName = uniqid('group_', true) . '.' . $ext;
+                        $target   = $dir . $fileName;
+                        if (move_uploaded_file($tmp, $target) || rename($tmp, $target)) {
+                            DbFunctions::updateGroup((int)$newGroupId, ['group_picture' => $fileName]);
+                        }
+                    }
+                }
             } else {
                 $error = 'Fehler: Gruppe konnte nicht erstellt werden.';
             }

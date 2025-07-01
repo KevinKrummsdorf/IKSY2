@@ -6,6 +6,21 @@
   {if $error}<div class="alert alert-danger">{$error}</div>{/if}
   {if $success}<div class="alert alert-success">{$success}</div>{/if}
 
+  <div class="text-center mb-3">
+    {if $group.group_picture}
+      <img src='{url file="group_pictures/{$group.group_picture|escape:'url'}"}' alt="Gruppenbild" class="rounded-circle shadow mb-2" style="max-width:150px;object-fit:cover;">
+    {else}
+      <img src="{$base_url}/assets/default_group.png" alt="Gruppenbild" class="rounded-circle shadow mb-2" style="max-width:150px;object-fit:cover;">
+    {/if}
+    {if $myRole === 'admin'}
+      <form method="post" enctype="multipart/form-data" class="mt-2">
+        <input type="hidden" name="csrf_token" value="{$csrf_token}">
+        <input type="file" name="group_picture" accept="image/*" class="form-control mb-2">
+        <button name="update_picture" class="btn btn-outline-primary btn-sm">Bild aktualisieren</button>
+      </form>
+    {/if}
+  </div>
+
   <h1 class="mb-4">{$group.name|escape}</h1>
   {if $group.join_type === 'invite'}
     <p class="text-muted">Beitritt nur per Einladung.</p>

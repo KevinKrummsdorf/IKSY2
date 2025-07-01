@@ -866,6 +866,12 @@ input.timetable-input:-ms-input-placeholder {
   align-items: center;
   gap: 0.15rem;
 }
+.calendar-group-event img {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  object-fit: cover;
+}
 
 @media (max-width: 576px) {
   .calendar-cell {

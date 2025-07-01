@@ -156,6 +156,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Termin konnte nicht gelöscht werden.';
         }
     }
+    // Gruppenbild aktualisieren
+    elseif (isset($_POST['update_picture'])) {
+        if ($myRole !== 'admin') {
+            $error = 'Nur Gruppen-Administratoren dürfen das Bild ändern.';
+        } else {
+            if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
+                $error = 'Ungültiger CSRF-Token.';
+            } elseif (empty($_FILES['group_picture']) || $_FILES['group_picture']['error'] !== UPLOAD_ERR_OK) {
+                $error = 'Kein Bild hochgeladen.';
+            } else {
+            $tmp  = $_FILES['group_picture']['tmp_name'];
+            $ext  = strtolower(pathinfo($_FILES['group_picture']['name'], PATHINFO_EXTENSION));
+
+            $mime = '';
+            if (function_exists('finfo_open')) {
+                $f = finfo_open(FILEINFO_MIME_TYPE);
+                $mime = finfo_file($f, $tmp) ?: '';
+                finfo_close($f);
+            } elseif (function_exists('mime_content_type')) {
+                $mime = mime_content_type($tmp);
+            }
+            $allowed = ['image/jpeg','image/png','image/gif','image/x-png'];
+            if ($mime && !in_array($mime, $allowed, true)) {
+                $error = 'Ungültiger Bildtyp.';
+            } else {
+                $dir = __DIR__ . '/../uploads/group_pictures/';
+                if (!is_dir($dir)) {
+                    mkdir($dir, 0775, true);
+                }
+
+                $fileName   = uniqid('group_', true) . '.' . $ext;
+                $targetPath = $dir . $fileName;
+                if (!move_uploaded_file($tmp, $targetPath)) {
+                    if (!rename($tmp, $targetPath)) {
+                        $error = 'Fehler beim Hochladen des Bildes.';
+                    }
+                }
+
+                if ($error === '') {
+                    if (!empty($group['group_picture'])) {
+                        $old = __DIR__ . '/../uploads/group_pictures/' . $group['group_picture'];
+                        if (is_file($old)) {
+                            unlink($old);
+                        }
+                    }
+                    DbFunctions::updateGroup($groupId, ['group_picture' => $fileName]);
+                    $group['group_picture'] = $fileName;
+                    $success = 'Gruppenbild aktualisiert.';
+                }
+            }
+        }
+    }
+}
 }
 
 // Mitglieder + Uploads holen
