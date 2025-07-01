@@ -62,6 +62,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  async function getRegistrationErrorMessage(err) {
+    const defaultMsg = 'Verbindungsfehler. Bitte später erneut versuchen.';
+    try {
+      if (err instanceof Response) {
+        const status = err.status;
+        let data = {};
+        const ct = err.headers.get('content-type') || '';
+        if (ct.includes('application/json')) {
+          try { data = await err.clone().json(); } catch (_) {}
+        }
+
+        if (data && data.error && data.error.code) {
+          switch (data.error.code) {
+            case 'USERNAME_EXISTS':
+              return 'Username bereits vergeben';
+            case 'EMAIL_EXISTS':
+              return 'E-Mail bereits vergeben';
+            case 'PASSWORD_WEAK':
+              return 'Passwort erfüllt nicht die Bedingungen';
+          }
+        }
+
+        if (status === 409) {
+          if (data.errors) {
+            if (data.errors.username) return 'Username bereits vergeben';
+            if (data.errors.email) return 'E-Mail bereits vergeben';
+          }
+          return 'Username oder E-Mail bereits vergeben';
+        }
+        if (status === 400) {
+          if (data.errors && data.errors.password) {
+            return 'Passwort erfüllt nicht die Bedingungen';
+          }
+        }
+      } else if (err && err.response instanceof Response) {
+        return await getRegistrationErrorMessage(err.response);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return defaultMsg;
+  }
+
   function showAlert(htmlMessage, type = 'danger', autoCloseMs = 5000, container = formAlertContainer) {
     if (!container) container = globalAlertContainer;
     if (!container) {
@@ -134,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const ct = response.headers.get('content-type') || '';
           let data = {};
           if (ct.includes('application/json')) {
-            data = await response.json();
+            data = await response.clone().json();
           }
 
           if (response.ok && data.success) {
@@ -148,23 +191,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 globalAlertContainer
               );
             }, 300);
-          } else if (data.errors || data.message) {
-            let msgs = '';
-            if (data.errors) {
-              Object.values(data.errors).forEach(v => {
-                if (Array.isArray(v)) v.forEach(m => msgs += `<div>${m}</div>`);
-                else msgs += `<div>${v}</div>`;
-              });
-            } else {
-              msgs = data.message || 'Unbekannter Fehler.';
-            }
-            showAlert(msgs, 'danger');
           } else {
-            showAlert('Verbindungsfehler. Bitte später erneut versuchen.', 'danger');
+            const msg = await getRegistrationErrorMessage(response);
+            showAlert(msg, 'danger');
           }
         } catch (err) {
           console.error(err);
-          showAlert('Verbindungsfehler. Bitte später erneut versuchen.', 'danger');
+          const msg = await getRegistrationErrorMessage(err);
+          showAlert(msg, 'danger');
         } finally {
           registerSubmitBtn.disabled = false;
           spinner.classList.add('d-none');

@@ -43,6 +43,9 @@ try {
 
     if ($errors) {
         $response['errors'] = $errors;
+        if (isset($errors['password'])) {
+            $response['error']['code'] = 'PASSWORD_WEAK';
+        }
         http_response_code(400);
         throw new DomainException('Ungültige Eingaben.');
     }
@@ -57,6 +60,11 @@ try {
     }
     if ($dupErrors) {
         $response['errors'] = $dupErrors;
+        if (isset($dupErrors['username'])) {
+            $response['error']['code'] = 'USERNAME_EXISTS';
+        } elseif (isset($dupErrors['email'])) {
+            $response['error']['code'] = 'EMAIL_EXISTS';
+        }
         http_response_code(409);
         throw new DomainException('Benutzer existiert bereits.');
     }
