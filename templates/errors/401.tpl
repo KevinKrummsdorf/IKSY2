@@ -6,7 +6,7 @@
     <div class="text-center py-5">
         <img src="{$base_url}/assets/401.png" alt="401 Fehlerroboter" class="mb-4" style="max-width: 320px;">
         <h1 class="display-4 text-danger">401 – Anmeldung erforderlich</h1>
-        <p class="lead">{$reason|default:"Du musst eingeloggt sein, um diese Seite aufzurufen."}</p>
+        <p class="lead">{$reason|default:"Du musst eingeloggt sein, um diese Seite aufzurufen."|escape}</p>
 
 {if $action == 'login' || $action == 'register' || $action == 'both'}
     <div class="d-flex justify-content-center align-items-center gap-3 mt-4 flex-wrap">
