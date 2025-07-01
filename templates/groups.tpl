@@ -18,7 +18,11 @@
   <ul id="group-list" class="list-group">
     {foreach $groups as $g}
       <li class="list-group-item d-flex justify-content-between align-items-center">
-        {$g.name|escape}
+        <span class="d-flex align-items-center">
+          <img src="{if $g.group_picture}{url file="group_pictures/{$g.group_picture|escape:'url'}"}{else}{$base_url}/assets/default_group.png{/if}"
+               alt="Gruppenbild" class="rounded-circle me-2" style="width:40px;height:40px;object-fit:cover;">
+          {$g.name|escape}
+        </span>
         <a href="{url path='groups' name=$g.name}" class="btn btn-sm btn-outline-primary">Ansehen</a>
       </li>
     {/foreach}

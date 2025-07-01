@@ -65,8 +65,9 @@ function assignUserCalendarToSmarty(PDO $pdo, Smarty $smarty): void
     foreach ($events as $event) {
         $day = (int)substr($event['event_date'], 8, 2);
         $tasksByDay[$day][] = [
-            'title' => $event['title'],
-            'is_group_event' => true,
+            'title'         => $event['title'],
+            'is_group_event'=> true,
+            'group_picture' => $event['group_picture'] ?? null,
         ];
     }
 
@@ -170,10 +171,11 @@ function assignTodayTodosToSmarty(PDO $pdo, Smarty $smarty): void
 
     foreach ($events as $event) {
         $todos[] = [
-            'title'       => $event['title'],
-            'is_group_event' => true,
-            'event_time' => $event['event_time'] ?? null,
-            'group_name' => $event['group_name'] ?? '',
+            'title'         => $event['title'],
+            'is_group_event'=> true,
+            'event_time'    => $event['event_time'] ?? null,
+            'group_name'    => $event['group_name'] ?? '',
+            'group_picture' => $event['group_picture'] ?? null,
         ];
     }
 
