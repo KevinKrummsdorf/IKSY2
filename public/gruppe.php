@@ -209,6 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+}
 
 // Mitglieder + Uploads holen
 $members = DbFunctions::getGroupMembers($groupId);
