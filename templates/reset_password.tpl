@@ -15,16 +15,34 @@
 {/if}
 
 {if !$success}
-<form method="post" class="needs-validation" novalidate>
+<form method="post" class="needs-validation" data-pw-validate novalidate>
     <div id="formAlert" class="alert alert-danger d-none">Bitte alle Felder ausfüllen.</div>
 
-    <div class="mb-3">
+    <div class="mb-3 pass-field">
         <label for="password" class="form-label">Neues Passwort</label>
-        <input type="password" class="form-control" id="password" name="password" required>
+        <div class="input-group">
+            <input type="password" class="form-control pw-new" id="password" name="password" required>
+            <span class="input-group-text" id="toggleResetPassword" style="cursor: pointer;">
+                <span class="material-symbols-outlined">visibility</span>
+            </span>
+        </div>
+        <ul class="requirement-list mb-3">
+          <li data-requirement="minlength"><i class="material-symbols-outlined">close</i>Mindestens 8 Zeichen</li>
+          <li data-requirement="maxlength"><i class="material-symbols-outlined">close</i>Maximal 128 Zeichen</li>
+          <li data-requirement="number"><i class="material-symbols-outlined">close</i>Mindestens eine Zahl</li>
+          <li data-requirement="lowercase"><i class="material-symbols-outlined">close</i>Kleinbuchstabe</li>
+          <li data-requirement="uppercase"><i class="material-symbols-outlined">close</i>Großbuchstabe</li>
+          <li data-requirement="special"><i class="material-symbols-outlined">close</i>Sonderzeichen</li>
+        </ul>
     </div>
     <div class="mb-3">
         <label for="password_confirm" class="form-label">Passwort bestätigen</label>
-        <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+        <div class="input-group">
+            <input type="password" class="form-control pw-confirm" id="password_confirm" name="password_confirm" required>
+            <span class="input-group-text" id="toggleResetPasswordConfirm" style="cursor: pointer;">
+                <span class="material-symbols-outlined">visibility</span>
+            </span>
+        </div>
     </div>
     <button type="submit" class="btn btn-primary">Passwort speichern</button>
 </form>

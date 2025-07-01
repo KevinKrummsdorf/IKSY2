@@ -156,4 +156,19 @@
       togglePasswordVisibility('new_password_confirm', 'toggleNewPasswordConfirm');
     });
   }
+
+  // Event Listener für Passwort-Reset Felder
+  const resetToggle = document.getElementById('toggleResetPassword');
+  if (resetToggle) {
+    resetToggle.addEventListener('click', () => {
+      togglePasswordVisibility('password', 'toggleResetPassword');
+    });
+  }
+
+  const resetConfirmToggle = document.getElementById('toggleResetPasswordConfirm');
+  if (resetConfirmToggle) {
+    resetConfirmToggle.addEventListener('click', () => {
+      togglePasswordVisibility('password_confirm', 'toggleResetPasswordConfirm');
+    });
+  }
 </script>
