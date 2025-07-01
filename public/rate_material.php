@@ -5,7 +5,12 @@ ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../includes/config.inc.php';
-// Session wird bereits in config.inc.php gestartet
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+header('Content-Type: application/json');
+
 
 // Sicherstellen, dass der Benutzer eingeloggt ist
 if (empty($_SESSION['user_id'])) {
@@ -45,7 +50,13 @@ try {
         $insert->execute(['material_id' => $materialId, 'user_id' => $userId, 'rating' => $rating]);
     }
     
-    echo json_encode(['success' => true]);
+    $avg = DbFunctions::getAverageMaterialRating($materialId);
+    echo json_encode([
+        'success' => true,
+        'average_rating' => $avg['average_rating'] ?? 0,
+        'total_ratings' => $avg['total_ratings'] ?? 0,
+    ]);
+    exit;
 } catch (Throwable $e) {
     http_response_code(500);
     echo json_encode(['error' => 'Interner Fehler']);

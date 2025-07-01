@@ -47,10 +47,10 @@
                                     {/if}
 
                                     {* Durchschnittsbewertung anzeigen *}
-                                    <p class="mt-2">
+                                    <p class="mt-2" id="rating-info-{$material.id}">
                                         Durchschnitt:
                                         {if $averageRatings[$material.id].average_rating > 0}
-                                            {math equation="round(a,1)" a=$averageRatings[$material.id].average_rating} ★ 
+                                            {math equation="round(a,1)" a=$averageRatings[$material.id].average_rating} ★
                                             ({$averageRatings[$material.id].total_ratings} Bewertungen)
                                         {else}
                                             Noch keine Bewertung
@@ -63,8 +63,9 @@
                                             Deine Bewertung: 
                                             {section name=star loop=5}
                                                 {assign var="starValue" value=$smarty.section.star.index+1}
-                                                <span 
-                                                    class="star {if $userRatings[$material.id]|default:0 >= $starValue}text-warning{else}text-secondary{/if}" 
+                                                <span
+                                                    class="star {if $userRatings[$material.id]|default:0 >= $starValue}text-warning{else}text-secondary{/if}"
+                                                    data-material-id="{$material.id}"
                                                     style="font-size: 24px; cursor:pointer;"
                                                     onclick="submitRating({$material.id}, {$starValue})"
                                                 >★</span>
