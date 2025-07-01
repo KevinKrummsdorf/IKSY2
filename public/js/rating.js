@@ -21,8 +21,8 @@ function submitRating(materialId, rating) {
 }
 
 function updateStars(materialId, rating) {
-    const container = document.querySelectorAll(`[data-material-id="${materialId}"] .star`);
-    container.forEach((star, idx) => {
+    const stars = document.querySelectorAll(`.star[data-material-id="${materialId}"]`);
+    stars.forEach((star, idx) => {
         if (idx < rating) {
             star.classList.add('text-warning');
             star.classList.remove('text-secondary');
