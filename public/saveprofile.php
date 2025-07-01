@@ -42,6 +42,7 @@ if (!empty($data['birthdate'])) {
 }
 
 $newEmail = trim($_POST['email'] ?? '');
+$emailChanged = false;
 if ($newEmail !== '' && $newEmail !== $currentEmail) {
     if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
         exit('Ungültige E-Mail-Adresse.');
@@ -54,6 +55,7 @@ if ($newEmail !== '' && $newEmail !== $currentEmail) {
     DbFunctions::unverifyUser($userId);
     require_once __DIR__ . '/../includes/verification.inc.php';
     sendVerificationEmail(DbFunctions::db_connect(), $userId, $currentUser['username'], $newEmail);
+    $emailChanged = true;
 }
 
 // Optional: Profilbild-Upload verarbeiten
@@ -116,5 +118,16 @@ foreach ($platforms as $platform) {
 }
 
 // Weiterleitung
-header('Location: ' . build_url('profile/my', ['success' => 1]));
+if ($emailChanged) {
+    $_SESSION['flash'] = [
+        'type'    => 'success',
+        'message' => 'E-Mail-Adresse aktualisiert. Bitte bestätige sie erneut.'
+    ];
+} else {
+    $_SESSION['flash'] = [
+        'type'    => 'success',
+        'message' => 'Profil wurde erfolgreich gespeichert.'
+    ];
+}
+header('Location: ' . build_url('profile/my'));
 exit;
