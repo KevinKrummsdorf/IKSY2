@@ -3,7 +3,7 @@
   {if $todayTodos|@count > 0}
     <ul class="list-group">
       {foreach $todayTodos as $task}
-        {if $task.is_group_event}
+        {if $task.is_group_event|default:false}
           <li class="list-group-item list-group-item-info d-flex align-items-center">
             <img src="{if $task.group_picture}{url file="group_pictures/{$task.group_picture|escape:'url'}"}{else}{$base_url}/assets/default_group.png{/if}"
                  alt="Gruppenbild" class="me-1 rounded-circle" style="width:24px;height:24px;object-fit:cover;">
