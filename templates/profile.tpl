@@ -207,7 +207,12 @@
           </div>
           <div class="mb-3 pass-field">
             <label for="new_password" class="form-label">Neues Passwort</label>
-            <input type="password" class="form-control pw-new" id="new_password" name="new_password" required>
+            <div class="input-group">
+              <input type="password" class="form-control pw-new" id="new_password" name="new_password" required>
+              <span class="input-group-text" id="toggleNewPassword" style="cursor: pointer;">
+                <span class="material-symbols-outlined">visibility</span>
+              </span>
+            </div>
             <ul class="requirement-list mb-3">
               <li data-requirement="minlength"><i class="material-symbols-outlined">close</i>Mindestens 8 Zeichen</li>
               <li data-requirement="maxlength"><i class="material-symbols-outlined">close</i>Maximal 128 Zeichen</li>
@@ -219,7 +224,12 @@
           </div>
           <div class="mb-3">
             <label for="new_password_confirm" class="form-label">Passwort bestätigen</label>
-            <input type="password" class="form-control pw-confirm" id="new_password_confirm" name="new_password_confirm" required>
+            <div class="input-group">
+              <input type="password" class="form-control pw-confirm" id="new_password_confirm" name="new_password_confirm" required>
+              <span class="input-group-text" id="toggleNewPasswordConfirm" style="cursor: pointer;">
+                <span class="material-symbols-outlined">visibility</span>
+              </span>
+            </div>
           </div>
           <button type="submit" class="btn btn-primary">Speichern</button>
         </form>

@@ -120,17 +120,40 @@
   }
 
   // Event Listener für das Umschalten der Passwortsichtbarkeit im Login Modal
-  document.getElementById('toggleLoginPassword').addEventListener('click', function() {
-    togglePasswordVisibility('loginPassword', 'toggleLoginPassword');
-  });
+  const loginToggle = document.getElementById('toggleLoginPassword');
+  if (loginToggle) {
+    loginToggle.addEventListener('click', () => {
+      togglePasswordVisibility('loginPassword', 'toggleLoginPassword');
+    });
+  }
 
-  // Event Listener für das Umschalten der Passwortsichtbarkeit im Registration Modal
-  document.getElementById('togglePassword').addEventListener('click', function() {
-    togglePasswordVisibility('password', 'togglePassword');
-  });
+  // Event Listener für die Registrierungspasswörter
+  const regToggle = document.getElementById('togglePassword');
+  if (regToggle) {
+    regToggle.addEventListener('click', () => {
+      togglePasswordVisibility('password', 'togglePassword');
+    });
+  }
 
-  // Event Listener für das Umschalten der Passwortsichtbarkeit im Confirm Password Feld
-  document.getElementById('togglePasswordConfirm').addEventListener('click', function() {
-    togglePasswordVisibility('password_confirm', 'togglePasswordConfirm');
-  });
+  const regConfirmToggle = document.getElementById('togglePasswordConfirm');
+  if (regConfirmToggle) {
+    regConfirmToggle.addEventListener('click', () => {
+      togglePasswordVisibility('password_confirm', 'togglePasswordConfirm');
+    });
+  }
+
+  // Event Listener für Passwortänderungen (Profil/Seite)
+  const newPwToggle = document.getElementById('toggleNewPassword');
+  if (newPwToggle) {
+    newPwToggle.addEventListener('click', () => {
+      togglePasswordVisibility('new_password', 'toggleNewPassword');
+    });
+  }
+
+  const newPwConfirmToggle = document.getElementById('toggleNewPasswordConfirm');
+  if (newPwConfirmToggle) {
+    newPwConfirmToggle.addEventListener('click', () => {
+      togglePasswordVisibility('new_password_confirm', 'toggleNewPasswordConfirm');
+    });
+  }
 </script>
