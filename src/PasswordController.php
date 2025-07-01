@@ -34,6 +34,9 @@ class PasswordController
         if (!$user || !verifyPassword($oldPassword, $user['password_hash'])) {
             throw new RuntimeException('Aktuelles Passwort falsch');
         }
+        if (!password_meets_requirements($newPassword)) {
+            throw new RuntimeException('Passwort erfüllt nicht die Bedingungen');
+        }
         $hash = password_hash($newPassword, PASSWORD_DEFAULT);
         DbFunctions::updatePassword($userId, $hash);
     }

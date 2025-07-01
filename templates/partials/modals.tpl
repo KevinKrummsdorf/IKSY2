@@ -53,7 +53,7 @@
       <div class="modal-body">
         <div id="registerAlert" class="alert alert-danger d-none" role="alert" aria-live="assertive"></div>
 
-        <form id="registerForm" method="POST" action="{url path='register'}" novalidate>
+        <form id="registerForm" method="POST" action="{url path='register'}" data-pw-validate novalidate>
           <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" name="username" required>
@@ -67,7 +67,7 @@
           <div class="mb-3 pass-field">
             <label for="password" class="form-label">Passwort</label>
             <div class="input-group">
-              <input type="password" class="form-control" id="password" name="password" required>
+              <input type="password" class="form-control pw-new" id="password" name="password" required>
               <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
                 <span class="material-symbols-outlined">visibility</span>
               </span>
@@ -85,7 +85,7 @@
           <div class="mb-3 pass-field">
             <label for="password_confirm" class="form-label">Passwort bestätigen</label>
             <div class="input-group">
-              <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                <input type="password" class="form-control pw-confirm" id="password_confirm" name="password_confirm" required>
               <span class="input-group-text" id="togglePasswordConfirm" style="cursor: pointer;">
                 <span class="material-symbols-outlined">visibility</span>
               </span>

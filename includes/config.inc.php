@@ -30,6 +30,7 @@ require_once __DIR__ . '/../includes/recaptcha.inc.php';
 require_once __DIR__ . '/../includes/mailing.inc.php';
 require_once __DIR__ . '/../includes/group_invites.inc.php';
 require_once __DIR__ . '/../includes/crypto.inc.php';
+require_once __DIR__ . '/../includes/password_requirements.inc.php';
 
 // .env laden
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
