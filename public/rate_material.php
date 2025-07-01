@@ -6,6 +6,7 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/../includes/config.inc.php';
 session_start();
+header('Content-Type: application/json');
 
 // Sicherstellen, dass der Benutzer eingeloggt ist
 if (empty($_SESSION['user_id'])) {
@@ -46,6 +47,7 @@ try {
     }
     
     echo json_encode(['success' => true]);
+    exit;
 } catch (Throwable $e) {
     http_response_code(500);
     echo json_encode(['error' => 'Interner Fehler']);

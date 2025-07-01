@@ -63,8 +63,9 @@
                                             Deine Bewertung: 
                                             {section name=star loop=5}
                                                 {assign var="starValue" value=$smarty.section.star.index+1}
-                                                <span 
-                                                    class="star {if $userRatings[$material.id]|default:0 >= $starValue}text-warning{else}text-secondary{/if}" 
+                                                <span
+                                                    class="star {if $userRatings[$material.id]|default:0 >= $starValue}text-warning{else}text-secondary{/if}"
+                                                    data-material-id="{$material.id}"
                                                     style="font-size: 24px; cursor:pointer;"
                                                     onclick="submitRating({$material.id}, {$starValue})"
                                                 >★</span>

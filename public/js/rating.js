@@ -1,16 +1,35 @@
 function submitRating(materialId, rating) {
-    fetch('rate_material.php', {
+    return fetch('rate_material.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: `material_id=${materialId}&rating=${rating}`
+        body: `material_id=${encodeURIComponent(materialId)}&rating=${encodeURIComponent(rating)}`
     })
-    .then(response => response.json())
+    .then(res => {
+        if (!res.ok) {
+            return res.json().then(data => Promise.reject(data.error || 'Fehler beim Speichern der Bewertung'));
+        }
+        return res.json();
+    })
     .then(data => {
         if (data.success) {
-            location.reload();
+            updateStars(materialId, rating);
         } else {
-            alert(data.error);
+            return Promise.reject(data.error);
         }
     })
-    .catch(() => alert('Fehler beim Speichern der Bewertung'));
+    .catch(err => alert(err || 'Fehler beim Speichern der Bewertung'));
 }
+
+function updateStars(materialId, rating) {
+    const container = document.querySelectorAll(`[data-material-id="${materialId}"] .star`);
+    container.forEach((star, idx) => {
+        if (idx < rating) {
+            star.classList.add('text-warning');
+            star.classList.remove('text-secondary');
+        } else {
+            star.classList.add('text-secondary');
+            star.classList.remove('text-warning');
+        }
+    });
+}
+
