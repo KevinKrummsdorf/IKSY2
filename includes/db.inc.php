@@ -341,49 +341,67 @@ class DbFunctions
             ':uid'  => $userId,
             ':end'  => $endDate,
         ], true);
-
         $events = [];
         foreach ($rows as $row) {
-            $date = new DateTimeImmutable($row['event_date']);
-            $interval = $row['repeat_interval'] ?? 'none';
-
-            // advance to first occurrence within range
-            while ($date->format('Y-m-d') < $startDate) {
-                if ($interval === 'weekly') {
-                    $date = $date->modify('+1 week');
-                } elseif ($interval === 'biweekly') {
-                    $date = $date->modify('+2 weeks');
-                } elseif ($interval === 'monthly') {
-                    $date = $date->modify('+1 month');
-                } else {
-                    // not repeating and before range
-                    continue 2;
-                }
-            }
-
-            while ($date->format('Y-m-d') <= $endDate) {
-                if ($date->format('Y-m-d') >= $startDate) {
-                    $events[] = [
-                        'title'         => $row['title'],
-                        'event_date'    => $date->format('Y-m-d'),
-                        'event_time'    => $row['event_time'],
-                        'group_name'    => $row['group_name'],
-                        'group_picture' => $row['group_picture'] ?? null,
-                    ];
-                }
-                if ($interval === 'weekly') {
-                    $date = $date->modify('+1 week');
-                } elseif ($interval === 'biweekly') {
-                    $date = $date->modify('+2 weeks');
-                } elseif ($interval === 'monthly') {
-                    $date = $date->modify('+1 month');
-                } else {
-                    break;
-                }
-            }
+            $events = array_merge(
+                $events,
+                self::expandEventRow($row, $startDate, $endDate)
+            );
         }
 
         return $events;
+    }
+
+    /**
+     * Expandiert einen Ereignis-Datensatz auf alle Vorkommen innerhalb des Zeitbereichs.
+     */
+    private static function expandEventRow(array $row, string $startDate, string $endDate): array
+    {
+        $date     = new DateTimeImmutable($row['event_date']);
+        $interval = $row['repeat_interval'] ?? 'none';
+        $events   = [];
+
+        while ($date->format('Y-m-d') < $startDate) {
+            $next = self::advanceRecurringDate($date, $interval);
+            if ($next === null) {
+                return $events;
+            }
+            $date = $next;
+        }
+
+        while ($date->format('Y-m-d') <= $endDate) {
+            $events[] = [
+                'title'         => $row['title'],
+                'event_date'    => $date->format('Y-m-d'),
+                'event_time'    => $row['event_time'],
+                'group_name'    => $row['group_name'],
+                'group_picture' => $row['group_picture'] ?? null,
+            ];
+            $next = self::advanceRecurringDate($date, $interval);
+            if ($next === null) {
+                break;
+            }
+            $date = $next;
+        }
+
+        return $events;
+    }
+
+    /**
+     * Gibt das nächste Wiederholungsdatum zurück oder null bei einmaligen Terminen.
+     */
+    private static function advanceRecurringDate(DateTimeImmutable $date, string $interval): ?DateTimeImmutable
+    {
+        switch ($interval) {
+            case 'weekly':
+                return $date->modify('+1 week');
+            case 'biweekly':
+                return $date->modify('+2 weeks');
+            case 'monthly':
+                return $date->modify('+1 month');
+            default:
+                return null;
+        }
     }
 
     
