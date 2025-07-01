@@ -62,47 +62,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  async function getRegistrationErrorMessage(err) {
-    const defaultMsg = 'Verbindungsfehler. Bitte später erneut versuchen.';
-    try {
-      if (err instanceof Response) {
-        const status = err.status;
-        let data = {};
-        const ct = err.headers.get('content-type') || '';
-        if (ct.includes('application/json')) {
-          try { data = await err.clone().json(); } catch (_) {}
-        }
+  function getRegistrationErrorMessage(err) {
+    const code = typeof err.data === 'object' ? err.data?.error?.code : null;
+    if (err.status === 409 && code === 'USERNAME_EXISTS') return 'Username bereits vergeben';
+    if (err.status === 409 && code === 'EMAIL_EXISTS')    return 'E-Mail bereits vergeben';
+    if (err.status === 400 && code === 'PASSWORD_WEAK')   return 'Passwort erfüllt nicht die Bedingungen';
 
-        if (data && data.error && data.error.code) {
-          switch (data.error.code) {
-            case 'USERNAME_EXISTS':
-              return 'Username bereits vergeben';
-            case 'EMAIL_EXISTS':
-              return 'E-Mail bereits vergeben';
-            case 'PASSWORD_WEAK':
-              return 'Passwort erfüllt nicht die Bedingungen';
-          }
-        }
-
-        if (status === 409) {
-          if (data.errors) {
-            if (data.errors.username) return 'Username bereits vergeben';
-            if (data.errors.email) return 'E-Mail bereits vergeben';
-          }
-          return 'Username oder E-Mail bereits vergeben';
-        }
-        if (status === 400) {
-          if (data.errors && data.errors.password) {
-            return 'Passwort erfüllt nicht die Bedingungen';
-          }
-        }
-      } else if (err && err.response instanceof Response) {
-        return await getRegistrationErrorMessage(err.response);
-      }
-    } catch (e) {
-      console.error(e);
+    if (err.status === 409 && typeof err.data === 'string') {
+      if (err.data.includes('username')) return 'Username bereits vergeben';
+      if (err.data.includes('E-Mail'))   return 'E-Mail bereits vergeben';
     }
-    return defaultMsg;
+    return 'Verbindungsfehler. Bitte später erneut versuchen.';
   }
 
   function showAlert(htmlMessage, type = 'danger', autoCloseMs = 5000, container = formAlertContainer) {
@@ -128,6 +98,22 @@ document.addEventListener('DOMContentLoaded', () => {
       container.className = `alert alert-${type}`;
       container.classList.remove('d-none');
       if (autoCloseMs > 0) setTimeout(() => container.classList.add('d-none'), autoCloseMs);
+    }
+  }
+
+  async function register(formData) {
+    try {
+      const res = await fetch(registerForm.action, { method: 'POST', body: formData });
+      let data = null;
+      try { data = await res.clone().json(); } catch { data = await res.text(); }
+
+      if (!res.ok) throw { status: res.status, data };
+      return data;
+    } catch (err) {
+      const msg = getRegistrationErrorMessage(err);
+      showAlert(msg, 'danger');
+      console.log('Registration error', err);
+      return null;
     }
   }
 
@@ -168,41 +154,22 @@ document.addEventListener('DOMContentLoaded', () => {
     grecaptcha.ready(() => {
       grecaptcha.execute(siteKey, { action: 'register' }).then(async token => {
         tokenField.value = token;
-        try {
-          const response = await fetch(registerForm.action, {
-            method: 'POST',
-            body: new FormData(registerForm)
-          });
-
-          const ct = response.headers.get('content-type') || '';
-          let data = {};
-          if (ct.includes('application/json')) {
-            data = await response.clone().json();
-          }
-
-          if (response.ok && data.success) {
-            bootstrap.Modal.getInstance(registerModal)?.hide();
-            setTimeout(() => {
-              resetForm();
-              showAlert(
-                'Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse.',
-                'success',
-                7000,
-                globalAlertContainer
-              );
-            }, 300);
-          } else {
-            const msg = await getRegistrationErrorMessage(response);
-            showAlert(msg, 'danger');
-          }
-        } catch (err) {
-          console.error(err);
-          const msg = await getRegistrationErrorMessage(err);
-          showAlert(msg, 'danger');
-        } finally {
-          registerSubmitBtn.disabled = false;
-          spinner.classList.add('d-none');
+        const formData = new FormData(registerForm);
+        const data = await register(formData);
+        if (data && data.success) {
+          bootstrap.Modal.getInstance(registerModal)?.hide();
+          setTimeout(() => {
+            resetForm();
+            showAlert(
+              'Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse.',
+              'success',
+              7000,
+              globalAlertContainer
+            );
+          }, 300);
         }
+        registerSubmitBtn.disabled = false;
+        spinner.classList.add('d-none');
       });
     });
   });

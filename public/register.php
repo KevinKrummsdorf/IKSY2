@@ -42,10 +42,14 @@ try {
     }
 
     if ($errors) {
-        $response['errors'] = $errors;
         if (isset($errors['password'])) {
-            $response['error']['code'] = 'PASSWORD_WEAK';
+            http_response_code(400);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => ['code' => 'PASSWORD_WEAK']]);
+            exit;
         }
+
+        $response['errors'] = $errors;
         http_response_code(400);
         throw new DomainException('Ungültige Eingaben.');
     }
@@ -59,12 +63,20 @@ try {
         $dupErrors['email'] = 'E-Mail vergeben.';
     }
     if ($dupErrors) {
-        $response['errors'] = $dupErrors;
         if (isset($dupErrors['username'])) {
-            $response['error']['code'] = 'USERNAME_EXISTS';
-        } elseif (isset($dupErrors['email'])) {
-            $response['error']['code'] = 'EMAIL_EXISTS';
+            http_response_code(409);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => ['code' => 'USERNAME_EXISTS']]);
+            exit;
         }
+        if (isset($dupErrors['email'])) {
+            http_response_code(409);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => ['code' => 'EMAIL_EXISTS']]);
+            exit;
+        }
+
+        $response['errors'] = $dupErrors;
         http_response_code(409);
         throw new DomainException('Benutzer existiert bereits.');
     }
