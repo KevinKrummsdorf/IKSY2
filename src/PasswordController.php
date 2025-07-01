@@ -22,6 +22,9 @@ class PasswordController
         if (!$user) {
             throw new RuntimeException('Token ungültig oder abgelaufen');
         }
+        if (!password_meets_requirements($password)) {
+            throw new RuntimeException('Passwort erfüllt nicht die Bedingungen');
+        }
         $hash = password_hash($password, PASSWORD_DEFAULT);
         DbFunctions::updatePassword((int)$user['id'], $hash);
         DbFunctions::deletePasswordResetToken((int)$user['id']);
@@ -33,6 +36,9 @@ class PasswordController
         $user = DbFunctions::fetchUserById($userId);
         if (!$user || !verifyPassword($oldPassword, $user['password_hash'])) {
             throw new RuntimeException('Aktuelles Passwort falsch');
+        }
+        if (!password_meets_requirements($newPassword)) {
+            throw new RuntimeException('Passwort erfüllt nicht die Bedingungen');
         }
         $hash = password_hash($newPassword, PASSWORD_DEFAULT);
         DbFunctions::updatePassword($userId, $hash);

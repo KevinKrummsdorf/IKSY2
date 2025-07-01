@@ -124,6 +124,7 @@
 <script src="{$base_url}/js/login-success.js"></script>
 <script src="{$base_url}/js/theme-toggle.js"></script>
 <script src="{$base_url}/js/register.js"></script>
+<script src="{$base_url}/js/password-requirements.js"></script>
 
 {block name="scripts"}{/block}
 

@@ -56,12 +56,8 @@ try {
             if ($new !== $confirm) {
                 throw new RuntimeException('Passwörter stimmen nicht überein.');
             }
+            PasswordController::changePassword($userId, $old, $new);
             $user = DbFunctions::fetchUserById($userId);
-            if (!$user || !verifyPassword($old, $user['password_hash'])) {
-                throw new RuntimeException('Aktuelles Passwort falsch.');
-            }
-            $hash = password_hash($new, PASSWORD_DEFAULT);
-            DbFunctions::updatePassword($userId, $hash);
 
             // Confirmation email
             try {

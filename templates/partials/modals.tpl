@@ -53,7 +53,7 @@
       <div class="modal-body">
         <div id="registerAlert" class="alert alert-danger d-none" role="alert" aria-live="assertive"></div>
 
-        <form id="registerForm" method="POST" action="{url path='register'}" novalidate>
+        <form id="registerForm" method="POST" action="{url path='register'}" data-pw-validate novalidate>
           <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" name="username" required>
@@ -67,25 +67,25 @@
           <div class="mb-3 pass-field">
             <label for="password" class="form-label">Passwort</label>
             <div class="input-group">
-              <input type="password" class="form-control" id="password" name="password" required>
+              <input type="password" class="form-control pw-new" id="password" name="password" required>
               <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
                 <span class="material-symbols-outlined">visibility</span>
               </span>
             </div>
             <ul class="requirement-list mb-3">
-              <li data-requirement="minlength">Mindestens 8 Zeichen</li>
-              <li data-requirement="maxlength">Maximal 128 Zeichen</li>
-              <li data-requirement="number">Mindestens eine Zahl</li>
-              <li data-requirement="lowercase">Kleinbuchstabe</li>
-              <li data-requirement="uppercase">Großbuchstabe</li>
-              <li data-requirement="special">Sonderzeichen</li>
+              <li data-requirement="minlength"><i class="material-symbols-outlined">close</i>Mindestens 8 Zeichen</li>
+              <li data-requirement="maxlength"><i class="material-symbols-outlined">close</i>Maximal 128 Zeichen</li>
+              <li data-requirement="number"><i class="material-symbols-outlined">close</i>Mindestens eine Zahl</li>
+              <li data-requirement="lowercase"><i class="material-symbols-outlined">close</i>Kleinbuchstabe</li>
+              <li data-requirement="uppercase"><i class="material-symbols-outlined">close</i>Großbuchstabe</li>
+              <li data-requirement="special"><i class="material-symbols-outlined">close</i>Sonderzeichen</li>
             </ul>
           </div>
 
           <div class="mb-3 pass-field">
             <label for="password_confirm" class="form-label">Passwort bestätigen</label>
             <div class="input-group">
-              <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                <input type="password" class="form-control pw-confirm" id="password_confirm" name="password_confirm" required>
               <span class="input-group-text" id="togglePasswordConfirm" style="cursor: pointer;">
                 <span class="material-symbols-outlined">visibility</span>
               </span>
@@ -120,17 +120,55 @@
   }
 
   // Event Listener für das Umschalten der Passwortsichtbarkeit im Login Modal
-  document.getElementById('toggleLoginPassword').addEventListener('click', function() {
-    togglePasswordVisibility('loginPassword', 'toggleLoginPassword');
-  });
+  const loginToggle = document.getElementById('toggleLoginPassword');
+  if (loginToggle) {
+    loginToggle.addEventListener('click', () => {
+      togglePasswordVisibility('loginPassword', 'toggleLoginPassword');
+    });
+  }
 
-  // Event Listener für das Umschalten der Passwortsichtbarkeit im Registration Modal
-  document.getElementById('togglePassword').addEventListener('click', function() {
-    togglePasswordVisibility('password', 'togglePassword');
-  });
+  // Event Listener für die Registrierungspasswörter
+  const regToggle = document.getElementById('togglePassword');
+  if (regToggle) {
+    regToggle.addEventListener('click', () => {
+      togglePasswordVisibility('password', 'togglePassword');
+    });
+  }
 
-  // Event Listener für das Umschalten der Passwortsichtbarkeit im Confirm Password Feld
-  document.getElementById('togglePasswordConfirm').addEventListener('click', function() {
-    togglePasswordVisibility('password_confirm', 'togglePasswordConfirm');
-  });
+  const regConfirmToggle = document.getElementById('togglePasswordConfirm');
+  if (regConfirmToggle) {
+    regConfirmToggle.addEventListener('click', () => {
+      togglePasswordVisibility('password_confirm', 'togglePasswordConfirm');
+    });
+  }
+
+  // Event Listener für Passwortänderungen (Profil/Seite)
+  const newPwToggle = document.getElementById('toggleNewPassword');
+  if (newPwToggle) {
+    newPwToggle.addEventListener('click', () => {
+      togglePasswordVisibility('new_password', 'toggleNewPassword');
+    });
+  }
+
+  const newPwConfirmToggle = document.getElementById('toggleNewPasswordConfirm');
+  if (newPwConfirmToggle) {
+    newPwConfirmToggle.addEventListener('click', () => {
+      togglePasswordVisibility('new_password_confirm', 'toggleNewPasswordConfirm');
+    });
+  }
+
+  // Event Listener für Passwort-Reset Felder
+  const resetToggle = document.getElementById('toggleResetPassword');
+  if (resetToggle) {
+    resetToggle.addEventListener('click', () => {
+      togglePasswordVisibility('password', 'toggleResetPassword');
+    });
+  }
+
+  const resetConfirmToggle = document.getElementById('toggleResetPasswordConfirm');
+  if (resetConfirmToggle) {
+    resetConfirmToggle.addEventListener('click', () => {
+      togglePasswordVisibility('password_confirm', 'toggleResetPasswordConfirm');
+    });
+  }
 </script>

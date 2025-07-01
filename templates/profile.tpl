@@ -199,19 +199,37 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="{url path='update_profile'}">
+        <form method="post" action="{url path='update_profile'}" data-pw-validate>
           <input type="hidden" name="action" value="update_password">
           <div class="mb-3">
             <label for="current_password" class="form-label">Aktuelles Passwort</label>
             <input type="password" class="form-control" id="current_password" name="old_password" required>
           </div>
-          <div class="mb-3">
+          <div class="mb-3 pass-field">
             <label for="new_password" class="form-label">Neues Passwort</label>
-            <input type="password" class="form-control" id="new_password" name="new_password" required>
+            <div class="input-group">
+              <input type="password" class="form-control pw-new" id="new_password" name="new_password" required>
+              <span class="input-group-text" id="toggleNewPassword" style="cursor: pointer;">
+                <span class="material-symbols-outlined">visibility</span>
+              </span>
+            </div>
+            <ul class="requirement-list mb-3">
+              <li data-requirement="minlength"><i class="material-symbols-outlined">close</i>Mindestens 8 Zeichen</li>
+              <li data-requirement="maxlength"><i class="material-symbols-outlined">close</i>Maximal 128 Zeichen</li>
+              <li data-requirement="number"><i class="material-symbols-outlined">close</i>Mindestens eine Zahl</li>
+              <li data-requirement="lowercase"><i class="material-symbols-outlined">close</i>Kleinbuchstabe</li>
+              <li data-requirement="uppercase"><i class="material-symbols-outlined">close</i>Großbuchstabe</li>
+              <li data-requirement="special"><i class="material-symbols-outlined">close</i>Sonderzeichen</li>
+            </ul>
           </div>
           <div class="mb-3">
             <label for="new_password_confirm" class="form-label">Passwort bestätigen</label>
-            <input type="password" class="form-control" id="new_password_confirm" name="new_password_confirm" required>
+            <div class="input-group">
+              <input type="password" class="form-control pw-confirm" id="new_password_confirm" name="new_password_confirm" required>
+              <span class="input-group-text" id="toggleNewPasswordConfirm" style="cursor: pointer;">
+                <span class="material-symbols-outlined">visibility</span>
+              </span>
+            </div>
           </div>
           <button type="submit" class="btn btn-primary">Speichern</button>
         </form>
