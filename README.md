@@ -1,6 +1,35 @@
-# Anleitung im Umgang mit git und github
+# StudyHub – Projektübersicht
 
-Diese Anwendung verwendet [Composer](https://getcomposer.org) zur einfachen Installation und Verwaltung der benötigten Bibliotheken. Diese Anleitung geht davon aus, das Composer sowie git bereits intalliert und konfiguriert sind.  
+StudyHub ist ein webbasiertes Lernportal, das Studierenden die Organisation von Lerngruppen und den Austausch von Materialien erleichtert. Die Anwendung entstand im Rahmen des Moduls **IKSY2** und dient als zentrale Plattform, um Aufgaben zu koordinieren und Lernfortschritte zu verfolgen.
+
+## Ziele
+
+- Bereitstellung einer gemeinsamen Umgebung für Lernmaterialien
+- Einfache Verwaltung von Gruppen und Terminen
+- Unterstützung des kooperativen Lernens durch ToDo-Listen und Kalenderfunktionen
+
+## Funktionsüberblick
+
+- **Benutzerkonten**  
+  Registrierung und Login erfolgen über ein eigenes Account-System. Auf Wunsch kann eine Zwei-Faktor-Authentifizierung aktiviert werden. Ein Passwort-Reset per E-Mail steht ebenfalls bereit.
+
+- **Gruppenverwaltung**  
+  Nutzer erstellen Lerngruppen, verschicken Einladungen und vergeben Rollen wie *Administrator* oder *Moderator*, sodass Verantwortlichkeiten klar verteilt sind.
+
+- **Material-Upload und Bewertung**  
+  Skripte, Präsentationen und andere Dateien lassen sich direkt hochladen. Kommentare und Bewertungen helfen bei der Qualitätssicherung der bereitgestellten Materialien.
+
+- **Persönlicher Kalender mit ToDo-Verwaltung**  
+  Termine und Aufgaben werden zentral im Dashboard verwaltet. Wiederkehrende Einträge und farbliche Hervorhebungen erleichtern die Planung.
+- **PDF-Export**
+  Sowohl der Stundenplan als auch hochgeladene Materialien lassen sich bequem als PDF herunterladen.
+
+- **Kontaktformular**  
+  Über das Formular erreichst du die Betreuer; neue Nachrichten werden automatisch per E-Mail weitergeleitet.
+
+## Anleitung im Umgang mit git und github
+
+Diese Anwendung verwendet [Composer](https://getcomposer.org) zur einfachen Installation und Verwaltung der benötigten Bibliotheken. Diese Anleitung geht davon aus, dass Composer sowie git bereits installiert und konfiguriert sind.
   
 ## Repo clonen
 ```
@@ -88,7 +117,7 @@ sudo ./manager.sh --uninstall
 
 # Hinweis zur Darstellung von HTTP-Fehler (z.B. 401 - Unauthorized)
 
-Beim Aufruf geschützter Seiten ohne vorherige Anmeldung kann es in bestimmten Browser-Umgebungen zu einer **weißen Seite** kommen, während andere Browser eine Fehlermeldung wie `401 Unauthorize` anzeigen.
+Beim Aufruf geschützter Seiten ohne vorherige Anmeldung kann es in bestimmten Browser-Umgebungen zu einer **weißen Seite** kommen, während andere Browser eine Fehlermeldung wie `401 Unauthorized` anzeigen.
 
 **Dies ist kein Fehler im Code**, sondern ein **browserabhängiges Verhalten**:
 
@@ -98,7 +127,7 @@ Der Server liefert in diesem Fall bewusst nur den HTTP-Statuscode `401` ohne wei
 Gemäß [RFC 7235](https://datatracker.ietf.org/doc/html/rfc7235#section-3.1) ist es **zulässig**, bei z.B. einem `401 Unauthorized`-Status **keine** Antwortdaten zu senden. Das Verhalten bei der Darstellung liegt dann im Verantwortungsbereich des Browsers. Unterschiede können auch durch Profil-Einstellungen, Themes oder systembedingte UI-Eigenheiten entstehen.
 
 **Hinweis zur Projektkonfiguration:**  
-Über das Skript [`manager.sh`](./scripts/manager.sh) werden benutzerdefinierte Fehlerseiten eingerichtet, die dieses Verhalten umgehen können, indem sie bei Bedarf einen eigenen HTML-Inhalt für solche Fehler bereitstellen.
+Über das Skript [`manager.sh`](./manager.sh) werden benutzerdefinierte Fehlerseiten eingerichtet, die dieses Verhalten umgehen können, indem sie bei Bedarf einen eigenen HTML-Inhalt für solche Fehler bereitstellen.
 
 Für konsistentes Verhalten über alle Systeme hinweg wird empfohlen, die Fehlerseitenkonfiguration aus `manager.sh` zu übernehmen.
 
@@ -119,4 +148,4 @@ Für konsistentes Verhalten über alle Systeme hinweg wird empfohlen, die Fehler
 
 # Verwendete APIs
 [Google reCaptcha](https://cloud.google.com/security/products/recaptcha)  
-[Google Fronts](https://fonts.google.com/icons) (lokal eingebunden)
+[Google Fonts](https://fonts.google.com/icons) (lokal eingebunden)
