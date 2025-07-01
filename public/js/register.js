@@ -126,21 +126,18 @@ document.addEventListener('DOMContentLoaded', () => {
       grecaptcha.execute(siteKey, { action: 'register' }).then(async token => {
         tokenField.value = token;
         try {
-          const response = await fetch(baseUrl + '/register.php', {
+          const response = await fetch(registerForm.action, {
             method: 'POST',
             body: new FormData(registerForm)
           });
 
-          if (!response.ok) throw new Error(`Server-Error: ${response.status}`);
           const ct = response.headers.get('content-type') || '';
-          if (!ct.includes('application/json')) {
-            showAlert('Ungültige Server-Antwort.', 'danger');
-            return;
+          let data = {};
+          if (ct.includes('application/json')) {
+            data = await response.json();
           }
 
-          const data = await response.json();
-
-          if (data.success) {
+          if (response.ok && data.success) {
             bootstrap.Modal.getInstance(registerModal)?.hide();
             setTimeout(() => {
               resetForm();
@@ -151,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 globalAlertContainer
               );
             }, 300);
-          } else {
+          } else if (data.errors || data.message) {
             let msgs = '';
             if (data.errors) {
               Object.values(data.errors).forEach(v => {
@@ -162,6 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
               msgs = data.message || 'Unbekannter Fehler.';
             }
             showAlert(msgs, 'danger');
+          } else {
+            showAlert('Verbindungsfehler. Bitte später erneut versuchen.', 'danger');
           }
         } catch (err) {
           console.error(err);

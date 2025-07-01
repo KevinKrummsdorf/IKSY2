@@ -43,18 +43,21 @@ try {
 
     if ($errors) {
         $response['errors'] = $errors;
+        http_response_code(400);
         throw new DomainException('Ungültige Eingaben.');
     }
 
     // Doppelte prüfen
+    $dupErrors = [];
     if (DbFunctions::countWhere('users', 'username', $username) > 0) {
-        $errors['username'] = 'Benutzername vergeben.';
+        $dupErrors['username'] = 'Benutzername vergeben.';
     }
     if (DbFunctions::countWhere('users', 'email', $email) > 0) {
-        $errors['email'] = 'E-Mail vergeben.';
+        $dupErrors['email'] = 'E-Mail vergeben.';
     }
-    if ($errors) {
-        $response['errors'] = $errors;
+    if ($dupErrors) {
+        $response['errors'] = $dupErrors;
+        http_response_code(409);
         throw new DomainException('Benutzer existiert bereits.');
     }
 
