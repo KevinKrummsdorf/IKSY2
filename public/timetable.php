@@ -5,9 +5,7 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/../includes/config.inc.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+// Session wird bereits in config.inc.php gestartet
 
 // Prüfen, ob Nutzer eingeloggt ist
 if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
