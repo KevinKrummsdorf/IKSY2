@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-session_start();
+// Session wird bereits in config.inc.php gestartet
 header('Content-Type: text/html; charset=utf-8');
 
 require_once __DIR__ . '/../includes/config.inc.php';

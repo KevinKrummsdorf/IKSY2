@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-session_start();
+// Session wird bereits in config.inc.php gestartet
 
 require_once __DIR__ . '/../includes/config.inc.php';
 

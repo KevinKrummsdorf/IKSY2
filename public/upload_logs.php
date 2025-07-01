@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-session_start();
+// Session wird bereits in config.inc.php gestartet
 register_shutdown_function(function () {
     $err = error_get_last();
     if ($err) {
