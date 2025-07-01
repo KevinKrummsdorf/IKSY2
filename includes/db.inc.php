@@ -2574,6 +2574,34 @@ public static function getFilteredLockedUsers(array $filters = []): array
     }
 
     /**
+     * Prüft, ob ein Benutzername bereits vergeben ist.
+     */
+    public static function usernameExists(string $username, ?int $excludeId = null): bool
+    {
+        $sql = 'SELECT id FROM users WHERE username = :u';
+        $params = [':u' => $username];
+        if ($excludeId !== null) {
+            $sql .= ' AND id != :id';
+            $params[':id'] = $excludeId;
+        }
+        return (bool) self::fetchValue($sql, $params);
+    }
+
+    /**
+     * Prüft, ob eine E-Mail-Adresse bereits vergeben ist.
+     */
+    public static function emailExists(string $email, ?int $excludeId = null): bool
+    {
+        $sql = 'SELECT id FROM users WHERE email = :e';
+        $params = [':e' => $email];
+        if ($excludeId !== null) {
+            $sql .= ' AND id != :id';
+            $params[':id'] = $excludeId;
+        }
+        return (bool) self::fetchValue($sql, $params);
+    }
+
+    /**
      * Löscht alle Einträge im Stundenplan eines Nutzers.
      */
     public static function deleteAllTimetableEntries(int $userId): void
