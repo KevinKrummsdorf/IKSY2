@@ -157,12 +157,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     // Gruppenbild aktualisieren
-    elseif (isset($_POST['update_picture']) && $myRole === 'admin') {
-        if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
-            $error = 'Ungültiger CSRF-Token.';
-        } elseif (empty($_FILES['group_picture']) || $_FILES['group_picture']['error'] !== UPLOAD_ERR_OK) {
-            $error = 'Kein Bild hochgeladen.';
+    elseif (isset($_POST['update_picture'])) {
+        if ($myRole !== 'admin') {
+            $error = 'Nur Gruppen-Administratoren dürfen das Bild ändern.';
         } else {
+            if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
+                $error = 'Ungültiger CSRF-Token.';
+            } elseif (empty($_FILES['group_picture']) || $_FILES['group_picture']['error'] !== UPLOAD_ERR_OK) {
+                $error = 'Kein Bild hochgeladen.';
+            } else {
             $tmp  = $_FILES['group_picture']['tmp_name'];
             $ext  = strtolower(pathinfo($_FILES['group_picture']['name'], PATHINFO_EXTENSION));
 
