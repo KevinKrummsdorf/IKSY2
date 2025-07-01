@@ -5,7 +5,9 @@ ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../includes/config.inc.php';
-session_start();
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 header('Content-Type: application/json');
 
 // Sicherstellen, dass der Benutzer eingeloggt ist
