@@ -1,1 +1,18 @@
-phpcs not installed (composer global require squizlabs/php_codesniffer)
+
+FILE: /var/www/html/iksy05/StudyHub/src/PasswordController.php
+---------------------------------------------------------------------------------------------------
+FOUND 2 ERRORS AND 1 WARNING AFFECTING 2 LINES
+---------------------------------------------------------------------------------------------------
+ 1 | WARNING | [ ] A file should declare new symbols (classes, functions, constants, etc.) and
+   |         |     cause no other side effects, or it should execute logic with side effects, but
+   |         |     should not do both. The first symbol is defined on line 5 and the first side
+   |         |     effect is on line 2.
+ 1 | ERROR   | [x] Header blocks must be separated by a single blank line
+ 5 | ERROR   | [ ] Each class must be in a namespace of at least one level (a top-level vendor
+   |         |     name)
+---------------------------------------------------------------------------------------------------
+PHPCBF CAN FIX THE 1 MARKED SNIFF VIOLATIONS AUTOMATICALLY
+---------------------------------------------------------------------------------------------------
+
+Time: 298ms; Memory: 12MB
+

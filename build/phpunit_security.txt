@@ -1,1 +1,1 @@
-phpunit not installed (composer require --dev phpunit/phpunit)
+Kein PHPUnit-Config-File gefunden – Test-Suite übersprungen

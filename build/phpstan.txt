@@ -1,1 +1,14 @@
-phpstan not installed (composer require --dev phpstan/phpstan)
+/var/www/html/iksy05/StudyHub/src/PasswordController.php:9:Call to static method fetchUserByIdentifier() on an unknown class DbFunctions.
+/var/www/html/iksy05/StudyHub/src/PasswordController.php:15:Call to static method storePasswordResetToken() on an unknown class DbFunctions.
+/var/www/html/iksy05/StudyHub/src/PasswordController.php:16:Call to static method db_connect() on an unknown class DbFunctions.
+/var/www/html/iksy05/StudyHub/src/PasswordController.php:16:Function sendPasswordResetEmail not found.
+/var/www/html/iksy05/StudyHub/src/PasswordController.php:21:Call to static method fetchPasswordResetUser() on an unknown class DbFunctions.
+/var/www/html/iksy05/StudyHub/src/PasswordController.php:25:Function password_meets_requirements not found.
+/var/www/html/iksy05/StudyHub/src/PasswordController.php:29:Call to static method updatePassword() on an unknown class DbFunctions.
+/var/www/html/iksy05/StudyHub/src/PasswordController.php:30:Call to static method deletePasswordResetToken() on an unknown class DbFunctions.
+/var/www/html/iksy05/StudyHub/src/PasswordController.php:31:Call to static method db_connect() on an unknown class DbFunctions.
+/var/www/html/iksy05/StudyHub/src/PasswordController.php:31:Function sendPasswordResetSuccessEmail not found.
+/var/www/html/iksy05/StudyHub/src/PasswordController.php:36:Call to static method fetchUserById() on an unknown class DbFunctions.
+/var/www/html/iksy05/StudyHub/src/PasswordController.php:37:Function verifyPassword not found.
+/var/www/html/iksy05/StudyHub/src/PasswordController.php:40:Function password_meets_requirements not found.
+/var/www/html/iksy05/StudyHub/src/PasswordController.php:44:Call to static method updatePassword() on an unknown class DbFunctions.

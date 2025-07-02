@@ -3,8 +3,92 @@
     "version": "dev-main",
     "license": [],
     "dependencies": {
+        "colinodell/json5": {
+            "version": "v3.0.0",
+            "license": [
+                "MIT"
+            ]
+        },
+        "composer/pcre": {
+            "version": "3.3.2",
+            "license": [
+                "MIT"
+            ]
+        },
+        "composer/xdebug-handler": {
+            "version": "3.0.5",
+            "license": [
+                "MIT"
+            ]
+        },
+        "fidry/cpu-core-counter": {
+            "version": "1.2.0",
+            "license": [
+                "MIT"
+            ]
+        },
         "graham-campbell/result-type": {
             "version": "v1.1.3",
+            "license": [
+                "MIT"
+            ]
+        },
+        "infection/abstract-testframework-adapter": {
+            "version": "0.5.0",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "infection/extension-installer": {
+            "version": "0.1.2",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "infection/include-interceptor": {
+            "version": "0.2.5",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "infection/infection": {
+            "version": "0.29.14",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "infection/mutator": {
+            "version": "0.4.1",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "justinrainbow/json-schema": {
+            "version": "6.4.2",
+            "license": [
+                "MIT"
+            ]
+        },
+        "marc-mabe/php-enum": {
+            "version": "v4.7.1",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "nikic/php-parser": {
+            "version": "v5.5.0",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "ondram/ci-detector": {
+            "version": "4.2.0",
+            "license": [
+                "MIT"
+            ]
+        },
+        "openmetrics-php/exposition-text": {
+            "version": "v0.4.2",
             "license": [
                 "MIT"
             ]
@@ -39,10 +123,70 @@
                 "LGPL-2.1-only"
             ]
         },
+        "phpmetrics/phpmetrics": {
+            "version": "v3.0.0rc8",
+            "license": [
+                "MIT"
+            ]
+        },
         "phpoption/phpoption": {
             "version": "1.9.3",
             "license": [
                 "Apache-2.0"
+            ]
+        },
+        "phpstan/phpstan": {
+            "version": "2.1.17",
+            "license": [
+                "MIT"
+            ]
+        },
+        "phpunit/php-code-coverage": {
+            "version": "1.2.18",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "phpunit/php-file-iterator": {
+            "version": "3.0.6",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "phpunit/php-text-template": {
+            "version": "5.0.0",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "phpunit/php-timer": {
+            "version": "5.0.3",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "phpunit/php-token-stream": {
+            "version": "1.2.2",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "phpunit/phpunit": {
+            "version": "3.7.32",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "phpunit/phpunit-mock-objects": {
+            "version": "1.2.3",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "psr/container": {
+            "version": "2.0.2",
+            "license": [
+                "MIT"
             ]
         },
         "psr/log": {
@@ -57,13 +201,91 @@
                 "MIT"
             ]
         },
+        "sanmai/later": {
+            "version": "0.1.7",
+            "license": [
+                "Apache-2.0"
+            ]
+        },
+        "sanmai/pipeline": {
+            "version": "6.18",
+            "license": [
+                "Apache-2.0"
+            ]
+        },
+        "sebastian/cli-parser": {
+            "version": "1.0.2",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "sebastian/diff": {
+            "version": "7.0.0",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "sebastian/phpcpd": {
+            "version": "6.0.3",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "sebastian/version": {
+            "version": "3.0.2",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
         "smarty/smarty": {
             "version": "v5.5.1",
             "license": [
                 "LGPL-3.0"
             ]
         },
+        "squizlabs/php_codesniffer": {
+            "version": "3.13.2",
+            "license": [
+                "BSD-3-Clause"
+            ]
+        },
+        "symfony/console": {
+            "version": "v7.3.1",
+            "license": [
+                "MIT"
+            ]
+        },
+        "symfony/deprecation-contracts": {
+            "version": "v3.6.0",
+            "license": [
+                "MIT"
+            ]
+        },
+        "symfony/filesystem": {
+            "version": "v7.3.0",
+            "license": [
+                "MIT"
+            ]
+        },
+        "symfony/finder": {
+            "version": "v7.3.0",
+            "license": [
+                "MIT"
+            ]
+        },
         "symfony/polyfill-ctype": {
+            "version": "v1.32.0",
+            "license": [
+                "MIT"
+            ]
+        },
+        "symfony/polyfill-intl-grapheme": {
+            "version": "v1.32.0",
+            "license": [
+                "MIT"
+            ]
+        },
+        "symfony/polyfill-intl-normalizer": {
             "version": "v1.32.0",
             "license": [
                 "MIT"
@@ -81,10 +303,40 @@
                 "MIT"
             ]
         },
+        "symfony/process": {
+            "version": "v7.3.0",
+            "license": [
+                "MIT"
+            ]
+        },
+        "symfony/service-contracts": {
+            "version": "v3.6.0",
+            "license": [
+                "MIT"
+            ]
+        },
+        "symfony/string": {
+            "version": "v7.3.0",
+            "license": [
+                "MIT"
+            ]
+        },
+        "symfony/yaml": {
+            "version": "v2.8.52",
+            "license": [
+                "MIT"
+            ]
+        },
         "tecnickcom/tcpdf": {
             "version": "6.10.0",
             "license": [
                 "LGPL-3.0-or-later"
+            ]
+        },
+        "thecodingmachine/safe": {
+            "version": "v3.3.0",
+            "license": [
+                "MIT"
             ]
         },
         "twbs/bootstrap": {
@@ -97,6 +349,12 @@
             "version": "v5.6.2",
             "license": [
                 "BSD-3-Clause"
+            ]
+        },
+        "webmozart/assert": {
+            "version": "1.11.0",
+            "license": [
+                "MIT"
             ]
         }
     }

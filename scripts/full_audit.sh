@@ -1,95 +1,120 @@
 #!/usr/bin/env bash
 set -euo pipefail
-mkdir -p build
+mkdir -p build tools
 
-# 1) Abhängigkeiten & Umgebung
+# ------------------------------------------------------------
+# 0) Helfer – Dev-Pakete nachziehen (-W = full-update)
+# ------------------------------------------------------------
+require_dev() {
+  local pkg="$1"
+  if ! grep -q "\"${pkg%%:*}\"" composer.json 2>/dev/null; then
+    echo "  » $pkg nachziehen …"
+    composer require --dev -W --no-interaction --no-progress "$pkg"
+  fi
+}
+
+# ------------------------------------------------------------
+# 1) Abhängigkeiten & QA-Toolchain
+# ------------------------------------------------------------
 composer install --prefer-dist --no-interaction
-if command -v docker >/dev/null 2>&1; then
-  docker compose up -d --quiet-pull db redis || true
-else
-  echo 'docker not installed, skipping containers' >&2
+
+echo "🔧 QA-Toolchain installieren (falls nötig)…"
+require_dev "phpunit/phpunit"
+require_dev "phpstan/phpstan"
+require_dev "infection/infection"
+require_dev "phpmetrics/phpmetrics:^3@dev"
+require_dev "squizlabs/php_codesniffer"
+
+# Psalm als PHAR (unabhängig von Composer)
+if [ ! -x tools/psalm.phar ]; then
+  curl -sSL \
+    https://github.com/vimeo/psalm/releases/latest/download/psalm.phar \
+    -o tools/psalm.phar && chmod +x tools/psalm.phar
 fi
-php -r "copy('.env.example','.env');" 2>/dev/null || true
+
+# ------------------------------------------------------------
+# 2) Optionale Container (DB/Redis)
+# ------------------------------------------------------------
+if command -v docker >/dev/null 2>&1 && [ -f docker-compose.yml ]; then
+  docker compose up -d --quiet-pull db redis || true
+fi
+
+php -r "file_exists('.env') ?: @copy('.env.example','.env');" || true
 php artisan key:generate 2>/dev/null || true
 
-# 2) SECURITY
-composer audit --no-dev --format=json   > build/composer_audit.json
-if [ -x vendor/bin/psalm ]; then
-  vendor/bin/psalm --taint-analysis --output-format=json \
-                                  > build/psalm_taint.json
-else
-  echo '{}' > build/psalm_taint.json
-  echo 'psalm not installed, skipping (composer require --dev vimeo/psalm)' >&2
-fi
+# ------------------------------------------------------------
+# 3) SECURITY-CHECKS
+# ------------------------------------------------------------
+composer audit --no-dev --format=json > build/composer_audit.json
+php tools/psalm.phar --taint-analysis --no-cache --output-format=json \
+                     > build/psalm_taint.json || true
+
 if command -v npx >/dev/null 2>&1; then
   npx --yes @zaproxy/zap-cli quick-scan --self-contained \
-        --spider-time 0 http://localhost > build/zap.txt 2>&1 || true
+      --spider-time 0 http://localhost \
+      > build/zap.txt 2>&1 || true
 else
-  echo 'npx not installed (install Node.js and npm)' > build/zap.txt
+  echo 'Node.js (npm/npx) fehlt – ZAP übersprungen' > build/zap.txt
 fi
+
 grep -R --line-number -E "\$_(GET|POST|REQUEST|COOKIE)\['[^']+'\]" src \
-                                  > build/raw_superglobals.txt || true
+     > build/raw_superglobals.txt || true
 
-# 3) XSS / SQL-Injection Tests
-if [ -x vendor/bin/phpunit ]; then
-  vendor/bin/phpunit --testsuite security --coverage-text \
-                                  > build/phpunit_security.txt
+# ------------------------------------------------------------
+# 4) UNIT-Tests (XSS / SQLi …)
+# ------------------------------------------------------------
+if [ -x vendor/bin/phpunit ] && ls phpunit*.xml* phpunit*.yml* 1>/dev/null 2>&1
+then
+  vendor/bin/phpunit --coverage-text > build/phpunit_security.txt || true
 else
-  echo 'phpunit not installed (composer require --dev phpunit/phpunit)' > build/phpunit_security.txt
-fi
-
-# 4) PERFORMANCE / EFFIZIENZ
-if [ -x vendor/bin/phpbench ]; then
-  vendor/bin/phpbench run --report=aggregate --output=build/phpbench.xml
-else
-  echo '<phpbench/>' > build/phpbench.xml
-fi
-if [ -x vendor/bin/phpmetrics ]; then
-  vendor/bin/phpmetrics --report-html=build/metrics     >/dev/null
-else
-  echo 'phpmetrics not installed (composer global require phpmetrics/phpmetrics)' > build/metrics.txt
-fi
-if command -v ab >/dev/null 2>&1; then
-  ab -n 500 -c 25 http://localhost/                     > build/ab.txt
-else
-  echo 'ab not installed (install apache2-utils)' > build/ab.txt
+  echo 'Kein PHPUnit-Config-File gefunden – Test-Suite übersprungen' \
+       > build/phpunit_security.txt
 fi
 
-# 5) CODE-QUALITÄT
-if [ -x vendor/bin/phpstan ]; then
-  vendor/bin/phpstan analyse --error-format raw         > build/phpstan.txt
-else
-  echo 'phpstan not installed (composer require --dev phpstan/phpstan)' > build/phpstan.txt
-fi
-if [ -x vendor/bin/phpcs ]; then
-  vendor/bin/phpcs --standard=PSR12 --report=full src/  > build/phpcs.txt
-else
-  echo 'phpcs not installed (composer global require squizlabs/php_codesniffer)' > build/phpcs.txt
-fi
-if [ -x vendor/bin/phpcpd ]; then
-  vendor/bin/phpcpd src/                                > build/duplication.txt
-else
-  echo 'phpcpd not installed (composer require --dev sebastian/phpcpd)' > build/duplication.txt
-fi
-if [ -x vendor/bin/deptrac ]; then
+# ------------------------------------------------------------
+# 5) PERFORMANCE / EFFIZIENZ
+# ------------------------------------------------------------
+vendor/bin/phpbench run --report=aggregate --output=build/phpbench.xml || true
+vendor/bin/phpmetrics --report-html=build/metrics ./src              || true
+command -v ab >/dev/null 2>&1 && \
+  ab -n 500 -c 25 http://localhost/ > build/ab.txt || true
+
+# ------------------------------------------------------------
+# 6) CODE-QUALITÄT
+# ------------------------------------------------------------
+PHPSTAN_PATH="src"; [ -d "$PHPSTAN_PATH" ] || PHPSTAN_PATH="."
+vendor/bin/phpstan analyse "$PHPSTAN_PATH" --no-progress --error-format raw \
+                         > build/phpstan.txt  || true
+vendor/bin/phpcs --standard=PSR12 --report=full src/ \
+                 > build/phpcs.txt            || true
+vendor/bin/phpcpd src/ > build/duplication.txt || true
+[ -x vendor/bin/deptrac ] && \
   vendor/bin/deptrac --formatter=graphviz \
-                   --output=build/architecture.dot    || true
+                     --output=build/architecture.dot || true
+
+# ------------------------------------------------------------
+# 7) DEPENDENCY-HYGIENE
+# ------------------------------------------------------------
+composer outdated --direct      > build/outdated.txt
+composer licenses --format=json > build/licenses.json || true
+
+# ------------------------------------------------------------
+# 8) MUTATION-Tests
+# ------------------------------------------------------------
+if [ ! -f infection.json ]; then
+cat > infection.json <<'JSON'
+{
+  "source": { "directories": ["src"] },
+  "logs":   { "text": "build/infection-log.txt" }
+}
+JSON
 fi
+vendor/bin/infection --threads=4 --only-covered --no-interaction \
+                     > build/infection.txt || true
 
-# 6) DEPENDENCY-HYGIENE
-composer outdated --direct               > build/outdated.txt
-composer licenses --format=json          > build/licenses.json || true
-
-# 7) MUTATION TESTING
-if [ -x vendor/bin/infection ]; then
-  vendor/bin/infection --threads=4 --only-covered \
-                     --log-verbosity=all \
-                     --text=build/infection.txt        || true
-else
-  echo 'infection not installed (composer require --dev infection/infection)' > build/infection.txt
-fi
-
-# 8) ZUSAMMENFASSUNG
+# ------------------------------------------------------------
+# 9) SUMMARY
+# ------------------------------------------------------------
 php -r '
 $out = "## Projekt-Audit (".date("Y-m-d").")\n\n";
 foreach (glob("build/*.txt") as $f) {
@@ -97,3 +122,4 @@ foreach (glob("build/*.txt") as $f) {
 }
 file_put_contents("AUDIT_SUMMARY.md", $out);
 '
+echo "✅ Audit abgeschlossen – Berichte liegen in ./build/ und AUDIT_SUMMARY.md"

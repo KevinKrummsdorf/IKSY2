@@ -1,9 +1,10 @@
-npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
-npm error code E404
-npm error 404 Not Found - GET https://registry.npmjs.org/@zaproxy%2fzap-cli - Not found
-npm error 404
-npm error 404  '@zaproxy/zap-cli@*' is not in this registry.
-npm error 404
-npm error 404 Note that you can also install from a
-npm error 404 tarball, folder, http url, or git url.
-npm error A complete log of this run can be found in: /root/.npm/_logs/2025-07-02T07_37_59_287Z-debug-0.log
+npm ERR! code E404
+npm ERR! 404 Not Found - GET https://registry.npmjs.org/@zaproxy%2fzap-cli - Not found
+npm ERR! 404 
+npm ERR! 404  '@zaproxy/zap-cli@*' is not in this registry.
+npm ERR! 404 
+npm ERR! 404 Note that you can also install from a
+npm ERR! 404 tarball, folder, http url, or git url.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /home/iksy/.npm/_logs/2025-07-02T08_40_52_247Z-debug-0.log
