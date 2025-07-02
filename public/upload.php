@@ -170,10 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     $uploadId = DbFunctions::uploadFile($storedName, $materialId, (int)$_SESSION['user_id']);
                                     $success  = 'Datei erfolgreich hochgeladen und wartet auf Freigabe.';
                                 }
-
-                                DbFunctions::insertUploadLog((int)$_SESSION['user_id'], $uploadId);
-
-                             }
+                            }
 
                             $_POST = [];
                         } catch (Exception $e) {
