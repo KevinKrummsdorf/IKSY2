@@ -1,0 +1,104 @@
+name: Full Project Audit
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+
+    services:
+      # Optional: Datenbank f\xC3\xBCr Integration- / SQLi-Tests
+      mariadb:
+        image: mariadb:11
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. PHP-Umgebung
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          coverage: xdebug
+          tools: >
+            composer,
+            phpunit,
+            phpbench,
+            psalm,
+            phpstan,
+            phpcs,
+            phpmetrics,
+            infection,
+            phpcpd
+
+      - name: Install composer deps
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      # 2. SECURITY-CHECKS
+      - name: Composer CVE audit
+        run: composer audit --no-dev --format=plain
+
+      - name: Taint analysis (Psalm)
+        run: vendor/bin/psalm --taint-analysis
+
+      - name: Static code scan (PHPStan)
+        run: vendor/bin/phpstan analyse
+
+      - name: Coding standards (PHPCS)
+        run: vendor/bin/phpcs --standard=PSR12 src/
+
+      - name: Duplicate / dead code (PHPCPD)
+        run: vendor/bin/phpcpd src/
+
+      - name: Unit + security test-suite
+        run: vendor/bin/phpunit --coverage-text
+
+      # 3. PERFORMANCE & EFFIZIENZ
+      - name: Micro-benchmarks (PHPBench)
+        run: vendor/bin/phpbench run --report=aggregate --ansi
+
+      - name: Metrics & complexity (PHPMetrics)
+        run: vendor/bin/phpmetrics --report-html=build/metrics ./src
+
+      # 4. MUTATION-TESTING (stellt echte Fehler sicher)
+      - name: Infection
+        run: vendor/bin/infection --threads=4 --only-covered --logger-text=build/infection.txt
+
+      # 5. OPTIONAL: OWASP-ZAP Baseline gegen lokale http://localhost
+      - name: OWASP ZAP baseline scan
+        uses: zaproxy/action-baseline@v0.7.0
+        with:
+          target: 'http://localhost'
+          rules_file_name: zap-ignore.txt
+        continue-on-error: true   # Fails nicht den ganzen Job
+
+      # 6. Outdated & License check
+      - name: Outdated dependencies
+        run: composer outdated --direct --strict
+
+      - name: License overview
+        run: composer licenses --format=json | tee build/licenses.json
+
+      # 7. Ergebnisse als Artefakt anh\xC3\xA4ngen
+      - name: Upload audit reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-reports
+          path: |
+            build/
+            tests/_output
+          if-no-files-found: warn
