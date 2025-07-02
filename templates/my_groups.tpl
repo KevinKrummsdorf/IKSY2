@@ -4,8 +4,8 @@
 {block name="content"}
 <div class="container mt-5">
   <h1 class="mb-4 text-center">Meine Lerngruppen</h1>
-  {if $error}<div class="alert alert-danger">{$error}</div>{/if}
-  {if $success}<div class="alert alert-success">{$success}</div>{/if}
+  {if $error}<div class="alert alert-danger">{$error|escape}</div>{/if}
+  {if $success}<div class="alert alert-success">{$success|escape}</div>{/if}
 
   {if $myGroups|@count > 0}
     <div class="mb-3">

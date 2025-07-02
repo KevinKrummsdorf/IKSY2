@@ -7,7 +7,7 @@
 {if $success}
     <div class="alert alert-success">Passwort wurde aktualisiert.</div>
 {elseif $message}
-    <div class="alert alert-danger">{$message}</div>
+    <div class="alert alert-danger">{$message|escape}</div>
 {/if}
 <div id="formAlert" class="alert alert-danger d-none">Bitte alle Felder ausfüllen.</div>
 <form method="post" class="needs-validation" data-pw-validate novalidate>

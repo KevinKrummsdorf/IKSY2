@@ -3,8 +3,8 @@
 {block name="content"}
 <div class="container mt-5">
   <h1 class="mb-4 text-center">Neue Gruppe erstellen</h1>
-  {if $error}<div class="alert alert-danger">{$error}</div>{/if}
-  {if $success}<div class="alert alert-success">{$success}</div>{/if}
+  {if $error}<div class="alert alert-danger">{$error|escape}</div>{/if}
+  {if $success}<div class="alert alert-success">{$success|escape}</div>{/if}
   <form method="post">
     <div class="mb-3">
       <input type="text" name="group_name" class="form-control" placeholder="Gruppenname" required>

@@ -16,9 +16,9 @@
             {if isset($flash.message) || isset($message)}
                 <div class="alert alert-{if isset($flash.type)}{$flash.type|default:'info'}{else}danger{/if}">
                     {if isset($flash.message)}
-                        {$flash.message}
+                        {$flash.message|escape}
                     {else}
-                        {$message}
+                        {$message|escape}
                     {/if}
                 </div>
             {/if}

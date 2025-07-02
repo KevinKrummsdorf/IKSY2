@@ -6,13 +6,13 @@
     <h1 class="mb-4 text-center">Materialien hochladen</h1>
 
     {if isset($error)}
-    <div class="alert alert-danger">{$error}</div>
+    <div class="alert alert-danger">{$error|escape}</div>
     {/if}
     {if isset($warning)}
-    <div class="alert alert-warning">{$warning}</div>
+    <div class="alert alert-warning">{$warning|escape}</div>
     {/if}
     {if isset($success)}
-    <div class="alert alert-success">{$success}</div>
+    <div class="alert alert-success">{$success|escape}</div>
     {/if}
 
     <div class="mb-3">
