@@ -14,11 +14,21 @@ if (!in_array($_SESSION['role'] ?? '', ['admin', 'mod'], true)) {
     handle_error(403, $reason, 'both');
 }
 
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf = $_SESSION['csrf_token'];
+
 // Flash-Messages
 $_SESSION['flash'] = null;
 
 // Antwort senden
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply_contact_id'])) {
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_POST['reply_contact_id']) &&
+    isset($_POST['csrf_token']) &&
+    hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])
+) {
     $contactId = trim($_POST['reply_contact_id']);
     $replyText = trim($_POST['reply_text'] ?? '');
 
@@ -47,7 +57,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply_contact_id'])) 
 }
 
 // Statuswechsel
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status_contact_id'], $_POST['new_status'])) {
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_POST['status_contact_id'], $_POST['new_status'], $_POST['csrf_token']) &&
+    hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])
+) {
     $contactId  = trim($_POST['status_contact_id']);
     $newStatus  = trim($_POST['new_status']);
     $validStates = ['offen', 'in_bearbeitung', 'geschlossen'];
@@ -102,6 +116,7 @@ $smarty->assign([
     'isAdmin'          => ($_SESSION['role'] ?? '') === 'admin',
     'isMod'            => ($_SESSION['role'] ?? '') === 'mod',
     'username'         => $_SESSION['username'] ?? '',
+    'csrf_token'       => $csrf,
 ]);
 
 unset($_SESSION['flash']);

@@ -71,6 +71,7 @@
                 <!-- Status-Wechsel -->
                 <td>
                   <form method="post" action="{url path='contact_request'}" class="d-flex">
+                    <input type="hidden" name="csrf_token" value="{$csrf_token}">
                     <input type="hidden" name="status_contact_id" value="{$r.contact_id}">
                     <select name="new_status" class="form-select form-select-sm me-2">
                       <option value="offen" {if $r.status == 'offen'}selected{/if}>Offen</option>
@@ -84,6 +85,7 @@
                 <!-- Antwortformular -->
                 <td>
                   <form method="post" action="{url path='contact_request'}">
+                    <input type="hidden" name="csrf_token" value="{$csrf_token}">
                     <input type="hidden" name="reply_contact_id" value="{$r.contact_id}">
                     <textarea name="reply_text" rows="2" class="form-control mb-2" placeholder="Antwort eingeben..." required></textarea>
                     <button type="submit" class="btn btn-sm btn-outline-success w-100">Antwort senden</button>
