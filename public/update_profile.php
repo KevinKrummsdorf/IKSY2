@@ -63,8 +63,8 @@ try {
             try {
                 $subject = 'Passwort geändert';
                 $html    = "<p>Hallo {$user['username']},</p><p>dein Passwort wurde erfolgreich geändert. " .
-                           "Wenn du das nicht warst, kontaktiere bitte sofort den Support.</p>" .
-                           '<p>Viele Grüße,<br>StudyHub-Team</p>';
+                           "Wenn du das nicht warst, kontaktiere bitte umgehend den Support.</p>" .
+                           '<p>Viele Grüße,<br>dein StudyHub-Team</p>';
                 sendMail($user['email'], $user['username'], $subject, $html);
             } catch (Throwable $mailEx) {
                 error_log('Passwort-Change-E-Mail fehlgeschlagen: ' . $mailEx->getMessage());
