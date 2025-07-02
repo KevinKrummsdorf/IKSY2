@@ -1,5 +1,4 @@
 # Ignoriere einzelne Dateien
-publicsecret-key.txt
 .env
 .cache_ggshield
 README.md
