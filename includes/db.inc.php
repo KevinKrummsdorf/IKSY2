@@ -1982,21 +1982,29 @@ public static function submitCourseSuggestion(string $courseName, int $userId): 
      */
     public static function findSimilarCourse(string $courseName): ?string
     {
-        $pdo = self::db_connect();
-        $stmt = $pdo->query('SELECT name FROM courses');
-        $courses = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        static $courses = null;
+        static $canonical = [];
+
+        if ($courses === null) {
+            $pdo = self::db_connect();
+            $stmt = $pdo->query('SELECT name FROM courses');
+            $courses = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            foreach ($courses as $course) {
+                $canonical[$course] = self::canonicalCourseName($course);
+            }
+        }
+
         $target = self::canonicalCourseName($courseName);
 
-        foreach ($courses as $c) {
-            $norm = self::canonicalCourseName($c);
+        foreach ($canonical as $orig => $norm) {
             if ($target === $norm) {
-                return $c;
+                return $orig;
             }
             if (levenshtein($target, $norm) <= 2) {
-                return $c;
+                return $orig;
             }
             if (soundex($target) === soundex($norm)) {
-                return $c;
+                return $orig;
             }
         }
 
