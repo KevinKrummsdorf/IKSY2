@@ -13,7 +13,7 @@ jobs:
     services:
       # Optional: Datenbank f\xC3\xBCr Integration- / SQLi-Tests
       mariadb:
-        image: mariadb:11
+        image: mariadb:10.11
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: test
