@@ -72,9 +72,6 @@
                   <span class="badge bg-success">Freigegeben</span>
                 {elseif $u.is_rejected}
                   <span class="badge bg-danger">Abgelehnt</span>
-                  <a href="#" class="text-info ms-1 info-note" data-note="{$u.rejection_note|escape}">
-                    <span class="material-symbols-outlined" style="font-size:1rem">info</span>
-                  </a>
                 {else}
                   <span class="badge bg-warning text-dark">Wartet auf Freigabe</span>
                 {/if}
@@ -117,13 +114,4 @@
     <div class="alert alert-info">Keine Uploads gefunden.</div>
   {/if}
 </div>
-<script>
-  document.querySelectorAll('.info-note').forEach(el => {
-    el.addEventListener('click', e => {
-      e.preventDefault();
-      const note = el.dataset.note || 'Kein Grund angegeben';
-      alert('Ablehnungsgrund: ' + note);
-    });
-  });
-</script>
 {/block}

@@ -1364,27 +1364,7 @@ public static function approveUpload(int $uploadId, int $adminId): bool
     $stmt = $pdo->prepare("UPDATE uploads SET is_approved = 1 WHERE id = ?");
     $stmt->execute([$uploadId]);
 
-    // Logging
-    self::logUploadAction($uploadId, 'approved', $adminId, 'Upload freigegeben');
     return true;
-}
-
-/*
-    * Protokolliert eine Aktion für einen Upload.
-    * $uploadId: ID des Uploads
-    * $action: Art der Aktion (z.B. 'approved', 'rejected')
-    * $actedBy: ID des Benutzers, der die Aktion ausgeführt hat
-    * $note: Optionaler Kommentar zur Aktion
-*/
-public static function logUploadAction(int $uploadId, string $action, int $actedBy, ?string $note = null): void
-{
-    $pdo = self::db_connect();
-
-    $stmt = $pdo->prepare("
-        INSERT INTO upload_logs (upload_id, action, acted_by, note)
-        VALUES (?, ?, ?, ?)
-    ");
-    $stmt->execute([$uploadId, $action, $actedBy, $note]);
 }
 
 /*
@@ -1404,7 +1384,6 @@ public static function rejectUpload(int $uploadId, int $modId, ?string $note = n
     $stmt->execute([$uploadId]);
 
     // Logeintrag
-    self::logUploadAction($uploadId, 'rejected', $modId, $note ?? 'Upload abgelehnt');
 
     return true;
 }
@@ -1548,15 +1527,7 @@ public static function getPendingCourseSuggestions(): array
         $sql = "
             SELECT u.id, u.stored_name, u.uploaded_at,
                    u.is_approved, u.is_rejected,
-                   m.title, c.name AS course_name,
-                   (
-                     SELECT ul.note
-                     FROM upload_logs ul
-                     WHERE ul.upload_id = u.id
-                       AND ul.action = 'rejected'
-                     ORDER BY ul.action_time DESC
-                     LIMIT 1
-                   ) AS rejection_note
+                   m.title, c.name AS course_name
             FROM uploads u
             JOIN materials m ON u.material_id = m.id
             JOIN courses c ON m.course_id = c.id
@@ -1673,7 +1644,6 @@ public static function getPendingCourseSuggestions(): array
             $materialId = (int)$row['material_id'];
 
             // Erst loggen, dann löschen, damit Foreign Keys nicht scheitern
-            self::logUploadAction($uploadId, 'deleted', $userId, 'Upload gelöscht');
 
             $del = $pdo->prepare('DELETE FROM uploads WHERE id = ? AND uploaded_by = ?');
             $del->execute([$uploadId, $userId]);
@@ -1697,60 +1667,6 @@ public static function getPendingCourseSuggestions(): array
 * Entfernt abgelehnte Uploads, deren Ablehnung älter ist als die angegebene Anzahl Tage.
      * Gibt die Anzahl der gelöschten Uploads zurück.
      */
-    public static function purgeOldRejectedUploads(int $days = 30): int
-    {
-        $pdo = self::db_connect();
-
-        $sql = "
-            SELECT u.id, u.stored_name, u.material_id
-            FROM uploads u
-            JOIN (
-                SELECT upload_id, MAX(action_time) AS reject_time
-                FROM upload_logs
-                WHERE action = 'rejected'
-                GROUP BY upload_id
-            ) r ON u.id = r.upload_id
-            WHERE u.is_rejected = 1
-              AND r.reject_time < DATE_SUB(NOW(), INTERVAL ? DAY)";
-
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$days]);
-        $oldUploads = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $deleted = 0;
-
-        $pdo->beginTransaction();
-        try {
-            foreach ($oldUploads as $row) {
-                $uploadId   = (int)$row['id'];
-                $materialId = (int)$row['material_id'];
-                $name       = $row['stored_name'];
-
-                self::logUploadAction($uploadId, 'deleted', 0, 'Automatisch entfernt');
-                $pdo->prepare('DELETE FROM uploads WHERE id = ?')->execute([$uploadId]);
-
-                $file = __DIR__ . '/../uploads/' . $name;
-                if (is_file($file)) {
-                    @unlink($file);
-                }
-
-                $check = $pdo->prepare('SELECT COUNT(*) FROM uploads WHERE material_id = ?');
-                $check->execute([$materialId]);
-                if ((int)$check->fetchColumn() === 0) {
-                    $pdo->prepare('DELETE FROM materials WHERE id = ?')->execute([$materialId]);
-                }
-
-                $deleted++;
-            }
-
-            $pdo->commit();
-        } catch (Exception $e) {
-            $pdo->rollBack();
-            throw $e;
-        }
-
-        return $deleted;
-    }
 
     /*
     * Löscht einen Upload einer Lerngruppe durch einen Administrator.
@@ -1774,7 +1690,6 @@ public static function getPendingCourseSuggestions(): array
             $name = $row['stored_name'];
             $materialId = (int)$row['material_id'];
 
-            self::logUploadAction($uploadId, 'deleted', $adminId, 'Upload gelöscht (admin)');
 
             $del = $pdo->prepare('DELETE FROM uploads WHERE id = ? AND group_id = ?');
             $del->execute([$uploadId, $groupId]);
@@ -1792,6 +1707,7 @@ public static function getPendingCourseSuggestions(): array
             throw $e;
         }
     }
+
 /* * Holt die ID eines Kurses anhand seines Namens.
  * Gibt die Kurs-ID zurück oder wirft eine Ausnahme, wenn der Kurs nicht gefunden wird.
  */
@@ -1883,16 +1799,6 @@ public static function submitCourseSuggestion(string $courseName, int $userId): 
         return null;
     }
 
-/**
- * Zählt die Login-Logs basierend auf den angegebenen Filtern.
- * @param array $filters Filterkriterien
- * @return int Anzahl der Login-Logs
- */
-/**
- * Zählt die Anzahl der Captcha-Logs basierend auf den angegebenen Filtern.
- * @param array $filters Filterkriterien
- * @return int Anzahl der Captcha-Logs
- */
 public static function countFilteredCaptchaLogs(array $filters = []): int
 {
     $pdo = self::db_connect();
