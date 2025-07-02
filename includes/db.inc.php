@@ -794,11 +794,6 @@ public static function execute(string $query, array $params = [], bool $expectRe
         ], false);
     }
 
-
-
-
-
-
     /**
      * Holt den Benutzer anhand des Tokens für die E-Mail-Verifizierung.
      */
@@ -1373,9 +1368,6 @@ public static function approveUpload(int $uploadId, int $adminId): bool
 }
 
 /*
- * @param int $limit Anzahl der Einträge pro Seite
- * @param int $offset Offset für die Paginierung
- * @param bool $isAdmin Ist der Benutzer ein Administrator?
  * Lehnt einen Upload ab und protokolliert die Aktion.
  * Gibt true zurück, wenn erfolgreich.
  */
@@ -1499,7 +1491,6 @@ public static function getPendingCourseSuggestions(): array
     ");
     return $stmt->fetchAll();
 }
-
 
     /**
      * Holt alle genehmigten Uploads eines Benutzers.
@@ -1716,7 +1707,8 @@ public static function getPendingCourseSuggestions(): array
             throw $e;
         }
     }
-/**
+
+/* * Holt die ID eines Kurses anhand seines Namens.
  * Gibt die Kurs-ID zurück oder wirft eine Ausnahme, wenn der Kurs nicht gefunden wird.
  */
 public static function getCourseIdByName(string $name): int
@@ -1806,6 +1798,7 @@ public static function submitCourseSuggestion(string $courseName, int $userId): 
 
         return null;
     }
+
 public static function countFilteredCaptchaLogs(array $filters = []): int
 {
     $pdo = self::db_connect();

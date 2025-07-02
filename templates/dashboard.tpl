@@ -189,7 +189,8 @@
       </div>
     </section>
 
-    {* Abschnitt 4 : Ungeprüfte Uploads *}
+    {* Abschnitt 3 : Ungeprüfte Uploads *}
+
     <section class="my-5">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h2 class="mb-0">Ungeprüfte Uploads</h2>
@@ -240,7 +241,7 @@
       </div>
     </section>
 
-    {* Abschnitt 5 : Offene Kursvorschläge *}
+    {* Abschnitt 4 : Offene Kursvorschläge *}
     <section class="my-5">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h2 class="mb-0">Offene Kursvorschläge</h2>
