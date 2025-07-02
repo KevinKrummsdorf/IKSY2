@@ -189,57 +189,6 @@
       </div>
     </section>
 
-    {* Abschnitt 3 : Upload-Logs *}
-    <section class="my-5">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h2 class="mb-0">Upload-Logs</h2>
-        <button class="btn btn-outline-secondary btn-sm toggle-collapse-icon"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseUploadLogs"
-                aria-expanded="false"
-                aria-controls="collapseUploadLogs">
-          <span class="material-symbols-outlined collapse-icon">expand_more</span>
-        </button>
-      </div>
-
-      <div class="collapse" id="collapseUploadLogs">
-        {if $upload_logs|count > 0}
-          <div class="card card-body">
-            <table class="table table-striped table-bordered align-middle">
-              <thead class="table-dark text-center">
-                <tr>
-                  <th>#</th>
-                  <th>Username</th>
-                  <th>Dateiname</th>
-                  <th>Action</th>
-                  <th>Grund</th>
-                  <th>Zeitpunkt</th>
-                </tr>
-              </thead>
-              <tbody>
-                {foreach $upload_logs as $i => $log}
-                  <tr>
-                    <td>{$index + 1}</td>
-                    <td>{$log.acted_by_user|default:'–'|escape}</td>
-                    <td>{$log.stored_name|escape}</td>
-                    <td>{$log.action|capitalize}</td>
-                    <td>{$log.note|default:'–'|escape}</td>
-                    <td>{$log.action_time|date_format:"%d.%m.%Y %H:%M"}</td>
-                  </tr>
-                {/foreach}
-              </tbody>
-            </table>
-            <div class="mt-3 text-end">
-              <a href="{url path='upload_logs'}" class="btn btn-sm btn-primary">Alle Upload-Logs anzeigen</a>
-            </div>
-          </div>
-        {else}
-          <div class="alert alert-info">Keine Upload-Logs vorhanden.</div>
-        {/if}
-      </div>
-    </section>
-
     {* Abschnitt 4 : Ungeprüfte Uploads *}
     <section class="my-5">
       <div class="d-flex justify-content-between align-items-center mb-2">
