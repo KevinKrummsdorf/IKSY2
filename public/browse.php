@@ -23,6 +23,12 @@ if ($searchTerm === '') {
 // Genehmigte Uploads laden
 $uploads = DbFunctions::getApprovedUploads();
 
+// Uploads nach Material gruppieren, um spätere Suchschleifen zu vermeiden
+$uploadsByMaterial = [];
+foreach ($uploads as $up) {
+    $uploadsByMaterial[$up['material_id']][] = $up;
+}
+
 // Alle Uploader-IDs sammeln
 $uploaderIds = array_unique(array_column($uploads, 'uploaded_by'));
 
@@ -54,7 +60,8 @@ if ($isLoggedIn) {
 // Alle Daten an Smarty übergeben
 $smarty->assign('searchTerm', $searchTerm);
 $smarty->assign('materials', $materials);
-$smarty->assign('uploads', $uploads);
+$smarty->assign('uploads', $uploads); // bisherige Nutzung
+$smarty->assign('uploadsByMaterial', $uploadsByMaterial);
 $smarty->assign('profiles', $profilesAssoc);
 $smarty->assign('isLoggedIn', $isLoggedIn);
 $smarty->assign('averageRatings', $averageRatings);
