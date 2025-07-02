@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/PasswordController.php';
 
 if (empty($_SESSION['user_id'])) {
     $reason = 'Nicht eingeloggt.';
