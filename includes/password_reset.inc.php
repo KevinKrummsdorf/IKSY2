@@ -33,6 +33,9 @@ function sendPasswordResetEmail(
     sendMail($email, $username, $subject, $htmlBody, $altBody);
 }
 
+/**
+ * Benachrichtigt den Nutzer über ein erfolgreiches Zurücksetzen.
+ */
 function sendPasswordResetSuccessEmail (
     PDO $pdo,
     int $userId,
