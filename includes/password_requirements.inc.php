@@ -1,4 +1,13 @@
 <?php
+
+/**
+ * Prüft, ob ein Passwort die Mindestanforderungen erfüllt.
+ *
+ * Anforderungen:
+ *  - Länge zwischen 8 und 128 Zeichen
+ *  - Mindestens eine Ziffer, ein Groß‑ und Kleinbuchstabe
+ *  - Mindestens ein Sonderzeichen
+ */
 function password_meets_requirements(string $password): bool {
     $lengthOk = preg_match('/^.{8,128}$/', $password) === 1;
     $hasNumber = preg_match('/[0-9]/', $password) === 1;

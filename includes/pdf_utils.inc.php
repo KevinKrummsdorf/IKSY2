@@ -46,6 +46,9 @@ function convert_file_to_pdf(string $sourcePath, string $destPath): bool
     return true;
 }
 
+/**
+ * Extrahiert einfachen Text aus einer DOCX-Datei.
+ */
 function extract_text_from_docx(string $file): string
 {
     $zip = new ZipArchive();
@@ -59,6 +62,9 @@ function extract_text_from_docx(string $file): string
     return '';
 }
 
+/**
+ * Extrahiert Text aus allen Folien einer PPTX-Datei.
+ */
 function extract_text_from_pptx(string $file): string
 {
     $zip = new ZipArchive();

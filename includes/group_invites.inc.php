@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/mailing.inc.php';
 
+/**
+ * Versendet eine Einladung zu einer Lerngruppe per E-Mail.
+ */
 function sendGroupInviteEmail(string $toEmail, string $toName, string $groupName, string $inviterName, string $token): void
 {
     global $config;

@@ -2325,6 +2325,9 @@ public static function getFilteredLockedUsers(array $filters = []): array
         return $profile ?: [];
     }
 
+    /**
+     * Aktualisiert das Benutzerprofil mit den angegebenen Feldern.
+     */
     public static function updateUserProfile(int $userId, array $fields): void
     {
         $pdo = self::db_connect();
@@ -2353,6 +2356,9 @@ public static function getFilteredLockedUsers(array $filters = []): array
         }
     }
 
+    /**
+     * Speichert Änderungen an einer Gruppe.
+     */
     public static function updateGroup(int $groupId, array $fields): void
     {
         $pdo = self::db_connect();
