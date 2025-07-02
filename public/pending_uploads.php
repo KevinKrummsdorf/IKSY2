@@ -16,6 +16,19 @@ if (!$isAdmin && !$isMod) {
     handle_error(403, $reason, 'both');
 }
 
+$filters = [
+    'title'       => trim($_GET['title'] ?? ''),
+    'filename'    => trim($_GET['filename'] ?? ''),
+    'course_name' => trim($_GET['course_name'] ?? ''),
+    'username'    => trim($_GET['username'] ?? ''),
+    'from_date'   => trim($_GET['from_date'] ?? ''),
+    'to_date'     => trim($_GET['to_date'] ?? ''),
+];
+
+$currentPage = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$pageSize    = 25;
+$offset      = ($currentPage - 1) * $pageSize;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $uploadId = (int) ($_POST['upload_id'] ?? 0);
     $action   = $_POST['action'] ?? '';
@@ -70,8 +83,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Nur nicht freigegebene/abgelehnte anzeigen
-$pendingUploads = DbFunctions::getPendingUploads();
+$doExport = isset($_GET['export']) && $_GET['export'] === 'csv';
+
+if ($doExport) {
+    $allUploads = DbFunctions::getFilteredPendingUploads($filters);
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=pending_uploads.csv');
+    $out = fopen('php://output', 'w');
+    fputcsv($out, ['Dateiname', 'Titel', 'Kurs', 'Uploader', 'Hochgeladen am']);
+    foreach ($allUploads as $u) {
+        fputcsv($out, [
+            $u['stored_name'],
+            $u['title'],
+            $u['course_name'],
+            $u['username'] ?? '',
+            $u['uploaded_at'],
+        ]);
+    }
+    fclose($out);
+    exit;
+}
+
+$totalCount    = DbFunctions::countFilteredPendingUploads($filters);
+$totalPages    = (int)ceil($totalCount / $pageSize);
+$pendingUploads = DbFunctions::getFilteredPendingUploads($filters, $pageSize, $offset);
 
 if (isset($_SESSION['flash'])) {
     $smarty->assign('flash', $_SESSION['flash']);
@@ -79,6 +114,9 @@ if (isset($_SESSION['flash'])) {
 }
 
 $smarty->assign('pending_uploads', $pendingUploads);
+$smarty->assign('currentPage', $currentPage);
+$smarty->assign('totalPages', $totalPages);
+$smarty->assign('filters', $filters);
 $smarty->assign('isAdmin', $isAdmin);
 $smarty->assign('isMod', $isMod);
 $smarty->assign('username', $_SESSION['username'] ?? '');
