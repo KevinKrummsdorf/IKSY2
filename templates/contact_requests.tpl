@@ -70,15 +70,18 @@
 
                 <!-- Status-Wechsel -->
                 <td>
-                  <form method="post" action="{url path='contact_request'}" class="d-flex">
+                  <form method="post" action="{url path='contact_request'}" class="status-form d-flex flex-column">
                     <input type="hidden" name="csrf_token" value="{$csrf_token}">
                     <input type="hidden" name="status_contact_id" value="{$r.contact_id}">
-                    <select name="new_status" class="form-select form-select-sm me-2">
+                    <div class="d-flex mb-2">
+                      <select name="new_status" class="form-select form-select-sm me-2 status-select" data-id="{$r.contact_id}">
                       <option value="offen" {if $r.status == 'offen'}selected{/if}>Offen</option>
                       <option value="in_bearbeitung" {if $r.status == 'in_bearbeitung'}selected{/if}>In Bearbeitung</option>
                       <option value="geschlossen" {if $r.status == 'geschlossen'}selected{/if}>Geschlossen</option>
-                    </select>
-                    <button type="submit" class="btn btn-sm btn-outline-primary">Speichern</button>
+                      </select>
+                      <button type="submit" class="btn btn-sm btn-outline-primary">Speichern</button>
+                    </div>
+                    <textarea name="close_reply_text" rows="2" class="form-control d-none" placeholder="Antwort zum Schließen..." data-target="{$r.contact_id}"></textarea>
                   </form>
                 </td>
 
@@ -112,4 +115,24 @@
   </div>
 
 </div>
+{/block}
+
+{block name="scripts"}
+<script>
+  document.querySelectorAll('.status-select').forEach(sel => {
+    const id = sel.dataset.id;
+    const area = document.querySelector(`textarea[data-target="${id}"]`);
+    const toggle = () => {
+      if (sel.value === 'geschlossen') {
+        area.classList.remove('d-none');
+        area.setAttribute('required', 'required');
+      } else {
+        area.classList.add('d-none');
+        area.removeAttribute('required');
+      }
+    };
+    sel.addEventListener('change', toggle);
+    toggle();
+  });
+</script>
 {/block}

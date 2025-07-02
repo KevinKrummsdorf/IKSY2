@@ -62,15 +62,35 @@ if (
     isset($_POST['status_contact_id'], $_POST['new_status'], $_POST['csrf_token']) &&
     hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])
 ) {
-    $contactId  = trim($_POST['status_contact_id']);
-    $newStatus  = trim($_POST['new_status']);
+    $contactId   = trim($_POST['status_contact_id']);
+    $newStatus   = trim($_POST['new_status']);
+    $closeReply  = trim($_POST['close_reply_text'] ?? '');
     $validStates = ['offen', 'in_bearbeitung', 'geschlossen'];
 
     if (in_array($newStatus, $validStates, true)) {
+        if ($newStatus === 'geschlossen' && $closeReply === '') {
+            $_SESSION['flash'] = ['type' => 'warning', 'message' => 'Antworttext wird zum Schließen benötigt.'];
+            header('Location: contact_request.php');
+            exit;
+        }
+
         $pdo = DbFunctions::db_connect();
         $stmt = $pdo->prepare("UPDATE contact_requests SET status = ? WHERE contact_id = ?");
         $stmt->execute([$newStatus, $contactId]);
         $_SESSION['flash'] = ['type' => 'info', 'message' => 'Status wurde aktualisiert.'];
+
+        if ($newStatus === 'geschlossen') {
+            $contact = DbFunctions::fetchOne("SELECT name, email FROM contact_requests WHERE contact_id = ?", [$contactId]);
+            if ($contact) {
+                $subject = 'Kontaktanfrage abgeschlossen';
+                $body = "<p>Hallo {$contact['name']},</p><p>{$closeReply}</p><p>Viele Grüße,<br>Dein StudyHub-Team</p>";
+                try {
+                    sendMail($contact['email'], $contact['name'], $subject, $body);
+                } catch (Exception $e) {
+                    error_log('Close contact request mail failed: ' . $e->getMessage());
+                }
+            }
+        }
     } else {
         $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Ungültiger Statuswert.'];
     }
