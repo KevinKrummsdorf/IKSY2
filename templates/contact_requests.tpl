@@ -118,6 +118,7 @@
 {/block}
 
 {block name="scripts"}
+{literal}
 <script>
   document.querySelectorAll('.status-select').forEach(sel => {
     const id = sel.dataset.id;
@@ -135,4 +136,5 @@
     toggle();
   });
 </script>
+{/literal}
 {/block}
