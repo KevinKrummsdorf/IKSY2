@@ -40,13 +40,17 @@ git clone https://github.com/KevinKrummsdorf/IKSY2 /var/www/html/iksy05/StudyHub
 cd /var/www/html/iksy05/StudyHub
 composer install
 ```
-
 Nach dem Klonen funktioniert die Anwendung sofort mit einer einfachen
 `.htaccess`-Datei. Diese deaktiviert Pretty URLs und eigene Fehlerseiten,
 damit der Webserver auch ohne besondere Rechte korrekt arbeitet.
 Ohne Setup-Skript liefern geschützte Bereiche lediglich den passenden
 HTTP-Statuscode, sodass Apache seine Standardfehlerseiten anzeigt. Erweiterte
-Funktionen können später mit `manager.sh` aktiviert werden.
+Funktionen können später mit `manager.sh` aktiviert werden.  
+
+## **Hinweis**  
+Aufgrund der größe des Projekts, sind in dieser Abgabe die Abhängigkeiten **nicht** installiert. Vor dem ersten Start der Anwenung muss daher ```composer install``` im root Verzeichnis ausgeführt werden.   
+Im Ordner ```sql``` finden Sie den gewünschten MySQL dump.  
+In der Datei ```user.txt``` finden sie den Username sowie das zugehörige Passwort für einen normalen User und einen Admin.
 
 # Custom Fehlerseiten konfigurieren
 
