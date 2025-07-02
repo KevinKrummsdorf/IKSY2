@@ -7,5 +7,8 @@
         "robthree/twofactorauth": "1.8",
         "paragonie/halite": "^5.1",
         "tecnickcom/tcpdf": "^6.6"
+    },
+    "require-dev": {
+        "vimeo/psalm": "^6.5"
     }
 }
