@@ -36,6 +36,9 @@ $myRole = DbFunctions::fetchUserRoleInGroup($groupId, $userId) ?? 'none';
 
 // POST-Aktionen
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], (string)($_POST['csrf_token'] ?? ''))) {
+        $error = 'Ungültiger CSRF-Token.';
+    } else {
     // Beitreten
     if (isset($_POST['join_group']) && $myRole === 'none') {
         if ($group['join_type'] === 'open' || ($group['join_type'] === 'code' && ($_POST['invite_code'] ?? '') === $group['invite_code'])) {
@@ -161,9 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($myRole !== 'admin') {
             $error = 'Nur Gruppen-Administratoren dürfen das Bild ändern.';
         } else {
-            if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
-                $error = 'Ungültiger CSRF-Token.';
-            } elseif (empty($_FILES['group_picture']) || $_FILES['group_picture']['error'] !== UPLOAD_ERR_OK) {
+            if (empty($_FILES['group_picture']) || $_FILES['group_picture']['error'] !== UPLOAD_ERR_OK) {
                 $error = 'Kein Bild hochgeladen.';
             } else {
             $tmp  = $_FILES['group_picture']['tmp_name'];
@@ -208,6 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+}
 }
 }
 

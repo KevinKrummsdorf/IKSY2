@@ -32,6 +32,7 @@
     <div class="col-md-6">
       <h3>Neue Gruppe erstellen</h3>
       <form method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{$csrf_token}">
         <div class="mb-3">
           <input type="text" name="group_name" class="form-control" placeholder="Gruppenname" required>
         </div>
@@ -53,6 +54,7 @@
     <div class="col-md-6">
       <h3>Bestehender Gruppe beitreten</h3>
       <form method="post">
+        <input type="hidden" name="csrf_token" value="{$csrf_token}">
         <div class="mb-3">
           <input type="text" name="group_name" class="form-control" placeholder="Gruppenname" required>
         </div>

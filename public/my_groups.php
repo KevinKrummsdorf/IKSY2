@@ -12,10 +12,16 @@ if (empty($_SESSION['user_id'])) {
 $userId  = (int)$_SESSION['user_id'];
 $error   = '';
 $success = '';
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf = $_SESSION['csrf_token'];
 
 // Gruppenaktionen verarbeiten (Erstellen/Beitreten)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['create_group'])) {
+    if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], (string)($_POST['csrf_token'] ?? ''))) {
+        $error = 'Ungültiger CSRF-Token.';
+    } elseif (isset($_POST['create_group'])) {
         $groupName = trim($_POST['group_name'] ?? '');
         $joinType  = $_POST['join_type'] ?? 'open';
         $allowed   = ['open','invite','code'];
@@ -99,7 +105,8 @@ $myGroups = DbFunctions::fetchGroupsByUser($userId);
 
 // Smarty-Variablen zuweisen
 $smarty->assign([
-    'myGroups' => $myGroups,
+    'myGroups'   => $myGroups,
+    'csrf_token' => $csrf,
 ]);
 if ($error !== '') {
     $smarty->assign('error', $error);

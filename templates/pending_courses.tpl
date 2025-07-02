@@ -80,6 +80,9 @@
   {else}
     <div class="alert alert-info">Keine offenen Kursvorschläge gefunden.</div>
   {/if}
+  <div class="mt-4">
+  <a href="{url path='dashboard'}" class="btn btn-sm btn-primary">Zurück zum Dashboard</a>
+</div>
 </div>
 
 <script>
