@@ -53,6 +53,7 @@
           </span>
           {if $myRole === 'admin'}
             <form method="post" class="ms-2" onsubmit="return confirm('Termin wirklich löschen?');">
+              <input type="hidden" name="csrf_token" value="{$csrf_token}">
               <input type="hidden" name="event_id" value="{$ev.id}">
               <button type="submit" name="delete_event" class="btn btn-sm btn-outline-danger">Löschen</button>
             </form>
@@ -67,6 +68,7 @@
   {if $myRole === 'admin'}
     <h4>Neuen Termin erstellen</h4>
     <form method="post" class="mb-4">
+      <input type="hidden" name="csrf_token" value="{$csrf_token}">
       <div class="row g-2">
         <div class="col-md-6"><input type="text" name="event_title" class="form-control" placeholder="Titel" required></div>
         <div class="col-md-3"><input type="date" name="event_date" class="form-control" required></div>
@@ -88,9 +90,13 @@
 
   {if $myRole === 'none'}
     {if $group.join_type === 'open'}
-      <form method="post"><button name="join_group" class="btn btn-primary">Beitreten</button></form>
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{$csrf_token}">
+        <button name="join_group" class="btn btn-primary">Beitreten</button>
+      </form>
     {elseif $group.join_type === 'code'}
       <form method="post" class="mb-3">
+        <input type="hidden" name="csrf_token" value="{$csrf_token}">
         <div class="mb-2"><input type="text" name="invite_code" class="form-control" placeholder="Einladungscode" required></div>
         <button name="join_group" class="btn btn-primary">Beitreten</button>
       </form>
@@ -98,9 +104,13 @@
       
     {/if}
   {else}
-    <form method="post" class="d-inline"><button name="leave_group" class="btn btn-outline-warning">Verlassen</button></form>
+    <form method="post" class="d-inline">
+      <input type="hidden" name="csrf_token" value="{$csrf_token}">
+      <button name="leave_group" class="btn btn-outline-warning">Verlassen</button>
+    </form>
     {if $myRole === 'admin'}
       <form method="post" class="d-inline ms-2">
+        <input type="hidden" name="csrf_token" value="{$csrf_token}">
         <button name="delete_group" class="btn btn-outline-danger">Gruppe löschen</button>
       </form>
     {/if}
@@ -120,6 +130,7 @@
         </span>
         {if $myRole === 'admin' && $m.user_id != $smarty.session.user_id}
           <form method="post" style="margin:0">
+            <input type="hidden" name="csrf_token" value="{$csrf_token}">
             <input type="hidden" name="user_id" value="{$m.user_id}">
             <button name="remove_member" class="btn btn-sm btn-outline-danger">Entfernen</button>
           </form>
@@ -131,6 +142,7 @@
   {if $myRole === 'admin'}
     <h4>Benutzer einladen</h4>
     <form method="post" class="mb-4">
+      <input type="hidden" name="csrf_token" value="{$csrf_token}">
       <div class="mb-3">
         <input type="text" name="invite_username" class="form-control" placeholder="Benutzername" required>
       </div>
@@ -163,9 +175,12 @@
     <p class="text-muted">Keine Materialien vorhanden.</p>
   {/if}
 
-  {if $myRole !== 'none'}
-    <form method="post"><button name="upload_group" class="btn btn-success">Für Lerngruppe hochladen</button></form>
-  {/if}
+{if $myRole !== 'none'}
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{$csrf_token}">
+      <button name="upload_group" class="btn btn-success">Für Lerngruppe hochladen</button>
+    </form>
+{/if}
 </div>
 {/block}
 

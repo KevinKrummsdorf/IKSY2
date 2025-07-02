@@ -14,22 +14,34 @@ if (!in_array($_SESSION['role'] ?? '', ['admin', 'mod'], true)) {
     handle_error(403, $reason, 'both');
 }
 
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf = $_SESSION['csrf_token'];
+
 // Flash-Messages
 $_SESSION['flash'] = null;
 
 // Antwort senden
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply_contact_id'])) {
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_POST['reply_contact_id']) &&
+    isset($_POST['csrf_token']) &&
+    hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])
+) {
     $contactId = trim($_POST['reply_contact_id']);
     $replyText = trim($_POST['reply_text'] ?? '');
 
     if ($replyText !== '') {
         $contact = DbFunctions::fetchOne("SELECT name, email FROM contact_requests WHERE contact_id = ?", [$contactId]);
         if ($contact) {
-            $subject = "Antwort auf deine Kontaktanfrage bei StudyHub";
-            $body = "<p>Hallo {$contact['name']},</p>
-                     <p>wir haben deine Kontaktanfrage erhalten und möchten dir wie folgt antworten:</p>
-                     <blockquote>{$replyText}</blockquote>
-                     <p>Viele Grüße,<br>Dein StudyHub-Team</p>";
+            $safeName  = htmlspecialchars($contact['name'], ENT_QUOTES);
+            $safeReply = nl2br(htmlspecialchars($replyText, ENT_QUOTES));
+            $subject   = "Antwort auf deine Kontaktanfrage #{$contactId} bei StudyHub";
+            $body      = "<p>Hallo {$safeName},</p>" .
+                         '<p>wir haben deine Kontaktanfrage erhalten und möchten dir wie folgt antworten:</p>' .
+                         "<blockquote>{$safeReply}</blockquote>" .
+                         '<p>Viele Grüße,<br>Dein StudyHub-Team</p>';
             try {
                 sendMail($contact['email'], $contact['name'], $subject, $body);
                 $_SESSION['flash'] = ['type' => 'success', 'message' => 'Antwort erfolgreich versendet.'];
@@ -47,20 +59,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply_contact_id'])) 
 }
 
 // Statuswechsel
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status_contact_id'], $_POST['new_status'])) {
-    $contactId  = trim($_POST['status_contact_id']);
-    $newStatus  = trim($_POST['new_status']);
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_POST['status_contact_id'], $_POST['new_status'], $_POST['csrf_token']) &&
+    hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])
+) {
+    $contactId   = trim($_POST['status_contact_id']);
+    $newStatus   = trim($_POST['new_status']);
+    $closeReply  = trim($_POST['close_reply_text'] ?? '');
     $validStates = ['offen', 'in_bearbeitung', 'geschlossen'];
 
     if (in_array($newStatus, $validStates, true)) {
+        if ($newStatus === 'geschlossen' && $closeReply === '') {
+            $_SESSION['flash'] = ['type' => 'warning', 'message' => 'Antworttext wird zum Schließen benötigt.'];
+            header('Location: contact_request.php');
+            exit;
+        }
+
         $pdo = DbFunctions::db_connect();
         $stmt = $pdo->prepare("UPDATE contact_requests SET status = ? WHERE contact_id = ?");
         $stmt->execute([$newStatus, $contactId]);
         $_SESSION['flash'] = ['type' => 'info', 'message' => 'Status wurde aktualisiert.'];
+
+        if ($newStatus === 'geschlossen') {
+            $contact = DbFunctions::fetchOne("SELECT name, email FROM contact_requests WHERE contact_id = ?", [$contactId]);
+            if ($contact) {
+                $safeName  = htmlspecialchars($contact['name'], ENT_QUOTES);
+                $safeReply = nl2br(htmlspecialchars($closeReply, ENT_QUOTES));
+                $subject   = "Kontaktanfrage #{$contactId} abgeschlossen";
+                $body      = "<p>Hallo {$safeName},</p><p>{$safeReply}</p><p>Viele Grüße,<br>Dein StudyHub-Team</p>";
+                try {
+                    sendMail($contact['email'], $contact['name'], $subject, $body);
+                } catch (Exception $e) {
+                    error_log('Close contact request mail failed: ' . $e->getMessage());
+                }
+            }
+        }
     } else {
         $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Ungültiger Statuswert.'];
     }
 
+    header('Location: contact_request.php');
+    exit;
+}
+
+// Anfrage löschen
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_POST['delete_contact_id'], $_POST['csrf_token']) &&
+    hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])
+) {
+    $delId = trim($_POST['delete_contact_id']);
+    DbFunctions::deleteContactRequest($delId);
+    $_SESSION['flash'] = ['type' => 'success', 'message' => 'Kontaktanfrage gelöscht.'];
     header('Location: contact_request.php');
     exit;
 }
@@ -102,6 +153,7 @@ $smarty->assign([
     'isAdmin'          => ($_SESSION['role'] ?? '') === 'admin',
     'isMod'            => ($_SESSION['role'] ?? '') === 'mod',
     'username'         => $_SESSION['username'] ?? '',
+    'csrf_token'       => $csrf,
 ]);
 
 unset($_SESSION['flash']);
