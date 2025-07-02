@@ -38,13 +38,12 @@
                             {/if}
 
                             {* Download/Ansicht-Logik *}
-                            {assign var="fileFound" value=false}
-                            {foreach $uploads as $upload}
-                                {if $upload.material_id == $material.id}
-                                    {if $isLoggedIn}
-                                        <a href="{url path='download' id=$upload.id}" class="btn btn-sm btn-outline-primary me-2" target="_blank" download>Download</a>
-                                        <a href="{url path='view_pdf' file=$upload.stored_name}" class="btn btn-sm btn-outline-secondary" target="_blank">Dokument anzeigen</a>
-                                    {/if}
+                            {assign var="upload" value=$uploadsByMaterial[$material.id][0]|default:null}
+                            {if $upload}
+                                {if $isLoggedIn}
+                                    <a href="{url path='download' id=$upload.id}" class="btn btn-sm btn-outline-primary me-2" target="_blank" download>Download</a>
+                                    <a href="{url path='view_pdf' file=$upload.stored_name}" class="btn btn-sm btn-outline-secondary" target="_blank">Dokument anzeigen</a>
+                                {/if}
 
                                     {* Durchschnittsbewertung anzeigen *}
                                     <p class="mt-2" id="rating-info-{$material.id}">
@@ -73,11 +72,9 @@
                                         </div>
                                     {/if}
 
-                                    {assign var="fileFound" value=true}
-
-                                    {* Profilbild anzeigen *}
-                                    {if isset($profiles[$upload.uploaded_by])}
-                                        {assign var="profile" value=$profiles[$upload.uploaded_by]}
+                                {* Profilbild anzeigen *}
+                                {if isset($profiles[$upload.uploaded_by])}
+                                    {assign var="profile" value=$profiles[$upload.uploaded_by]}
                                         <a href="{url path='profile' user=$profile.username}" class="profile-picture-link position-absolute bottom-0 end-0 m-2">
                                             {if $profile.profile_picture}
                                                 <img src='{url file="profile_pictures/{$profile.profile_picture|escape:'url'}"}'
@@ -90,12 +87,8 @@
                                                      style="width: 40px; height: 40px; object-fit: cover;">
                                             {/if}
                                         </a>
-                                    {/if}
-                                    {break}
                                 {/if}
-                            {/foreach}
-
-                            {if !$fileFound}
+                            {else}
                                 <span class="text-muted">Keine Datei verfügbar</span>
                             {/if}
                         </div>
