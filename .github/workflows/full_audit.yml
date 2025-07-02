@@ -56,7 +56,7 @@ jobs:
         run: vendor/bin/psalm --taint-analysis
 
       - name: Static code scan (PHPStan)
-        run: vendor/bin/phpstan analyse
+        run: vendor/bin/phpstan analyse src/
 
       - name: Coding standards (PHPCS)
         run: vendor/bin/phpcs --standard=PSR12 src/
