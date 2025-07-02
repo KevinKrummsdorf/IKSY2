@@ -36,22 +36,19 @@ if (!empty($uploaderIds)) {
 // Prüfen, ob der Benutzer eingeloggt ist
 $isLoggedIn = isset($_SESSION['user_id']) && $_SESSION['user_id'] > 0;
 
-// Durchschnittliche Bewertungen für jedes Material berechnen
-$averageRatings = [];
-foreach ($materials as $material) {
-    $average = DbFunctions::getAverageMaterialRating((int)$material['id']);
-    $averageRatings[$material['id']] = $average ?: ['average_rating' => 0, 'total_ratings' => 0];
+// IDs aller Materialien sammeln
+$materialIds = array_column($materials, 'id');
+
+// Durchschnittliche Bewertungen gebündelt laden
+$averageRatings = DbFunctions::getAverageRatingsForMaterials($materialIds);
+foreach ($materialIds as $id) {
+    $averageRatings[$id] ??= ['average_rating' => 0, 'total_ratings' => 0];
 }
 
-// Eigene Bewertungen des eingeloggten Nutzers holen
+// Eigene Bewertungen gebündelt laden
 $userRatings = [];
 if ($isLoggedIn) {
-    foreach ($materials as $material) {
-        $rating = DbFunctions::getUserMaterialRating((int)$material['id'], (int)$_SESSION['user_id']);
-        if ($rating) {
-            $userRatings[$material['id']] = $rating['rating'];
-        }
-    }
+    $userRatings = DbFunctions::getUserRatingsForMaterials($materialIds, (int)$_SESSION['user_id']);
 }
 
 // Alle Daten an Smarty übergeben

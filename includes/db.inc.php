@@ -639,6 +639,69 @@ public static function getMaterialsByTitle(string $searchTerm): array
         return self::fetchOne($sql, ['material_id' => $materialId, 'user_id' => $userId]);
     }
 
+    /**
+     * Liefert Durchschnittsbewertungen für mehrere Materialien.
+     * Gibt ein Array mit material_id als Schlüssel zurück.
+     */
+    public static function getAverageRatingsForMaterials(array $materialIds): array
+    {
+        if (empty($materialIds)) {
+            return [];
+        }
+
+        $pdo = self::db_connect();
+        $placeholders = implode(',', array_fill(0, count($materialIds), '?'));
+        $sql = "
+            SELECT material_id, AVG(rating) AS average_rating, COUNT(*) AS total_ratings
+            FROM material_ratings
+            WHERE material_id IN ($placeholders)
+            GROUP BY material_id
+        ";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(array_values($materialIds));
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $result = [];
+        foreach ($rows as $row) {
+            $result[$row['material_id']] = [
+                'average_rating' => $row['average_rating'],
+                'total_ratings'  => $row['total_ratings'],
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Liefert die Bewertungen eines Nutzers für mehrere Materialien.
+     * Gibt ein Array material_id => rating zurück.
+     */
+    public static function getUserRatingsForMaterials(array $materialIds, int $userId): array
+    {
+        if (empty($materialIds)) {
+            return [];
+        }
+
+        $pdo = self::db_connect();
+        $placeholders = implode(',', array_fill(0, count($materialIds), '?'));
+        $sql = "
+            SELECT material_id, rating
+            FROM material_ratings
+            WHERE user_id = ? AND material_id IN ($placeholders)
+        ";
+        $params = array_merge([$userId], array_values($materialIds));
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $ratings = [];
+        foreach ($rows as $row) {
+            $ratings[$row['material_id']] = (int)$row['rating'];
+        }
+
+        return $ratings;
+    }
+
     public static function getProfilesByUserIds(array $userIds): array
     {
         if (empty($userIds)) {
