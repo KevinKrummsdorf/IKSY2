@@ -35,11 +35,13 @@ if (
     if ($replyText !== '') {
         $contact = DbFunctions::fetchOne("SELECT name, email FROM contact_requests WHERE contact_id = ?", [$contactId]);
         if ($contact) {
-            $subject = "Antwort auf deine Kontaktanfrage bei StudyHub";
-            $body = "<p>Hallo {$contact['name']},</p>
-                     <p>wir haben deine Kontaktanfrage erhalten und möchten dir wie folgt antworten:</p>
-                     <blockquote>{$replyText}</blockquote>
-                     <p>Viele Grüße,<br>Dein StudyHub-Team</p>";
+            $safeName  = htmlspecialchars($contact['name'], ENT_QUOTES);
+            $safeReply = nl2br(htmlspecialchars($replyText, ENT_QUOTES));
+            $subject   = "Antwort auf deine Kontaktanfrage #{$contactId} bei StudyHub";
+            $body      = "<p>Hallo {$safeName},</p>" .
+                         '<p>wir haben deine Kontaktanfrage erhalten und möchten dir wie folgt antworten:</p>' .
+                         "<blockquote>{$safeReply}</blockquote>" .
+                         '<p>Viele Grüße,<br>Dein StudyHub-Team</p>';
             try {
                 sendMail($contact['email'], $contact['name'], $subject, $body);
                 $_SESSION['flash'] = ['type' => 'success', 'message' => 'Antwort erfolgreich versendet.'];
@@ -82,8 +84,10 @@ if (
         if ($newStatus === 'geschlossen') {
             $contact = DbFunctions::fetchOne("SELECT name, email FROM contact_requests WHERE contact_id = ?", [$contactId]);
             if ($contact) {
-                $subject = 'Kontaktanfrage abgeschlossen';
-                $body = "<p>Hallo {$contact['name']},</p><p>{$closeReply}</p><p>Viele Grüße,<br>Dein StudyHub-Team</p>";
+                $safeName  = htmlspecialchars($contact['name'], ENT_QUOTES);
+                $safeReply = nl2br(htmlspecialchars($closeReply, ENT_QUOTES));
+                $subject   = "Kontaktanfrage #{$contactId} abgeschlossen";
+                $body      = "<p>Hallo {$safeName},</p><p>{$safeReply}</p><p>Viele Grüße,<br>Dein StudyHub-Team</p>";
                 try {
                     sendMail($contact['email'], $contact['name'], $subject, $body);
                 } catch (Exception $e) {
@@ -95,6 +99,19 @@ if (
         $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Ungültiger Statuswert.'];
     }
 
+    header('Location: contact_request.php');
+    exit;
+}
+
+// Anfrage löschen
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_POST['delete_contact_id'], $_POST['csrf_token']) &&
+    hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])
+) {
+    $delId = trim($_POST['delete_contact_id']);
+    DbFunctions::deleteContactRequest($delId);
+    $_SESSION['flash'] = ['type' => 'success', 'message' => 'Kontaktanfrage gelöscht.'];
     header('Location: contact_request.php');
     exit;
 }

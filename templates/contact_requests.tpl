@@ -99,6 +99,13 @@
                 <td class="text-center">
                   <span class="badge bg-info">{$r.status|capitalize}</span><br>
                   <small>{$r.created_at|date_format:"%d.%m.%Y %H:%M"}</small>
+                  {if $r.status == 'geschlossen'}
+                    <form method="post" class="mt-2" onsubmit="return confirm('Anfrage wirklich löschen?');">
+                      <input type="hidden" name="csrf_token" value="{$csrf_token}">
+                      <input type="hidden" name="delete_contact_id" value="{$r.contact_id}">
+                      <button type="submit" class="btn btn-sm btn-outline-danger">Löschen</button>
+                    </form>
+                  {/if}
                 </td>
               </tr>
               {/foreach}
