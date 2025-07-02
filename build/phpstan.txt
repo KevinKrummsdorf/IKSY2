@@ -1,1 +1,1 @@
-phpstan not installed
+phpstan not installed (composer require --dev phpstan/phpstan)

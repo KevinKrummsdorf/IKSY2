@@ -1,1 +1,1 @@
-phpcpd not installed
+phpcpd not installed (composer require --dev sebastian/phpcpd)

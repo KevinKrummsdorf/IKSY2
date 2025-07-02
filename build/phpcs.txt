@@ -1,1 +1,1 @@
-phpcs not installed
+phpcs not installed (composer global require squizlabs/php_codesniffer)

@@ -1,1 +1,1 @@
-infection not installed
+infection not installed (composer require --dev infection/infection)

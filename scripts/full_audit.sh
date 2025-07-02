@@ -4,7 +4,11 @@ mkdir -p build
 
 # 1) Abhängigkeiten & Umgebung
 composer install --prefer-dist --no-interaction
-docker compose up -d --quiet-pull db redis || true          # falls vorhanden
+if command -v docker >/dev/null 2>&1; then
+  docker compose up -d --quiet-pull db redis || true
+else
+  echo 'docker not installed, skipping containers' >&2
+fi
 php -r "copy('.env.example','.env');" 2>/dev/null || true
 php artisan key:generate 2>/dev/null || true
 
@@ -15,10 +19,14 @@ if [ -x vendor/bin/psalm ]; then
                                   > build/psalm_taint.json
 else
   echo '{}' > build/psalm_taint.json
-  echo 'psalm not installed, skipping' >&2
+  echo 'psalm not installed, skipping (composer require --dev vimeo/psalm)' >&2
 fi
-npx --yes @zaproxy/zap-cli quick-scan --self-contained \
-        --spider-time 0 http://localhost        || true
+if command -v npx >/dev/null 2>&1; then
+  npx --yes @zaproxy/zap-cli quick-scan --self-contained \
+        --spider-time 0 http://localhost > build/zap.txt 2>&1 || true
+else
+  echo 'npx not installed (install Node.js and npm)' > build/zap.txt
+fi
 grep -R --line-number -E "\$_(GET|POST|REQUEST|COOKIE)\['[^']+'\]" src \
                                   > build/raw_superglobals.txt || true
 
@@ -27,7 +35,7 @@ if [ -x vendor/bin/phpunit ]; then
   vendor/bin/phpunit --testsuite security --coverage-text \
                                   > build/phpunit_security.txt
 else
-  echo 'phpunit not installed' > build/phpunit_security.txt
+  echo 'phpunit not installed (composer require --dev phpunit/phpunit)' > build/phpunit_security.txt
 fi
 
 # 4) PERFORMANCE / EFFIZIENZ
@@ -39,25 +47,29 @@ fi
 if [ -x vendor/bin/phpmetrics ]; then
   vendor/bin/phpmetrics --report-html=build/metrics     >/dev/null
 else
-  echo 'phpmetrics not installed' > build/metrics.txt
+  echo 'phpmetrics not installed (composer global require phpmetrics/phpmetrics)' > build/metrics.txt
 fi
-ab -n 500 -c 25 http://localhost/                     > build/ab.txt || true
+if command -v ab >/dev/null 2>&1; then
+  ab -n 500 -c 25 http://localhost/                     > build/ab.txt
+else
+  echo 'ab not installed (install apache2-utils)' > build/ab.txt
+fi
 
 # 5) CODE-QUALITÄT
 if [ -x vendor/bin/phpstan ]; then
   vendor/bin/phpstan analyse --error-format raw         > build/phpstan.txt
 else
-  echo 'phpstan not installed' > build/phpstan.txt
+  echo 'phpstan not installed (composer require --dev phpstan/phpstan)' > build/phpstan.txt
 fi
 if [ -x vendor/bin/phpcs ]; then
   vendor/bin/phpcs --standard=PSR12 --report=full src/  > build/phpcs.txt
 else
-  echo 'phpcs not installed' > build/phpcs.txt
+  echo 'phpcs not installed (composer global require squizlabs/php_codesniffer)' > build/phpcs.txt
 fi
 if [ -x vendor/bin/phpcpd ]; then
   vendor/bin/phpcpd src/                                > build/duplication.txt
 else
-  echo 'phpcpd not installed' > build/duplication.txt
+  echo 'phpcpd not installed (composer require --dev sebastian/phpcpd)' > build/duplication.txt
 fi
 if [ -x vendor/bin/deptrac ]; then
   vendor/bin/deptrac --formatter=graphviz \
@@ -74,7 +86,7 @@ if [ -x vendor/bin/infection ]; then
                      --log-verbosity=all \
                      --text=build/infection.txt        || true
 else
-  echo 'infection not installed' > build/infection.txt
+  echo 'infection not installed (composer require --dev infection/infection)' > build/infection.txt
 fi
 
 # 8) ZUSAMMENFASSUNG

@@ -1,1 +1,1 @@
-phpmetrics not installed
+phpmetrics not installed (composer global require phpmetrics/phpmetrics)
