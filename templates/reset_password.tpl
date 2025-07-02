@@ -11,7 +11,7 @@
 {/if}
 
 {if $message}
-    <div class="alert alert-danger">{$message}</div>
+    <div class="alert alert-danger">{$message|escape}</div>
 {/if}
 
 {if !$success}

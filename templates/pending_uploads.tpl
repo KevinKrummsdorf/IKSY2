@@ -3,7 +3,7 @@
 
 {if $flash}
   <div class="alert alert-{$flash.type} alert-dismissible fade show" role="alert">
-    {$flash.message}
+    {$flash.message|escape}
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
   </div>
 {/if}

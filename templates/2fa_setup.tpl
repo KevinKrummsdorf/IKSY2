@@ -5,7 +5,7 @@
     <h2 class="mb-3">Zwei-Faktor-Authentifizierung einrichten</h2>
 
     {if isset($message)}
-        <div class="alert alert-danger">{$message}</div>
+        <div class="alert alert-danger">{$message|escape}</div>
     {/if}
 
     <p>Scanne den folgenden QR-Code mit einer Authenticator-App wie z. B. <strong>Google Authenticator</strong> oder <strong>Authy</strong>:</p>

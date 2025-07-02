@@ -3,8 +3,8 @@
 
 {block name="content"}
 <div class="container mt-5">
-  {if $error}<div class="alert alert-danger">{$error}</div>{/if}
-  {if $success}<div class="alert alert-success">{$success}</div>{/if}
+  {if $error}<div class="alert alert-danger">{$error|escape}</div>{/if}
+  {if $success}<div class="alert alert-success">{$success|escape}</div>{/if}
 
   <div class="text-center mb-3">
     {if $group.group_picture}
