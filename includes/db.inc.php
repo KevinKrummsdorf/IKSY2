@@ -88,8 +88,9 @@ class DbFunctions
     public static function addUserToGroup(int $groupId, int $userId): bool
     {
         $sql = '
-        INSERT IGNORE INTO group_members (group_id, user_id)
+        INSERT INTO group_members (group_id, user_id)
         VALUES (:gid, :uid)
+        ON CONFLICT (group_id, user_id) DO NOTHING
     ';
         return self::execute($sql, [':gid' => $groupId, ':uid' => $userId]) > 0;
     }
@@ -149,7 +150,7 @@ class DbFunctions
      */
     public static function fetchAllGroups(): array
     {
-        $sql = 'SELECT id, name, group_picture FROM `groups` ORDER BY name ASC';
+        $sql = 'SELECT id, name, group_picture FROM groups ORDER BY name ASC';
         return self::execute($sql, [], true);
     }
 
@@ -158,7 +159,7 @@ class DbFunctions
      */
     public static function fetchGroupById(int $groupId): ?array
     {
-        $sql = 'SELECT id, name, join_type, invite_code, group_picture FROM `groups` WHERE id = :gid LIMIT 1';
+        $sql = 'SELECT id, name, join_type, invite_code, group_picture FROM groups WHERE id = :gid LIMIT 1';
         return self::fetchOne($sql, [':gid' => $groupId]);
     }
 
@@ -167,7 +168,7 @@ class DbFunctions
      */
     public static function fetchGroupByInviteCode(string $code): ?array
     {
-        $sql = 'SELECT id, name, join_type, invite_code, group_picture FROM `groups` WHERE invite_code = :code LIMIT 1';
+        $sql = 'SELECT id, name, join_type, invite_code, group_picture FROM groups WHERE invite_code = :code LIMIT 1';
         return self::fetchOne($sql, [':code' => $code]);
     }
 
@@ -194,7 +195,7 @@ class DbFunctions
         $sql = '
             INSERT INTO group_roles (group_id, user_id, role)
             VALUES (:gid, :uid, :role)
-            ON DUPLICATE KEY UPDATE role = VALUES(role)
+            ON CONFLICT (group_id, user_id) DO UPDATE SET role = EXCLUDED.role
         ';
         return self::execute($sql, [
             ':gid'  => $groupId,
@@ -222,7 +223,7 @@ class DbFunctions
             $pdo->prepare('UPDATE uploads SET group_id = NULL WHERE group_id = ?')
                 ->execute([$groupId]);
 
-            $pdo->prepare('DELETE FROM `groups` WHERE id = ?')
+            $pdo->prepare('DELETE FROM groups WHERE id = ?')
                 ->execute([$groupId]);
 
             $pdo->commit();
@@ -254,8 +255,8 @@ class DbFunctions
             return false;
         }
 
-        $sql = 'INSERT INTO group_invites (group_id, invited_user_id, token, created_at, expires_at)
-                VALUES (:gid, :uid, :token, NOW(), DATE_ADD(NOW(), INTERVAL :exp HOUR))';
+        $sql = "INSERT INTO group_invites (group_id, invited_user_id, token, created_at, expires_at)
+                VALUES (:gid, :uid, :token, NOW(), NOW() + (:exp * INTERVAL '1 hour'))";
 
         return self::execute($sql, [
             ':gid'  => $groupId,
@@ -428,9 +429,9 @@ class DbFunctions
         }
 
         $dsn = sprintf(
-            'mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
+            'pgsql:host=%s;port=%s;dbname=%s',
             $db['host'],
-            $db['port'] ?? 3306,
+            $db['port'] ?? 5432,
             $db['name']
         );
 
@@ -872,7 +873,7 @@ public static function unverifyUser(int $userId): int
             !in_array($column, self::$allowedColumns, true)) {
             throw new InvalidArgumentException('Ungültige Tabelle oder Spalte.');
         }
-        $sql = "SELECT COUNT(*) FROM `$table` WHERE `$column` = :val";
+        $sql = "SELECT COUNT(*) FROM \"$table\" WHERE \"$column\" = :val";
         return (int) self::fetchValue($sql, [':val' => $value]);
     }
 
@@ -2145,13 +2146,13 @@ public static function getFilteredLockedUsers(array $filters = []): array
      */
     public static function storePasswordResetToken(int $userId, string $token, int $expiresMinutes = 60): void
     {
-        $sql = '
+        $sql = "
             INSERT INTO password_reset_tokens (user_id, reset_token, expires_at)
-            VALUES (:uid, :token, DATE_ADD(NOW(), INTERVAL :exp MINUTE))
-            ON DUPLICATE KEY UPDATE
-                reset_token = VALUES(reset_token),
-                expires_at = VALUES(expires_at)
-        ';
+            VALUES (:uid, :token, NOW() + (:exp * INTERVAL '1 minute'))
+            ON CONFLICT (user_id) DO UPDATE SET
+                reset_token = EXCLUDED.reset_token,
+                expires_at = EXCLUDED.expires_at
+        ";
         self::execute($sql, [
             ':uid'  => $userId,
             ':token'=> $token,
@@ -2242,7 +2243,7 @@ public static function getFilteredLockedUsers(array $filters = []): array
         $params = [':id' => $userId];
 
         foreach ($fields as $key => $value) {
-            $set[] = "`$key` = :$key";
+            $set[] = "\"$key\" = :$key";
             $params[":$key"] = $value;
         }
 
@@ -2273,7 +2274,7 @@ public static function getFilteredLockedUsers(array $filters = []): array
         $params = [':id' => $groupId];
 
         foreach ($fields as $key => $value) {
-            $set[] = "`$key` = :$key";
+            $set[] = "\"$key\" = :$key";
             $params[":$key"] = $value;
         }
 
@@ -2281,7 +2282,7 @@ public static function getFilteredLockedUsers(array $filters = []): array
             return;
         }
 
-        $sql = 'UPDATE `groups` SET ' . implode(', ', $set) . ' WHERE id = :id';
+        $sql = 'UPDATE groups SET ' . implode(', ', $set) . ' WHERE id = :id';
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
     }

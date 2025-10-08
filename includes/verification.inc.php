@@ -29,9 +29,9 @@ function sendVerificationEmail(
     $stmt = $pdo->prepare('
         INSERT INTO verification_tokens (user_id, verification_token, verification_sent_at)
         VALUES (:user_id, :token, NOW())
-        ON DUPLICATE KEY UPDATE
-            verification_token = VALUES(verification_token),
-            verification_sent_at = VALUES(verification_sent_at)
+        ON CONFLICT (user_id) DO UPDATE SET
+            verification_token = EXCLUDED.verification_token,
+            verification_sent_at = EXCLUDED.verification_sent_at
     ');
 
     if (!$stmt->execute([

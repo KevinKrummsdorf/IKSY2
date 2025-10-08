@@ -1,19 +1,19 @@
 -- Tabelle: courses (Kurse)
 CREATE TABLE courses (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     professor VARCHAR(255)
 );
 
 -- Tabelle: weekdays (Wochentage)
 CREATE TABLE weekdays (
-    id TINYINT PRIMARY KEY,
+    id SMALLINT PRIMARY KEY,
     day_name VARCHAR(20) NOT NULL UNIQUE
 );
 
 -- Tabelle: time_slots (Zeitfenster)
 CREATE TABLE time_slots (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     UNIQUE (start_time, end_time)
@@ -21,16 +21,13 @@ CREATE TABLE time_slots (
 
 -- Tabelle: user_schedules (Zuweisung von Kursen zu Benutzern)
 CREATE TABLE user_schedules (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     course_name VARCHAR(255) NOT NULL,
-    weekday_id TINYINT NOT NULL,
-    time_slot_id INT NOT NULL,
+    weekday_id SMALLINT NOT NULL REFERENCES weekdays(id),
+    time_slot_id INT NOT NULL REFERENCES time_slots(id),
     room VARCHAR(50),
     notes TEXT,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (weekday_id) REFERENCES weekdays(id),
-    FOREIGN KEY (time_slot_id) REFERENCES time_slots(id),
     UNIQUE (user_id, weekday_id, time_slot_id)
 );
 

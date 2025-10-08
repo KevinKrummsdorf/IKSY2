@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'approve') {
             $pdo->beginTransaction();
 
-            $pdo->prepare("INSERT IGNORE INTO courses (name) VALUES (?)")
+            $pdo->prepare("INSERT INTO courses (name) VALUES (?) ON CONFLICT (name) DO NOTHING")
                 ->execute([$row['course_name']]);
             $pdo->prepare("UPDATE pending_course_suggestions SET is_approved = 1 WHERE id = ?")
                 ->execute([$id]);

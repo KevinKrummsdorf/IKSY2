@@ -1,3 +1,3 @@
-ALTER TABLE `groups`
-    ADD COLUMN `join_type` ENUM('open','invite','code') NOT NULL DEFAULT 'open' AFTER `name`,
-    ADD COLUMN `invite_code` VARCHAR(64) NULL AFTER `join_type`;
+ALTER TABLE groups
+    ADD COLUMN join_type VARCHAR(10) NOT NULL DEFAULT 'open' CHECK (join_type IN ('open','invite','code')),
+    ADD COLUMN invite_code VARCHAR(64);
