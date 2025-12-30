@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
 // Konfiguration & Session laden
 require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../src/Database.php';

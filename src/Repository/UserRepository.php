@@ -175,7 +175,7 @@ class UserRepository
     {
         $sql = '
             UPDATE user_security
-            SET account_locked = 1
+            SET account_locked = true
             WHERE user_id = :id
         ';
         return $this->db->execute($sql, [':id' => $userId]);
@@ -185,7 +185,7 @@ class UserRepository
     {
         $sql = '
             UPDATE user_security
-            SET failed_attempts = 0, account_locked = 0
+            SET failed_attempts = 0, account_locked = false
             WHERE user_id = :id
         ';
         return $this->db->execute($sql, [':id' => $userId]);

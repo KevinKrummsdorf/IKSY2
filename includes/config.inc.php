@@ -30,6 +30,9 @@ require_once __DIR__ . '/../includes/mailing.inc.php';
 require_once __DIR__ . '/../includes/group_invites.inc.php';
 require_once __DIR__ . '/../includes/crypto.inc.php';
 require_once __DIR__ . '/../includes/password_requirements.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/UserRepository.php';
+
 
 // .env laden
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
@@ -131,26 +134,28 @@ $smarty->assign('isAdmin', ($_SESSION['role'] ?? '') === 'admin');
 
 function handle_error(int $code, string $reason = '', string $action = ''): void
 {
-    global $config;
+    global $smarty;
 
-    if ($config['use_pretty_urls']) {
-        $params = [];
-        if ($reason !== '') {
-            $params['reason'] = $reason;
-        }
-        if ($action !== '') {
-            $params['action'] = $action;
-        }
-        $url = build_url("error/{$code}");
-        if (!empty($params)) {
-            $url .= '?' . http_build_query($params);
-        }
-        header("Location: $url");
-    } else {
-        http_response_code($code);
+    http_response_code($code);
+
+    // Smarty-Variablen für das Template
+    $smarty->assign('code', $code);
+    $smarty->assign('reason', $reason);
+    $smarty->assign('action', $action);
+
+    // Template-Datei ermitteln
+    $templateFile = "errors/{$code}.tpl";
+    $fullPath = __DIR__ . '/../templates/' . $templateFile;
+
+    if (!file_exists($fullPath)) {
+        $templateFile = "errors/500.tpl";
     }
+
+    // Template direkt anzeigen
+    $smarty->display($templateFile);
     exit;
 }
+
 
 function build_url(string $path, array $params = []): string
 {
