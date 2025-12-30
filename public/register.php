@@ -3,17 +3,21 @@ declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/UserRepository.php';
 
 $response = ['success' => false];
 
-$pdo = DbFunctions::db_connect();
+$db = new Database();
+$userRepository = new UserRepository($db);
 
 try {
 
     // reCAPTCHA prüfen
     $token  = $_POST['recaptcha_token'] ?? '';
     $secret = $config['recaptcha']['secret_key'];
-    if (!recaptcha_verify($pdo, $token, $secret, $config['recaptcha']['min_score'])) {
+    // Assuming recaptcha_verify is a global function for now
+    if (!recaptcha_verify($db, $token, $secret, $config['recaptcha']['min_score'])) {
         $response['errors']['recaptcha'] = 'reCAPTCHA fehlgeschlagen.';
         throw new DomainException('reCAPTCHA ungültig.');
     }
@@ -56,10 +60,10 @@ try {
 
     // Doppelte prüfen
     $dupErrors = [];
-    if (DbFunctions::countWhere('users', 'username', $username) > 0) {
+    if ($userRepository->usernameExists($username)) {
         $dupErrors['username'] = 'Benutzername vergeben.';
     }
-    if (DbFunctions::countWhere('users', 'email', $email) > 0) {
+    if ($userRepository->emailExists($email)) {
         $dupErrors['email'] = 'E-Mail vergeben.';
     }
     if ($dupErrors) {
@@ -81,23 +85,18 @@ try {
         throw new DomainException('Benutzer existiert bereits.');
     }
 
-    // Passwort hashen (jetzt nativ ohne Halite)
+    // Passwort hashen
     $hash = password_hash($pw, PASSWORD_DEFAULT);
 
-    DbFunctions::beginTransaction();
-
-    $userId = DbFunctions::insertUser($username, $email, $hash);
-
-    DbFunctions::assignRole($userId, 3);
-
-    DbFunctions::commit();
+    $userId = $userRepository->insertUser($username, $email, $hash);
+    $userRepository->assignRole($userId, 3);
 
     try {
         require_once __DIR__ . '/../includes/verification.inc.php';
-        sendVerificationEmail($pdo, $userId, $username, $email);
+        sendVerificationEmail($db, $userId, $username, $email);
         $response['message'] = 'Bestätigungs-E-Mail gesendet.';
     } catch (Exception $e) {
-
+        // Log error or handle
     }
 
     $response['success'] = true;
@@ -106,13 +105,10 @@ try {
     if (!isset($response['errors'])) {
         $response['message'] = $e->getMessage();
     }
-    DbFunctions::rollBack();
-
 } catch (Throwable $e) {
     $response['message'] = (defined('DEBUG'))
         ? $e->getMessage()
         : 'Interner Serverfehler. Bitte später erneut versuchen.';
-    DbFunctions::rollBack();
 }
 
 echo json_encode($response);

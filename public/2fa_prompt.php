@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
-require_once __DIR__ . '/../includes/2fa.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/UserRepository.php';
 
 use RobThree\Auth\TwoFactorAuth;
 
@@ -19,13 +20,16 @@ if (!$username || !$userId) {
     exit;
 }
 
+$db = new Database();
+$userRepository = new UserRepository($db);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $code = preg_replace('/\D/', '', $_POST['code'] ?? '');
 
     try {
         // Secret entschlüsseln & extrahieren
         $secret = null;
-        $encrypted = DbFunctions::getTwoFASecret($username);
+        $encrypted = $userRepository->getTwoFASecret($username);
 
         if ($encrypted) {
             try {

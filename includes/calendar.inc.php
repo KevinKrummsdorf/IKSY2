@@ -6,11 +6,14 @@ use Smarty\Smarty;
 /**
  * Prepares a monthly calendar with user tasks and assigns it to Smarty.
  */
-function assignUserCalendarToSmarty(PDO $pdo, Smarty $smarty): void
+function assignUserCalendarToSmarty(Database $db, Smarty $smarty): void
 {
     if (empty($_SESSION['user_id'])) {
         return; // no user context
     }
+
+    $todoRepository = new TodoRepository($db);
+    $groupRepository = new GroupRepository($db);
 
     $month = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('n');
     $year  = isset($_GET['year'])  ? (int)$_GET['year']  : (int)date('Y');
@@ -33,7 +36,7 @@ function assignUserCalendarToSmarty(PDO $pdo, Smarty $smarty): void
     $endDate   = $current->format('Y-m-' . str_pad((string)$daysInMonth, 2, '0', STR_PAD_LEFT));
 
     try {
-        $rows = DbFunctions::getTodosForDateRange(
+        $rows = $todoRepository->getTodosForDateRange(
             (int)$_SESSION['user_id'],
             $startDate,
             $endDate
@@ -44,7 +47,7 @@ function assignUserCalendarToSmarty(PDO $pdo, Smarty $smarty): void
     }
 
     try {
-        $events = DbFunctions::getGroupEventsForUserDateRange(
+        $events = $groupRepository->getGroupEventsForUserDateRange(
             (int)$_SESSION['user_id'],
             $startDate,
             $endDate
@@ -139,16 +142,19 @@ function assignUserCalendarToSmarty(PDO $pdo, Smarty $smarty): void
 /**
  * Loads today's tasks for the logged in user and assigns them to Smarty.
  */
-function assignTodayTodosToSmarty(PDO $pdo, Smarty $smarty): void
+function assignTodayTodosToSmarty(Database $db, Smarty $smarty): void
 {
     if (empty($_SESSION['user_id'])) {
         return;
     }
 
+    $todoRepository = new TodoRepository($db);
+    $groupRepository = new GroupRepository($db);
+
     $today = (new DateTimeImmutable('today'))->format('Y-m-d');
 
     try {
-        $todos = DbFunctions::getTodosForDateRange(
+        $todos = $todoRepository->getTodosForDateRange(
             (int)$_SESSION['user_id'],
             $today,
             $today
@@ -159,7 +165,7 @@ function assignTodayTodosToSmarty(PDO $pdo, Smarty $smarty): void
     }
 
     try {
-        $events = DbFunctions::getGroupEventsForUserDateRange(
+        $events = $groupRepository->getGroupEventsForUserDateRange(
             (int)$_SESSION['user_id'],
             $today,
             $today

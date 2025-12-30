@@ -3,9 +3,15 @@ declare(strict_types=1);
 
 // Konfiguration & Session laden
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/UploadRepository.php';
+require_once __DIR__ . '/../src/Repository/ProfileRepository.php';
 
 // Datenbankverbindung holen
-$pdo = DbFunctions::db_connect();
+$db = new Database();
+$uploadRepository = new UploadRepository($db);
+$profileRepository = new ProfileRepository($db);
+
 
 // Suchbegriff aus GET-Parameter holen und bereinigen
 $searchTerm = $_GET['search'] ?? '';
@@ -14,14 +20,14 @@ $searchTerm = trim($searchTerm);
 // Materialien laden (entweder alle oder gefiltert)
 if ($searchTerm === '') {
     // Ohne Suchbegriff: alle Materialien
-    $materials = DbFunctions::getAllMaterials();
+    $materials = $uploadRepository->getAllMaterials();
 } else {
     // Mit Suchbegriff: nur passende Materialien (siehe neue Funktion unten)
-    $materials = DbFunctions::getMaterialsByTitle($searchTerm);
+    $materials = $uploadRepository->getMaterialsByTitle($searchTerm);
 }
 
 // Genehmigte Uploads laden
-$uploads = DbFunctions::getApprovedUploads();
+$uploads = $uploadRepository->getApprovedUploads();
 
 // Uploads nach Material gruppieren, um spätere Suchschleifen zu vermeiden
 $uploadsByMaterial = [];
@@ -35,7 +41,7 @@ $uploaderIds = array_unique(array_column($uploads, 'uploaded_by'));
 // Profile laden, falls vorhanden
 $profilesAssoc = [];
 if (!empty($uploaderIds)) {
-    $profiles = DbFunctions::getProfilesByUserIds($uploaderIds);
+    $profiles = $profileRepository->getProfilesByUserIds($uploaderIds);
     $profilesAssoc = array_column($profiles, null, 'user_id');
 }
 
@@ -46,7 +52,7 @@ $isLoggedIn = isset($_SESSION['user_id']) && $_SESSION['user_id'] > 0;
 $materialIds = array_column($materials, 'id');
 
 // Durchschnittliche Bewertungen gebündelt laden
-$averageRatings = DbFunctions::getAverageRatingsForMaterials($materialIds);
+$averageRatings = $uploadRepository->getAverageRatingsForMaterials($materialIds);
 foreach ($materialIds as $id) {
     $averageRatings[$id] ??= ['average_rating' => 0, 'total_ratings' => 0];
 }
@@ -54,7 +60,7 @@ foreach ($materialIds as $id) {
 // Eigene Bewertungen gebündelt laden
 $userRatings = [];
 if ($isLoggedIn) {
-    $userRatings = DbFunctions::getUserRatingsForMaterials($materialIds, (int)$_SESSION['user_id']);
+    $userRatings = $uploadRepository->getUserRatingsForMaterials($materialIds, (int)$_SESSION['user_id']);
 }
 
 // Alle Daten an Smarty übergeben

@@ -3,6 +3,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../includes/pdf_utils.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/CourseRepository.php';
+require_once __DIR__ . '/../src/Repository/GroupRepository.php';
+require_once __DIR__ . '/../src/Repository/UploadRepository.php';
+
 
 if (empty($_SESSION['user_id'])) {
     $reason = "Du musst eingeloggt sein, um Dateien hochladen zu können.";
@@ -13,6 +18,11 @@ if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
+$db = new Database();
+$courseRepository = new CourseRepository($db);
+$groupRepository = new GroupRepository($db);
+$uploadRepository = new UploadRepository($db);
+
 $error   = '';
 $success = '';
 $warning = '';
@@ -20,8 +30,8 @@ $warning = '';
 $action = $_POST['action'] ?? ($_GET['action'] ?? 'upload');
 $action = $action === 'suggest' ? 'suggest' : 'upload';
 
-$courses         = DbFunctions::getAllCourses();
-$userGroups      = DbFunctions::fetchGroupsByUser((int)$_SESSION['user_id']);
+$courses         = $courseRepository->getAllCourses();
+$userGroups      = $groupRepository->fetchGroupsByUser((int)$_SESSION['user_id']);
 $groupUpload     = false;
 $selectedGroupId = 0;
 $uploadTarget    = 'public';
@@ -49,13 +59,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($courseSuggestion === '') {
             $error = 'Bitte gib einen Kursnamen an.';
         } else {
-            $similar = DbFunctions::findSimilarCourse($courseSuggestion);
+            $similar = $courseRepository->findSimilarCourse($courseSuggestion);
 
             if ($similar !== null && ! $confirmSimilar) {
                 $warning = "Ein ähnlicher Kurs existiert bereits: '{$similar}'. Meintest du diesen? Klicke erneut auf 'Vorschlagen', um trotzdem einzureichen.";
             } else {
                 try {
-                    DbFunctions::submitCourseSuggestion($courseSuggestion, (int) $_SESSION['user_id']);
+                    $courseRepository->submitCourseSuggestion($courseSuggestion, (int) $_SESSION['user_id']);
                     $success = 'Kursvorschlag wurde eingereicht.';
                     $_POST   = [];
                 } catch (Exception $e) {
@@ -151,14 +161,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         try {
                             if ($course === '__custom__') {
-                                DbFunctions::submitCourseSuggestion($customCourse, (int) $_SESSION['user_id']);
+                                $courseRepository->submitCourseSuggestion($customCourse, (int) $_SESSION['user_id']);
                                 $success = 'Kursvorschlag wurde eingereicht. Datei wird erst nach Freigabe akzeptiert.';
                             } else {
-                                $courseId   = DbFunctions::getCourseIdByName($course);
-                                $materialId = DbFunctions::getOrCreateMaterial($courseId, $title, $description);
+                                $courseId   = $courseRepository->getCourseIdByName($course);
+                                $materialId = $courseRepository->getOrCreateMaterial($courseId, $title, $description);
 
                                 if ($groupUpload) {
-                                    DbFunctions::uploadFile(
+                                    $uploadRepository->uploadFile(
                                         $storedName,
                                         $materialId,
                                         (int) $_SESSION['user_id'],
@@ -167,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     );
                                     $success = 'Datei erfolgreich für die Lerngruppe hochgeladen.';
                                 } else {
-                                    DbFunctions::uploadFile(
+                                    $uploadRepository->uploadFile(
                                         $storedName,
                                         $materialId,
                                         (int) $_SESSION['user_id']

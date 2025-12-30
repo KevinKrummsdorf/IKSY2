@@ -21,8 +21,10 @@ if (!$username) {
     return; // kein Benutzerkontext vorhanden
 }
 
+$userRepository = new UserRepository($db);
+
 // Ergebnis-Variablen für Smarty vorbereiten
-$twofa_enabled = DbFunctions::isTwoFAEnabled($username);
+$twofa_enabled = $userRepository->isTwoFAEnabled($username);
 $show_2fa_form = false;
 $qrCodeUrl      = '';
 $smarty->assign('twofa_enabled', $twofa_enabled);
@@ -58,7 +60,7 @@ if (!$twofa_enabled && ($_POST['action'] ?? '') === 'confirm_2fa') {
 
         if ($secret && $tfa->verifyCode($secret, $code)) {
             $encrypted = encryptData($secret);
-            DbFunctions::storeTwoFASecret($username, $encrypted);
+            $userRepository->storeTwoFASecret($username, $encrypted);
 
             unset($_SESSION['2fa_secret_temp']);
             $twofa_enabled = true;
@@ -76,7 +78,7 @@ if (!$twofa_enabled && ($_POST['action'] ?? '') === 'confirm_2fa') {
 
 // 2FA deaktivieren
 if ($twofa_enabled && ($_POST['action'] ?? '') === 'disable_2fa') {
-    DbFunctions::disableTwoFA($username);
+    $userRepository->disableTwoFA($username);
     unset($_SESSION['2fa_passed']);
 
     $twofa_enabled  = false;

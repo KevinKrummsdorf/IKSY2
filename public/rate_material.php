@@ -5,6 +5,8 @@ ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/UploadRepository.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
@@ -32,25 +34,23 @@ if (!$materialId || !$rating) {
 }
 
 // DB-Verbindung
-$pdo = DbFunctions::db_connect();
+$db = new Database();
+$uploadRepository = new UploadRepository($db);
 $userId = $_SESSION['user_id'];
 
 try {
     // Prüfen ob Bewertung existiert
-    $stmt = $pdo->prepare("SELECT id FROM material_ratings WHERE material_id = :material_id AND user_id = :user_id");
-    $stmt->execute(['material_id' => $materialId, 'user_id' => $userId]);
+    $existingRating = $uploadRepository->getUserMaterialRating($materialId, $userId);
     
-    if ($stmt->fetch()) {
+    if ($existingRating) {
         // Update vorhandener Bewertung
-        $update = $pdo->prepare("UPDATE material_ratings SET rating = :rating WHERE material_id = :material_id AND user_id = :user_id");
-        $update->execute(['rating' => $rating, 'material_id' => $materialId, 'user_id' => $userId]);
+        $db->execute("UPDATE material_ratings SET rating = :rating WHERE material_id = :material_id AND user_id = :user_id", ['rating' => $rating, 'material_id' => $materialId, 'user_id' => $userId]);
     } else {
         // Neue Bewertung einfügen
-        $insert = $pdo->prepare("INSERT INTO material_ratings (material_id, user_id, rating) VALUES (:material_id, :user_id, :rating)");
-        $insert->execute(['material_id' => $materialId, 'user_id' => $userId, 'rating' => $rating]);
+        $db->execute("INSERT INTO material_ratings (material_id, user_id, rating) VALUES (:material_id, :user_id, :rating)", ['material_id' => $materialId, 'user_id' => $userId, 'rating' => $rating]);
     }
     
-    $avg = DbFunctions::getAverageMaterialRating($materialId);
+    $avg = $uploadRepository->getAverageMaterialRating($materialId);
     echo json_encode([
         'success' => true,
         'average_rating' => $avg['average_rating'] ?? 0,

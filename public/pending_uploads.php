@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/UploadRepository.php';
 
 if (empty($_SESSION['user_id'])) {
     $reason = 'Nicht eingeloggt.';
@@ -15,6 +17,9 @@ if (!$isAdmin && !$isMod) {
     $reason = 'Du hast nicht die nötigen Rechte, um auf diese Ressource zuzugreifen.';
     handle_error(403, $reason, 'both');
 }
+
+$db = new Database();
+$uploadRepository = new UploadRepository($db);
 
 $filters = [
     'title'       => trim($_GET['title'] ?? ''),
@@ -38,14 +43,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         if ($action === 'approve') {
-            DbFunctions::approveUpload($uploadId, (int)$_SESSION['user_id']);
+            $uploadRepository->approveUpload($uploadId, (int)$_SESSION['user_id']);
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Upload wurde freigegeben.'];
             $actionSuccess = true;
         } elseif ($action === 'reject') {
             if ($note === '') {
                 $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Bitte einen Ablehnungsgrund angeben.'];
             } else {
-                DbFunctions::rejectUpload($uploadId, (int)$_SESSION['user_id'], $note);
+                $uploadRepository->rejectUpload($uploadId, (int)$_SESSION['user_id'], $note);
                 $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Upload wurde abgelehnt.'];
                 $actionSuccess = true;
             }
@@ -53,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Mail an den Nutzer senden, falls Aktion erfolgreich war
         if ($actionSuccess) {
-            $uploadData = DbFunctions::getUploadDetails($uploadId);
+            $uploadData = $uploadRepository->getUploadDetails($uploadId);
 
             if ($uploadData && !empty($uploadData['email']) && !empty($uploadData['username'])) {
                 $subject = ($action === 'approve')
@@ -86,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $doExport = isset($_GET['export']) && $_GET['export'] === 'csv';
 
 if ($doExport) {
-    $allUploads = DbFunctions::getFilteredPendingUploads($filters);
+    $allUploads = $uploadRepository->getFilteredPendingUploads($filters);
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename=pending_uploads.csv');
     $out = fopen('php://output', 'w');
@@ -104,9 +109,9 @@ if ($doExport) {
     exit;
 }
 
-$totalCount    = DbFunctions::countFilteredPendingUploads($filters);
+$totalCount    = $uploadRepository->countFilteredPendingUploads($filters);
 $totalPages    = (int)ceil($totalCount / $pageSize);
-$pendingUploads = DbFunctions::getFilteredPendingUploads($filters, $pageSize, $offset);
+$pendingUploads = $uploadRepository->getFilteredPendingUploads($filters, $pageSize, $offset);
 
 if (isset($_SESSION['flash'])) {
     $smarty->assign('flash', $_SESSION['flash']);

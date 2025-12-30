@@ -5,9 +5,13 @@ declare(strict_types=1);
 header('Content-Type: text/html; charset=utf-8');
 
 require_once __DIR__ . '/../includes/config.inc.php';
-
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/UserRepository.php';
 
 try {
+    $db = new Database();
+    $userRepository = new UserRepository($db);
+
     $identifier = trim($_POST['username_or_email'] ?? '');
     $password   = $_POST['password'] ?? '';
     $ip         = getClientIp();
@@ -18,7 +22,7 @@ try {
     }
 
     // 1) User holen
-    $user = DbFunctions::fetchUserByIdentifier($identifier);
+    $user = $userRepository->fetchUserByIdentifier($identifier);
 
     if (!$user) {
 
@@ -33,7 +37,7 @@ try {
     $userId = (int)$user['id'];
 
     // 2) Konto gesperrt?
-    if (DbFunctions::isAccountLocked($userId)) {
+    if ($userRepository->isAccountLocked($userId)) {
 
         $_SESSION['flash'] = [
             'type'    => 'danger',
@@ -55,12 +59,12 @@ try {
 
     // 4) Passwort prüfen
     if (!verifyPassword($password, $user['password_hash'])) {
-        DbFunctions::updateFailedAttempts($userId);
+        $userRepository->updateFailedAttempts($userId);
 
         // Optional: direkt sperren ab X Fehlversuchen (z. B. 5)
-        $attempts = DbFunctions::fetchValue('SELECT failed_attempts FROM user_security WHERE user_id = :id', [':id' => $userId]);
+        $attempts = $db->fetchValue('SELECT failed_attempts FROM user_security WHERE user_id = :id', [':id' => $userId]);
         if ($attempts >= 5) {
-            DbFunctions::lockAccount($userId, 15); // z. B. 15 Minuten Sperre
+            $userRepository->lockAccount($userId, 15); // z. B. 15 Minuten Sperre
         }
 
         $_SESSION['flash'] = [
@@ -72,10 +76,10 @@ try {
     }
 
     // 5) Login erfolgreich – Fehlversuche zurücksetzen
-    DbFunctions::resetFailedAttempts($userId);
+    $userRepository->resetFailedAttempts($userId);
 
     // 6) Wenn 2FA aktiviert, weiterleiten
-    if (DbFunctions::isTwoFAEnabled($user['username'])) {
+    if ($userRepository->isTwoFAEnabled($user['username'])) {
         require_once __DIR__ . '/../includes/2fa.inc.php';
         $_SESSION['2fa_user']        = $user['username'];
         $_SESSION['user_id_pending'] = $userId;
@@ -91,7 +95,7 @@ try {
     }
 
     // 7) Login erfolgreich: Zeit und Logs
-    DbFunctions::updateLastLogin($userId);
+    $userRepository->updateLastLogin($userId);
 
     session_regenerate_id(true);
 

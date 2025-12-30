@@ -4,6 +4,8 @@ declare(strict_types=1);
 // Session wird bereits in config.inc.php gestartet
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/ContactRequestRepository.php';
 
 // Initialisierung
 $errors    = [];
@@ -15,12 +17,13 @@ $ip      = getClientIp();
 $maskedIp= maskIp($ip);
 
 // DB-Verbindung
-$pdo = DbFunctions::db_connect();
+$db = new Database();
+$contactRequestRepository = new ContactRequestRepository($db);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // reCAPTCHA prüfen
     $token = $_POST['recaptcha_token'] ?? '';
-    if (!recaptcha_verify_auto($pdo, $token)) {
+    if (!recaptcha_verify_auto($db, $token)) {
 
         $errors[] = 'reCAPTCHA-Validierung fehlgeschlagen. Bitte erneut versuchen.';
     }
@@ -48,20 +51,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $contactId = 'CF' . strtoupper(bin2hex(random_bytes(4)));
 
         // In DB speichern
-        $stmt = $pdo->prepare('INSERT INTO contact_requests 
-                (contact_id, name, email, subject, message, ip_address, user_agent)
-            VALUES 
-                (:contact_id, :name, :email, :subject, :message, :ip, :ua)'
+        $contactRequestRepository->createContactRequest(
+            $contactId,
+            $input['name'],
+            $input['email'],
+            $input['subject'],
+            $input['message'],
+            $_SERVER['REMOTE_ADDR'] ?? null,
+            $_SERVER['HTTP_USER_AGENT'] ?? null
         );
-        $stmt->execute([
-            ':contact_id' => $contactId,
-            ':name'       => $input['name'],
-            ':email'      => $input['email'],
-            ':subject'    => $input['subject'],
-            ':message'    => $input['message'],
-            ':ip'         => $_SERVER['REMOTE_ADDR'] ?? null,
-            ':ua'         => $_SERVER['HTTP_USER_AGENT'] ?? null,
-        ]);
 
         // Mail an Team
         try {

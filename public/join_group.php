@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/GroupRepository.php';
 
 
 if (empty($_SESSION['user_id'])) {
@@ -23,7 +25,10 @@ try {
         throw new RuntimeException('Token fehlt');
     }
 
-    $invite = DbFunctions::fetchGroupInviteByToken($token);
+    $db = new Database();
+    $groupRepository = new GroupRepository($db);
+
+    $invite = $groupRepository->fetchGroupInviteByToken($token);
     if (!$invite) {
         throw new RuntimeException('Einladung ungültig oder abgelaufen');
     }
@@ -32,14 +37,14 @@ try {
         throw new RuntimeException('Diese Einladung ist nicht für deinen Account.');
     }
 
-    $group = DbFunctions::fetchGroupById((int)$invite['group_id']);
+    $group = $groupRepository->fetchGroupById((int)$invite['group_id']);
     if (!$group || $group['join_type'] !== 'invite') {
         throw new RuntimeException('Diese Gruppe erlaubt keinen Beitritt per Einladung.');
     }
 
-    DbFunctions::addUserToGroup((int)$invite['group_id'], (int)$invite['invited_user_id']);
-    DbFunctions::setUserRoleInGroup((int)$invite['group_id'], (int)$invite['invited_user_id'], 'member');
-    DbFunctions::markGroupInviteUsed((int)$invite['id']);
+    $groupRepository->addUserToGroup((int)$invite['group_id'], (int)$invite['invited_user_id']);
+    $groupRepository->setUserRoleInGroup((int)$invite['group_id'], (int)$invite['invited_user_id'], 'member');
+    $groupRepository->markGroupInviteUsed((int)$invite['id']);
 
     $data['alertType']  = 'success';
     $data['message']    = 'Du bist der Gruppe ' . htmlspecialchars($group['name'], ENT_QUOTES) . ' beigetreten.';

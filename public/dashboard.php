@@ -4,8 +4,13 @@ declare(strict_types=1);
 // Zentrale Initialisierung
 require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../includes/calendar.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/ContactRequestRepository.php';
+require_once __DIR__ . '/../src/Repository/AdminRepository.php';
+require_once __DIR__ . '/../src/Repository/UploadRepository.php';
+require_once __DIR__ . '/../src/Repository/CourseRepository.php';
 
-$pdo = DbFunctions::db_connect();
+$db = new Database();
 
 // Zugriffsschutz: Login + 2FA erforderlich
 if (
@@ -21,12 +26,17 @@ if (
 $isAdmin = ($_SESSION['role'] ?? '') === 'admin';
 $isMod   = ($_SESSION['role'] ?? '') === 'mod';
 
-// Logs laden über DbFunctions – bei jedem Aufruf!
-$contactRequests = $isAdmin ? DbFunctions::getRecentContactRequests(10) : [];
-$lockedUsers     = $isAdmin ? DbFunctions::getAllLockedUsers() : [];
-$pendingUploads  = DbFunctions::getPendingUploads();
-$pendingCourses  = DbFunctions::getPendingCourseSuggestions();
-$userUploads     = DbFunctions::getApprovedUploadsByUser((int)$_SESSION['user_id']);
+$contactRequestRepository = new ContactRequestRepository($db);
+$adminRepository = new AdminRepository($db);
+$uploadRepository = new UploadRepository($db);
+$courseRepository = new CourseRepository($db);
+
+// Logs laden
+$contactRequests = $isAdmin ? $contactRequestRepository->getRecentContactRequests(10) : [];
+$lockedUsers     = $isAdmin ? $adminRepository->getAllLockedUsers() : [];
+$pendingUploads  = $uploadRepository->getPendingUploads();
+$pendingCourses  = $courseRepository->getPendingCourseSuggestions();
+$userUploads     = $uploadRepository->getApprovedUploadsByUser((int)$_SESSION['user_id']);
 
 if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -45,8 +55,8 @@ foreach ($userUploads as &$upload) {
 unset($upload);
 
 // Kalender- und Tagesansicht laden
-assignUserCalendarToSmarty($pdo, $smarty);
-assignTodayTodosToSmarty($pdo, $smarty);
+assignUserCalendarToSmarty($db, $smarty);
+assignTodayTodosToSmarty($db, $smarty);
 
 // Flash anzeigen
 if (isset($_SESSION['flash'])) {

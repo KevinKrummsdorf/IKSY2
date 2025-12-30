@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../includes/mailing.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/CourseRepository.php';
 
 if (empty($_SESSION['user_id'])) {
     $reason = 'Nicht eingeloggt.';
@@ -21,7 +23,8 @@ $filters = [
     'to_date'     => trim($_GET['to_date'] ?? '')
 ];
 
-$pdo = DbFunctions::db_connect();
+$db = new Database();
+$courseRepository = new CourseRepository($db);
 
 // Aktion: Genehmigung oder Ablehnung
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -29,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action   = $_POST['action'] ?? '';
     $reason   = trim($_POST['rejection_reason'] ?? '');
 
-    $stmt = $pdo->prepare("
+    $stmt = $db->prepare("
         SELECT pcs.course_name, u.username, u.email
         FROM pending_course_suggestions pcs
         JOIN users u ON pcs.user_id = u.id
@@ -40,14 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($row) {
         if ($action === 'approve') {
-            $pdo->beginTransaction();
+            $db->beginTransaction();
 
-            $pdo->prepare("INSERT IGNORE INTO courses (name) VALUES (?)")
-                ->execute([$row['course_name']]);
-            $pdo->prepare("UPDATE pending_course_suggestions SET is_approved = 1 WHERE id = ?")
-                ->execute([$id]);
+            $db->execute("INSERT INTO courses (name) VALUES (?) ON CONFLICT (name) DO NOTHING", [$row['course_name']]);
+            $db->execute("UPDATE pending_course_suggestions SET is_approved = TRUE WHERE id = ?", [$id]);
 
-            $pdo->commit();
+            $db->commit();
 
             sendMail(
                 $row['email'], $row['username'],
@@ -63,8 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($reason === '') {
                 $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Bitte eine Begründung angeben.'];
             } else {
-                $pdo->prepare("UPDATE pending_course_suggestions SET is_approved = 0 WHERE id = ?")
-                    ->execute([$id]);
+                $db->execute("UPDATE pending_course_suggestions SET is_approved = FALSE WHERE id = ?", [$id]);
 
                 sendMail(
                     $row['email'], $row['username'],
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // CSV-Export
-$entries = DbFunctions::getFilteredCourseSuggestions($filters);
+$entries = $courseRepository->getFilteredCourseSuggestions($filters);
 if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename=course_suggestions.csv');

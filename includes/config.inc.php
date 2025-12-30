@@ -24,7 +24,6 @@ foreach ($dirs as $d) {
     }
 }
 
-require_once __DIR__ . '/../includes/db.inc.php';
 require_once __DIR__ . '/../includes/ip_utils.inc.php';
 require_once __DIR__ . '/../includes/recaptcha.inc.php';
 require_once __DIR__ . '/../includes/mailing.inc.php';

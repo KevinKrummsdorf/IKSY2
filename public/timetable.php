@@ -4,6 +4,8 @@
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/TimetableRepository.php';
 
 // Session wird bereits in config.inc.php gestartet
 
@@ -16,12 +18,15 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
 $userId = (int) $_SESSION['user_id'];
 $success = false;
 
+$db = new Database();
+$timetableRepository = new TimetableRepository($db);
+
 // === Export-Funktionen ===
 $export = $_GET['export'] ?? '';
 if ($export === 'csv' || $export === 'pdf') {
-    $weekdays  = DbFunctions::fetchAllWeekdays();
-    $timeSlots = DbFunctions::fetchAllTimeSlots();
-    $timetable = DbFunctions::fetchUserSchedule($userId);
+    $weekdays  = $timetableRepository->fetchAllWeekdays();
+    $timeSlots = $timetableRepository->fetchAllTimeSlots();
+    $timetable = $timetableRepository->fetchUserSchedule($userId);
 
     if ($export === 'csv') {
         header('Content-Type: text/csv; charset=utf-8');
@@ -98,7 +103,7 @@ if ($export === 'csv' || $export === 'pdf') {
 // === Formular absenden ===
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        DbFunctions::saveUserSchedule($userId, $_POST['timetable'] ?? []);
+        $timetableRepository->saveUserSchedule($userId, $_POST['timetable'] ?? []);
         header('Location: timetable.php?success=1');
         exit;
     } catch (Throwable $e) {
@@ -108,9 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // === Daten laden ===
-$weekdays  = DbFunctions::fetchAllWeekdays();    // id, day_name
-$timeSlots = DbFunctions::fetchAllTimeSlots();   // id, start_time, end_time
-$timetable = DbFunctions::fetchUserSchedule($userId); // [weekday_id][slot_id] => array
+$weekdays  = $timetableRepository->fetchAllWeekdays();    // id, day_name
+$timeSlots = $timetableRepository->fetchAllTimeSlots();   // id, start_time, end_time
+$timetable = $timetableRepository->fetchUserSchedule($userId); // [weekday_id][slot_id] => array
 
 // === Smarty anzeigen ===
 $smarty->assign('title', 'Stundenplan');

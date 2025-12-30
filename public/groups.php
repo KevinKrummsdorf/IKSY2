@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/GroupRepository.php';
 
 // Login-Schutz
 if (empty($_SESSION['user_id']) || empty($_SESSION['username'])) {
@@ -17,9 +19,11 @@ $userId = $_SESSION['user_id'];
 $error   = '';
 $success = '';
 
+$db = new Database();
+$groupRepository = new GroupRepository($db);
 
 // Alle Gruppen für Liste
-$allGroups = DbFunctions::fetchAllGroups();
+$allGroups = $groupRepository->fetchAllGroups();
 
 $smarty->assign([
     'groups'  => $allGroups,
