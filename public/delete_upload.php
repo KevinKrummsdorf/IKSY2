@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/UploadRepository.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_SESSION['user_id'])) {
     $reason = 'Zugriff verweigert.';
@@ -21,7 +23,9 @@ if ($uploadId <= 0) {
 $userId = (int)$_SESSION['user_id'];
 
 try {
-    $storedName = DbFunctions::deleteUpload($uploadId, $userId);
+    $db = new Database();
+    $uploadRepository = new UploadRepository($db);
+    $storedName = $uploadRepository->deleteUpload($uploadId, $userId);
     if ($storedName === null) {
         $reason = 'Upload nicht gefunden oder keine Berechtigung.';
         handle_error(403, $reason, 'both');

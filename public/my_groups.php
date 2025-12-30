@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/GroupRepository.php';
 
 // Zugriffsschutz: Nur für eingeloggte Nutzer
 if (empty($_SESSION['user_id'])) {
@@ -17,6 +19,9 @@ if (!isset($_SESSION['csrf_token'])) {
 }
 $csrf = $_SESSION['csrf_token'];
 
+$db = new Database();
+$groupRepository = new GroupRepository($db);
+
 // Gruppenaktionen verarbeiten (Erstellen/Beitreten)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], (string)($_POST['csrf_token'] ?? ''))) {
@@ -27,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $allowed   = ['open','invite','code'];
         if ($groupName === '') {
             $error = 'Bitte gib einen Gruppennamen ein.';
-        } elseif (DbFunctions::fetchGroupByName($groupName)) {
+        } elseif ($groupRepository->fetchGroupByName($groupName)) {
             $error = 'Dieser Gruppenname ist bereits vergeben.';
         } elseif (!in_array($joinType, $allowed, true)) {
             $error = 'Ungültige Beitrittsart.';
@@ -36,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($joinType === 'code') {
                 $inviteCode = bin2hex(random_bytes(5));
             }
-            $newGroupId = DbFunctions::createGroup($groupName, $userId, $joinType, $inviteCode);
+            $newGroupId = $groupRepository->createGroup($groupName, $userId, $joinType, $inviteCode);
             if ($newGroupId) {
                 $success = 'Die Gruppe wurde erfolgreich erstellt.';
                 if ($inviteCode) {
@@ -64,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $fileName = uniqid('group_', true) . '.' . $ext;
                         $target   = $dir . $fileName;
                         if (move_uploaded_file($tmp, $target) || rename($tmp, $target)) {
-                            DbFunctions::updateGroup((int)$newGroupId, ['group_picture' => $fileName]);
+                            $groupRepository->updateGroup((int)$newGroupId, ['group_picture' => $fileName]);
                         }
                     }
                 }
@@ -77,15 +82,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($groupName === '') {
             $error = 'Bitte gib einen Gruppenname ein.';
         } else {
-            $group = DbFunctions::fetchGroupByName($groupName);
+            $group = $groupRepository->fetchGroupByName($groupName);
             if (!$group) {
                 $error = 'Keine Gruppe mit diesem Namen gefunden.';
             } else {
                 $groupId = (int)$group['id'];
                 if ($group['join_type'] !== 'open') {
                     $error = 'Dieser Gruppe kann man nicht direkt beitreten.';
-                } elseif (DbFunctions::addUserToGroup($groupId, $userId)) {
-                    DbFunctions::setUserRoleInGroup($groupId, $userId, 'member');
+                } elseif ($groupRepository->addUserToGroup($groupId, $userId)) {
+                    $groupRepository->setUserRoleInGroup($groupId, $userId, 'member');
                     $success = 'Du bist der Gruppe beigetreten.';
                 } else {
                     $error = 'Fehler: dem Gruppenbeitritt ist fehlgeschlagen.';
@@ -101,7 +106,7 @@ if (isset($_GET['deleted']) && $_GET['deleted'] === '1') {
 }
 
 // Alle Gruppen des Nutzers abrufen
-$myGroups = DbFunctions::fetchGroupsByUser($userId);
+$myGroups = $groupRepository->fetchGroupsByUser($userId);
 
 // Smarty-Variablen zuweisen
 $smarty->assign([
@@ -117,4 +122,3 @@ if ($success !== '') {
 
 // Seite anzeigen
 $smarty->display('my_groups.tpl');
-

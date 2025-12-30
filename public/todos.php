@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/TodoRepository.php';
 
 // Initialisiere die Session-Variable für kürzlich erledigte Aufgaben
 if (!isset($_SESSION['just_completed'])) {
@@ -17,11 +19,14 @@ if (empty($_SESSION['user_id'])) {
 $userId   = (int)$_SESSION['user_id'];
 $showDone = isset($_GET['show_done']) && $_GET['show_done'] == '1';
 
+$db = new Database();
+$todoRepository = new TodoRepository($db);
+
 // Priorität eines offenen ToDos aktualisieren
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_priority'])) {
     $todoId  = (int)$_POST['todo_id'];
     $priority = $_POST['priority'] ?? 'medium';
-    DbFunctions::updateTodoPriority($todoId, $userId, $priority);
+    $todoRepository->updateTodoPriority($todoId, $userId, $priority);
     header('Location: todos.php');
     exit;
 }
@@ -33,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['new_todo'])) {
     $priority = $_POST['priority'] ?? 'medium';
 
     if ($text !== '') {
-        DbFunctions::insertTodo($userId, $text, $dueDate, $priority);
+        $todoRepository->insertTodo($userId, $text, $dueDate, $priority);
     }
 
     // Nach dem Hinzufügen neu laden (Vermeidung von POST-Resubmits)
@@ -45,11 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['new_todo'])) {
 if (isset($_GET['toggle'])) {
     $todoId = (int)$_GET['toggle'];
     
-    $todo = DbFunctions::getTodoStatus($todoId, $userId);
+    $todo = $todoRepository->getTodoStatus($todoId, $userId);
     
     if ($todo) {
         $newStatus = (int)!$todo['is_done'];
-        DbFunctions::updateTodoStatus($todoId, $userId, $newStatus);
+        $todoRepository->updateTodoStatus($todoId, $userId, $newStatus);
         
         if ($newStatus === 1) {
             $_SESSION['just_completed'][] = $todoId;
@@ -65,21 +70,21 @@ if (isset($_GET['toggle'])) {
 // Einzelnes erledigtes ToDo löschen
 if (isset($_GET['delete'])) {
     $todoId = (int)$_GET['delete'];
-    DbFunctions::deleteTodo($todoId, $userId);
+    $todoRepository->deleteTodo($todoId, $userId);
     header('Location: todos.php?show_done=1');
     exit;
 }
 
 // Alle erledigten ToDos löschen
 if (isset($_GET['delete_completed'])) {
-    DbFunctions::deleteCompletedTodos($userId);
+    $todoRepository->deleteCompletedTodos($userId);
     header('Location: todos.php?show_done=1');
     exit;
 }
 
 
 // Alle ToDos des Benutzers laden (auch die bereits erledigten)
-$todos = DbFunctions::getTodosByUserId($userId);
+$todos = $todoRepository->getTodosByUserId($userId);
 
 // ToDos in offene und erledigte Aufgaben aufteilen
 $todos_unfinished = [];

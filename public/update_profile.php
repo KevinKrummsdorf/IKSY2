@@ -2,6 +2,9 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/UserRepository.php';
+require_once __DIR__ . '/../src/Repository/ProfileRepository.php';
 require_once __DIR__ . '/../src/PasswordController.php';
 
 if (empty($_SESSION['user_id'])) {
@@ -13,6 +16,11 @@ $userId = (int)$_SESSION['user_id'];
 $action = $_POST['action'] ?? '';
 $_SESSION['flash'] = null; // clear previous flash
 
+$db = new Database();
+$userRepository = new UserRepository($db);
+$profileRepository = new ProfileRepository($db);
+$passwordController = new PasswordController($db);
+
 try {
     switch ($action) {
         case 'update_username':
@@ -20,13 +28,10 @@ try {
             if ($username === '') {
                 throw new RuntimeException('Ungültiger Benutzername.');
             }
-            if (DbFunctions::usernameExists($username, $userId)) {
+            if ($userRepository->usernameExists($username, $userId)) {
                 throw new RuntimeException('Benutzername bereits vergeben.');
             }
-            DbFunctions::execute('UPDATE users SET username = :u WHERE id = :id', [
-                ':u' => $username,
-                ':id' => $userId
-            ], false);
+            $userRepository->updateUsername($userId, $username);
             $_SESSION['username'] = $username;
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Benutzername aktualisiert.'];
             break;
@@ -36,14 +41,14 @@ try {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 throw new RuntimeException('Ungültige E-Mail-Adresse.');
             }
-            if (DbFunctions::emailExists($email, $userId)) {
+            if ($userRepository->emailExists($email, $userId)) {
                 throw new RuntimeException('E-Mail-Adresse wird bereits verwendet.');
             }
-            DbFunctions::updateEmail($userId, $email);
-            DbFunctions::unverifyUser($userId);
+            $userRepository->updateEmail($userId, $email);
+            $userRepository->unverifyUser($userId);
             require_once __DIR__ . '/../includes/verification.inc.php';
-            $user = DbFunctions::fetchUserById($userId);
-            sendVerificationEmail(DbFunctions::db_connect(), $userId, $user['username'], $email);
+            $user = $userRepository->fetchUserById($userId);
+            sendVerificationEmail($db, $userId, $user['username'], $email);
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'E-Mail-Adresse aktualisiert. Bitte bestätige sie erneut.'];
             break;
 
@@ -57,8 +62,8 @@ try {
             if ($new !== $confirm) {
                 throw new RuntimeException('Passwörter stimmen nicht überein.');
             }
-            PasswordController::changePassword($userId, $old, $new);
-            $user = DbFunctions::fetchUserById($userId);
+            $passwordController->changePassword($userId, $old, $new);
+            $user = $userRepository->fetchUserById($userId);
 
             // Confirmation email
             try {
@@ -100,7 +105,7 @@ try {
                 'birthdate'  => $birthdate,
             ];
 
-            DbFunctions::updateUserProfile($userId, $fields);
+            $profileRepository->updateUserProfile($userId, $fields);
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Persönliche Daten aktualisiert.'];
             break;
 
@@ -108,7 +113,7 @@ try {
             $platforms = ['instagram', 'tiktok', 'discord', 'ms_teams', 'twitter', 'linkedin', 'github'];
             foreach ($platforms as $platform) {
                 $handle = htmlspecialchars(trim($_POST[$platform] ?? ''), ENT_QUOTES, 'UTF-8');
-                DbFunctions::saveUserSocialMedia($userId, $platform, $handle);
+                $profileRepository->saveUserSocialMedia($userId, $platform, $handle);
             }
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Social-Media-Daten aktualisiert.'];
             break;
@@ -149,7 +154,7 @@ try {
                 }
             }
 
-            DbFunctions::updateUserProfile($userId, ['profile_picture' => $fileName]);
+            $profileRepository->updateUserProfile($userId, ['profile_picture' => $fileName]);
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Profilbild aktualisiert.'];
             break;
 
@@ -164,4 +169,3 @@ try {
     header('Location: ' . build_url('profile/my'));
     exit;
 }
-

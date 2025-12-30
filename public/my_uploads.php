@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/UploadRepository.php';
 
 // Zugriffsschutz
 if (empty($_SESSION['user_id'])) {
@@ -10,6 +12,9 @@ if (empty($_SESSION['user_id'])) {
 }
 
 $userId = (int)$_SESSION['user_id'];
+
+$db = new Database();
+$uploadRepository = new UploadRepository($db);
 
 $filters = [
     'title'       => trim($_GET['title'] ?? ''),
@@ -23,10 +28,10 @@ $currentPage = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, (int)$
 $pageSize    = 25;
 $offset      = ($currentPage - 1) * $pageSize;
 
-$totalCount = DbFunctions::countFilteredUploadsByUser($userId, $filters);
+$totalCount = $uploadRepository->countFilteredUploadsByUser($userId, $filters);
 $totalPages = (int)ceil($totalCount / $pageSize);
-$uploads    = DbFunctions::getFilteredUploadsByUser($userId, $filters, $pageSize, $offset);
-$suggestions = DbFunctions::getUserUploadSuggestions($userId);
+$uploads    = $uploadRepository->getFilteredUploadsByUser($userId, $filters, $pageSize, $offset);
+$suggestions = $uploadRepository->getUserUploadSuggestions($userId);
 
 if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));

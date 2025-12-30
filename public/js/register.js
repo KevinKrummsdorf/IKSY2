@@ -9,12 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const requirementList      = registerForm.querySelector('.requirement-list');
   const globalAlertContainer = document.getElementById('AlertContainer');
   const formAlertContainer   = document.getElementById('registerAlert');
-  const tokenField           = document.getElementById('register-recaptcha-token');
   const spinner              = document.getElementById('register-spinner');
-  const siteKey              = window.recaptchaSiteKey;
 
   if (!registerForm || !registerSubmitBtn || !passwordInput || !passwordConfirmInput
-      || !requirementList || !tokenField || !spinner) {
+      || !requirementList || !spinner) {
     console.error('Einige Elemente fehlen im Formular!');
     return;
   }
@@ -28,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     special:   { regex: /[^A-Za-z0-9]/,message: 'Mindestens ein Sonderzeichen' },
   };
 
+  // Passwort anzeigen/verstecken
   eyeIcons.forEach(icon => {
     icon.addEventListener('click', () => {
       const input = icon.previousElementSibling;
@@ -38,12 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  passwordInput.addEventListener('focus', () => {
-    requirementList.classList.add('visible');
-  });
-  passwordInput.addEventListener('blur', () => {
-    requirementList.classList.remove('visible');
-  });
+  passwordInput.addEventListener('focus', () => requirementList.classList.add('visible'));
+  passwordInput.addEventListener('blur', () => requirementList.classList.remove('visible'));
 
   passwordInput.addEventListener('input', () => {
     const val = passwordInput.value;
@@ -57,9 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function resetForm() {
     registerForm.reset();
     requirementList.classList.remove('visible');
-    requirementList.querySelectorAll('li').forEach(li => {
-      li.classList.remove('valid', 'invalid');
-    });
+    requirementList.querySelectorAll('li').forEach(li => li.classList.remove('valid', 'invalid'));
   }
 
   function getRegistrationErrorMessage(err) {
@@ -77,10 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showAlert(htmlMessage, type = 'danger', autoCloseMs = 5000, container = formAlertContainer) {
     if (!container) container = globalAlertContainer;
-    if (!container) {
-      alert(htmlMessage);
-      return;
-    }
+    if (!container) { alert(htmlMessage); return; }
 
     if (container === globalAlertContainer) {
       container.innerHTML = `
@@ -151,26 +141,21 @@ document.addEventListener('DOMContentLoaded', () => {
     registerSubmitBtn.disabled = true;
     spinner.classList.remove('d-none');
 
-    grecaptcha.ready(() => {
-      grecaptcha.execute(siteKey, { action: 'register' }).then(async token => {
-        tokenField.value = token;
-        const formData = new FormData(registerForm);
-        const data = await register(formData);
-        if (data && data.success) {
-          bootstrap.Modal.getInstance(registerModal)?.hide();
-          setTimeout(() => {
-            resetForm();
-            showAlert(
-              'Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse.',
-              'success',
-              7000,
-              globalAlertContainer
-            );
-          }, 300);
-        }
-        registerSubmitBtn.disabled = false;
-        spinner.classList.add('d-none');
-      });
-    });
+    const formData = new FormData(registerForm);
+    const data = await register(formData);
+    if (data && data.success) {
+      bootstrap.Modal.getInstance(registerModal)?.hide();
+      setTimeout(() => {
+        resetForm();
+        showAlert(
+          'Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse.',
+          'success',
+          7000,
+          globalAlertContainer
+        );
+      }, 300);
+    }
+    registerSubmitBtn.disabled = false;
+    spinner.classList.add('d-none');
   });
 });

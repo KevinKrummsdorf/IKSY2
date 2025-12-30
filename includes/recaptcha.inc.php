@@ -34,7 +34,7 @@ function recaptcha_write_log(string $line, string $logFile): void
 /**
  * Prüft reCAPTCHA v3-Token gegen Googles API.
  *
- * @param PDO $pdo
+ * @param Database $db
  * @param string $token Token vom Client
  * @param string $secret Dein geheimer Schlüssel
  * @param float $minScore Mindestscore (z.B. 0.5)
@@ -43,7 +43,7 @@ function recaptcha_write_log(string $line, string $logFile): void
  * @return bool true wenn gültig
  */
 function recaptcha_verify(
-    PDO $pdo,
+    Database $db,
     string $token,
     string $secret,
     float $minScore = 0.5,
@@ -93,12 +93,12 @@ function recaptcha_verify(
 /**
  * Vereinfachter Wrapper für recaptcha_verify mit globaler $config-Nutzung.
  */
-function recaptcha_verify_auto(PDO $pdo, string $token): bool
+function recaptcha_verify_auto(Database $db, string $token): bool
 {
     global $config;
 
     return recaptcha_verify(
-        $pdo,
+        $db,
         $token,
         $config['recaptcha']['secret_key'],
         $config['recaptcha']['min_score'],

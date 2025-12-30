@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 // Zentrale Initialisierung
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/UserRepository.php';
+require_once __DIR__ . '/../src/Repository/ProfileRepository.php';
 require_once __DIR__ . '/../src/PasswordController.php';
 
 // Login-Schutz
@@ -15,6 +18,10 @@ $userId   = $_SESSION['user_id'];
 $username = $_SESSION['username'];
 $isAdmin = ($_SESSION['role'] ?? '') === 'admin';
 
+$db = new Database();
+$userRepository = new UserRepository($db);
+$profileRepository = new ProfileRepository($db);
+
 // Standardmäßig eigenes Profil laden
 $profileUserId = $userId;
 
@@ -22,14 +29,14 @@ $profileUserId = $userId;
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $profileUserId = (int) $_GET['id'];
 } elseif (isset($_GET['user'])) {
-    $other = DbFunctions::fetchUserByIdentifier($_GET['user']);
+    $other = $userRepository->fetchUserByIdentifier($_GET['user']);
     if ($other) {
         $profileUserId = (int)$other['id'];
     }
 }
 
 // Profil abrufen
-$profile = DbFunctions::getOrCreateUserProfile($profileUserId);
+$profile = $profileRepository->getOrCreateUserProfile($profileUserId);
 
 // Alter berechnen, falls Geburtsdatum vorhanden ist
 if (!empty($profile['birthdate'])) {
@@ -42,7 +49,7 @@ if (!empty($profile['birthdate'])) {
 }
 
 // Username des Profilbesitzers abrufen
-$profileOwner = DbFunctions::fetchUserById($profileUserId);
+$profileOwner = $userRepository->fetchUserById($profileUserId);
 if ($profileOwner) {
     if (isset($profileOwner['username'])) {
         $profile['username'] = $profileOwner['username'];
@@ -54,7 +61,7 @@ if ($profileOwner) {
 
 // Prüfen, ob es das eigene Profil ist
 $isOwnProfile = ($profileUserId === $userId);
-$entries = DbFunctions::getUserSocialMedia($profileUserId);
+$entries = $profileRepository->getUserSocialMedia($profileUserId);
 $socialEntries = [];
 foreach ($entries as $s) {
     $socialEntries[$s['platform']] = $s['username'];
@@ -75,7 +82,8 @@ if ($isOwnProfile && ($_POST['action'] ?? '') === 'change_password') {
         if ($new !== $confirm) {
             throw new RuntimeException('Passwörter stimmen nicht überein');
         }
-        PasswordController::changePassword($userId, $old, $new);
+        $passwordController = new PasswordController($db);
+        $passwordController->changePassword($userId, $old, $new);
         $pwSuccess = 'Passwort wurde aktualisiert.';
     } catch (Throwable $e) {
         $pwMessage = defined('DEBUG') ? $e->getMessage() : 'Fehler beim Ändern des Passworts.';

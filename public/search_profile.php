@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/UserRepository.php';
 
 if (empty($_SESSION['user_id'])) {
     $reason = 'Nicht eingeloggt.';
@@ -12,17 +14,9 @@ $results = [];
 
 if ($searchTerm !== '') {
     try {
-        $pdo = DbFunctions::db_connect();
-        $stmt = $pdo->prepare("
-            SELECT id, username AS result_username
-            FROM users
-            WHERE username LIKE :term1 OR email LIKE :term2
-        ");
-        $stmt->execute([
-            ':term1' => '%' . $searchTerm . '%',
-            ':term2' => '%' . $searchTerm . '%'
-        ]);
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $db = new Database();
+        $userRepository = new UserRepository($db);
+        $results = $userRepository->searchUsers($searchTerm);
     } catch (Throwable $e) {
         echo 'Fehler bei der Datenbanksuche: ' . $e->getMessage();
         exit;

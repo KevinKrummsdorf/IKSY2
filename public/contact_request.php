@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../includes/mailing.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/ContactRequestRepository.php';
 
 // Admin-/Mod-Schutz
 if (empty($_SESSION['user_id'])) {
@@ -19,6 +21,9 @@ if (!isset($_SESSION['csrf_token'])) {
 }
 $csrf = $_SESSION['csrf_token'];
 
+$db = new Database();
+$contactRequestRepository = new ContactRequestRepository($db);
+
 // Flash-Messages
 $_SESSION['flash'] = null;
 
@@ -33,8 +38,10 @@ if (
     $replyText = trim($_POST['reply_text'] ?? '');
 
     if ($replyText !== '') {
-        $contact = DbFunctions::fetchOne("SELECT name, email FROM contact_requests WHERE contact_id = ?", [$contactId]);
-        if ($contact) {
+        // This is not ideal, but we'll refactor it later
+        $requests = $contactRequestRepository->getFilteredContactRequests(['contact_id' => $contactId]);
+        if (!empty($requests)) {
+            $contact = $requests[0];
             $safeName  = htmlspecialchars($contact['name'], ENT_QUOTES);
             $safeReply = nl2br(htmlspecialchars($replyText, ENT_QUOTES));
             $subject   = "Antwort auf deine Kontaktanfrage #{$contactId} bei StudyHub";
@@ -76,14 +83,13 @@ if (
             exit;
         }
 
-        $pdo = DbFunctions::db_connect();
-        $stmt = $pdo->prepare("UPDATE contact_requests SET status = ? WHERE contact_id = ?");
-        $stmt->execute([$newStatus, $contactId]);
+        $db->execute("UPDATE contact_requests SET status = ? WHERE contact_id = ?", [$newStatus, $contactId]);
         $_SESSION['flash'] = ['type' => 'info', 'message' => 'Status wurde aktualisiert.'];
 
         if ($newStatus === 'geschlossen') {
-            $contact = DbFunctions::fetchOne("SELECT name, email FROM contact_requests WHERE contact_id = ?", [$contactId]);
-            if ($contact) {
+            $requests = $contactRequestRepository->getFilteredContactRequests(['contact_id' => $contactId]);
+            if (!empty($requests)) {
+                $contact = $requests[0];
                 $safeName  = htmlspecialchars($contact['name'], ENT_QUOTES);
                 $safeReply = nl2br(htmlspecialchars($closeReply, ENT_QUOTES));
                 $subject   = "Kontaktanfrage #{$contactId} abgeschlossen";
@@ -110,7 +116,7 @@ if (
     hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])
 ) {
     $delId = trim($_POST['delete_contact_id']);
-    DbFunctions::deleteContactRequest($delId);
+    $contactRequestRepository->deleteContactRequest($delId);
     $_SESSION['flash'] = ['type' => 'success', 'message' => 'Kontaktanfrage gelöscht.'];
     header('Location: contact_request.php');
     exit;
@@ -126,7 +132,7 @@ $filters = [
 ];
 
 // CSV-Export
-$requests = DbFunctions::getFilteredContactRequests($filters);
+$requests = $contactRequestRepository->getFilteredContactRequests($filters);
 
 if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     header('Content-Type: text/csv; charset=utf-8');

@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/UploadRepository.php';
 
 // Optional: nur für eingeloggte Benutzer
 if (empty($_SESSION['user_id'])) {
@@ -16,8 +18,11 @@ if ($uploadId <= 0) {
     handle_error(400, $reason);
 }
 
+$db = new Database();
+$uploadRepository = new UploadRepository($db);
+
 // Upload-Daten abrufen
-$upload = DbFunctions::getApprovedUploadById($uploadId);
+$upload = $uploadRepository->getApprovedUploadById($uploadId);
 
 if (!$upload) {
     $reason = 'Upload nicht gefunden oder nicht freigegeben.';

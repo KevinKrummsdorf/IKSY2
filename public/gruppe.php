@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/GroupRepository.php';
+require_once __DIR__ . '/../src/Repository/UserRepository.php';
+require_once __DIR__ . '/../src/Repository/UploadRepository.php';
 
 if (empty($_SESSION['user_id'])) {
     $reason = "Du musst eingeloggt sein, um Dateien hochladen zu können.";
@@ -13,10 +17,16 @@ if (empty($_SESSION['csrf_token'])) {
 
 $userId  = (int)$_SESSION['user_id'];
 $groupId = 0;
+
+$db = new Database();
+$groupRepository = new GroupRepository($db);
+$userRepository = new UserRepository($db);
+$uploadRepository = new UploadRepository($db);
+
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $groupId = (int)$_GET['id'];
 } elseif (isset($_GET['name'])) {
-    $grp = DbFunctions::fetchGroupByName($_GET['name']);
+    $grp = $groupRepository->fetchGroupByName($_GET['name']);
     if ($grp) {
         $groupId = (int)$grp['id'];
     }
@@ -25,14 +35,14 @@ $error   = '';
 $success = '';
 
 // Gruppe laden
-$group = DbFunctions::fetchGroupById($groupId);
+$group = $groupRepository->fetchGroupById($groupId);
 if (!$group) {
     $reason = 'Gruppe nicht gefunden';
     handle_error(404, $reason);
 }
 
 // Rolle des Users (admin/member/none)
-$myRole = DbFunctions::fetchUserRoleInGroup($groupId, $userId) ?? 'none';
+$myRole = $groupRepository->fetchUserRoleInGroup($groupId, $userId) ?? 'none';
 
 // POST-Aktionen
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -42,8 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Beitreten
     if (isset($_POST['join_group']) && $myRole === 'none') {
         if ($group['join_type'] === 'open' || ($group['join_type'] === 'code' && ($_POST['invite_code'] ?? '') === $group['invite_code'])) {
-            if (DbFunctions::addUserToGroup($groupId, $userId)) {
-                DbFunctions::setUserRoleInGroup($groupId, $userId, 'member');
+            if ($groupRepository->addUserToGroup($groupId, $userId)) {
+                $groupRepository->setUserRoleInGroup($groupId, $userId, 'member');
                 $success = 'Beigetreten.';
                 $myRole = 'member';
             } else {
@@ -57,13 +67,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     // Verlassen
     elseif (isset($_POST['leave_group']) && $myRole !== 'none') {
-        DbFunctions::removeUserFromGroup($groupId, $userId);
+        $groupRepository->removeUserFromGroup($groupId, $userId);
         $success = 'Gruppe verlassen.';
         $myRole = 'none';
     }
     // Löschen (nur Admin)
     elseif (isset($_POST['delete_group']) && $myRole === 'admin') {
-        if (DbFunctions::deleteGroup($groupId)) {
+        if ($groupRepository->deleteGroup($groupId)) {
             header('Location: lerngruppen?deleted=1');
             exit;
         }
@@ -72,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Mitglied entfernen (nur Admin)
     elseif (isset($_POST['remove_member']) && $myRole === 'admin') {
         $uid = (int)$_POST['user_id'];
-        DbFunctions::removeUserFromGroup($groupId, $uid);
+        $groupRepository->removeUserFromGroup($groupId, $uid);
         $success = 'Mitglied entfernt.';
     }
     // Benutzer einladen (nur Admin)
@@ -82,16 +92,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Bitte gib einen Benutzernamen ein.';
         } else {
             try {
-                $invUser = DbFunctions::fetchUserByIdentifier($username);
+                $invUser = $userRepository->fetchUserByIdentifier($username);
                 if (!$invUser) {
                     $error = 'Benutzer nicht gefunden.';
-                } elseif (DbFunctions::fetchUserRoleInGroup($groupId, (int)$invUser['id'])) {
+                } elseif ($groupRepository->fetchUserRoleInGroup($groupId, (int)$invUser['id'])) {
                     $error = 'Benutzer ist bereits Mitglied.';
-                } elseif (DbFunctions::fetchActiveGroupInvite($groupId, (int)$invUser['id'])) {
+                } elseif ($groupRepository->fetchActiveGroupInvite($groupId, (int)$invUser['id'])) {
                     $error = 'Es besteht bereits eine aktive Einladung.';
                 } else {
                     $token = bin2hex(random_bytes(32));
-                    if (DbFunctions::createGroupInvite($groupId, (int)$invUser['id'], $token)) {
+                    if ($groupRepository->createGroupInvite($groupId, (int)$invUser['id'], $token)) {
                         sendGroupInviteEmail(
                             $invUser['email'],
                             $invUser['username'],
@@ -115,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $uId = (int)($_POST['upload_id'] ?? 0);
         if ($uId > 0) {
             try {
-                $stored = DbFunctions::deleteGroupUpload($uId, $groupId, $userId);
+                $stored = $uploadRepository->deleteGroupUpload($uId, $groupId, $userId);
                 if ($stored !== null) {
                     $file = __DIR__ . '/../uploads/' . $stored;
                     if (is_file($file)) {
@@ -144,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $repeat = $_POST['event_repeat'] ?? 'none';
         if ($title === '' || $date === '') {
             $error = 'Titel und Datum erforderlich.';
-        } elseif (DbFunctions::createGroupEvent($groupId, $title, $date, $time, $repeat)) {
+        } elseif ($groupRepository->createGroupEvent($groupId, $title, $date, $time, $repeat)) {
             $success = 'Termin erstellt.';
         } else {
             $error = 'Termin konnte nicht erstellt werden.';
@@ -153,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Gruppentermin löschen
     elseif (isset($_POST['delete_event']) && $myRole === 'admin') {
         $eventId = (int)($_POST['event_id'] ?? 0);
-        if ($eventId > 0 && DbFunctions::deleteGroupEvent($eventId, $groupId)) {
+        if ($eventId > 0 && $groupRepository->deleteGroupEvent($eventId, $groupId)) {
             $success = 'Termin gelöscht.';
         } else {
             $error = 'Termin konnte nicht gelöscht werden.';
@@ -202,7 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             unlink($old);
                         }
                     }
-                    DbFunctions::updateGroup($groupId, ['group_picture' => $fileName]);
+                    $groupRepository->updateGroup($groupId, ['group_picture' => $fileName]);
                     $group['group_picture'] = $fileName;
                     $success = 'Gruppenbild aktualisiert.';
                 }
@@ -214,9 +224,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Mitglieder + Uploads holen
-$members = DbFunctions::getGroupMembers($groupId);
-$uploads = DbFunctions::getUploadsByGroup($groupId);
-$events  = DbFunctions::getGroupEventsByGroup($groupId);
+$members = $groupRepository->getGroupMembers($groupId);
+$uploads = $groupRepository->getUploadsByGroup($groupId);
+$events  = $groupRepository->getGroupEventsByGroup($groupId);
 foreach ($events as &$ev) {
     $ev['repeat_label'] = match ($ev['repeat_interval']) {
         'weekly'   => 'Wöchentlich',

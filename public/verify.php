@@ -2,8 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
-
-
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/UserRepository.php';
 
 $token = trim((string)($_GET['token'] ?? ''));
 
@@ -20,8 +20,11 @@ try {
         throw new RuntimeException('Token fehlt');
     }
 
+    $db = new Database();
+    $userRepository = new UserRepository($db);
+
     // 1) Hole User- und Token-Daten
-    $user = DbFunctions::fetchVerificationUser($token);
+    $user = $userRepository->fetchVerificationUser($token);
 
     if (!$user) {
         throw new RuntimeException('Token ungültig oder abgelaufen.');
@@ -35,10 +38,10 @@ try {
         $verifyData['buttonLink'] = 'index.php#loginModal';
     } else {
         // 3) Verifizieren
-        DbFunctions::verifyUser((int)$user['id']);
+        $userRepository->verifyUser((int)$user['id']);
 
         // 4) Token löschen
-        DbFunctions::deleteVerificationToken((int)$user['id']);
+        $userRepository->deleteVerificationToken((int)$user['id']);
 
         $verifyData['alertType']  = 'success';
         $verifyData['message']    = 'Deine E-Mail wurde erfolgreich verifiziert!';

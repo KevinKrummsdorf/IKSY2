@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
 require_once __DIR__ . '/../includes/mailing.inc.php';
+require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Repository/AdminRepository.php';
+require_once __DIR__ . '/../src/Repository/UserRepository.php';
 
 // Zugriff nur für Admins oder Moderatoren
 if (empty($_SESSION['user_id'])) {
@@ -15,13 +18,17 @@ if (!in_array($_SESSION['role'] ?? '', ['admin', 'mod'], true)) {
     handle_error(403, $reason, 'both');
 }
 
+$db = new Database();
+$adminRepository = new AdminRepository($db);
+$userRepository = new UserRepository($db);
+
 // Benutzer entsperren + Mail versenden
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unlock_user_id'])) {
     $unlockId = (int)$_POST['unlock_user_id'];
-    DbFunctions::unlockAccount($unlockId);
+    $userRepository->unlockAccount($unlockId);
 
     // Benutzerinformationen abrufen
-    $user = DbFunctions::getUserById($unlockId);
+    $user = $userRepository->getUserById($unlockId);
     if ($user && !empty($user['email'])) {
         $subject = 'Dein Account bei StudyHub wurde entsperrt';
         $body = "<p>Hallo {$user['username']},</p>
@@ -48,7 +55,7 @@ $filters = [
 
 // CSV-Export
 $doExport = isset($_GET['export']) && $_GET['export'] === 'csv';
-$lockedUsers = DbFunctions::getFilteredLockedUsers($filters);
+$lockedUsers = $adminRepository->getFilteredLockedUsers($filters);
 
 if ($doExport) {
     header('Content-Type: text/csv; charset=utf-8');

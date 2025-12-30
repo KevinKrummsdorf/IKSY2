@@ -6,15 +6,15 @@ use ParagonIE\Halite\KeyFactory;
 /**
  * Sendet eine E-Mail zur Verifizierung der Adresse und speichert den Token.
  *
- * @param PDO    $pdo      Datenbankverbindung
- * @param int    $userId   Benutzer-ID
- * @param string $username Anzeigename
- * @param string $email    Empfängeradresse
+ * @param Database $db       Datenbankverbindung
+ * @param int      $userId   Benutzer-ID
+ * @param string   $username Anzeigename
+ * @param string   $email    Empfängeradresse
  *
  * @throws RuntimeException
  */
 function sendVerificationEmail(
-    PDO $pdo,
+    Database $db,
     int $userId,
     string $username,
     string $email,
@@ -26,15 +26,15 @@ function sendVerificationEmail(
     $token         = KeyFactory::export($encryptionKey)->getString();
 
     // 2. In verification_tokens speichern (ersetzen, falls vorhanden)
-    $stmt = $pdo->prepare('
+    $sql = '
         INSERT INTO verification_tokens (user_id, verification_token, verification_sent_at)
         VALUES (:user_id, :token, NOW())
-        ON DUPLICATE KEY UPDATE
-            verification_token = VALUES(verification_token),
-            verification_sent_at = VALUES(verification_sent_at)
-    ');
+        ON CONFLICT (user_id) DO UPDATE SET
+            verification_token = EXCLUDED.verification_token,
+            verification_sent_at = EXCLUDED.verification_sent_at
+    ';
 
-    if (!$stmt->execute([
+    if (!$db->execute($sql, [
         ':user_id' => $userId,
         ':token'   => $token,
     ])) {
