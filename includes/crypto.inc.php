@@ -4,13 +4,14 @@ declare(strict_types=1);
 use ParagonIE\Halite\Symmetric\EncryptionKey;
 use ParagonIE\HiddenString\HiddenString;
 use ParagonIE\Halite\Symmetric\Crypto as HaliteCrypto;
+use ParagonIE\Halite\Password;
 
 /**
  * Erstellt einen sicheren Hash eines Passworts.
  */
 function hashPassword(string $password): string
 {
-    return password_hash($password, PASSWORD_DEFAULT);
+    return Password::hash(new HiddenString($password), getCryptoKey());
 }
 
 /**
@@ -18,7 +19,12 @@ function hashPassword(string $password): string
  */
 function verifyPassword(string $password, string $hash): bool
 {
-    return password_verify($password, $hash);
+    try {
+        return Password::verify(new HiddenString($password), $hash, getCryptoKey());
+    } catch (\Throwable $ex) {
+        // Log error, and return false
+        return false;
+    }
 }
 
 /**

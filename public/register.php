@@ -61,7 +61,8 @@ try {
     }
 
     // Passwort hashen und Benutzer anlegen
-    $hash = password_hash($pw, PASSWORD_DEFAULT);
+
+    $hash = hashPassword($pw);
     $userId = $userRepository->insertUser($username, $email, $hash);
     $userRepository->assignRole($userId, 3);
 
