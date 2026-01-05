@@ -16,7 +16,7 @@ class UploadRepository
         $query = '
             SELECT id, stored_name, material_id, uploaded_by
             FROM uploads
-            WHERE is_approved = 1 AND group_id IS NULL
+            WHERE is_approved AND group_id IS NULL
         ';
         return $this->db->execute($query, [], true);
     }
@@ -28,7 +28,7 @@ class UploadRepository
             FROM materials m
             JOIN uploads u ON u.material_id = m.id
             JOIN courses c ON m.course_id = c.id
-            WHERE u.is_approved = 1 AND u.group_id IS NULL
+            WHERE u.is_approved AND u.group_id IS NULL
         ';
         return $this->db->execute($query, [], true);
     }
@@ -40,7 +40,7 @@ class UploadRepository
             FROM materials m
             JOIN uploads u ON u.material_id = m.id
             JOIN courses c ON m.course_id = c.id
-            WHERE u.is_approved = 1 AND u.group_id IS NULL AND m.title LIKE :search
+            WHERE u.is_approved AND u.group_id IS NULL AND m.title LIKE :search
         ';
         return $this->db->execute($query, ['search' => '%' . $searchTerm . '%'], true);
     }
@@ -150,7 +150,7 @@ class UploadRepository
             $this->db->execute("UPDATE uploads SET material_id = ? WHERE id = ?", [$newMaterialId, $uploadId]);
         }
 
-        $this->db->execute("UPDATE uploads SET is_approved = 1 WHERE id = ?", [$uploadId]);
+        $this->db->execute("UPDATE uploads SET is_approved = true WHERE id = ?", [$uploadId]);
 
         return true;
     }
@@ -173,7 +173,7 @@ class UploadRepository
             LEFT JOIN users us ON u.uploaded_by = us.id
             LEFT JOIN materials m ON u.material_id = m.id
             LEFT JOIN courses c ON m.course_id = c.id
-            WHERE u.is_approved = 0 AND u.is_rejected = 0
+            WHERE NOT u.is_approved AND NOT u.is_rejected
             ORDER BY u.uploaded_at DESC
         ";
         return $this->db->execute($sql, [], true);
@@ -199,7 +199,7 @@ class UploadRepository
         $sql = "
             SELECT stored_name
             FROM uploads
-            WHERE id = ? AND is_approved = 1
+            WHERE id = ? AND is_approved
             LIMIT 1
         ";
         return $this->db->fetchOne($sql, [$uploadId]);
@@ -213,7 +213,7 @@ class UploadRepository
             JOIN materials m ON u.material_id = m.id
             JOIN courses c ON m.course_id = c.id
             WHERE u.uploaded_by = ?
-              AND u.is_approved = 1
+              AND u.is_approved
             ORDER BY u.uploaded_at DESC
         ";
         return $this->db->execute($sql, [$userId], true);

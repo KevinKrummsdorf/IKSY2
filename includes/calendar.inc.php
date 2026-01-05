@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../src/Repository/TodoRepository.php';
+require_once __DIR__ . '/../src/Repository/GroupRepository.php';
+
 use Smarty\Smarty;
 
 /**

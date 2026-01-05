@@ -2,6 +2,7 @@
 .env
 .cache_ggshield
 README.md
+deploy.sh
 
 # Ignoriere ein ganzes Verzeichnis
 /vendor/

@@ -17,12 +17,6 @@
   {foreach from=$team item=member}
     <section class="container my-5">
       <div class="row justify-content-center align-items-center">
-        <div class="col-md-4 text-center mb-3 mb-md-0">
-          <div class="team-photo-wrapper mx-auto rounded shadow overflow-hidden" style="max-width: 500px;">
-            <img src="{$base_url}/assets/{$member.img|escape}" class="img-fluid" alt="{$member.name|escape}">
-          </div>
-          <h4 class="mt-3">{$member.name|escape}</h4>
-        </div>
         <div class="col-md-8">
           <p>{$member.bio|escape:'html'}</p>
         </div>
