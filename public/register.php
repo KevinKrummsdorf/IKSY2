@@ -5,6 +5,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../includes/csrf.inc.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Repository/UserRepository.php';
 
@@ -14,6 +15,9 @@ $db = new Database();
 $userRepository = new UserRepository($db);
 
 try {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        validate_csrf_token();
+    }
     // Eingaben validieren
     $username = trim($_POST['username'] ?? '');
     $email    = trim($_POST['email'] ?? '');
@@ -61,7 +65,7 @@ try {
     }
 
     // Passwort hashen und Benutzer anlegen
-    $hash = hashPassword($pw);
+    $hash = password_hash($pw, PASSWORD_DEFAULT);
     $userId = $userRepository->insertUser($username, $email, $hash);
     $userRepository->assignRole($userId, 3);
 

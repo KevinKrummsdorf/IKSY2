@@ -19,10 +19,11 @@ function showAlert(htmlMessage, type = 'danger', autoCloseMs = 5000) {
 }
 
 function submitRating(materialId, rating) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
     return fetch('rate_material.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: `material_id=${encodeURIComponent(materialId)}&rating=${encodeURIComponent(rating)}`
+        body: `material_id=${encodeURIComponent(materialId)}&rating=${encodeURIComponent(rating)}&csrf_token=${encodeURIComponent(csrfToken)}`
     })
     .then(res => {
         if (!res.ok) {

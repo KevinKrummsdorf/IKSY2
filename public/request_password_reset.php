@@ -3,12 +3,14 @@ declare(strict_types=1);
 header('Content-Type: text/html; charset=utf-8');
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../includes/csrf.inc.php';
 require_once __DIR__ . '/../src/PasswordController.php';
 
 $success = false;
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    validate_csrf_token();
     $identifier = trim($_POST['identifier'] ?? '');
     try {
         if ($identifier === '') {

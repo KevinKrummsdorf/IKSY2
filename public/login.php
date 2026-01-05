@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 header('Content-Type: text/html; charset=utf-8');
 
-require_once __DIR__ . '/../includes/config.inc.php';
+$config = require __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../includes/csrf.inc.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Repository/UserRepository.php';
 
 try {
     $db = new Database();
     $userRepository = new UserRepository($db);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    validate_csrf_token();
+}
 
     $identifier = trim($_POST['username_or_email'] ?? '');
     $password   = $_POST['password'] ?? '';
@@ -122,11 +127,14 @@ try {
     header('Location: index.php');
     exit;
 
-} catch (Throwable $e) {
+}catch (Throwable $e) {
+    // DEBUG: zeige die echte Fehlermeldung
     $_SESSION['flash'] = [
-        'type'    => 'danger',
-        'message' => 'Interner Serverfehler. Bitte versuche es später erneut.',
+        'type' => 'danger',
+        'message' => 'Fehler: ' . $e->getMessage(),
     ];
-    header('Location: index.php');
+    // Optional: Stacktrace für lokale Tests
+    echo '<pre>' . $e . '</pre>';
     exit;
 }
+

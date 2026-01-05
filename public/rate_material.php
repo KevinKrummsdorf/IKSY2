@@ -5,6 +5,7 @@ ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../includes/csrf.inc.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Repository/UploadRepository.php';
 
@@ -19,6 +20,10 @@ if (empty($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Nicht eingeloggt']);
     exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    validate_csrf_token();
 }
 
 // Eingaben validieren

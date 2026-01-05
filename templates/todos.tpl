@@ -9,6 +9,7 @@
     {*Formular zum Hinzufügen eines neuen ToDos.
         Optional kann ein Fälligkeitsdatum mitgegeben werden.*}
     <form method="post" class="mb-4">
+        <input type="hidden" name="csrf_token" value="{$csrf_token}">
         <div class="row g-2">
             <div class="col-md-6">
                 <input type="text" name="new_todo" class="form-control" placeholder="Neues ToDo..." required>
@@ -48,6 +49,7 @@
                             {if $todo.priority=='high'}Hoch{elseif $todo.priority=='medium'}Mittel{else}Niedrig{/if}
                         </span>
                         <form method="post" class="d-inline ms-2">
+                            <input type="hidden" name="csrf_token" value="{$csrf_token}">
                             <input type="hidden" name="update_priority" value="1">
                             <input type="hidden" name="todo_id" value="{$todo.id}">
                             <select name="priority" class="form-select form-select-sm d-inline-block w-auto me-1">

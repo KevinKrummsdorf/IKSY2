@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../includes/csrf.inc.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Repository/UserRepository.php';
 require_once __DIR__ . '/../src/Repository/ProfileRepository.php';
@@ -22,6 +23,10 @@ $profileRepository = new ProfileRepository($db);
 $passwordController = new PasswordController($db);
 
 try {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        validate_csrf_token();
+    }
+
     switch ($action) {
         case 'update_username':
             $username = trim($_POST['username'] ?? '');
