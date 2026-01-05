@@ -10,6 +10,7 @@
         <div id="loginAlert" class="alert alert-danger d-none" role="alert" aria-live="assertive"></div>
 
         <form id="login-form" method="POST" action="{url path='login'}" novalidate>
+          <input type="hidden" name="csrf_token" value="{$csrf_token}">
           <div class="mb-3">
             <label for="username_or_email" class="form-label">Username oder E-Mail</label>
             <input type="text" class="form-control" id="username_or_email" name="username_or_email"
@@ -54,6 +55,7 @@
         <div id="registerAlert" class="alert alert-danger d-none" role="alert" aria-live="assertive"></div>
 
         <form id="registerForm" method="POST" action="{url path='register'}" data-pw-validate novalidate>
+          <input type="hidden" name="csrf_token" value="{$csrf_token}">
           <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" name="username" required>

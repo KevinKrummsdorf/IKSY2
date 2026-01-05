@@ -46,6 +46,7 @@
           <p>2FA ist aktiviert.</p>
           <form method="post" class="d-inline">
             <input type="hidden" name="action" value="disable_2fa">
+            <input type="hidden" name="csrf_token" value="{$csrf_token}">
             <button type="submit" class="btn btn-sm btn-outline-danger">Deaktivieren</button>
           </form>
         {else}
@@ -56,6 +57,7 @@
             </div>
             <form method="post" class="needs-validation" novalidate>
               <input type="hidden" name="action" value="confirm_2fa">
+              <input type="hidden" name="csrf_token" value="{$csrf_token}">
               <div class="mb-3">
                 <label for="code" class="form-label">Code</label>
                 <input type="text" class="form-control" id="code" name="code" pattern="^\d{6}$" required autocomplete="off">
@@ -66,6 +68,7 @@
           {else}
             <form method="post" class="d-inline">
               <input type="hidden" name="action" value="start_2fa">
+              <input type="hidden" name="csrf_token" value="{$csrf_token}">
               <button type="submit" class="btn btn-sm btn-outline-primary">Jetzt 2FA einrichten</button>
             </form>
           {/if}
@@ -136,6 +139,7 @@
       <div class="modal-body">
         <form method="post" action="{url path='update_profile'}" enctype="multipart/form-data">
           <input type="hidden" name="action" value="update_picture">
+          <input type="hidden" name="csrf_token" value="{$csrf_token}">
           <div class="mb-3">
             <label for="profile_picture" class="form-label">Neues Profilbild</label>
             <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*" required>
@@ -157,6 +161,7 @@
       <div class="modal-body">
         <form method="post" action="{url path='update_profile'}">
           <input type="hidden" name="action" value="update_username">
+          <input type="hidden" name="csrf_token" value="{$csrf_token}">
           <div class="mb-3">
             <label for="new_username" class="form-label">Neuer Benutzername</label>
             <input type="text" class="form-control" id="new_username" name="username" required>
@@ -179,6 +184,7 @@
       <div class="modal-body">
         <form method="post" action="{url path='update_profile'}">
           <input type="hidden" name="action" value="update_email">
+          <input type="hidden" name="csrf_token" value="{$csrf_token}">
           <div class="mb-3">
             <label for="new_email" class="form-label">Neue E-Mail-Adresse</label>
             <input type="email" class="form-control" id="new_email" name="email" required>
@@ -201,6 +207,7 @@
       <div class="modal-body">
         <form method="post" action="{url path='update_profile'}" data-pw-validate>
           <input type="hidden" name="action" value="update_password">
+          <input type="hidden" name="csrf_token" value="{$csrf_token}">
           <div class="mb-3">
             <label for="current_password" class="form-label">Aktuelles Passwort</label>
             <input type="password" class="form-control" id="current_password" name="old_password" required>
@@ -249,6 +256,7 @@
       <div class="modal-body">
         <form method="post" action="{url path='update_profile'}">
           <input type="hidden" name="action" value="update_personal">
+          <input type="hidden" name="csrf_token" value="{$csrf_token}">
           <div class="mb-3">
             <label for="first_name" class="form-label">Vorname</label>
             <input type="text" class="form-control" id="first_name" name="first_name" value="{$profile.first_name|escape}">
@@ -283,6 +291,7 @@
       <div class="modal-body">
         <form method="post" action="{url path='update_profile'}">
           <input type="hidden" name="action" value="update_socials">
+          <input type="hidden" name="csrf_token" value="{$csrf_token}">
           <div class="mb-3">
             <label for="instagram" class="form-label">Instagram</label>
             <input type="text" class="form-control" id="instagram" name="instagram" value="{$socials.instagram|default:''|escape}">

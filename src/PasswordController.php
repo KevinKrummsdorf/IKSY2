@@ -44,7 +44,7 @@ class PasswordController
         if (!password_meets_requirements($password)) {
             throw new RuntimeException('Passwort erfüllt nicht die Bedingungen');
         }
-        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $hash = hashPassword($password);
         $this->userRepository->updatePassword((int)$user['id'], $hash);
         $this->userRepository->deletePasswordResetToken((int)$user['id']);
         sendPasswordResetSuccessEmail($this->db, (int)$user['id'], $user['username'], $user['email']);
@@ -56,13 +56,13 @@ class PasswordController
     public function changePassword(int $userId, string $oldPassword, string $newPassword): void
     {
         $user = $this->userRepository->fetchUserById($userId);
-        if (!$user || !password_verify($oldPassword, $user['password_hash'])) {
+        if (!$user || !verifyPassword($oldPassword, $user['password_hash'])) {
             throw new RuntimeException('Aktuelles Passwort falsch');
         }
         if (!password_meets_requirements($newPassword)) {
             throw new RuntimeException('Passwort erfüllt nicht die Bedingungen');
         }
-        $hash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $hash = hashPassword($newPassword);
         $this->userRepository->updatePassword($userId, $hash);
     }
 }

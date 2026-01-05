@@ -53,6 +53,11 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
+// 6. CSRF-Token generieren
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 /* =========================================================
  * Encryption Keys (Nur noch für Daten-Verschlüsselung)
  * ========================================================= */
@@ -135,6 +140,7 @@ $smarty->assign([
     'username'           => $_SESSION['username'] ?? null,
     'user_role'          => $_SESSION['role'] ?? 'guest',
     'isAdmin'            => ($_SESSION['role'] ?? '') === 'admin',
+    'csrf_token'         => $_SESSION['csrf_token'] ?? '',
 ]);
 
 function handle_error(int $code, string $reason = '', string $action = ''): void

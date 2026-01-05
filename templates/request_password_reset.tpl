@@ -11,6 +11,7 @@
 {/if}
 <div id="formAlert" class="alert alert-danger d-none">Bitte alle Felder ausfüllen.</div>
 <form method="post" class="needs-validation" novalidate>
+    <input type="hidden" name="csrf_token" value="{$csrf_token}">
     <div class="mb-3">
         <label for="identifier" class="form-label">Benutzername oder E-Mail</label>
         <input type="text" class="form-control" id="identifier" name="identifier" required>

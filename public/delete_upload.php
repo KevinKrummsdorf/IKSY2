@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../includes/csrf.inc.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Repository/UploadRepository.php';
 
@@ -9,10 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_SESSION['user_id'])) {
     handle_error(401, $reason, 'both');
 }
 
-if (empty($_POST['csrf_token']) || !isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])) {
-    $reason = 'Ungültiger CSRF-Token.';
-    handle_error(403, $reason, 'both');
-}
+validate_csrf_token();
 
 $uploadId = (int)($_POST['upload_id'] ?? 0);
 if ($uploadId <= 0) {
