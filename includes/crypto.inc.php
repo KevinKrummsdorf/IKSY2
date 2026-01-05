@@ -6,7 +6,8 @@ use ParagonIE\HiddenString\HiddenString;
 use ParagonIE\Halite\Symmetric\Crypto as HaliteCrypto;
 
 /**
- * Erstellt einen sicheren Hash eines Passworts.
+ * Erstellt einen nativen PHP Passwort-Hash (Bcrypt/Argon2).
+ * Da du sagtest, die DB hat $2y..., nutzt PHP hier korrekt Bcrypt.
  */
 function hashPassword(string $password): string
 {
@@ -14,28 +15,30 @@ function hashPassword(string $password): string
 }
 
 /**
- * Vergleicht ein Passwort mit seinem Hash.
+ * Vergleicht ein Passwort mit einem nativen PHP-Hash.
  */
 function verifyPassword(string $password, string $hash): bool
 {
+    // password_verify erkennt automatisch, ob es Bcrypt ($2y...) 
+    // oder Argon2 ($argon2id...) ist.
     return password_verify($password, $hash);
 }
 
 /**
- * Liefert den in der Konfiguration hinterlegten Halite-Schlüssel.
+ * Liefert den Halite-Schlüssel NUR für Datenverschlüsselung (nicht für Passwörter).
  */
 function getCryptoKey(): EncryptionKey
 {
     global $config;
     $key = $config['halite_key'] ?? null;
     if (!$key instanceof EncryptionKey) {
-        throw new \RuntimeException('Ungültiger Halite-Key: Erwarte ein EncryptionKey-Objekt.');
+        throw new \RuntimeException('Ungültiger Halite-Key für Datenverschlüsselung.');
     }
     return $key;
 }
 
 /**
- * Verschlüsselt Klartext mit dem Halite-Key.
+ * Verschlüsselt Daten (z.B. 2FA Secrets) mit Halite.
  */
 function encryptData(string $plainText): string
 {
@@ -43,14 +46,14 @@ function encryptData(string $plainText): string
 }
 
 /**
- * Entschlüsselt zuvor verschlüsselte Daten.
+ * Entschlüsselt Daten mit Halite.
  */
 function decryptData(string $cipherText): HiddenString
 {
     try {
         return HaliteCrypto::decrypt($cipherText, getCryptoKey());
-    } catch (Throwable $e) {
+    } catch (\Throwable $e) {
         error_log('Halite decryptData() Fehler: ' . $e->getMessage());
-        throw new RuntimeException('Entschlüsselung fehlgeschlagen: ' . $e->getMessage(), 0, $e);
+        throw new RuntimeException('Entschlüsselung fehlgeschlagen.');
     }
 }

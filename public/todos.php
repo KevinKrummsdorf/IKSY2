@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../includes/csrf.inc.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Repository/TodoRepository.php';
 
@@ -24,6 +25,7 @@ $todoRepository = new TodoRepository($db);
 
 // Priorität eines offenen ToDos aktualisieren
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_priority'])) {
+    validate_csrf_token();
     $todoId  = (int)$_POST['todo_id'];
     $priority = $_POST['priority'] ?? 'medium';
     $todoRepository->updateTodoPriority($todoId, $userId, $priority);
@@ -33,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_priority'])) {
 
 // Neues ToDo hinzufügen, inklusive Fälligkeitsdatum
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['new_todo'])) {
+    validate_csrf_token();
     $text = trim($_POST['new_todo']);
     $dueDate = !empty($_POST['due_date']) ? $_POST['due_date'] : null;
     $priority = $_POST['priority'] ?? 'medium';

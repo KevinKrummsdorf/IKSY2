@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../includes/csrf.inc.php';
 require_once __DIR__ . '/../includes/pdf_utils.inc.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Repository/CourseRepository.php';
@@ -12,10 +13,6 @@ require_once __DIR__ . '/../src/Repository/UploadRepository.php';
 if (empty($_SESSION['user_id'])) {
     $reason = "Du musst eingeloggt sein, um Dateien hochladen zu können.";
     handle_error(401, $reason, 'both');
-}
-
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
 $db = new Database();
@@ -49,9 +46,8 @@ if (isset($_GET['group_id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], (string) $_POST['csrf_token'])) {
-        $error = 'Ungültiger CSRF-Token.';
-    } elseif ($action === 'suggest') {
+    validate_csrf_token();
+    if ($action === 'suggest') {
         $courseSuggestion = trim($_POST['course_suggestion'] ?? '');
         $confirmSimilar   = isset($_POST['confirm_similar']);
         $smarty->assign('courseSuggestion', $courseSuggestion);
@@ -211,7 +207,6 @@ $smarty->assign([
     'selectedCourse'   => $_POST['course'] ?? '',
     'title'            => $_POST['title'] ?? '',
     'description'      => $_POST['description'] ?? '',
-    'csrf_token'       => $_SESSION['csrf_token'],
     'action'           => $action,
     'courseSuggestion' => $_POST['course_suggestion'] ?? '',
 ]);

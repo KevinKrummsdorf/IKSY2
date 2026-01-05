@@ -16,6 +16,7 @@
 
 {if !$success}
 <form method="post" class="needs-validation" data-pw-validate novalidate>
+    <input type="hidden" name="csrf_token" value="{$csrf_token}">
     <div id="formAlert" class="alert alert-danger d-none">Bitte alle Felder ausfüllen.</div>
 
     <div class="mb-3 pass-field">

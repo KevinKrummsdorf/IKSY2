@@ -5,12 +5,17 @@ declare(strict_types=1);
 header('Content-Type: text/html; charset=utf-8');
 
 $config = require __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../includes/csrf.inc.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Repository/UserRepository.php';
 
 try {
     $db = new Database();
     $userRepository = new UserRepository($db);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    validate_csrf_token();
+}
 
     $identifier = trim($_POST['username_or_email'] ?? '');
     $password   = $_POST['password'] ?? '';

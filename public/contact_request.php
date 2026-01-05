@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/config.inc.php';
+require_once __DIR__ . '/../includes/csrf.inc.php';
 require_once __DIR__ . '/../includes/mailing.inc.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Repository/ContactRequestRepository.php';
@@ -16,11 +17,6 @@ if (!in_array($_SESSION['role'] ?? '', ['admin', 'mod'], true)) {
     handle_error(403, $reason, 'both');
 }
 
-if (!isset($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
-$csrf = $_SESSION['csrf_token'];
-
 $db = new Database();
 $contactRequestRepository = new ContactRequestRepository($db);
 
@@ -29,11 +25,9 @@ $_SESSION['flash'] = null;
 
 // Antwort senden
 if (
-    $_SERVER['REQUEST_METHOD'] === 'POST' &&
-    isset($_POST['reply_contact_id']) &&
-    isset($_POST['csrf_token']) &&
-    hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])
+    $_SERVER['REQUEST_METHOD'] === 'POST'
 ) {
+    validate_csrf_token();
     $contactId = trim($_POST['reply_contact_id']);
     $replyText = trim($_POST['reply_text'] ?? '');
 
@@ -68,9 +62,9 @@ if (
 // Statuswechsel
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST' &&
-    isset($_POST['status_contact_id'], $_POST['new_status'], $_POST['csrf_token']) &&
-    hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])
+    isset($_POST['status_contact_id'], $_POST['new_status'])
 ) {
+    validate_csrf_token();
     $contactId   = trim($_POST['status_contact_id']);
     $newStatus   = trim($_POST['new_status']);
     $closeReply  = trim($_POST['close_reply_text'] ?? '');
@@ -112,9 +106,9 @@ if (
 // Anfrage löschen
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST' &&
-    isset($_POST['delete_contact_id'], $_POST['csrf_token']) &&
-    hash_equals($_SESSION['csrf_token'], (string)$_POST['csrf_token'])
+    isset($_POST['delete_contact_id'])
 ) {
+    validate_csrf_token();
     $delId = trim($_POST['delete_contact_id']);
     $contactRequestRepository->deleteContactRequest($delId);
     $_SESSION['flash'] = ['type' => 'success', 'message' => 'Kontaktanfrage gelöscht.'];
@@ -159,7 +153,6 @@ $smarty->assign([
     'isAdmin'          => ($_SESSION['role'] ?? '') === 'admin',
     'isMod'            => ($_SESSION['role'] ?? '') === 'mod',
     'username'         => $_SESSION['username'] ?? '',
-    'csrf_token'       => $csrf,
 ]);
 
 unset($_SESSION['flash']);
