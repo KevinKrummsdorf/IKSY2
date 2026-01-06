@@ -56,6 +56,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getRegistrationErrorMessage(err) {
+    if (err.status === 400 && typeof err.data === 'object' && err.data.errors) {
+        const errorMessages = Object.values(err.data.errors);
+        if (errorMessages.length > 0) {
+            return errorMessages.join('<br>');
+        }
+    }
     const code = typeof err.data === 'object' ? err.data?.error?.code : null;
     if (err.status === 409 && code === 'USERNAME_EXISTS') return 'Username bereits vergeben';
     if (err.status === 409 && code === 'EMAIL_EXISTS')    return 'E-Mail bereits vergeben';
