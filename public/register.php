@@ -19,14 +19,18 @@ try {
         validate_csrf_token();
     }
     // Eingaben validieren
-    $username = trim($_POST['username'] ?? '');
+    $username = strip_tags(trim($_POST['username'] ?? ''));
     $email    = trim($_POST['email'] ?? '');
     $pw       = $_POST['password'] ?? '';
     $pw2      = $_POST['password_confirm'] ?? '';
     $errors   = [];
 
-    if ($username === '') {
+    if (empty($username)) {
         $errors['username'] = 'Benutzername erforderlich.';
+    } elseif (mb_strlen($username) < 3 || mb_strlen($username) > 50) {
+        $errors['username'] = 'Benutzername muss zwischen 3 und 50 Zeichen lang sein.';
+    } elseif (!preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
+        $errors['username'] = 'Benutzername darf nur Buchstaben, Zahlen und Unterstriche enthalten.';
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
