@@ -164,7 +164,7 @@
           <input type="hidden" name="csrf_token" value="{$csrf_token}">
           <div class="mb-3">
             <label for="new_username" class="form-label">Neuer Benutzername</label>
-            <input type="text" class="form-control" id="new_username" name="username" required>
+            <input type="text" class="form-control" id="new_username" name="username">
           </div>
           <button type="submit" class="btn btn-primary">Speichern</button>
         </form>

@@ -48,12 +48,14 @@ if (isset($_GET['group_id'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validate_csrf_token();
     if ($action === 'suggest') {
-        $courseSuggestion = trim($_POST['course_suggestion'] ?? '');
+        $courseSuggestion = strip_tags(trim($_POST['course_suggestion'] ?? ''));
         $confirmSimilar   = isset($_POST['confirm_similar']);
         $smarty->assign('courseSuggestion', $courseSuggestion);
 
-        if ($courseSuggestion === '') {
+        if (empty($courseSuggestion)) {
             $error = 'Bitte gib einen Kursnamen an.';
+        } elseif (mb_strlen($courseSuggestion) > 100) {
+            $error = 'Kursvorschlag darf nicht länger als 100 Zeichen sein.';
         } else {
             $similar = $courseRepository->findSimilarCourse($courseSuggestion);
 
@@ -70,10 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     } else {
-        $title        = trim($_POST['title'] ?? '');
-        $description  = trim($_POST['description'] ?? '');
+        $title        = strip_tags(trim($_POST['title'] ?? ''));
+        $description  = strip_tags(trim($_POST['description'] ?? ''));
         $course       = trim($_POST['course'] ?? '');
-        $customCourse = trim($_POST['custom_course'] ?? '');
+        $customCourse = strip_tags(trim($_POST['custom_course'] ?? ''));
 
         $uploadTarget = $_POST['upload_target'] ?? 'public';
         if ($uploadTarget === 'group') {
@@ -89,12 +91,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $smarty->assign('customCourse', $customCourse);
         $smarty->assign('uploadTarget', $uploadTarget);
 
-        if ($title === '' || ! isset($_FILES['file'])) {
+        if (empty($title) || ! isset($_FILES['file'])) {
             $error = 'Titel und Datei sind erforderlich.';
+        } elseif (mb_strlen($title) > 255) {
+            $error = 'Titel darf nicht länger als 255 Zeichen sein.';
+        } elseif (mb_strlen($description) > 1000) {
+            $error = 'Beschreibung darf nicht länger als 1000 Zeichen sein.';
         } elseif ($course !== '__custom__' && ! in_array($course, array_column($courses, 'value'), true)) {
             $error = 'Ungültiger Kurs ausgewählt.';
-        } elseif ($course === '__custom__' && $customCourse === '') {
+        } elseif ($course === '__custom__' && empty($customCourse)) {
             $error = 'Bitte gib einen Kursvorschlag an.';
+        } elseif ($course === '__custom__' && mb_strlen($customCourse) > 100) {
+            $error = 'Benutzerdefinierter Kurs darf nicht länger als 100 Zeichen sein.';
         } else {
             $file     = $_FILES['file'];
             $finfo    = new finfo(FILEINFO_MIME_TYPE);

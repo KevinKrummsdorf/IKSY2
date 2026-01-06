@@ -29,9 +29,12 @@ try {
 
     switch ($action) {
         case 'update_username':
-            $username = trim($_POST['username'] ?? '');
-            if ($username === '') {
-                throw new RuntimeException('Ungültiger Benutzername.');
+            $username = strip_tags(trim($_POST['username'] ?? ''));
+            if (mb_strlen($username) < 3 || mb_strlen($username) > 50) {
+                throw new RuntimeException('Benutzername muss zwischen 3 und 50 Zeichen lang sein.');
+            }
+            if (!preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
+                throw new RuntimeException('Benutzername darf nur Buchstaben, Zahlen und Unterstriche enthalten.');
             }
             if ($userRepository->usernameExists($username, $userId)) {
                 throw new RuntimeException('Benutzername bereits vergeben.');
@@ -103,10 +106,24 @@ try {
                 }
             }
 
+            $firstName = strip_tags(trim($_POST['first_name'] ?? ''));
+            $lastName = strip_tags(trim($_POST['last_name'] ?? ''));
+            $aboutMe = strip_tags(trim($_POST['about_me'] ?? ''));
+
+            if (mb_strlen($firstName) > 100) {
+                throw new RuntimeException('Vorname darf nicht länger als 100 Zeichen sein.');
+            }
+            if (mb_strlen($lastName) > 100) {
+                throw new RuntimeException('Nachname darf nicht länger als 100 Zeichen sein.');
+            }
+            if (mb_strlen($aboutMe) > 500) {
+                throw new RuntimeException('About Me darf nicht länger als 500 Zeichen sein.');
+            }
+
             $fields = [
-                'first_name' => trim($_POST['first_name'] ?? ''),
-                'last_name'  => trim($_POST['last_name'] ?? ''),
-                'about_me'   => trim($_POST['about_me'] ?? ''),
+                'first_name' => $firstName,
+                'last_name'  => $lastName,
+                'about_me'   => $aboutMe,
                 'birthdate'  => $birthdate,
             ];
 

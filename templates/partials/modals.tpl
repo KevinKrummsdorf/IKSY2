@@ -58,7 +58,7 @@
           <input type="hidden" name="csrf_token" value="{$csrf_token}">
           <div class="mb-3">
             <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" required>
+            <input type="text" class="form-control" id="username" name="username" required maxlength="50">
           </div>
 
           <div class="mb-3">
