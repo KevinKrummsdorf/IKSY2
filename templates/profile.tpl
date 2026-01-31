@@ -44,34 +44,14 @@
 
         {if $twofa_enabled}
           <p>2FA ist aktiviert.</p>
-          <form method="post" class="d-inline">
-            <input type="hidden" name="action" value="disable_2fa">
-            <input type="hidden" name="csrf_token" value="{$csrf_token}">
-            <button type="submit" class="btn btn-sm btn-outline-danger">Deaktivieren</button>
-          </form>
+          <div class="alert alert-secondary d-inline-block">
+            <small>2FA-Einstellungen können in der Demo nicht geändert werden.</small>
+          </div>
         {else}
-          {if $show_2fa_form}
-            <p>Scanne den QR-Code mit einer Authenticator-App und gib anschließend den 6-stelligen Code ein.</p>
-            <div class="my-3 text-center">
-              <img src="{$qrCodeUrl}" alt="QR-Code" class="img-fluid" style="max-width:200px;">
-            </div>
-            <form method="post" class="needs-validation" novalidate>
-              <input type="hidden" name="action" value="confirm_2fa">
-              <input type="hidden" name="csrf_token" value="{$csrf_token}">
-              <div class="mb-3">
-                <label for="code" class="form-label">Code</label>
-                <input type="text" class="form-control" id="code" name="code" pattern="^\d{6}$" required autocomplete="off">
-                <div class="invalid-feedback">Bitte gültigen 6-stelligen Code eingeben.</div>
-              </div>
-              <button type="submit" class="btn btn-primary btn-sm">2FA aktivieren</button>
-            </form>
-          {else}
-            <form method="post" class="d-inline">
-              <input type="hidden" name="action" value="start_2fa">
-              <input type="hidden" name="csrf_token" value="{$csrf_token}">
-              <button type="submit" class="btn btn-sm btn-outline-primary">Jetzt 2FA einrichten</button>
-            </form>
-          {/if}
+          <p>2FA ist deaktiviert.</p>
+          <div class="alert alert-secondary d-inline-block">
+            <small>2FA-Einstellungen können in der Demo nicht geändert werden.</small>
+          </div>
         {/if}
         </div>
       {/if}
@@ -164,7 +144,7 @@
           <input type="hidden" name="csrf_token" value="{$csrf_token}">
           <div class="mb-3">
             <label for="new_username" class="form-label">Neuer Benutzername</label>
-            <input type="text" class="form-control" id="new_username" name="username" required maxlength="50">
+            <input type="text" class="form-control" id="new_username" name="username">
           </div>
           <button type="submit" class="btn btn-primary">Speichern</button>
         </form>

@@ -9,7 +9,14 @@ require_once __DIR__ . '/../includes/csrf.inc.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Repository/UserRepository.php';
 
-$response = ['success' => false];
+$response = [
+    'success' => false,
+    'message' => 'Registrierung ist in der Demo-Version deaktiviert.'
+];
+
+http_response_code(403);
+echo json_encode($response);
+exit;
 
 $db = new Database();
 $userRepository = new UserRepository($db);

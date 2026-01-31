@@ -21,6 +21,10 @@ $db = new Database();
 $contactRequestRepository = new ContactRequestRepository($db);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $errors[] = 'Das Kontaktformular ist in der Demo-Version deaktiviert.';
+}
+
+if (false && $_SERVER['REQUEST_METHOD'] === 'POST') {
     // reCAPTCHA prüfen
     $token = $_POST['recaptcha_token'] ?? '';
     if (!recaptcha_verify_auto($db, $token)) {

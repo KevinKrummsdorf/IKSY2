@@ -29,8 +29,14 @@ $show_2fa_form = false;
 $qrCodeUrl      = '';
 $smarty->assign('twofa_enabled', $twofa_enabled);
 
-// Setup beginnen (QR anzeigen)
-if (!$twofa_enabled && ($_POST['action'] ?? '') === 'start_2fa') {
+// 2FA-Aktionen in der Demo-Version einschränken
+if (isset($_POST['action']) && in_array($_POST['action'], ['start_2fa', 'confirm_2fa', 'disable_2fa'])) {
+    $smarty->assign('flash', ['type' => 'info', 'message' => '2FA-Einstellungen können in der Demo-Version nicht geändert werden.']);
+    return;
+}
+
+// Setup beginnen (QR anzeigen) - DEAKTIVIERT
+if (false && !$twofa_enabled && ($_POST['action'] ?? '') === 'start_2fa') {
     $tfa = new TwoFactorAuth('StudyHub');
     $secret = $tfa->createSecret();
     $_SESSION['2fa_secret_temp'] = $secret;
@@ -41,8 +47,8 @@ if (!$twofa_enabled && ($_POST['action'] ?? '') === 'start_2fa') {
     $smarty->assign('show_2fa_form', true);
 }
 
-// Setup bestätigen (Code-Eingabe prüfen)
-if (!$twofa_enabled && ($_POST['action'] ?? '') === 'confirm_2fa') {
+// Setup bestätigen (Code-Eingabe prüfen) - DEAKTIVIERT
+if (false && !$twofa_enabled && ($_POST['action'] ?? '') === 'confirm_2fa') {
     $tfa = new TwoFactorAuth('StudyHub');
 
     $code = preg_replace('/\D/', '', $_POST['code'] ?? '');
@@ -76,8 +82,8 @@ if (!$twofa_enabled && ($_POST['action'] ?? '') === 'confirm_2fa') {
     }
 }
 
-// 2FA deaktivieren
-if ($twofa_enabled && ($_POST['action'] ?? '') === 'disable_2fa') {
+// 2FA deaktivieren - DEAKTIVIERT
+if (false && $twofa_enabled && ($_POST['action'] ?? '') === 'disable_2fa') {
     $userRepository->disableTwoFA($username);
     unset($_SESSION['2fa_passed']);
 

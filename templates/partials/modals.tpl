@@ -52,55 +52,13 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
       </div>
       <div class="modal-body">
-        <div id="registerAlert" class="alert alert-danger d-none" role="alert" aria-live="assertive"></div>
-
-        <form id="registerForm" method="POST" action="{url path='register'}" data-pw-validate novalidate>
-          <input type="hidden" name="csrf_token" value="{$csrf_token}">
-          <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" required maxlength="50">
-          </div>
-
-          <div class="mb-3">
-            <label for="email" class="form-label">E-Mail-Adresse</label>
-            <input type="email" class="form-control" id="email" name="email" required autocomplete="email">
-          </div>
-
-          <div class="mb-3 pass-field">
-            <label for="password" class="form-label">Passwort</label>
-            <div class="input-group">
-              <input type="password" class="form-control pw-new" id="password" name="password" required>
-              <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
-                <span class="material-symbols-outlined">visibility</span>
-              </span>
-            </div>
-            <ul class="requirement-list mb-3">
-              <li data-requirement="minlength"><i class="material-symbols-outlined">close</i>Mindestens 8 Zeichen</li>
-              <li data-requirement="maxlength"><i class="material-symbols-outlined">close</i>Maximal 128 Zeichen</li>
-              <li data-requirement="number"><i class="material-symbols-outlined">close</i>Mindestens eine Zahl</li>
-              <li data-requirement="lowercase"><i class="material-symbols-outlined">close</i>Kleinbuchstabe</li>
-              <li data-requirement="uppercase"><i class="material-symbols-outlined">close</i>Großbuchstabe</li>
-              <li data-requirement="special"><i class="material-symbols-outlined">close</i>Sonderzeichen</li>
-            </ul>
-          </div>
-
-          <div class="mb-3 pass-field">
-            <label for="password_confirm" class="form-label">Passwort bestätigen</label>
-            <div class="input-group">
-                <input type="password" class="form-control pw-confirm" id="password_confirm" name="password_confirm" required>
-              <span class="input-group-text" id="togglePasswordConfirm" style="cursor: pointer;">
-                <span class="material-symbols-outlined">visibility</span>
-              </span>
-            </div>
-          </div>
-
-          <input type="hidden" name="recaptcha_token" id="register-recaptcha-token">
-
-          <button type="submit" class="btn btn-primary w-100 position-relative">
-            <span id="register-spinner" class="spinner-border spinner-border-sm me-2 d-none" role="status"></span>
-            Registrieren
-          </button>
-        </form>
+        <div class="alert alert-info" role="alert">
+          Die Registrierung ist in dieser Demo-Version deaktiviert.
+        </div>
+        <p>Um die Funktionen von StudyHub zu testen, können Sie sich mit einem der Test-Accounts einloggen.</p>
+        <div class="text-center mt-4">
+          <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Schließen</button>
+        </div>
       </div>
     </div>
   </div>

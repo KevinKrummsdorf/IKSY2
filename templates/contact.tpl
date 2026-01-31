@@ -48,44 +48,16 @@
     </div>
   {/if}
 
-  <form id="contact-form" action="" method="POST" class="mx-auto" style="max-width:600px">
-    <div class="mb-3">
-      <label for="name" class="form-label">Name</label>
-      <input id="name" name="name" type="text" class="form-control"
-             value="{$input.name|escape}" required>
+  <div class="mx-auto" style="max-width:600px">
+    <div class="alert alert-info text-center" role="alert">
+      Das Kontaktformular ist in dieser Demo-Version deaktiviert.
     </div>
-
-    <div class="mb-3">
-      <label for="email" class="form-label">E-Mail</label>
-      <input id="email" name="email" type="email" class="form-control"
-             value="{$input.email|escape}" required>
-    </div>
-
-    <div class="mb-3">
-      <label for="subject" class="form-label">Betreff</label>
-      <input id="subject" name="subject" type="text" class="form-control"
-             value="{$input.subject|escape}" required>
-    </div>
-
-    <div class="mb-3">
-      <label for="message" class="form-label">Nachricht</label>
-      <textarea id="message" name="message" rows="6" class="form-control" required>{$input.message|escape}</textarea>
-    </div>
-
-    <input type="hidden" name="recaptcha_token" id="recaptcha_token">
-
-    <button type="submit" class="btn btn-primary w-100 position-relative">
-      <span class="spinner-border spinner-border-sm me-2 d-none"
-            id="btn-spinner" role="status"></span>
-      Nachricht senden
-    </button>
-    <br></br>
     <div class="text-center mt-4">
-      <h3>Oder kontaktieren Sie uns direkt:</h3>
+      <h3>Kontaktieren Sie uns direkt:</h3>
       <p>E-Mail: <a href="mailto:studyhub.iksy@gmail.com">studyhub.iksy@gmail.com</a></p>
       <p>Servicezeiten: Montags bis Freitags 9:00 – 17:00 Uhr</p>
     </div>
-  </form>
+  </div>
 </div>
 
 {* Der Code sorgt dafür, dass das Formular nur dann wirklich abgeschickt wird, wenn Google reCAPTCHA bestätigt *}
