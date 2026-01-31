@@ -27,8 +27,8 @@
   <div class="container text-center my-5">
     <h3 class="fw-normal">
       Dieses Projekt wurde mit viel Engagement von unseren Dozenten unterstützt:<br>
-      <a href="https://www.hochschule-bochum.de/fbw/service/labor-fuer-wirtschaftsinformatik/" target="_blank" rel="noopener">Frank Brockmann</a> und
-      <a href="https://www.hochschule-bochum.de/fbw/service/labor-fuer-wirtschaftsinformatik/" target="_blank" rel="noopener">Christoph Schennonek</a>.
+      <a href="#" target="_blank" rel="noopener">Dozent A</a> und
+      <a href="#" target="_blank" rel="noopener">Dozent B</a>.
     </h3>
   </div>
 {/block}
